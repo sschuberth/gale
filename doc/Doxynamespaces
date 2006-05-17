@@ -1,0 +1,8 @@
+/// \namespace gale
+/// Root namespace for all GALE related code.
+
+/// \namespace gale::math
+/// Namespace for mathematical code.
+
+/// \namespace gale::meta
+/// Namespace for meta-template programming code.
