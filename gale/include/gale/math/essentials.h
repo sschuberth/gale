@@ -17,14 +17,14 @@ namespace math {
 
 /// Converts the given \a angle specified in degrees to radians.
 template<typename T>
-inline T getRadFromDeg(T angle) {
+inline T convertDegToRad(T angle) {
     static T const PI=static_cast<T>(3.14159265358979323846);
     return (angle*PI)/180;
 }
 
 /// Converts the given \a angle specified in radians to degrees.
 template<typename T>
-inline T getDegFromRad(T angle) {
+inline T convertRadToDeg(T angle) {
     static T const PI=static_cast<T>(3.14159265358979323846);
     return (angle*180)/PI;
 }
