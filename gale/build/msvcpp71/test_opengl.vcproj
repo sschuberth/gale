@@ -111,7 +111,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\source\test\test_opengl.cpp">
+			RelativePath="..\..\test\test_opengl.cpp">
 		</File>
 	</Files>
 	<Globals>

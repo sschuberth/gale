@@ -111,7 +111,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\source\test\test_tuple.cpp">
+			RelativePath="..\..\test\test_tuple.cpp">
 		</File>
 	</Files>
 	<Globals>

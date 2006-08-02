@@ -111,7 +111,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\source\test\test_vector.cpp">
+			RelativePath="..\..\test\test_vector.cpp">
 		</File>
 	</Files>
 	<Globals>
