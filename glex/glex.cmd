@@ -1,0 +1,1 @@
+@php -f parse.php %*
