@@ -1,6 +1,6 @@
 <?php
 
-require 'constants.php';
+require 'functions.php';
 
 // Assume "register_globals" is set to "Off".
 $argc=$_SERVER['argc'];
@@ -23,52 +23,31 @@ $spec=$_REQUEST['spec'];
 if (empty($spec))
     exit('Error: The given "spec" argument is empty.');
 
-$handle=@fopen($spec,'r') or
-    exit("Error: Unable to open the file \"$spec\" for reading.");
-
-// Parse the sections and contents of the file into a structure array.
-$section=NULL;
-$content=NULL;
-
-$i=0;
-while (!feof($handle)) {
-    $line=rtrim(fgets($handle));
-    ++$i;
-
-    if (strlen($line)>OPENGL_SPEC_MAX_CHARS_PER_LINE)
-        echo "Warning: Line $i exceeds the maximum of ".OPENGL_SPEC_MAX_CHARS_PER_LINE." characters.\n";
-
-    // We can stop parsing when we have reached e.g. the revision history.
-    if (is_int(strpos($line,OPENGL_SPEC_BREAK_STRING)))
-        break;
-
-    if (empty($line) || $line[0]==' ') {
-        // Switch to content parsing mode until a new section header is found.
-        if (!empty($content))
-            $content.=' ';
-        $content.=ltrim($line);
-    } else {
-        // Skip comments as shown in the OpenGL extension document template.
-        if ($line[0]=='*')
-            continue;
-
-        // Add any new section and (possibly empty) content to the structure array.
-        if (!is_null($section) && !is_null($content)) {
-            $struct[$section]=$content;
-            $section=NULL;
-            $content=NULL;
-        }
-
-        // Switch to section parsing mode until indented text in found.
-        if (!empty($section))
-            $section.=' ';
-        $section.=$line;
-    }
-}
-$struct[$section]=$content;
-
+parseSpecIntoArray($spec,$struct);
 //print_r($struct);
 
-fclose($handle);
+// Search for the section where new procedures and functions are defined.
+foreach (array_keys($struct) as $section) {
+    if (preg_match('/New\W+Procedures\W+\w*\W*Functions/',$section)>0) {
+        $content=$struct[$section];
+        break;
+    }
+}
+
+if (!empty($content)) {
+    $type="\w+\s*\*?\w+\s*\*?";
+    $name="\w+";
+    $arguments="($type\s*,?\s*)*";
+    preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;/",$content,$matches,PREG_SET_ORDER);
+
+    $handle=fopen(basename($spec,'.txt').'_procs.h','w');
+
+    foreach ($matches as $procedure) {
+        list($all,$type,$name,$arguments,$argument)=$procedure;
+        fwrite($handle,"PROC($type,$name,($arguments));\n");
+    }
+    
+    fclose($handle);
+}
 
 ?>
