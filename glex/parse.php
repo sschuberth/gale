@@ -1,27 +1,23 @@
 <?php
 
-require 'functions.php';
+require_once 'functions.php';
 
 // Assume "register_globals" is set to "Off".
 $argc=$_SERVER['argc'];
+$argv=$_SERVER['argv'];
 
-if (isset($argc)) {
-    $argv=$_SERVER['argv'];
+@$spec=$_REQUEST['spec'];
 
-    if ($argc<2)
+if (empty($spec)) {
+    if (empty($argv[0])) {
+        // If the script is run on a web server, prompt for the spec.
+        require_once 'form.php';
+        return;
+    } else {
+        // When run from the command line, the spec has to be passed as an argument.
         exit('Usage: '.basename($argv[0]).' spec=<URI or URL to OpenGL extension specification text file>');
-
-    // Make the command line available as PHP variables.
-    for ($i=0;$i<$argc;++$i) {
-        parse_str($argv[$i],$tmp);
-        $_REQUEST=array_merge($_REQUEST,$tmp);
     }
 }
-
-$spec=$_REQUEST['spec'];
-
-if (empty($spec))
-    exit('Error: The given "spec" argument is empty.');
 
 parseSpecIntoArray($spec,$struct);
 //print_r($struct);
@@ -46,7 +42,7 @@ if (!empty($content)) {
         list($all,$type,$name,$arguments,$argument)=$procedure;
         fwrite($handle,"PROC($type,$name,($arguments));\n");
     }
-    
+
     fclose($handle);
 }
 
