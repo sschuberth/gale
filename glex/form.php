@@ -8,16 +8,27 @@
     <title>glex - OpenGL Extension Specification Parser</title>
     <style type="text/css">
         img { border-style: none; }
+
+        .rounded { display: block; }
+        .rounded * { display: block; height: 1px; overflow: hidden; background: #c7d1d2; }
+        .margin_side_5 { margin: 0px 5px; }
+        .margin_side_3 { margin: 0px 3px; }
+        .margin_side_2 { margin: 0px 2px; }
+        .margin_side_1 { margin: 0px 1px; height: 2px; }
+        .margin_side_0 { margin: 0px; height: 6px; }
+
+        hr.line { border-style: none; background-color: #abb5b5; color: #abb5b5; height: 1px; margin: 0px; }
     </style>
-    <link rel="stylesheet" href="http://www.opengl.org/css/home.css" type="text/css" media="screen" />
 </head>
 
 <body>
-    <div id="right_column">
-        <div class="cap_top">Column Header</div>
-        <div class="sidecontent">
-            <hr class="sidenav"/>
-        </div>
+    <div class="rounded">
+        <b class="margin_side_5"></b>
+        <b class="margin_side_3"></b>
+        <b class="margin_side_2"></b>
+        <b class="margin_side_1"></b>
+        <b class="margin_side_0"></b>
+        <hr class="line" />
     </div>
 
     <p>
