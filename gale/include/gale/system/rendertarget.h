@@ -1,6 +1,8 @@
 #ifndef RENDERTARGET_H
 #define RENDERTARGET_H
 
+/**
+ */
 class RenderTarget {
   public:
     RenderTarget();
