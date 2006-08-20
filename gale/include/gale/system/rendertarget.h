@@ -2,6 +2,7 @@
 #define RENDERTARGET_H
 
 /**
+ * Dummy
  */
 class RenderTarget {
   public:
