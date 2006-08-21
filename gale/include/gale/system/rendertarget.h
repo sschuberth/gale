@@ -11,6 +11,7 @@ class RenderTarget {
   protected:
     //void createWindow();
 
+    /// Dummy
     static unsigned int s_instances;
 };
 
