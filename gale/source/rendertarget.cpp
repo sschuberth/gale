@@ -1,7 +1,7 @@
 #include "gale/system/rendertarget.h"
 #include "gale/global/defines.h"
 
-#include <windows.h>
+#include "../../glex/WGL_ARB_pixel_format.h"
 
 unsigned int RenderTarget::s_instances=0;
 
@@ -53,8 +53,13 @@ RenderTarget::RenderTarget() {
     HGLRC rc=wglCreateContext(dc);
     G_ASSERT(rc!=NULL)
 
-    //
-    //
+    result=wglMakeCurrent(dc,rc);
+    G_ASSERT(result!=FALSE)
+
+    GLboolean r=WGL_ARB_pixel_format_init();
+
+    result=wglMakeCurrent(NULL,NULL);
+    G_ASSERT(result!=FALSE)
 
     result=wglDeleteContext(rc);
     G_ASSERT(result!=FALSE)
