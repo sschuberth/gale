@@ -3,7 +3,8 @@
 require_once 'constants.php';
 
 function parseSpecIntoArray($spec,&$struct) {
-    // Parse the sections and contents of the file into a structure array.
+    // Parse the sections and contents of the file into an associative array
+    // that represents the file structure.
     $handle=@fopen($spec,'r') or
         exit("Error: Unable to open the file \"$spec\" for reading.");
 
@@ -22,8 +23,12 @@ function parseSpecIntoArray($spec,&$struct) {
         if (is_int(strpos($line,OPENGL_SPEC_BREAK_STRING)))
             break;
 
+        // Skip empty lines right from the start.
         $ltline=ltrim($line);
-        if (empty($line) || $line!=$ltline) {
+        if (empty($ltline))
+            continue;
+
+        if ($line!=$ltline) {
             // Switch to content parsing mode until a new section header is found.
             if (!empty($content))
                 $content.=' ';
@@ -47,8 +52,140 @@ function parseSpecIntoArray($spec,&$struct) {
         }
     }
     $struct[$section]=$content;
-    $section=NULL;
-    $content=NULL;
+
+    fclose($handle);
+}
+
+function extractProcsToFile($extension,$content) {
+    $file=$extension.'_procs.h';
+    $handle=fopen($file,'w');
+    $file=strtoupper(strtr($file,'.','_'));
+
+    // TODO: Verify / simplify these regular expressions.
+    $type="\w+\s*\*?\w+\s*\*?";
+    $name="\w+";
+    $arguments="($type\s*,?\s*)*";
+    preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;/",$content,$matches,PREG_SET_ORDER);
+
+    $type_length_max=0;
+    $name_length_max=0;
+    $arguments_length_max=0;
+
+    foreach ($matches as $procedure) {
+        list($all,$type,$name,$arguments,$argument)=$procedure;
+
+        // Get the maximum string lengths for alignment.
+        $length=strlen($type);
+        if ($type_length_max<$length)
+            $type_length_max=$length;
+
+        $length=strlen($name);
+        if ($name_length_max<$length)
+            $name_length_max=$length;
+
+        $length=strlen($arguments);
+        if ($arguments_length_max<$length)
+            $arguments_length_max=$length;
+    }
+
+    foreach ($matches as $procedure) {
+        list($all,$type,$name,$arguments,$argument)=$procedure;
+
+        // Write the padded function prototypes to a header file.
+        $type=str_pad($type,$type_length_max+1);
+        $name=str_pad($name,$name_length_max+1);
+        $arguments=str_pad('('.$arguments.')',$arguments_length_max+2);
+        fwrite($handle,"GLEX_PROC( $type, $name, $arguments );\n");
+    }
+
+    fclose($handle);
+}
+
+function extractTypesToString($content,&$types) {
+    preg_match_all("/DECLARE_HANDLE.*(.*).*;/U",$content,$matches,PREG_SET_ORDER);
+    foreach ($matches as $type) {
+        list($all)=$type;
+        $types.="$all\n\n";
+    }
+
+    preg_match_all("/typedef(\s+\w+)+\s*;/U",$content,$matches,PREG_SET_ORDER);
+    foreach ($matches as $type) {
+        list($all)=$type;
+        $types.="$all\n\n";
+    }
+
+    preg_match_all("/typedef.*{.*}.*;/U",$content,$matches,PREG_SET_ORDER);
+    foreach ($matches as $type) {
+        list($all)=$type;
+        $types.="$all\n\n";
+    }
+}
+
+function writePrototypeHeader($extension,$content) {
+    $file=$extension.'.h';
+    $handle=fopen($file,'w');
+    $file=strtoupper(strtr($file,'.','_'));
+
+    // Write the inclusion guard header.
+    fwrite($handle,"#ifndef $file\n");
+    fwrite($handle,"#define $file\n\n");
+
+    fwrite($handle,"#define WIN32_LEAN_AND_MEAN\n");
+    fwrite($handle,"#include <windows.h>\n");
+    fwrite($handle,"#undef WIN32_LEAN_AND_MEAN\n");
+    fwrite($handle,"#include <GL/gl.h>\n\n");
+
+    fwrite($handle,"#ifdef __cplusplus\n");
+    fwrite($handle,"extern \"C\" {\n");
+    fwrite($handle,"#endif\n\n");
+
+    fwrite($handle,'extern GLboolean '.$extension."_init(void);\n\n");
+
+    extractTypesToString($content,$types);
+    if (!empty($types)) {
+        fwrite($handle,"// List the data types introduced by this extension.\n");
+        fwrite($handle,$types);
+    }
+
+    // Write the code that generates the prototype definitions.
+    fwrite($handle,"// List the pointer prototypes for all functions of this extension.\n");
+    fwrite($handle,"#define GLEX_PROC(t,n,a) extern t (APIENTRY *n) a\n");
+    fwrite($handle,'#include "'.$extension.'_procs.h"'."\n");
+    fwrite($handle,"#undef GLEX_PROC\n\n");
+
+    fwrite($handle,"#ifdef __cplusplus\n");
+    fwrite($handle,"} // extern \"C\"\n");
+    fwrite($handle,"#endif\n\n");
+
+    // Write the inclusion guard footer.
+    fwrite($handle,"#endif // $file\n");
+
+    fclose($handle);
+}
+
+function writeInitializationCode($extension) {
+    $handle=fopen($extension.'.c','w');
+
+    fwrite($handle,'#include "'.$extension.'.h"'."\n\n");
+
+    // Write the code that generates the function pointer variables.
+    fwrite($handle,"// Initialize all function pointers to 0.\n");
+    fwrite($handle,"#define GLEX_PROC(t,n,a) t (APIENTRY *n) a=0\n");
+    fwrite($handle,'#include "'.$extension.'_procs.h"'."\n");
+    fwrite($handle,"#undef GLEX_PROC\n\n");
+
+    // Write the code that initializes the function pointer variables.
+    fwrite($handle,"// Get the addresses for all functions of this extension.\n");
+    fwrite($handle,'GLboolean '.$extension."_init(void) {\n");
+    fwrite($handle,"    GLboolean r=GL_TRUE;\n\n");
+
+    fwrite($handle,"#define GLEX_PROC(t,n,a) r=r&&((n=(void*)wglGetProcAddress(#n))!=0)\n");
+    fwrite($handle,'#include "'.$extension.'_procs.h"'."\n");
+    fwrite($handle,"#undef GLEX_PROC\n\n");
+
+    fwrite($handle,"    return r;\n");
+    fwrite($handle,"}\n");
+
     fclose($handle);
 }
 
