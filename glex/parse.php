@@ -6,7 +6,9 @@ require_once 'functions.php';
 $argc=$_SERVER['argc'];
 $argv=$_SERVER['argv'];
 
+// Suppress any errors in case these variables are not set.
 @$spec=$_REQUEST['spec'];
+@$debug=$_REQUEST['debug'];
 
 if (empty($spec)) {
     if (empty($argv[0])) {
@@ -19,31 +21,38 @@ if (empty($spec)) {
     }
 }
 
+// Parse the OpenGL specification into an associative array with section headers
+// as keys and and section contents as values.
 parseSpecIntoArray($spec,$struct);
-//print_r($struct);
+
+if ($debug==1) {
+    foreach (array_keys($struct) as $section) {
+        // Dump only the section header.
+        echo $section."\n";
+    }
+} else if ($debug==2) {
+    // Dump the array containing the file structure if debugging is enabled.
+    print_r($struct);
+}
 
 // Search for the section where new procedures and functions are defined.
 foreach (array_keys($struct) as $section) {
+    // We need to find strings like these (and variations):
+    // "New Procedures and Functions"
+    // "New Procedures, Functions and Structures:"
     if (preg_match('/New\W+Procedures\W+\w*\W*Functions/',$section)>0) {
         $content=$struct[$section];
         break;
     }
 }
 
+// If this extension introduces new procedures and / or functions, create code
+// to initialize them.
 if (!empty($content)) {
-    $type="\w+\s*\*?\w+\s*\*?";
-    $name="\w+";
-    $arguments="($type\s*,?\s*)*";
-    preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;/",$content,$matches,PREG_SET_ORDER);
-
-    $handle=fopen(basename($spec,'.txt').'_procs.h','w');
-
-    foreach ($matches as $procedure) {
-        list($all,$type,$name,$arguments,$argument)=$procedure;
-        fwrite($handle,"PROC($type,$name,($arguments));\n");
-    }
-
-    fclose($handle);
+    $extension=$struct['Name'];
+    extractProcsToFile($extension,$content);
+    writePrototypeHeader($extension,$content);
+    writeInitializationCode($extension);
 }
 
 ?>
