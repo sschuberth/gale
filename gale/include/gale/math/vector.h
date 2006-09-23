@@ -40,7 +40,7 @@ namespace math {
 /**
  * Vector class implementation based on a tuple, featuring common linear algebra
  * and specialized computer graphic math.
- * 
+ *
  * Example usage:
  * \code
  * glBegin(GL_LINE_LOOP);
@@ -56,8 +56,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
-     * static methods instead of static variables are used here, see
-     * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14
+     * static methods instead of static variables are used here (see
+     * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14).
      */
     //@{
     static Vector const& ZERO() {

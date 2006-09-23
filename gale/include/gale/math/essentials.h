@@ -182,7 +182,10 @@ inline unsigned long getCeilPow2(unsigned long x) {
 /// This is the default rounding mode on x86 platforms, so the floating-point
 /// control word is not modified.
 inline long long roundToEven(float f) {
-    // See http://web.archive.org/web/20041011125702/http://www.self-similar.com/rounding.html
+    // By default, the Pentium's fistp instruction does a "round to even", so
+    // there is no need to save and restore the floating-point control word like
+    // the C runtime does (see
+    // http://web.archive.org/web/20041011125702/http://www.self-similar.com/rounding.html).
 #ifdef __GNUC__
     long long i;
     __asm__(
@@ -205,7 +208,9 @@ inline long long roundToEven(float f) {
         double f;
         long long i;
     } u;
-    // See http://groups.google.de/group/comp.graphics.algorithms/tree/browse_frm/thread/5099095b1cd1a78a/2b72601d013c7a0f
+    // Add a float bias that shifts the mantissa to the right, and then subtract
+    // the bias as an integer again (see
+    // http://groups.google.de/group/comp.graphics.algorithms/tree/browse_frm/thread/5099095b1cd1a78a/2b72601d013c7a0f).
     u.f=static_cast<double>(3LL<<51);
     u.f+=static_cast<double>(f);
     return u.i-0x4338000000000000;
@@ -220,7 +225,9 @@ inline long long roundToZero(float f) {
         float f;
         long i;
     } u;
-    // See http://web.archive.org/web/20041011125702/http://www.self-similar.com/rounding.html
+    // For positive numbers, this returns roundToEven(f-u.i). For negative
+    // numbers, an additional two instructions are required negate this "magic"
+    // number (see http://web.archive.org/web/20041011125702/http://www.self-similar.com/rounding.html).
     u.f=f;
     u.i=(u.i&0x80000000)|0x3efffffe;
     return roundToEven(f-u.f);
