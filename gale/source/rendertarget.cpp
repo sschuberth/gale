@@ -1,7 +1,9 @@
 #include "gale/system/rendertarget.h"
-#include "gale/global/defines.h"
 
-#include "../../glex/WGL_ARB_pixel_format.h"
+#include "gale/global/defines.h"
+#include "gale/global/platform.h"
+
+//#include "../../glex/WGL_ARB_pixel_format.h"
 
 unsigned int RenderTarget::s_instances=0;
 
@@ -56,7 +58,7 @@ RenderTarget::RenderTarget() {
     result=wglMakeCurrent(dc,rc);
     G_ASSERT(result!=FALSE)
 
-    GLboolean r=WGL_ARB_pixel_format_init();
+    //GLboolean r=WGL_ARB_pixel_format_init();
 
     result=wglMakeCurrent(NULL,NULL);
     G_ASSERT(result!=FALSE)
