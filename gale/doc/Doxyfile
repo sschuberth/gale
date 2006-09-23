@@ -397,7 +397,7 @@ SHOW_DIRECTORIES       = NO
 # provided by doxygen. Whatever the program writes to standard output
 # is used as the file version. See the manual for examples.
 
-FILE_VERSION_FILTER    = "/bin/bash doc/version_filter.sh"
+FILE_VERSION_FILTER    = "/bin/bash version_filter.sh"
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -459,7 +459,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = doc/Doxymain doc/Doxynamespaces include source
+INPUT                  = Doxymain Doxynamespaces ../include ../source
 
 # If the value of the INPUT tag contains directories, you can use the
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -631,7 +631,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = doc/html
+HTML_OUTPUT            = html
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank
