@@ -2,7 +2,7 @@ PROJECT(gale)
 
 # Recursively add source code files. The specified path is relative to
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
-FILE(GLOB_RECURSE sources "*.cpp")
+FILE(GLOB_RECURSE sources "../source/*.cpp" "../include/*.h")
 
 # This writes absolute paths to the generated files even if relative paths are
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
