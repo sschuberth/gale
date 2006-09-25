@@ -34,6 +34,10 @@
 #include "../meta/loops.h"
 #include "../meta/operators.h"
 
+#ifndef NDEBUG
+    #include <iostream>
+#endif
+
 namespace gale {
 
 using namespace meta;
@@ -131,7 +135,7 @@ class TupleBase {
 
     /// Divides \c this tuple by another tuple \a t.
     C const& operator/=(C const& t) {
-        // TODO: Elements of t should be checked against (being close to) 0.
+        // The value of t is checked downstream in OpArithReci.
         return (*this)*=1/t;
     }
 
@@ -143,7 +147,7 @@ class TupleBase {
 
     /// Divides \c this tuple by a scalar \a s.
     C const& operator/=(T s) {
-        G_ASSERT(s>std::numeric_limits<T>::epsilon())
+        G_ASSERT(std::abs(s)>std::numeric_limits<T>::epsilon())
         return (*this)*=1/s;
     }
     //@}
@@ -235,6 +239,7 @@ class TupleBase {
 
     /// Returns the quotient of tuples \a t and \a u.
     friend C operator/(C const& t,C const& u) {
+        // The value of t is checked downstream in OpArithReci.
         return C(t)/=u;
     }
 
@@ -250,6 +255,7 @@ class TupleBase {
 
     /// Performs scalar division from the right of each element.
     friend C operator/(C const& t,T s) {
+        // The value of t is checked downstream in operator/=(T s).
         return C(t)/=s;
     }
 
@@ -302,14 +308,29 @@ class TupleBase {
     }
     //@}
 
+#ifndef NDEBUG
+    friend std::istream& operator>>(std::istream& s,C& t) {
+        for (int i=0;i<N;++i)
+            s >> t[i];
+        return s;
+    }
+
+    friend std::ostream& operator<<(std::ostream& s,const C& t) {
+        s << '(';
+        for (int i=0;i<N-1;++i)
+            s << t[i] << ',';
+        return s << t[i] << ')';
+    }
+#endif
+
   protected:
     /// Tightly packed array of \a N elements of type \a T.
     T m_data[N];
 };
 
 /**
- * Tuple class implementation with no extra functionality as an example how to
- * derive from TupleBase.
+ * Tuple class implementation as an example how to derive from TupleBase. This
+ * adds no functionality but shows how to get rid of the C template argument.
  */
 template<unsigned int N,typename T>
 class Tuple:public TupleBase<N,T,Tuple<N,T> > {

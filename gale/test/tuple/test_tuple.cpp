@@ -18,6 +18,10 @@ int main() {
     Tuple<3,float> t3f_a(3.0f,4.0f,5.0f),t3f_b((float)rand(),(float)rand(),(float)rand());
     Tuple<4,double> t4d_a(5.0,6.0,7.0,8.0),t4d_b((double)rand(),(double)rand(),(double)rand(),(double)rand());
 
+    cout << t2i_a << ", " << t2i_b << endl;
+    cout << t3f_a << ", " << t3f_b << endl;
+    cout << t4d_a << ", " << t4d_b << endl;
+
     // Check the sizes in memory.
     G_ASSERT(sizeof(t2i_a)==2*sizeof(int))
     G_ASSERT(sizeof(t3f_a)==3*sizeof(float))
