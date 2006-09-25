@@ -95,7 +95,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     }
 
     /// Sets all components to 0 except the one specified by \a index, which is
-    /// set to 1.
+    /// set to 1. This constructor is required to initialize the constants.
     explicit Vector(unsigned int index) {
         LoopFwd<N,OpAssign>::iterateMatchIndex(getData(),index);
     }
@@ -238,14 +238,14 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
         return LoopFwd<N,OpCalcProd>::iterateCombAdd(getData(),v.getData());
     }
 
-    /// Returns the cosinus of the angle between this vector and \a v.
-    T getAngleCosinus(Vector const& v) const {
+    /// Returns the cosine of the angle between this vector and \a v.
+    T getAngleCosine(Vector const& v) const {
         return (~v).dot(~(*this));
     }
 
     /// Returns the angle between this vector and \a v in radians.
     double getAngle(Vector const& v) const {
-        return std::acos(static_cast<double>(getAngleCosinus(v)));
+        return std::acos(static_cast<double>(getAngleCosine(v)));
     }
 
     /// Returns a highly accurate calculation of the angle between this vector
@@ -292,7 +292,9 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     //@}
 };
 
-/// \name Type definitions for use as OpenGL vertices
+/**
+ * \name Type definitions for use as OpenGL vertices
+ */
 //@{
 typedef Vector<2,double> Vec2d;
 typedef Vector<2,float> Vec2f;
