@@ -17,6 +17,9 @@ SET(LIBRARY_OUTPUT_PATH "../../lib")
 # file are absolute.
 INCLUDE_DIRECTORIES("../include")
 
+# List the libraries all following targets should link against.
+LINK_LIBRARIES(opengl32.lib)
+
 # Relative to CMAKE_CURRENT_SOURCE_DIR, add more projects to this one by
 # refering to their CMakeLists.txt files.
 ADD_SUBDIRECTORY("../test/opengl" ${CMAKE_CURRENT_BINARY_DIR})
