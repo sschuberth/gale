@@ -5,6 +5,10 @@
 
 //#include "../../glex/WGL_ARB_pixel_format.h"
 
+namespace gale {
+
+namespace system {
+
 unsigned int RenderTarget::s_instances=0;
 
 RenderTarget::RenderTarget() {
@@ -75,3 +79,7 @@ RenderTarget::RenderTarget() {
     result=UnregisterClass(MAKEINTATOM(atom),NULL);
     G_ASSERT(result!=FALSE)
 }
+
+} // namespace system
+
+} // namespace gale
