@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+using namespace gale::system;
+
 int main() {
     RenderTarget rt;
 
