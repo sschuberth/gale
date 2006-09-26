@@ -10,7 +10,7 @@ ADD_LIBRARY(gale ${sources})
 
 # Specify where to put the compiled library. This is relative to
 # CMAKE_CURRENT_BINARY_DIR, where the project file is located.
-SET(LIBRARY_OUTPUT_PATH "../../lib")
+SET(LIBRARY_OUTPUT_PATH CACHE INTERNAL "../../lib")
 
 # Specify any required include directories. The specified path is interpreted as
 # relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project

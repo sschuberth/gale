@@ -10,7 +10,7 @@ ADD_EXECUTABLE(test_vector ${sources})
 
 # Specify where to put the compiled executable. This is relative to
 # CMAKE_CURRENT_BINARY_DIR, where the project file is located.
-SET(EXECUTABLE_OUTPUT_PATH "../../bin")
+SET(EXECUTABLE_OUTPUT_PATH CACHE INTERNAL "../../bin")
 
 # Specify any required include directories. The specified path is interpreted as
 # relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
