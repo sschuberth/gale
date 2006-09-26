@@ -112,7 +112,7 @@ class TupleBase {
     //@}
 
     /**
-     * \name Element-wise arithmetic operator
+     * \name Element-wise arithmetic operators
      */
     //@{
     /// Increments \c this tuple by another tuple \a t.
@@ -153,7 +153,7 @@ class TupleBase {
     //@}
 
     /**
-     * \name Extremes determination operator
+     * \name Extremes determination methods
      */
     //@{
     /// Determines the minimum element of \c this tuple.
@@ -207,7 +207,7 @@ class TupleBase {
     //@}
 
     /**
-     * \name Element-wise arithmetic operator
+     * \name Element-wise arithmetic operators
      */
     //@{
     /// Returns tuple \a t unchanged; provided for convenience.
@@ -268,7 +268,7 @@ class TupleBase {
     //@}
 
     /**
-     * \name Element-wise comparison operator
+     * \name Element-wise comparison operators
      */
     //@{
     /// Returns whether all elements in \a t are less than their counterpart in
@@ -309,12 +309,14 @@ class TupleBase {
     //@}
 
 #ifndef NDEBUG
+    /// Reads tuple values from an input stream.
     friend std::istream& operator>>(std::istream& s,C& t) {
         for (int i=0;i<N;++i)
             s >> t[i];
         return s;
     }
 
+    /// Writes tuple values to an output stream.
     friend std::ostream& operator<<(std::ostream& s,const C& t) {
         s << '(';
         for (int i=0;i<N-1;++i)
