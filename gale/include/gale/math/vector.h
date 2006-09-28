@@ -102,7 +102,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     /// Sets all components to 0 except the one specified by \a index, which is
     /// set to 1. This constructor is required to initialize the constants.
     explicit Vector(unsigned int index) {
-        LoopFwd<N,OpAssign>::iterateMatchIndex(getData(),index);
+        meta::LoopFwd<N,meta::OpAssign>::iterateMatchIndex(getData(),index);
     }
 
     /// Allows to initialize 2-vectors directly.
@@ -120,7 +120,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     /// Conversion constructor to be able to use vectors of different types.
     template<typename U>
     Vector(const Vector<N,U>& v) {
-        LoopFwd<N,OpAssign>::iterate(getData(),v.getData());
+        meta::LoopFwd<N,meta::OpAssign>::iterate(getData(),v.getData());
     }
     //@}
 
@@ -240,7 +240,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
 
     /// Calculates the dot product between this vector and \a v.
     T dot(Vector const& v) const {
-        return LoopFwd<N,OpCalcProd>::iterateCombAdd(getData(),v.getData());
+        return meta::LoopFwd<N,meta::OpCalcProd>::iterateCombAdd(getData(),v.getData());
     }
 
     /// Returns the cosine of the angle between this vector and \a v.
@@ -272,7 +272,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
 
     /// Returns whether this vector is collinear to \a v.
     bool isCollinear(Vector const& v) const {
-        return OpCmpEqualEps::evaluate(v.cross(*this).getLengthSquared(),0);
+        return meta::OpCmpEqualEps::evaluate(v.cross(*this).getLengthSquared(),0);
     }
     //@}
 
