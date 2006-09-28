@@ -60,26 +60,31 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
      * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14).
      */
     //@{
+    /// Returns a vector which has all components set to 0.
     static Vector const& ZERO() {
         static Vector const v(N);
         return v;
     }
 
+    /// Returns a vector which has the x-component set to 1, all others to 0.
     static Vector const& X() {
         static Vector const v(0);
         return v;
     }
 
+    /// Returns a vector which has the y-component set to 1, all others to 0.
     static Vector const& Y() {
         static Vector const v(1);
         return v;
     }
 
+    /// Returns a vector which has the z-component set to 1, all others to 0.
     static Vector const& Z() {
         static Vector const v(2);
         return v;
     }
 
+    /// Returns a vector which has the w-component set to 1, all others to 0.
     static Vector const& W() {
         static Vector const v(3);
         return v;
@@ -120,7 +125,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     //@}
 
     /**
-     * \name Element access methods
+     * \name Component access methods
      */
     //@{
     /// Returns a reference to the x-component.
