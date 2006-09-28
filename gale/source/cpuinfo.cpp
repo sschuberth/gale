@@ -1,3 +1,28 @@
+/*                                     __
+ *                      .-----..---.-.|  |.-----.
+ *                      |  _  ||  _  ||  ||  -__|
+ *                      |___  ||___._||__||_____|
+ * This file is part of |_____| the Graphics Abstraction Layer & Engine,
+ * see the project page at http://developer.berlios.de/projects/gale/
+ *
+ * Copyright (C) 2005-2006  Sebastian Schuberth <sschuberth@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #include "gale/system/cpuinfo.h"
 
 namespace gale {
@@ -6,112 +31,134 @@ namespace system {
 
 CPUInfo& CPU=CPUInfo::the();
 
-CPUInfo::CPUInfo()
-:m_feat_flags_edx(0),m_feat_flags_ecx(0),m_ext_feat_flags_edx(0) {
+CPUInfo::CPUInfo():
+  m_std_feat_flags_edx(0),m_std_feat_flags_ecx(0),
+  m_ext_feat_flags_edx(0),m_ext_feat_flags_ecx(0)
+{
     // Null-terminate the vendor string.
     m_vendor[0]=m_vendor[3*4]=0;
 
     // Until now, the ECX register contains the "this" pointer.
-    if (!hasCPUID()) return;
+    if (!hasCPUID())
+        return;
 
-    // Check for CPUID feature flags support.
-    #ifdef __GNUC__
-    if (getMaxCPUIDFunc()>0) {
+    // Check for CPUID standard feature flags support.
+    if (getMaxCPUIDStdFunc()>0) {
+        // EAX = Processor Signature
+        // EBX = Brand ID etc.
+        // EDX = Standard Feature Flags (part 1)
+        // ECX = Standard Feature Flags (part 2)
+#ifdef __GNUC__
         __asm__(
-            "xor eax,eax\n"
-            "inc eax\n"
-            "cpuid\n"
-            : "=d" (m_feat_flags_edx), "=c" (m_feat_flags_ecx)
-            : : "eax", "ebx"
+            "xorl %%eax,%%eax\n\t"
+            "incl %%eax\n\t"
+            "pushl %%ebx\n\t"
+            "cpuid\n\t"
+            "popl %%ebx\n\t"
+            : "=d" (m_std_feat_flags_edx), "=c" (m_std_feat_flags_ecx)
+            :
+            : "eax"
         );
-    }
-    #else
-    if (getMaxCPUIDFunc()>0) {
+#else
         __asm {
             xor eax,eax
             inc eax
             cpuid
             mov eax,this
-            mov [eax]CPUInfo.m_feat_flags_edx,edx
-            mov [eax]CPUInfo.m_feat_flags_ecx,ecx
+            mov [eax]CPUInfo.m_std_feat_flags_edx,edx
+            mov [eax]CPUInfo.m_std_feat_flags_ecx,ecx
         }
+#endif
     }
-    #endif
 
     // Check for CPUID extended feature flags support.
-    #ifdef __GNUC__
     if (getMaxCPUIDExtFunc()>0) {
+        // EAX = Reserved (Intel) / Processor Signature (AMD)
+        // EBX = Reserved (Intel) / Brand ID etc. (AMD)
+        // EDX = Extended Feature Flags (part 1)
+        // ECX = Extended Feature Flags (part 2)
+#ifdef __GNUC__
         __asm__(
-            "mov eax,0x80000001\n"
-            "cpuid\n"
-            : "=d" (m_ext_feat_flags_edx)
-            : : "eax", "ebx", "ecx"
+            "movl $0x80000001,%%eax\n\t"
+            "pushl %%ebx\n\t"
+            "cpuid\n\t"
+            "popl %%ebx\n\t"
+            : "=d" (m_ext_feat_flags_edx), "=c" (m_ext_feat_flags_ecx)
+            :
+            : "%eax"
         );
-    }
-    #else
-    if (getMaxCPUIDExtFunc()>0) {
+#else
         __asm {
             mov eax,80000001h
             cpuid
             mov eax,this
             mov [eax]CPUInfo.m_ext_feat_flags_edx,edx
+            mov [eax]CPUInfo.m_ext_feat_flags_ecx,ecx
         }
+#endif
     }
-    #endif
 }
 
 #ifdef __GNUC__
+
 // Brennan's Guide to Inline Assembly
 // http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html
 
-// Check for the presence of the CPUID instruction.
+// Always preserve the EBX register to be compatible with the -fPIC option.
+// Note that specifying EBX in the clobber list does *not* work!
+
 bool CPUInfo::hasCPUID() const {
     unsigned eax;
     __asm__(
-        "// Read and invert the ID bit (21).\n"
-        "pushfd\n"
-        "pop eax\n"
-        "xor eax,0x00200000\n"
-        "mov ecx,eax\n"
-        "// Write and read back modified flags.\n"
-        "push eax\n"
-        "popfd\n"
-        "pushfd\n"
-        "pop eax\n"
-        "// Check if inverting the ID bit was successful.\n"
-        "cmp eax,ecx\n"
-        "sete cl\n"
-        "movzx eax,cl\n"
+        "// Read and invert the ID bit (21).\n\t"
+        "pushfl\n\t"
+        "popl %%eax\n\t"
+        "xorl $0x00200000,%%eax\n\t"
+        "movl %%eax,%%ecx\n\t"
+        "// Write and read back modified flags.\n\t"
+        "pushl %%eax\n\t"
+        "popfl\n\t"
+        "pushfl\n\t"
+        "popl %%eax\n\t"
+        "// Check if inverting the ID bit was successful.\n\t"
+        "cmpl %%ecx,%%eax\n\t"
+        "sete %%cl\n\t"
+        "movzx %%cl,%%eax\n\t"
         : "=a" (eax)
-        : : "ecx"
+        :
+        : "%ecx"
     );
     return eax;
 }
 
-// Get the maximum input value supported by the CPUID instruction.
-unsigned CPUInfo::getMaxCPUIDFunc() const {
+unsigned CPUInfo::getMaxCPUIDStdFunc() const {
     unsigned eax,*vendor=(unsigned*)m_vendor;
     unsigned *vendor4=(unsigned*)&m_vendor[4];
     unsigned *vendor8=(unsigned*)&m_vendor[8];
     __asm__(
-        "xor eax,eax\n"
-        "cpuid\n"
-        : "=a" (eax), "=b" (*vendor), "=d" (*vendor4), "=c" (*vendor8)
+        "xorl %%eax,%%eax\n\t"
+        "pushl %%ebx\n\t"
+        "cpuid\n\t"
+        "movl %%ebx,%1\n\t"
+        "popl %%ebx\n\t"
+        : "=a" (eax), "=r" (*vendor), "=d" (*vendor4), "=c" (*vendor8)
     );
     return eax;
 }
 
-// Get the maximum extended function input value supported.
 unsigned CPUInfo::getMaxCPUIDExtFunc() const {
     unsigned eax;
     __asm__(
-        "mov eax,0x80000000\n"
-        "push eax\n"
-        "cpuid\n"
-        "pop ebx\n"
-        "sub eax,ebx\n"
+        "movl $0x80000000,%%eax\n\t"
+        "pushl %%eax\n\t"
+        "pushl %%ebx\n\t"
+        "cpuid\n\t"
+        "popl %%ebx\n\t"
+        "popl %%ecx\n\t"
+        "subl %%ecx,%%eax\n\t"
         : "=a" (eax)
-        : : "ebx", "ecx", "edx"
+        :
+        : "%ecx", "%edx"
     );
     return eax;
 }
@@ -126,7 +173,6 @@ unsigned CPUInfo::getMaxCPUIDExtFunc() const {
 // prologue and epilogue code you will have to preserve the modified registers
 // by yourself.
 
-// Check for the presence of the CPUID instruction.
 __declspec(naked) bool CPUInfo::hasCPUID() const {
     __asm {
         // Read and invert the ID bit (21).
@@ -147,8 +193,7 @@ __declspec(naked) bool CPUInfo::hasCPUID() const {
     }
 }
 
-// Get the maximum input value supported by the CPUID instruction.
-__declspec(naked) unsigned CPUInfo::getMaxCPUIDFunc() const {
+__declspec(naked) unsigned CPUInfo::getMaxCPUIDStdFunc() const {
     __asm {
         // No prologue / epilogue is generated, so save EBX and EDI manually.
         push ebx
@@ -163,9 +208,10 @@ __declspec(naked) unsigned CPUInfo::getMaxCPUIDFunc() const {
         mov [edi+CPUInfo.m_vendor+4],edx
         mov [edi+CPUInfo.m_vendor+8],ecx
 #else
-        mov [edi+m_vendor],ebx
-        mov [edi+m_vendor+4],edx
-        mov [edi+m_vendor+8],ecx
+        lea edi,[edi]CPU.m_vendor
+        mov [edi],ebx
+        mov [edi+4],edx
+        mov [edi+8],ecx
 #endif
         pop edi
         pop ebx
@@ -173,7 +219,6 @@ __declspec(naked) unsigned CPUInfo::getMaxCPUIDFunc() const {
     }
 }
 
-// Get the maximum extended function input value supported.
 __declspec(naked) unsigned CPUInfo::getMaxCPUIDExtFunc() const {
     __asm {
         // No prologue / epilogue is generated, so save EBX manually.
