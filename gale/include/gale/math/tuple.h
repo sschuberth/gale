@@ -319,7 +319,7 @@ class TupleBase {
         s << '(';
         for (int i=0;i<N-1;++i)
             s << t[i] << ',';
-        return s << t[i] << ')';
+        return s << t[N-1] << ')';
     }
 #endif
 
