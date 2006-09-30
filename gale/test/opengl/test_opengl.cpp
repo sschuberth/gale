@@ -1,6 +1,6 @@
-#include <gale/system/rendertarget.h>
-
 #include <stdlib.h>
+
+#include <gale/system/rendertarget.h>
 
 using namespace gale::system;
 

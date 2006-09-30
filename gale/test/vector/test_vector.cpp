@@ -1,13 +1,12 @@
 #include <stdlib.h>
 
-#include <ctime>
 #include <iostream>
 
 #include <gale/math/vector.h>
 
 using namespace std;
-
 using namespace gale::math;
+
 using gale::meta::OpCmpEqualEps;
 
 int main() {

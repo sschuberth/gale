@@ -4,13 +4,27 @@
 #include <iostream>
 
 #include <gale/math/tuple.h>
+#include <gale/system/cpuinfo.h>
 
 using namespace std;
 
 using gale::math::Tuple;
 using gale::meta::OpCmpEqualEps;
+using gale::system::CPU;
 
 int main() {
+    cout << "CPU vendor: " << CPU.getVendorString() << endl;
+    cout << "Instruction sets:"
+         << (CPU.hasMMX()?" MMX":"")
+         << (CPU.hasMMXExt()?" MMXExt":"")
+         << (CPU.has3DNow()?" 3DNow!":"")
+         << (CPU.has3DNowExt()?" 3DNow!Ext":"")
+         << (CPU.hasSSE()?" SSE":"")
+         << (CPU.hasSSE2()?" SSE2":"")
+         << (CPU.hasSSE3()?" SSE3":"")
+         << (CPU.hasSSSE3()?" SSSE3":"")
+    << endl;
+
     srand((unsigned)time(NULL));
 
     // Check construction of objects.
