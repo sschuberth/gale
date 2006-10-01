@@ -54,8 +54,8 @@ class CPUInfo:public global::Singleton<CPUInfo> {
     /// Checks if this is a little-endian (as opposed to big-endian) machine.
     bool isLittleEndian() const {
         // See http://sjbaker.org/steve/software/cute_code.html.
-        static int i=1;
-        return *((char*)&i)!=0;
+        static int const i=1;
+        return *reinterpret_cast<char const*>(&i)!=0;
     }
 
     /**
@@ -75,51 +75,63 @@ class CPUInfo:public global::Singleton<CPUInfo> {
      */
     //@{
     /// Return the CPU vendor string.
-    const char* getVendorString() const {
+    char const* getVendorString() const {
         return m_vendor;
     }
 
 #define MAKE_DWORD(a,b,c,d) (a|(int)(b)<<8|(int)(c)<<16|(int)(d)<<24)
     /// Returns if this is an Intel CPU.
     bool isIntel() const {
-        if (*((int*)&m_vendor[0])!=MAKE_DWORD('G','e','n','u'))
+        int const* vendor=reinterpret_cast<int const*>(&m_vendor);
+        if (*vendor!=MAKE_DWORD('G','e','n','u'))
             return false;
-        if (*((int*)&m_vendor[4])!=MAKE_DWORD('i','n','e','I'))
+        ++vendor;
+        if (*vendor!=MAKE_DWORD('i','n','e','I'))
             return false;
-        if (*((int*)&m_vendor[8])!=MAKE_DWORD('n','t','e','l'))
+        ++vendor;
+        if (*vendor!=MAKE_DWORD('n','t','e','l'))
             return false;
         return true;
     }
 
     /// Returns if this is an AMD CPU.
     bool isAMD() const {
-        if (*((int*)&m_vendor[0])!=MAKE_DWORD('A','u','t','h'))
+        int const* vendor=reinterpret_cast<int const*>(&m_vendor);
+        if (*vendor!=MAKE_DWORD('A','u','t','h'))
             return false;
-        if (*((int*)&m_vendor[4])!=MAKE_DWORD('e','n','t','i'))
+        ++vendor;
+        if (*vendor!=MAKE_DWORD('e','n','t','i'))
             return false;
-        if (*((int*)&m_vendor[8])!=MAKE_DWORD('c','A','M','D'))
+        ++vendor;
+        if (*vendor!=MAKE_DWORD('c','A','M','D'))
             return false;
         return true;
     }
 
     /// Returns if this is a Cyrix / VIA CPU.
     bool isCyrix() const {
-        if (*((int*)&m_vendor[0])!=MAKE_DWORD('C','y','r','i'))
+        int const* vendor=reinterpret_cast<int const*>(&m_vendor);
+        if (*vendor!=MAKE_DWORD('C','y','r','i'))
             return false;
-        if (*((int*)&m_vendor[4])!=MAKE_DWORD('x','I','n','s'))
+        ++vendor;
+        if (*vendor!=MAKE_DWORD('x','I','n','s'))
             return false;
-        if (*((int*)&m_vendor[8])!=MAKE_DWORD('t','e','a','d'))
+        ++vendor;
+        if (*vendor!=MAKE_DWORD('t','e','a','d'))
             return false;
         return true;
     }
 
     /// Returns if this is a Centaur / VIA CPU.
     bool isCentaur() const {
-        if (*((int*)&m_vendor[0])!=MAKE_DWORD('C','e','n','t'))
+        int const* vendor=reinterpret_cast<int const*>(&m_vendor);
+        if (*vendor!=MAKE_DWORD('C','e','n','t'))
             return false;
-        if (*((int*)&m_vendor[4])!=MAKE_DWORD('a','u','r','H'))
+        ++vendor;
+        if (*vendor!=MAKE_DWORD('a','u','r','H'))
             return false;
-        if (*((int*)&m_vendor[8])!=MAKE_DWORD('a','u','l','s'))
+        ++vendor;
+        if (*vendor!=MAKE_DWORD('a','u','l','s'))
             return false;
         return true;
     }
