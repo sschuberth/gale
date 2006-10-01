@@ -142,19 +142,21 @@ struct OpCmpEqualEps {
 
 /// Minimum determination operator.
 struct OpCalcMin {
-    /// Returns the minimum of \a a and \a b, casted to type \a A.
-    template<typename A,typename B>
-    static G_INLINE A const& evaluate(A const& a,B const& b) {
-        return A(b<a?b:a);
+    /// Returns the minimum of \a a and \a b which need to be of the same data
+    /// type so casts can be avoided.
+    template<typename T>
+    static G_INLINE T const& evaluate(T const& a,T const& b) {
+        return b<a?b:a;
     }
 };
 
 /// Maximum determination operator.
 struct OpCalcMax {
-    /// Returns the maximum of \a a and \a b, casted to type \a A.
-    template<typename A,typename B>
-    static G_INLINE A const& evaluate(A const& a,B const& b) {
-        return A(b>a?b:a);
+    /// Returns the maximum of \a a and \a b which need to be of the same data
+    /// type so casts can be avoided.
+    template<typename T>
+    static G_INLINE T const& evaluate(T const& a,T const& b) {
+        return b>a?b:a;
     }
 };
 
