@@ -39,7 +39,7 @@
      * http://support.microsoft.com/default.aspx?scid=kb;en-us;143208).
      */
     #ifndef NOMINMAX
-    	#define NOMINMAX 1
+        #define NOMINMAX 1
     #endif
 
     /**
@@ -49,7 +49,7 @@
      * (see http://support.microsoft.com/default.aspx?scid=kb;en-us;166474).
      */
     #ifndef VC_EXTRA_LEAN
-    	#define VC_EXTRA_LEAN 1
+        #define VC_EXTRA_LEAN 1
     #endif
 
     /**
@@ -59,7 +59,7 @@
      * (see http://support.microsoft.com/default.aspx?scid=kb;en-us;166474).
      */
     #ifndef WIN32_LEAN_AND_MEAN
-    	#define WIN32_LEAN_AND_MEAN 1
+        #define WIN32_LEAN_AND_MEAN 1
     #endif
 
     #include <windows.h>
