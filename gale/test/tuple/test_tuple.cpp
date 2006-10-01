@@ -28,7 +28,7 @@ int main() {
 
     srand(static_cast<unsigned>(time(NULL)));
 
-    // Check construction of objects.
+    cout << "Check construction of objects ..." << endl;
     Tuple<2,int> t2i_a(1,2),t2i_b(rand(),rand());
 
     Tuple<3,float> t3f_a(3.0f,4.0f,5.0f);
@@ -50,12 +50,12 @@ int main() {
     cout << t3f_a << ", " << t3f_b << endl;
     cout << t4d_a << ", " << t4d_b << endl;
 
-    // Check the sizes in memory.
+    cout << "Check the sizes in memory ..." << endl;
     G_ASSERT(sizeof(t2i_a)==2*sizeof(int))
     G_ASSERT(sizeof(t3f_a)==3*sizeof(float))
     G_ASSERT(sizeof(t4d_a)==4*sizeof(double))
 
-    // Check implicit pointer conversion.
+    cout << "Check implicit pointer conversion ..." << endl;
     cout << t2i_a[0] << endl;
     cout << t2i_a[1] << endl;
 
@@ -64,28 +64,28 @@ int main() {
 
     cout << "-- " << endl;
 
-    // Check addition.
+    cout << "Check addition ..." << endl;
     {
         Tuple<2,int> tmp=t2i_a+t2i_b;
         G_ASSERT(tmp[0]==t2i_a[0]+t2i_b[0])
         G_ASSERT(tmp[1]==t2i_a[1]+t2i_b[1])
     }
 
-    // Check subtraction.
+    cout << "Check subtraction ..." << endl;
     {
         Tuple<2,int> tmp=t2i_a-t2i_b;
         G_ASSERT(tmp[0]==t2i_a[0]-t2i_b[0])
         G_ASSERT(tmp[1]==t2i_a[1]-t2i_b[1])
     }
 
-    // Check division (and implicitly multiplication).
+    cout << "Check division (and implicitly multiplication) ..." << endl;
     {
         Tuple<2,int> tmp=t2i_a/t2i_b;
         G_ASSERT(tmp[0]==t2i_a[0]/t2i_b[0])
         G_ASSERT(tmp[1]==t2i_a[1]/t2i_b[1])
     }
 
-    // Check division (and implicitly multiplication) by a scalar.
+    cout << "Check division (and implicitly multiplication) by a scalar ..." << endl;
     {
         float s=12.3f;
         Tuple<3,float> tmp=t3f_a/s;
@@ -94,7 +94,7 @@ int main() {
         G_ASSERT(OpCmpEqualEps::evaluate(tmp[2],t3f_a[2]/s))
     }
 
-    // Check minimum element determination.
+    cout << "Check minimum element determination ..." << endl;
     {
         float tmp=t3f_b.getMinElement();
         G_ASSERT(tmp<=t3f_b[0])
@@ -102,7 +102,7 @@ int main() {
         G_ASSERT(tmp<=t3f_b[2])
     }
 
-    // Check maximum element determination.
+    cout << "Check maximum element determination ..." << endl;
     {
         double tmp=t4d_b.getMaxElement();
         G_ASSERT(tmp>=t4d_b[0])
@@ -111,7 +111,7 @@ int main() {
         G_ASSERT(tmp>=t4d_b[3])
     }
 
-    // Check unary sign operators and absolute extremes element determination.
+    cout << "Check unary sign operators and absolute extremes element determination ..." << endl;
     {
         Tuple<3,float> tmp1=+t3f_b;
         Tuple<3,float> tmp2=-t3f_a;
@@ -127,7 +127,7 @@ int main() {
         G_ASSERT(tmp_max>=fabs(tmp2[2]))
     }
 
-    // Check element-wise minimum determination.
+    cout << "Check element-wise minimum determination ..." << endl;
     {
         Tuple<3,float> tmp=t3f_a.getMinElements(t3f_b);
         G_ASSERT(tmp[0]<=t3f_a[0] && tmp[0]<=t3f_b[0])
@@ -135,7 +135,7 @@ int main() {
         G_ASSERT(tmp[2]<=t3f_a[2] && tmp[2]<=t3f_b[2])
     }
 
-    // Check element-wise maximum determination.
+    cout << "Check element-wise maximum determination ..." << endl;
     {
         Tuple<3,float> tmp=t3f_a.getMaxElements(t3f_b);
         G_ASSERT(tmp[0]>=t3f_a[0] && tmp[0]>=t3f_b[0])
@@ -143,17 +143,17 @@ int main() {
         G_ASSERT(tmp[2]>=t3f_a[2] && tmp[2]>=t3f_b[2])
     }
 
-    // Check linear interpolation.
+    cout << "Check linear interpolation ..." << endl;
     {
         const double s=0.63;
         Tuple<4,double> tmp=t4d_a.lerp(t4d_b,s);
-        G_ASSERT(tmp[0]==t4d_a[0]+(t4d_b[0]-t4d_a[0])*s)
-        G_ASSERT(tmp[1]==t4d_a[1]+(t4d_b[1]-t4d_a[1])*s)
-        G_ASSERT(tmp[2]==t4d_a[2]+(t4d_b[2]-t4d_a[2])*s)
-        G_ASSERT(tmp[3]==t4d_a[3]+(t4d_b[3]-t4d_a[3])*s)
+        G_ASSERT(OpCmpEqualEps::evaluate(tmp[0],t4d_a[0]+(t4d_b[0]-t4d_a[0])*s))
+        G_ASSERT(OpCmpEqualEps::evaluate(tmp[1],t4d_a[1]+(t4d_b[1]-t4d_a[1])*s))
+        G_ASSERT(OpCmpEqualEps::evaluate(tmp[2],t4d_a[2]+(t4d_b[2]-t4d_a[2])*s))
+        G_ASSERT(OpCmpEqualEps::evaluate(tmp[3],t4d_a[3]+(t4d_b[3]-t4d_a[3])*s))
     }
 
-    // Check remaining vector / vector operators.
+    cout << "Check remaining vector vs. vector operators ..." << endl;
     {
         Tuple<3,float> tmp(
             static_cast<float>(rand()),
@@ -172,7 +172,7 @@ int main() {
         G_ASSERT(OpCmpEqualEps::evaluate(res2[2],tmp[2]/res[2]))
     }
 
-    // Check remaining vector / scalar operators.
+    cout << "Check remaining vector vs. scalar operators ..." << endl;
     {
         float s=344.5f,t=24.6f;
 
@@ -188,7 +188,7 @@ int main() {
 
     }
 
-    // Check comparison operators.
+    cout << "Check comparison operators ..." << endl;
     {
         bool res_l=(t3f_a<t3f_b);
         G_ASSERT(res_l==(t3f_a[0]<t3f_b[0] && t3f_a[1]<t3f_b[1] && t3f_a[2]<t3f_b[2]))
@@ -209,6 +209,8 @@ int main() {
         G_ASSERT(res_ne==(t2i_a[0]!=t2i_b[0] || t2i_a[1]!=t2i_b[1]))
     }
 
+#ifdef _WIN32
     system("pause");
+#endif
     return 0;
 }

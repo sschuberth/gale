@@ -12,7 +12,7 @@ using gale::meta::OpCmpEqualEps;
 int main() {
     Vec4d n(Vec4d::ZERO()),x(Vec4d::X()),y(Vec4d::Y()),z(Vec4d::Z()),w(Vec4d::W());
 
-    // Check predefined constants.
+    cout << "Check predefined constants ..." << endl;
     G_ASSERT(n[0]==0)
     G_ASSERT(n[1]==0)
     G_ASSERT(n[2]==0)
@@ -38,41 +38,43 @@ int main() {
     G_ASSERT(w[2]==0)
     G_ASSERT(w[3]==1)
 
-    // Check conversion constructor.
+    cout << "Check conversion constructor ..." << endl;
     Vec4i a(12,34,56,78);
     Vec4d b(a);
 
-    // Check access methods.
+    cout << "Check access methods ..." << endl;
     G_ASSERT(double(a.getX())==b[0])
     G_ASSERT(double(a.getY())==b[1])
     G_ASSERT(double(a.getZ())==b[2])
     G_ASSERT(double(a.getW())==b[3])
 
-    // Check magnitude related methods.
+    cout << "Check magnitude related methods ..." << endl;
     b.normalize();
     G_ASSERT(OpCmpEqualEps::evaluate(b.getLengthSquared(),1))
 
-    // Check the cross product operator.
+    cout << "Check the cross product operator ..." << endl;
     G_ASSERT((Vec3i::X()^Vec3i::Y())==Vec3i::Z())
 
-    // Check angle related methods.
+    cout << "Check angle related methods ..." << endl;
     double axy1=Vec3i::X().getAngle(Vec3i::Y());
     double axy2=Vec3i::X().getAccurateAngle(Vec3i::Y());
     G_ASSERT(OpCmpEqualEps::evaluate(axy1,axy2))
 
-    // Check getting an orthogonal vector.
+    cout << "Check getting an orthogonal vector ..." << endl;
     G_ASSERT(Vec3f::X().getOrthoVector()==Vec3f::Z())
     G_ASSERT(Vec3f::Y().getOrthoVector()==-Vec3f::Z())
     G_ASSERT(Vec3f::Z().getOrthoVector()==Vec3f::Y())
 
-    // Check unary sign, conversion constructor and collinear methods.
+    cout << "Check unary sign, conversion constructor and collinear methods ..." << endl;
     G_ASSERT(Vec3f::X().isCollinear(-Vec3i::X()))
 
-    // Check the dot product operator.
+    cout << "Check the dot product operator ..." << endl;
     G_ASSERT((Vec3i::X()%Vec3i::Y())==0)
     G_ASSERT((Vec3i::X()%Vec3i::Z())==0)
     G_ASSERT((Vec3i::Y()%Vec3i::Z())==0)
 
+#ifdef _WIN32
     system("pause");
+#endif
     return 0;
 }
