@@ -56,9 +56,9 @@ class Singleton {
 
   private:
     /// Disable automatic copy constructor generation by the compiler.
-    Singleton(const Singleton&);
+    Singleton(Singleton const&);
     /// Disable assignments (which always are self-assignments for singletons).
-    Singleton& operator=(const Singleton&);
+    Singleton& operator=(Singleton const&);
 };
 
 } // namespace global
