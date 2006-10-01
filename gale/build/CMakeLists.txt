@@ -42,13 +42,13 @@ ENDFOREACH(header ${headers})
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
 ADD_LIBRARY(${project_name} ${files})
 
-IF(NOT WIN32)
+IF(NOT WIN32 OR CYGWIN)
     # Get the absolute (!) path to the library we generate here, to pass it to the
     # linker for the test programs. On Linux, this is *not* done automatically by
     # specifying a dependency.
     SET(library_name ${LIBRARY_OUTPUT_PATH}/${CMAKE_STATIC_LIBRARY_PREFIX}${project_name}${CMAKE_STATIC_LIBRARY_SUFFIX})
     GET_FILENAME_COMPONENT(library_name ${library_name} ABSOLUTE)
-ENDIF(NOT WIN32)
+ENDIF(NOT WIN32 OR CYGWIN)
 
 # List the libraries all following targets should link against.
 INCLUDE(FindOpenGL)
