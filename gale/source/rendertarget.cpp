@@ -12,8 +12,11 @@ namespace system {
 unsigned int RenderTarget::s_instances=0;
 
 RenderTarget::RenderTarget() {
-    //if (s_instances==0) {
+    if (s_instances>0)
+        return;
+    ++s_instances;
 
+#ifdef _WIN32
     // Register a minimal class that allocates a unique device context for each window.
     WNDCLASS cls;
     ZeroMemory(&cls,sizeof(cls));
@@ -78,6 +81,11 @@ RenderTarget::RenderTarget() {
 
     result=UnregisterClass(MAKEINTATOM(atom),NULL);
     G_ASSERT(result!=FALSE)
+#endif
+}
+
+RenderTarget::~RenderTarget() {
+    --s_instances;
 }
 
 } // namespace system

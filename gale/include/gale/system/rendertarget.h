@@ -11,6 +11,7 @@ namespace system {
 class RenderTarget {
   public:
     RenderTarget();
+    ~RenderTarget();
 
   protected:
     //void createWindow();
