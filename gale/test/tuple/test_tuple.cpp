@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include <cmath>
 #include <ctime>
 #include <iostream>
 
@@ -25,12 +26,25 @@ int main() {
          << (CPU.hasSSSE3()?" SSSE3":"")
     << endl;
 
-    srand((unsigned)time(NULL));
+    srand(static_cast<unsigned>(time(NULL)));
 
     // Check construction of objects.
     Tuple<2,int> t2i_a(1,2),t2i_b(rand(),rand());
-    Tuple<3,float> t3f_a(3.0f,4.0f,5.0f),t3f_b((float)rand(),(float)rand(),(float)rand());
-    Tuple<4,double> t4d_a(5.0,6.0,7.0,8.0),t4d_b((double)rand(),(double)rand(),(double)rand(),(double)rand());
+
+    Tuple<3,float> t3f_a(3.0f,4.0f,5.0f);
+    Tuple<3,float> t3f_b(
+        static_cast<float>(rand()),
+        static_cast<float>(rand()),
+        static_cast<float>(rand())
+    );
+
+    Tuple<4,double> t4d_a(5.0,6.0,7.0,8.0);
+    Tuple<4,double> t4d_b(
+        static_cast<double>(rand()),
+        static_cast<double>(rand()),
+        static_cast<double>(rand()),
+        static_cast<double>(rand())
+    );
 
     cout << t2i_a << ", " << t2i_b << endl;
     cout << t3f_a << ", " << t3f_b << endl;
@@ -103,14 +117,14 @@ int main() {
         Tuple<3,float> tmp2=-t3f_a;
 
         float tmp_min=tmp2.getAbsMinElement();
-        G_ASSERT(tmp_min<=std::abs(tmp2[0]))
-        G_ASSERT(tmp_min<=std::abs(tmp2[1]))
-        G_ASSERT(tmp_min<=std::abs(tmp2[2]))
+        G_ASSERT(tmp_min<=fabs(tmp2[0]))
+        G_ASSERT(tmp_min<=fabs(tmp2[1]))
+        G_ASSERT(tmp_min<=fabs(tmp2[2]))
 
         float tmp_max=tmp2.getAbsMaxElement();
-        G_ASSERT(tmp_max>=std::abs(tmp2[0]))
-        G_ASSERT(tmp_max>=std::abs(tmp2[1]))
-        G_ASSERT(tmp_max>=std::abs(tmp2[2]))
+        G_ASSERT(tmp_max>=fabs(tmp2[0]))
+        G_ASSERT(tmp_max>=fabs(tmp2[1]))
+        G_ASSERT(tmp_max>=fabs(tmp2[2]))
     }
 
     // Check element-wise minimum determination.
@@ -141,7 +155,12 @@ int main() {
 
     // Check remaining vector / vector operators.
     {
-        Tuple<3,float> tmp((float)rand(),(float)rand(),(float)rand());
+        Tuple<3,float> tmp(
+            static_cast<float>(rand()),
+            static_cast<float>(rand()),
+            static_cast<float>(rand())
+        );
+
         Tuple<3,float> res=((t3f_a+t3f_b)-t3f_b)*tmp;
         G_ASSERT(OpCmpEqualEps::evaluate(res[0],(t3f_a[0]+t3f_b[0]-t3f_b[0])*tmp[0]))
         G_ASSERT(OpCmpEqualEps::evaluate(res[1],(t3f_a[1]+t3f_b[1]-t3f_b[1])*tmp[1]))
