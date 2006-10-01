@@ -131,17 +131,18 @@ bool CPUInfo::hasCPUID() const {
     return eax;
 }
 
-unsigned CPUInfo::getMaxCPUIDStdFunc() const {
-    unsigned eax,*vendor=(unsigned*)m_vendor;
-    unsigned *vendor4=(unsigned*)&m_vendor[4];
-    unsigned *vendor8=(unsigned*)&m_vendor[8];
+unsigned CPUInfo::getMaxCPUIDStdFunc() {
+    unsigned eax;
+    int* vendor0=reinterpret_cast<int*>(m_vendor);
+    int* vendor4=vendor0+1;
+    int* vendor8=vendor4+1;
     __asm__(
         "xorl %%eax,%%eax\n\t"
         "pushl %%ebx\n\t"
         "cpuid\n\t"
         "movl %%ebx,%1\n\t"
         "popl %%ebx\n\t"
-        : "=a" (eax), "=r" (*vendor), "=d" (*vendor4), "=c" (*vendor8)
+        : "=a" (eax), "=r" (*vendor0), "=d" (*vendor4), "=c" (*vendor8)
     );
     return eax;
 }
@@ -193,7 +194,7 @@ __declspec(naked) bool CPUInfo::hasCPUID() const {
     }
 }
 
-__declspec(naked) unsigned CPUInfo::getMaxCPUIDStdFunc() const {
+__declspec(naked) unsigned CPUInfo::getMaxCPUIDStdFunc() {
     __asm {
         // No prologue / epilogue is generated, so save EBX and EDI manually.
         push ebx
