@@ -1,7 +1,17 @@
-PROJECT(gale)
-
+SET(project_name "gale")
 SET(header_root "../include")
 SET(source_root "../source")
+
+PROJECT(${project_name})
+
+# Specify any required include directories. The specified path is interpreted as
+# relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
+# file are absolute.
+INCLUDE_DIRECTORIES(${header_root})
+
+# Specify where to put the compiled library. This is relative to
+# CMAKE_CURRENT_BINARY_DIR, where the project file is located.
+SET(LIBRARY_OUTPUT_PATH CACHE INTERNAL "../../lib")
 
 # Recursively add source code files. The specified path is relative to
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
@@ -30,20 +40,17 @@ ENDFOREACH(header ${headers})
 
 # This writes absolute paths to the generated files even if relative paths are
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
-ADD_LIBRARY(gale ${files})
+ADD_LIBRARY(${project_name} ${files})
 
-# Specify where to put the compiled library. This is relative to
-# CMAKE_CURRENT_BINARY_DIR, where the project file is located.
-SET(LIBRARY_OUTPUT_PATH CACHE INTERNAL "../../lib")
-
-# Specify any required include directories. The specified path is interpreted as
-# relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
-# file are absolute.
-INCLUDE_DIRECTORIES(${header_root})
+# Get the absolute (!) path to the library we generate here, to pass it to the
+# linker for the test programs. On Linux, this is *not* done automatically by
+# specifying a dependency.
+SET(library_name ${LIBRARY_OUTPUT_PATH}/${CMAKE_STATIC_LIBRARY_PREFIX}${project_name}${CMAKE_STATIC_LIBRARY_SUFFIX})
+GET_FILENAME_COMPONENT(library_name ${library_name} ABSOLUTE)
 
 # List the libraries all following targets should link against.
 INCLUDE(FindOpenGL)
-LINK_LIBRARIES(${OPENGL_gl_LIBRARY})
+LINK_LIBRARIES(${OPENGL_gl_LIBRARY} ${library_name})
 
 # Relative to CMAKE_CURRENT_SOURCE_DIR, add more projects to this one by
 # refering to their CMakeLists.txt files.

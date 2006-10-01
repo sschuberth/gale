@@ -5,7 +5,7 @@ PROJECT(${name})
 
 # Recursively add source code files. The specified path is relative to
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
-FILE(GLOB_RECURSE sources "*.cpp" "*.h")
+FILE(GLOB_RECURSE sources "*.h" "*.cpp")
 
 # This writes absolute paths to the generated files even if relative paths are
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
@@ -19,6 +19,9 @@ SET(EXECUTABLE_OUTPUT_PATH CACHE INTERNAL "../../bin")
 # relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
 # file are absolute.
 INCLUDE_DIRECTORIES("../include")
+
+# Also specify any directories in which to search for libraries.
+LINK_DIRECTORIES("../lib")
 
 # Make this test executable project depend on the gale library project.
 ADD_DEPENDENCIES(${name} gale)
