@@ -11,7 +11,7 @@ INCLUDE_DIRECTORIES(${header_root})
 
 # Specify where to put the compiled library. This is relative to
 # CMAKE_CURRENT_BINARY_DIR, where the project file is located.
-SET(LIBRARY_OUTPUT_PATH CACHE INTERNAL "../../lib")
+SET(LIBRARY_OUTPUT_PATH "../../lib" CACHE INTERNAL "" FORCE)
 
 # Recursively add source code files. The specified path is relative to
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
@@ -42,11 +42,13 @@ ENDFOREACH(header ${headers})
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
 ADD_LIBRARY(${project_name} ${files})
 
-# Get the absolute (!) path to the library we generate here, to pass it to the
-# linker for the test programs. On Linux, this is *not* done automatically by
-# specifying a dependency.
-SET(library_name ${LIBRARY_OUTPUT_PATH}/${CMAKE_STATIC_LIBRARY_PREFIX}${project_name}${CMAKE_STATIC_LIBRARY_SUFFIX})
-GET_FILENAME_COMPONENT(library_name ${library_name} ABSOLUTE)
+IF(NOT WIN32)
+    # Get the absolute (!) path to the library we generate here, to pass it to the
+    # linker for the test programs. On Linux, this is *not* done automatically by
+    # specifying a dependency.
+    SET(library_name ${LIBRARY_OUTPUT_PATH}/${CMAKE_STATIC_LIBRARY_PREFIX}${project_name}${CMAKE_STATIC_LIBRARY_SUFFIX})
+    GET_FILENAME_COMPONENT(library_name ${library_name} ABSOLUTE)
+ENDIF(NOT WIN32)
 
 # List the libraries all following targets should link against.
 INCLUDE(FindOpenGL)

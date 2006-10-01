@@ -13,7 +13,7 @@ LINK_DIRECTORIES("../../lib")
 
 # Specify where to put the compiled executable. This is relative to
 # CMAKE_CURRENT_BINARY_DIR, where the project file is located.
-SET(EXECUTABLE_OUTPUT_PATH CACHE INTERNAL "../../bin")
+SET(EXECUTABLE_OUTPUT_PATH "../../bin" CACHE INTERNAL "" FORCE)
 
 # Recursively add source code files. The specified path is relative to
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
