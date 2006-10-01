@@ -52,6 +52,8 @@ namespace math {
  */
 template<unsigned int N,typename T>
 class Vector:public TupleBase<N,T,Vector<N,T> > {
+    typedef TupleBase<N,T,Vector<N,T> > Base;
+
   public:
     /**
      * \name Predefined constants
@@ -102,7 +104,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     /// Sets all components to 0 except the one specified by \a index, which is
     /// set to 1. This constructor is required to initialize the constants.
     explicit Vector(unsigned int index) {
-        meta::LoopFwd<N,meta::OpAssign>::iterateMatchIndex(getData(),index);
+        meta::LoopFwd<N,meta::OpAssign>::iterateMatchIndex(Base::getData(),index);
     }
 
     /// Allows to initialize 2-vectors directly.
@@ -119,8 +121,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
 
     /// Conversion constructor to be able to use vectors of different types.
     template<typename U>
-    Vector(Vector<N,U> const& v) {
-        meta::LoopFwd<N,meta::OpAssign>::iterate(getData(),v.getData());
+    Vector(const Vector<N,U>& v) {
+        meta::LoopFwd<N,meta::OpAssign>::iterate(Base::getData(),v.getData());
     }
     //@}
 
@@ -131,73 +133,73 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     /// Returns a reference to the x-component.
     T& getX() {
         G_ASSERT(N>=1)
-        return m_data[0];
+        return Base::m_data[0];
     }
 
     /// Returns a \c constant reference to the x-component.
     T const& getX() const {
         G_ASSERT(N>=1)
-        return m_data[0];
+        return Base::m_data[0];
     }
 
     /// Assigns a new value to the x-component.
     void setX(T const& x) {
         G_ASSERT(N>=1)
-        m_data[0]=x;
+        Base::m_data[0]=x;
     }
 
     /// Returns a reference to the y-component.
     T& getY() {
         G_ASSERT(N>=2)
-        return m_data[1];
+        return Base::m_data[1];
     }
 
     /// Returns a \c constant reference to the y-component.
     T const& getY() const {
         G_ASSERT(N>=2)
-        return m_data[1];
+        return Base::m_data[1];
     }
 
     /// Assigns a new value to the y-component.
     void setY(T const& y) {
         G_ASSERT(N>=2)
-        m_data[1]=y;
+        Base::m_data[1]=y;
     }
 
     /// Returns a reference to the z-component.
     T& getZ() {
         G_ASSERT(N>=3)
-        return m_data[2];
+        return Base::m_data[2];
     }
 
     /// Returns a \c constant reference to the z-component.
     T const& getZ() const {
         G_ASSERT(N>=3)
-        return m_data[2];
+        return Base::m_data[2];
     }
 
     /// Assigns a new value to the z-component.
     void setZ(T const& z) {
         G_ASSERT(N>=3)
-        m_data[2]=z;
+        Base::m_data[2]=z;
     }
 
     /// Returns a reference to the w-component.
     T& getW() {
         G_ASSERT(N>=4)
-        return m_data[3];
+        return Base::m_data[3];
     }
 
     /// Returns a \c constant reference to the w-component.
     T const& getW() const {
         G_ASSERT(N>=4)
-        return m_data[3];
+        return Base::m_data[3];
     }
 
     /// Assigns a new value to the w-component.
     void setW(T const& w) {
         G_ASSERT(N>=4)
-        m_data[3]=w;
+        Base::m_data[3]=w;
     }
     //@}
 
@@ -232,15 +234,15 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     Vector cross(Vector const& v) const {
         G_ASSERT(N==3)
         return Vector(
-            m_data[1]*v.m_data[2]-m_data[2]*v.m_data[1],
-            m_data[2]*v.m_data[0]-m_data[0]*v.m_data[2],
-            m_data[0]*v.m_data[1]-m_data[1]*v.m_data[0]
+            Base::m_data[1]*v.m_data[2] - Base::m_data[2]*v.m_data[1],
+            Base::m_data[2]*v.m_data[0] - Base::m_data[0]*v.m_data[2],
+            Base::m_data[0]*v.m_data[1] - Base::m_data[1]*v.m_data[0]
         );
     }
 
     /// Calculates the dot product between this vector and \a v.
     T dot(Vector const& v) const {
-        return meta::LoopFwd<N,meta::OpCalcProd>::iterateCombAdd(getData(),v.getData());
+        return meta::LoopFwd<N,meta::OpCalcProd>::iterateCombAdd(Base::getData(),v.getData());
     }
 
     /// Returns the cosine of the angle between this vector and \a v.

@@ -31,6 +31,7 @@
  * Meta-template operator implementations.
  */
 
+#include <cmath>
 #include <limits>
 
 #include "../global/defines.h"
@@ -143,7 +144,7 @@ struct OpCmpEqualEps {
 /// Minimum determination operator.
 struct OpCalcMin {
     /// Returns the minimum of \a a and \a b which need to be of the same data
-    /// type so casts can be avoided.
+    /// type so casts (and thus temporary copies) can be avoided.
     template<typename T>
     static G_INLINE T const& evaluate(T const& a,T const& b) {
         return b<a?b:a;
@@ -153,7 +154,7 @@ struct OpCalcMin {
 /// Maximum determination operator.
 struct OpCalcMax {
     /// Returns the maximum of \a a and \a b which need to be of the same data
-    /// type so casts can be avoided.
+    /// type so casts (and thus temporary copies) can be avoided.
     template<typename T>
     static G_INLINE T const& evaluate(T const& a,T const& b) {
         return b>a?b:a;
