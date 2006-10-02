@@ -26,7 +26,7 @@ int main() {
          << (CPU.hasSSSE3()?" SSSE3":"")
     << endl;
 
-    srand(static_cast<unsigned>(time(NULL)));
+    srand(static_cast<unsigned int>(time(NULL)));
 
     cout << "Check construction of objects ..." << endl;
     Tuple<2,int> t2i_a(1,2),t2i_b(rand(),rand());

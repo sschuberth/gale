@@ -62,14 +62,14 @@ inline T convertRadToDeg(T angle) {
 //@{
 
 /// Returns whether \a x is an exact power of two.
-inline bool isPowerOf2(unsigned long x) {
+inline bool isPowerOf2(unsigned int x) {
     if (x==0)
         return false;
     return (x&(x-1))==0;
 }
 
 /// Returns the position of the least significant bit set in \a x.
-inline long getLSBSet(unsigned long x) {
+inline long getLSBSet(unsigned int x) {
     if (x==0)
         return -1;
 
@@ -99,7 +99,7 @@ inline long getLSBSet(unsigned long x) {
 }
 
 /// Returns the position of the most significant bit set in \a x.
-inline long getMSBSet(unsigned long x) {
+inline long getMSBSet(unsigned int x) {
     if (x==0)
         return -1;
 
@@ -130,9 +130,9 @@ inline long getMSBSet(unsigned long x) {
 
 /// Returns the largest power of 2 that is smaller than or equal to \a x, except
 /// for \a x=0 which returns 0.
-inline unsigned long getFloorPow2(unsigned long x) {
+inline unsigned int getFloorPow2(unsigned int x) {
 #ifdef __GNUC__
-    unsigned long result;
+    unsigned int result;
     __asm__(
         "xor eax,eax\n"
         "bsr ecx,ecx\n"
@@ -155,15 +155,15 @@ inline unsigned long getFloorPow2(unsigned long x) {
     long i=getMSBSet(x);
     if (i<0)
         return 0;
-    return 1UL<<static_cast<unsigned long>(i);
+    return 1UL<<static_cast<unsigned int>(i);
 #endif
 }
 
 /// Returns the smallest power of 2 that is greater than or equal to \a x,
 /// except for \a x=0 and \a x>2147483648 which returns 0.
-inline unsigned long getCeilPow2(unsigned long x) {
+inline unsigned int getCeilPow2(unsigned int x) {
 #ifdef __GNUC__
-    unsigned long result;
+    unsigned int result;
     __asm__(
         "xor eax,eax\n"
         "dec ecx\n"
@@ -192,7 +192,7 @@ inline unsigned long getCeilPow2(unsigned long x) {
     if (x==0)
         return 0;
     long i=getMSBSet(x-1)+1;
-    return 1UL<<static_cast<unsigned long>(i);
+    return 1UL<<static_cast<unsigned int>(i);
 #endif
 }
 

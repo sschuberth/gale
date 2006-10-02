@@ -65,9 +65,9 @@ class CPUInfo:public global::Singleton<CPUInfo> {
     /// Checks for the presence of the CPUID instruction.
     bool hasCPUID() const;
     /// Returns the highest standard function number supported.
-    unsigned getMaxCPUIDStdFunc();
+    unsigned int getMaxCPUIDStdFunc();
     /// Returns the highest extended function number supported.
-    unsigned getMaxCPUIDExtFunc() const;
+    unsigned int getMaxCPUIDExtFunc() const;
     //@}
 
     /**

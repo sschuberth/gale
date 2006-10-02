@@ -108,7 +108,7 @@ CPUInfo::CPUInfo():
 // Note that specifying EBX in the clobber list does *not* work!
 
 bool CPUInfo::hasCPUID() const {
-    unsigned eax;
+    unsigned int eax;
     __asm__(
         "// Read and invert the ID bit (21).\n\t"
         "pushfl\n\t"
@@ -131,8 +131,8 @@ bool CPUInfo::hasCPUID() const {
     return eax;
 }
 
-unsigned CPUInfo::getMaxCPUIDStdFunc() {
-    unsigned eax;
+unsigned int CPUInfo::getMaxCPUIDStdFunc() {
+    unsigned int eax;
     int* vendor0=reinterpret_cast<int*>(m_vendor);
     int* vendor4=vendor0+1;
     int* vendor8=vendor4+1;
@@ -147,8 +147,8 @@ unsigned CPUInfo::getMaxCPUIDStdFunc() {
     return eax;
 }
 
-unsigned CPUInfo::getMaxCPUIDExtFunc() const {
-    unsigned eax;
+unsigned int CPUInfo::getMaxCPUIDExtFunc() const {
+    unsigned int eax;
     __asm__(
         "movl $0x80000000,%%eax\n\t"
         "pushl %%eax\n\t"
@@ -194,7 +194,7 @@ __declspec(naked) bool CPUInfo::hasCPUID() const {
     }
 }
 
-__declspec(naked) unsigned CPUInfo::getMaxCPUIDStdFunc() {
+__declspec(naked) unsigned int CPUInfo::getMaxCPUIDStdFunc() {
     __asm {
         // No prologue / epilogue is generated, so save EBX and EDI manually.
         push ebx
@@ -220,7 +220,7 @@ __declspec(naked) unsigned CPUInfo::getMaxCPUIDStdFunc() {
     }
 }
 
-__declspec(naked) unsigned CPUInfo::getMaxCPUIDExtFunc() const {
+__declspec(naked) unsigned int CPUInfo::getMaxCPUIDExtFunc() const {
     __asm {
         // No prologue / epilogue is generated, so save EBX manually.
         push ebx
