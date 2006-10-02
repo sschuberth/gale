@@ -1,0 +1,59 @@
+Introduction
+============
+
+This documents lists some general conventions I think of as being senseful and
+that I try to follow in this project. If you are going to submit patches to the
+project or have been granted access to the source code repository, please make
+sure you adhere to these rules. After all, there is no rule without exceptions,
+so the most important rule should always be:
+
+  "Use common sense!"
+
+In case of doubt, you may refer to resources on the Internet like the excellent
+
+  C++ FAQ Lite
+  http://www.parashift.com/c++-faq-lite/
+
+or contact me.
+
+Coding
+======
+
+Formatting
+----------
+
+- Use four spaces for indenting, no tabs.
+
+- The line length should not exceed 80 characters. Lines of code that are harder
+  to understand if reformatted are and exception, but it is a must for comments.
+
+Data Types
+----------
+
+- Do not introduce type definitions for primitive data types, the given types
+  are well-defined on both Windows and Linux, for 32-bit and 64-bit.
+
+- Use the most common and shortest names, be explicit about unsigned data types.
+  I.e. instead of "signed long" write "int", instead of "unsigned" write
+  "unsigned int".
+
+General Coding
+--------------
+
+- When declaring pointers, always write the "*" next to the data type, not next
+  to the variable name. Do not declare pointer and non-pointer variables of the
+  same data type in a single line of code. That is, instead of
+
+    int *data,counter;
+
+  use
+
+    int* data;
+    int counter;
+
+  for clarity.
+
+- Put the "const" modifier always to the right of what is constant. As you have
+  no choice when declaring "const" methods, it makes sense to always use that
+  rule for consistency, e.g. instead of "char const* input" use "char const*
+  input".
