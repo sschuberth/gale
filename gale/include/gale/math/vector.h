@@ -52,6 +52,9 @@ namespace math {
  */
 template<unsigned int N,typename T>
 class Vector:public TupleBase<N,T,Vector<N,T> > {
+    /// This type definition simplifies base class access to identifiers that
+    /// are not visible until instantiation time because they do not dependent
+    /// on template arguments.
     typedef TupleBase<N,T,Vector<N,T> > Base;
 
   public:
