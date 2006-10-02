@@ -134,9 +134,12 @@ struct OpCmpGreaterEqual {
 /// Boolean "equal" comparison operator.
 struct OpCmpEqualEps {
     /// Returns whether \a a equals \a b using an epsilon-environment depending
-    /// on the precision of \a A.
-    template<typename A,typename B>
-    static G_INLINE bool evaluate(A const& a,B const& b,A const& epsilon=std::numeric_limits<A>::epsilon()) {
+    /// on the data type's precision.
+    template<typename T>
+    static G_INLINE bool evaluate(
+      T const& a,T const& b,
+      T const& epsilon=std::numeric_limits<T>::epsilon())
+    {
         return std::abs(b-a)<=epsilon;
     }
 };

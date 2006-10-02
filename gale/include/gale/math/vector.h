@@ -107,19 +107,20 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     /// Sets all components to 0 except the one specified by \a index, which is
     /// set to 1. This constructor is required to initialize the constants.
     explicit Vector(unsigned int index) {
-        meta::LoopFwd<N,meta::OpAssign>::iterateMatchIndex(Base::getData(),index);
+        meta::LoopFwd<N,meta::OpAssign>::
+          iterateMatchIndex(Base::getData(),index);
     }
 
     /// Allows to initialize 2-vectors directly.
-    Vector(T const& x,T const& y):TupleBase<N,T,Vector>(x,y) {
+    Vector(T const& x,T const& y):Base(x,y) {
     }
 
     /// Allows to initialize 3-vectors directly.
-    Vector(T const& x,T const& y,T const& z):TupleBase<N,T,Vector>(x,y,z) {
+    Vector(T const& x,T const& y,T const& z):Base(x,y,z) {
     }
 
     /// Allows to initialize 4-vectors directly.
-    Vector(T const& x,T const& y,T const& z,T const& w):TupleBase<N,T,Vector>(x,y,z,w) {
+    Vector(T const& x,T const& y,T const& z,T const& w):Base(x,y,z,w) {
     }
 
     /// Conversion constructor to be able to use vectors of different types.
@@ -245,7 +246,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
 
     /// Calculates the dot product between this vector and \a v.
     T dot(Vector const& v) const {
-        return meta::LoopFwd<N,meta::OpCalcProd>::iterateCombAdd(Base::getData(),v.getData());
+        return meta::LoopFwd<N,meta::OpCalcProd>::
+                 iterateCombAdd(Base::getData(),v.getData());
     }
 
     /// Returns the cosine of the angle between this vector and \a v.
@@ -262,7 +264,9 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     /// and \a v in radians.
     double getAccurateAngle(Vector const& v) const {
         Vector tn=~(*this),vn=~v;
-        return std::atan2(tn.cross(vn).getLength(),static_cast<double>(tn.dot(vn)));
+        return std::atan2(
+                 tn.cross(vn).getLength(),
+                 static_cast<double>(tn.dot(vn)));
     }
 
     /// Returns a vector which is orthogonal to this vector.
@@ -277,7 +281,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
 
     /// Returns whether this vector is collinear to \a v.
     bool isCollinear(Vector const& v) const {
-        return meta::OpCmpEqualEps::evaluate(v.cross(*this).getLengthSquared(),0);
+        return meta::OpCmpEqualEps::
+                 evaluate(v.cross(*this).getLengthSquared(),static_cast<T>(0));
     }
     //@}
 

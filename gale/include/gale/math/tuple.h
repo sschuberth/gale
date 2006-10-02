@@ -49,6 +49,9 @@ namespace math {
 template<unsigned int N,typename T,class C>
 class TupleBase {
   public:
+    /// Data type definition for external access to the template argument.
+    typedef T Type;
+
     /**
      * \name Constructors
      */
@@ -178,7 +181,8 @@ class TupleBase {
     /// \a t.
     C getMinElements(C const& t) const {
         C tmp;
-        meta::LoopFwd<N,meta::OpCalcMin>::iterate(tmp.getData(),getData(),t.getData());
+        meta::LoopFwd<N,meta::OpCalcMin>::
+          iterate(tmp.getData(),getData(),t.getData());
         return tmp;
     }
 
@@ -186,7 +190,8 @@ class TupleBase {
     /// \a t.
     C getMaxElements(C const& t) const {
         C tmp;
-        meta::LoopFwd<N,meta::OpCalcMax>::iterate(tmp.getData(),getData(),t.getData());
+        meta::LoopFwd<N,meta::OpCalcMax>::
+          iterate(tmp.getData(),getData(),t.getData());
         return tmp;
     }
     //@}
@@ -199,7 +204,8 @@ class TupleBase {
     /// on a scalar \a s. For performance reasons, \a s is not clamped to [0,1].
     C lerp(C const& t,double s) const {
         C tmp;
-        meta::LoopFwd<N,meta::OpCalcLerp>::iterate(tmp.getData(),getData(),t.getData(),s);
+        meta::LoopFwd<N,meta::OpCalcLerp>::
+          iterate(tmp.getData(),getData(),t.getData(),s);
         return tmp;
     }
     //@}
@@ -272,31 +278,36 @@ class TupleBase {
     /// Returns whether all elements in \a t are less than their counterpart in
     /// \a u.
     friend bool operator<(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpLess>::iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpLess>::
+                 iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether all elements in \a t are less than or equal to their
     /// counterpart in \a u.
     friend bool operator<=(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpLessEqual>::iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpLessEqual>::
+                 iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether all elements in \a t are greater than their counterpart
     /// in \a u.
     friend bool operator>(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpGreater>::iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpGreater>::
+                 iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether all elements in \a t are greater than or equal to their
     /// counterpart in \a u.
     friend bool operator>=(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpGreaterEqual>::iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpGreaterEqual>::
+                 iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether all elements in \a t equal their counterpart in \a u
     /// using an epsilon-environment depending on the precision of \a T.
     friend bool operator==(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpEqualEps>::iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpEqualEps>::
+                 iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether the elements in \a t are not equal to their counterparts
@@ -334,6 +345,11 @@ class TupleBase {
  */
 template<unsigned int N,typename T>
 class Tuple:public TupleBase<N,T,Tuple<N,T> > {
+    /// This type definition simplifies base class access to identifiers that
+    /// are not visible until instantiation time because they do not dependent
+    /// on template arguments.
+    typedef TupleBase<N,T,Tuple<N,T> > Base;
+
   public:
     /**
      * \name Constructors
@@ -344,15 +360,15 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> > {
     }
 
     /// Allows to initialize 2-tuples directly.
-    Tuple(T const& e0,T const& e1):TupleBase<N,T,Tuple>(e0,e1) {
+    Tuple(T const& e0,T const& e1):Base(e0,e1) {
     }
 
     /// Allows to initialize 3-tuples directly.
-    Tuple(T const& e0,T const& e1,T const& e2):TupleBase<N,T,Tuple>(e0,e1,e2) {
+    Tuple(T const& e0,T const& e1,T const& e2):Base(e0,e1,e2) {
     }
 
     /// Allows to initialize 4-tuples directly.
-    Tuple(T const& e0,T const& e1,T const& e2,T const& e3):TupleBase<N,T,Tuple>(e0,e1,e2,e3) {
+    Tuple(T const& e0,T const& e1,T const& e2,T const& e3):Base(e0,e1,e2,e3) {
     }
     //@}
 };

@@ -85,19 +85,23 @@ struct LoopFwd {
     /// Iterates over a single array of absolute values evaluating a scalar.
     template<typename A>
     static G_INLINE A iterateAbsValues(A const* a) {
-        return OP::evaluate(std::abs(a[index]),LoopFwd<index,OP>::iterateAbsValues(a));
+        return OP::evaluate(
+                 std::abs(a[index]),
+                 LoopFwd<index,OP>::iterateAbsValues(a));
     }
 
     /// Iterates over two arrays adding evaluated values.
     template<typename A,typename B>
     static G_INLINE A iterateCombAdd(A const* a,B const* b) {
-        return LoopFwd<index,OP>::iterateCombAdd(a,b) + OP::evaluate(a[index],b[index]);
+        return LoopFwd<index,OP>::iterateCombAdd(a,b)
+             + OP::evaluate(a[index],b[index]);
     }
 
     /// Iterates over two arrays evaluating an "and" condition.
     template<typename A,typename B>
     static G_INLINE bool iterateCondAnd(A const* a,B const* b) {
-        return LoopFwd<index,OP>::iterateCondAnd(a,b) && OP::evaluate(a[index],b[index]);
+        return LoopFwd<index,OP>::iterateCondAnd(a,b)
+            && OP::evaluate(a[index],b[index]);
     }
 
     /// Iterates over a destination array applying a scalar depending on the

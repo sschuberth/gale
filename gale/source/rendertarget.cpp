@@ -17,7 +17,7 @@ RenderTarget::RenderTarget() {
     ++s_instances;
 
 #ifdef _WIN32
-    // Register a minimal class that allocates a unique device context for each window.
+    // Register a minimal class whose windows allocate a unique device context.
     WNDCLASS cls;
     ZeroMemory(&cls,sizeof(cls));
     cls.style=CS_OWNDC;
