@@ -2,7 +2,7 @@
 /// Root namespace for all GALE related code.
 
 /// \namespace gale::global
-/// Namspace for miscellaneous globally used code.
+/// Namespace for miscellaneous globally used code.
 
 /// \namespace gale::math
 /// Namespace for mathematical code.
@@ -11,4 +11,4 @@
 /// Namespace for meta-template programming code.
 
 /// \namespace gale::system
-/// Namspace for code that closely works with the underlying operating system.
+/// Namespace for code that works closely with the underlying operating system.
