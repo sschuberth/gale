@@ -505,22 +505,17 @@ class CPUInfo:public global::Singleton<CPUInfo> {
     //@}
 
   private:
-    /// Stores the vendor string incl. trailing zero.
-    char m_vendor[3*4+1];
-
-    /// These store the CPUID standard flags.
-    int m_std_feat_flags_edx;
-    /// \copydoc m_std_feat_flags_edx
-    int m_std_feat_flags_ecx;
-
-    /// These store the CPUID extended flags.
-    int m_ext_feat_flags_edx;
-    /// \copydoc m_ext_feat_flags_edx
-    int m_ext_feat_flags_ecx;
-
     /// Make the constructor private so the class cannot be derived from and
     /// thus complete the Singleton design pattern.
     CPUInfo();
+
+    char m_vendor[3*4+1]; ///< Stores the vendor string incl. trailing zero.
+
+    int m_std_feat_flags_edx; ///< These store the CPUID standard flags.
+    int m_std_feat_flags_ecx; ///< \copydoc m_std_feat_flags_edx
+
+    int m_ext_feat_flags_edx; ///< These store the CPUID extended flags.
+    int m_ext_feat_flags_ecx; ///< \copydoc m_ext_feat_flags_edx
 };
 
 /// For convenience, offer a pre-defined instance of the CPUInfo class.

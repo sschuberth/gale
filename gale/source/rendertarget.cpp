@@ -86,6 +86,9 @@ RenderTarget::RenderTarget() {
 
 RenderTarget::~RenderTarget() {
     --s_instances;
+    if (s_instances==0) {
+        // TODO: Perform clean-up.
+    }
 }
 
 } // namespace system
