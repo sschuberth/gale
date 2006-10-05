@@ -63,6 +63,9 @@
     #endif
 
     #include <windows.h>
-#endif // _WIN32
+#else
+    #include <sys/times.h>
+    #include <unistd.h>
+#endif
 
 #endif // PLATFORM_H

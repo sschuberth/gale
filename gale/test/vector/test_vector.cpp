@@ -3,13 +3,18 @@
 #include <iostream>
 
 #include <gale/math/vector.h>
+#include <gale/system/timer.h>
 
 using namespace std;
 using namespace gale::math;
+using namespace gale::system;
 
 using gale::meta::OpCmpEqualEps;
 
 int main() {
+    double s;
+    Timer t;
+
     Vec4d n(Vec4d::ZERO());
     Vec4d x(Vec4d::X()),y(Vec4d::Y()),z(Vec4d::Z()),w(Vec4d::W());
 
@@ -82,6 +87,20 @@ int main() {
     G_ASSERT((Vec3i::X()%Vec3i::Y())==0)
     G_ASSERT((Vec3i::X()%Vec3i::Z())==0)
     G_ASSERT((Vec3i::Y()%Vec3i::Z())==0)
+
+    t.stop(s);
+    cout << "Time elapsed: " << s << " seconds." << endl;
+
+    t.resume();
+    Timer::sleep(2500);
+    t.stop(s);
+    cout << "Time elapsed: " << s << " seconds." << endl;
+
+    t.resume();
+    Timer::sleep(1500);
+
+    t.stop(s);
+    cout << "Time elapsed: " << s << " seconds." << endl;
 
 #ifdef _WIN32
     system("pause");
