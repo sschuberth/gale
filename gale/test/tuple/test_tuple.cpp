@@ -27,6 +27,8 @@ int main() {
          << (CPU.hasSSE2()?" SSE2":"")
          << (CPU.hasSSE3()?" SSE3":"")
          << (CPU.hasSSSE3()?" SSSE3":"")
+         << ((CPU.isIntel() && CPU.hasEM64T())?" EM64T":"")
+         << ((CPU.isAMD() && CPU.hasAMD64())?" AMD64":"")
          << endl;
 
     srand(static_cast<unsigned int>(time(NULL)));
