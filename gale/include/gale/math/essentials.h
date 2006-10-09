@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Essential mathematical function implementations.
+ * Optimized essential mathematical functions.
  */
 
 namespace gale {

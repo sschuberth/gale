@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Various timing related code, e.g. for performance measurements.
+ * Code for timing and benchmarking.
  */
 
 #include "gale/global/platform.h"

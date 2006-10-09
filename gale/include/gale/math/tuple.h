@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Simple tuple classes to derive more complex classes from.
+ * Mathematical tuple classes.
  */
 
 #include "../meta/loops.h"

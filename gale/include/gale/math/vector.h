@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Linear algebra vector class implementations.
+ * Linear algebra vector routines.
  */
 
 #include "tuple.h"

@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Implementations of singleton classes.
+ * Singleton design pattern implementations.
  */
 
 namespace gale {
