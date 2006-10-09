@@ -2,7 +2,8 @@
 
 using namespace gale::math;
 
-int main() {
+int __cdecl main() {
     Vec3f a,b;
+    //WriteFile
     return 0;
 }
