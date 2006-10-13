@@ -34,7 +34,7 @@
 #include "../meta/loops.h"
 #include "../meta/operators.h"
 
-#ifndef NDEBUG
+#ifndef GALE_TINY
     #include <iostream>
 #endif
 
@@ -317,7 +317,7 @@ class TupleBase {
     }
     //@}
 
-#ifndef NDEBUG
+#ifndef GALE_TINY
     /// Reads tuple values from an input stream.
     friend std::istream& operator>>(std::istream& s,C& t) {
         for (int i=0;i<N;++i)
