@@ -1,17 +1,22 @@
 #include <stdlib.h>
 
-#include <cmath>
 #include <ctime>
 #include <iostream>
 
 #include <gale/math/tuple.h>
+#include <gale/math/vector.h>
 #include <gale/system/cpuinfo.h>
+#include <gale/system/timer.h>
 
 using namespace std;
 
-using gale::math::Tuple;
+using namespace gale::math;
+using namespace gale::system;
+
 using gale::meta::OpCmpEqualEps;
-using gale::system::CPU;
+
+void test_tuple();
+void test_vector();
 
 int main() {
     cout << "CPU vendor: "
@@ -33,6 +38,16 @@ int main() {
 
     srand(static_cast<unsigned int>(time(NULL)));
 
+    test_tuple();
+    test_vector();
+
+#ifdef _WIN32
+    system("pause");
+#endif
+    return 0;
+}
+
+void test_tuple() {
     cout << "Check construction of objects ..."
          << endl;
     Tuple<2,int> t2i_a(1,2),t2i_b(rand(),rand());
@@ -228,9 +243,96 @@ int main() {
         bool res_ne=(t2i_a!=t2i_b);
         G_ASSERT(res_ne==(t2i_a[0]!=t2i_b[0] || t2i_a[1]!=t2i_b[1]))
     }
+}
 
-#ifdef _WIN32
-    system("pause");
-#endif
-    return 0;
+void test_vector() {
+    double s;
+    Timer t;
+
+    Vec4d n(Vec4d::ZERO());
+    Vec4d x(Vec4d::X()),y(Vec4d::Y()),z(Vec4d::Z()),w(Vec4d::W());
+
+    cout << "Check predefined constants ..."
+         << endl;
+    G_ASSERT(n[0]==0)
+    G_ASSERT(n[1]==0)
+    G_ASSERT(n[2]==0)
+    G_ASSERT(n[3]==0)
+
+    G_ASSERT(x[0]==1)
+    G_ASSERT(x[1]==0)
+    G_ASSERT(x[2]==0)
+    G_ASSERT(x[3]==0)
+
+    G_ASSERT(y[0]==0)
+    G_ASSERT(y[1]==1)
+    G_ASSERT(y[2]==0)
+    G_ASSERT(y[3]==0)
+
+    G_ASSERT(z[0]==0)
+    G_ASSERT(z[1]==0)
+    G_ASSERT(z[2]==1)
+    G_ASSERT(z[3]==0)
+
+    G_ASSERT(w[0]==0)
+    G_ASSERT(w[1]==0)
+    G_ASSERT(w[2]==0)
+    G_ASSERT(w[3]==1)
+
+    cout << "Check conversion constructor ..."
+         << endl;
+    Vec4i a(12,34,56,78);
+    Vec4d b(a);
+
+    cout << "Check access methods ..."
+         << endl;
+    G_ASSERT(double(a.getX())==b[0])
+    G_ASSERT(double(a.getY())==b[1])
+    G_ASSERT(double(a.getZ())==b[2])
+    G_ASSERT(double(a.getW())==b[3])
+
+    cout << "Check magnitude related methods ..."
+         << endl;
+    b.normalize();
+    G_ASSERT(OpCmpEqualEps::evaluate(b.getLengthSquared(),Vec4d::X()[0]))
+
+    cout << "Check the cross product operator ..."
+         << endl;
+    G_ASSERT((Vec3i::X()^Vec3i::Y())==Vec3i::Z())
+
+    cout << "Check angle related methods ..."
+         << endl;
+    double axy1=Vec3i::X().getAngle(Vec3i::Y());
+    double axy2=Vec3i::X().getAccurateAngle(Vec3i::Y());
+    G_ASSERT(OpCmpEqualEps::evaluate(axy1,axy2))
+
+    cout << "Check getting an orthogonal vector ..."
+         << endl;
+    G_ASSERT(Vec3f::X().getOrthoVector()==Vec3f::Z())
+    G_ASSERT(Vec3f::Y().getOrthoVector()==-Vec3f::Z())
+    G_ASSERT(Vec3f::Z().getOrthoVector()==Vec3f::Y())
+
+    cout << "Check unary sign, conversion constructor and collinear methods ..."
+         << endl;
+    G_ASSERT(Vec3f::X().isCollinear(-Vec3i::X()))
+
+    cout << "Check the dot product operator ..."
+         << endl;
+    G_ASSERT((Vec3i::X()%Vec3i::Y())==0)
+    G_ASSERT((Vec3i::X()%Vec3i::Z())==0)
+    G_ASSERT((Vec3i::Y()%Vec3i::Z())==0)
+
+    t.stop(s);
+    cout << "Time elapsed: " << s << " seconds." << endl;
+
+    t.resume();
+    Timer::sleep(2500);
+    t.stop(s);
+    cout << "Time elapsed: " << s << " seconds." << endl;
+
+    t.resume();
+    Timer::sleep(1500);
+
+    t.stop(s);
+    cout << "Time elapsed: " << s << " seconds." << endl;
 }
