@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="test_tiny"
-	ProjectGUID="{48F87C36-0E2C-45DD-AAD2-4482FCB747AE}"
+	Name="test_opengl_tiny"
+	ProjectGUID="{751309DE-DB21-4FC6-BBC6-46BE440F70D5}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -33,11 +33,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="gale.lib"
-				OutputFile="$(OutDir)/test_tiny.exe"
+				OutputFile="$(OutDir)/test_opengl_tiny.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\lib\debug"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/test_tiny.pdb"
+				ProgramDatabaseFile="$(OutDir)/test_opengl_tiny.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -94,7 +94,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="gale.lib"
-				OutputFile="$(OutDir)/test_tiny.exe"
+				OutputFile="$(OutDir)/test_opengl_tiny.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\lib\release"
 				GenerateDebugInformation="TRUE"
@@ -128,7 +128,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\test_tiny.cpp">
+			RelativePath=".\test_opengl_tiny.cpp">
 		</File>
 	</Files>
 	<Globals>
