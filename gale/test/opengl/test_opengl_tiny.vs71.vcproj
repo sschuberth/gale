@@ -128,7 +128,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\test_opengl_tiny.cpp">
+			RelativePath=".\test_opengl.cpp">
 		</File>
 	</Files>
 	<Globals>

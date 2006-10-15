@@ -128,7 +128,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\test_tuple_tiny.cpp">
+			RelativePath=".\test_tuple.cpp">
 		</File>
 	</Files>
 	<Globals>
