@@ -56,6 +56,13 @@ LINK_LIBRARIES(${OPENGL_gl_LIBRARY} ${library_name})
 
 # Relative to CMAKE_CURRENT_SOURCE_DIR, add more projects to this one by
 # refering to their CMakeLists.txt files.
-ADD_SUBDIRECTORY("../test/opengl" ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY("../test/tuple" ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY("../test/vector" ${CMAKE_CURRENT_BINARY_DIR})
+FILE(GLOB tests "../test/*")
+FOREACH(test ${tests})
+    GET_FILENAME_COMPONENT(path "${test}" ABSOLUTE)
+    IF(IS_DIRECTORY ${path})
+        GET_FILENAME_COMPONENT(dir ${path} NAME)
+        IF(NOT ${dir} STREQUAL "CVS" AND NOT ${dir} STREQUAL ".svn")
+            ADD_SUBDIRECTORY(${test} ${CMAKE_CURRENT_BINARY_DIR})
+        ENDIF(NOT ${dir} STREQUAL "CVS" AND NOT ${dir} STREQUAL ".svn")
+    ENDIF(IS_DIRECTORY ${path})
+ENDFOREACH(test ${tests})
