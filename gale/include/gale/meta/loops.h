@@ -104,12 +104,12 @@ struct LoopFwd {
             && OP::evaluate(a[index],b[index]);
     }
 
-    /// Iterates over a destination array applying a scalar depending on the
-    /// index.
+    /// Iterates over a destination array \a a setting its elements according to
+    /// the bit mask \a b to either the value of \a set or \a clear.
     template<typename A,typename B>
-    static G_INLINE void iterateMatchIndex(A* a,B const& b) {
-        LoopFwd<index,OP>::iterateMatchIndex(a,b);
-        OP::evaluate(a[index],B(b==index));
+    static G_INLINE void iterateIndexMask(A* a,B const& b,A set=1,A clear=0) {
+        LoopFwd<index,OP>::iterateIndexMask(a,b);
+        OP::evaluate(a[index],b&(1<<index)?set:clear);
     }
 };
 
@@ -168,11 +168,11 @@ struct LoopFwd<1,OP> {
         return OP::evaluate(a[0],b[0]);
     }
 
-    /// Iterates over a destination array applying a scalar depending on the
-    /// index.
+    /// Iterates over a destination array \a a setting its elements according to
+    /// the bit mask \a b to either the value of \a set or \a clear.
     template<typename A,typename B>
-    static G_INLINE void iterateMatchIndex(A* a,B const& b) {
-        OP::evaluate(a[0],B(b==0));
+    static G_INLINE void iterateIndexMask(A* a,B const& b,A set=1,A clear=0) {
+        OP::evaluate(a[0],b&1?set:clear);
     }
 };
 

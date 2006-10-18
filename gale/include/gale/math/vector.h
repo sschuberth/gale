@@ -67,31 +67,31 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     //@{
     /// Returns a vector which has all components set to 0.
     static Vector const& ZERO() {
-        static Vector const v(N);
+        static Vector const v(0x0);
         return v;
     }
 
     /// Returns a vector which has the x-component set to 1, all others to 0.
     static Vector const& X() {
-        static Vector const v(0);
+        static Vector const v(0x1);
         return v;
     }
 
     /// Returns a vector which has the y-component set to 1, all others to 0.
     static Vector const& Y() {
-        static Vector const v(1);
+        static Vector const v(0x2);
         return v;
     }
 
     /// Returns a vector which has the z-component set to 1, all others to 0.
     static Vector const& Z() {
-        static Vector const v(2);
+        static Vector const v(0x4);
         return v;
     }
 
     /// Returns a vector which has the w-component set to 1, all others to 0.
     static Vector const& W() {
-        static Vector const v(3);
+        static Vector const v(0x8);
         return v;
     }
     //@}
@@ -104,11 +104,13 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     Vector() {
     }
 
-    /// Sets all components to 0 except the one specified by \a index, which is
-    /// set to 1. This constructor is required to initialize the constants.
-    explicit Vector(unsigned int index) {
+    /// Sets each component in the vector to either 0 or 1 depending on the bits
+    /// set in \a mask. Bit 0 maps to the first component, bit 1 to second one
+    /// and so on. This constructor is required to initialize the static class
+    /// constants.
+    explicit Vector(unsigned int mask) {
         meta::LoopFwd<N,meta::OpAssign>::
-          iterateMatchIndex(Base::getData(),index);
+          iterateIndexMask(Base::getData(),mask);
     }
 
     /// Allows to initialize 2-vectors directly.
@@ -123,7 +125,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     Vector(T const& x,T const& y,T const& z,T const& w):Base(x,y,z,w) {
     }
 
-    /// Conversion constructor to be able to use vectors of different types.
+    /// Conversion constructor to be able to use vectors of different types
+    /// together.
     template<typename U>
     Vector(const Vector<N,U>& v) {
         meta::LoopFwd<N,meta::OpAssign>::iterate(Base::getData(),v.getData());
