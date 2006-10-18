@@ -31,6 +31,8 @@
  * Optimized essential mathematical functions.
  */
 
+#include <limits>
+
 namespace gale {
 
 namespace math {
@@ -256,6 +258,33 @@ inline long long roundToZero(float f) {
     u.f=f;
     u.i=(u.i&0x80000000)|0x3efffffe;
     return roundToEven(f-u.f);
+}
+
+//@}
+
+/**
+ * \name Template specializations for the abs() functions
+ */
+//@{
+
+template<typename T>
+inline T abs(T x) {
+    return abs(x);
+}
+
+template<>
+inline long abs(long x) {
+    return labs(x);
+}
+
+template<>
+inline double abs(double x) {
+    return fabs(x);
+}
+
+template<>
+inline float abs(float x) {
+    return fabsf(x);
 }
 
 //@}

@@ -31,10 +31,8 @@
  * Meta-template operator implementations.
  */
 
-#include <cmath>
-#include <limits>
-
 #include "../global/defines.h"
+#include "../math/essentials.h"
 
 namespace gale {
 
@@ -140,7 +138,7 @@ struct OpCmpEqualEps {
       T const& a,T const& b,
       T const& epsilon=std::numeric_limits<T>::epsilon())
     {
-        return std::abs(b-a)<=epsilon;
+        return math::abs(b-a)<=epsilon;
     }
 };
 
