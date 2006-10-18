@@ -27,7 +27,8 @@
 #define LOOPS_H
 
 /**
- * \file Meta-template loop implementations
+ * \file
+ * Meta-template loop implementations
  */
 
 #include "../global/defines.h"

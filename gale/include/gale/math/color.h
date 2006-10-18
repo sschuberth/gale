@@ -2,7 +2,8 @@
 #define COLOR_H
 
 /**
- * \file Color representation class implementations
+ * \file
+ * Color representation class implementations
  */
 
 #include "tuple.h"
@@ -20,10 +21,12 @@ namespace math {
 template<typename T>
 class ColorModel {
   public:
+    /// Return the minimum intensity value for a color channel.
     static T getMinIntensity() {
         return std::numeric_limits<T>::min();
     }
 
+    /// Return the maximum intensity value for a color channel.
     static T getMaxIntensity() {
         return std::numeric_limits<T>::max();
     }

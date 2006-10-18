@@ -27,7 +27,8 @@
 #define ESSENTIALS_H
 
 /**
- * \file Optimized essential mathematical functions
+ * \file
+ * Optimized essential mathematical functions
  */
 
 #include <limits>

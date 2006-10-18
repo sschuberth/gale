@@ -27,7 +27,8 @@
 #define ATTRIBUTELIST_H
 
 /**
- * \file Convenience data structures
+ * \file
+ * Convenience data structures
  */
 
 namespace gale {

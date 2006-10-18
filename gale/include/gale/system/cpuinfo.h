@@ -27,7 +27,8 @@
 #define CPUINFO_H
 
 /**
- * \file Means to identify CPUs and their features in detail
+ * \file
+ * Means to identify CPUs and their features in detail
  */
 
 #include "gale/global/singleton.h"

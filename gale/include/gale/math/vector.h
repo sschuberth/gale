@@ -27,7 +27,8 @@
 #define VECTOR_H
 
 /**
- * \file Linear algebra vector routines
+ * \file
+ * Linear algebra vector routines
  */
 
 #include "tuple.h"
