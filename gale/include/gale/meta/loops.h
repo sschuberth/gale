@@ -107,7 +107,7 @@ struct LoopFwd {
     /// the bit mask \a b to either the value of \a set or \a clear.
     template<typename A,typename B>
     static G_INLINE void iterateIndexMask(A* a,B const& b,A set=1,A clear=0) {
-        LoopFwd<index,OP>::iterateIndexMask(a,b);
+        LoopFwd<index,OP>::iterateIndexMask(a,b,set,clear);
         OP::evaluate(a[index],b&(1<<index)?set:clear);
     }
 };
