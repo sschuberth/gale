@@ -268,7 +268,22 @@ inline long long roundToZero(float f) {
 
 template<typename T>
 inline T abs(T x) {
-    return abs(x);
+    return ::abs(x);
+}
+
+template<>
+inline unsigned int abs(unsigned int x) {
+    return x;
+}
+
+template<>
+inline unsigned short abs(unsigned short x) {
+    return x;
+}
+
+template<>
+inline unsigned char abs(unsigned char x) {
+    return x;
 }
 
 template<>
