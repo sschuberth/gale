@@ -27,8 +27,7 @@
 #define ATTRIBUTELIST_H
 
 /**
- * \file
- * Convenience data structures.
+ * \file Convenience data structures
  */
 
 namespace gale {
@@ -126,7 +125,7 @@ class AttributeList {
 };
 
 /**
- * \name Type definitions as required by the WGL_ARB_pixel_format extension.
+ * \name Type definitions as required by the WGL_ARB_pixel_format extension
  */
 //@{
 typedef AttributeList<int> AttributeListi;

@@ -27,8 +27,7 @@
 #define TUPLE_H
 
 /**
- * \file
- * Mathematical tuple classes.
+ * \file Mathematical tuple classes
  */
 
 #include "../meta/loops.h"

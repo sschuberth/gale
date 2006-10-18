@@ -27,8 +27,7 @@
 #define DEFINES_H
 
 /**
- * \file
- * Global macro and type definitions.
+ * \file Global macro and type definitions
  */
 
 /**

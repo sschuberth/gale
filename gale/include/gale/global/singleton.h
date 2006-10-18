@@ -27,8 +27,7 @@
 #define SINGLETON_H
 
 /**
- * \file
- * Singleton design pattern implementations.
+ * \file Singleton design pattern implementations
  */
 
 namespace gale {

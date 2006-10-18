@@ -27,8 +27,7 @@
 #define PLATFORM_H
 
 /**
- * \file
- * Basic platform specific includes.
+ * \file Basic platform specific includes
  */
 
 #ifdef _WIN32

@@ -27,8 +27,7 @@
 #define OPERATORS_H
 
 /**
- * \file
- * Meta-template operator implementations.
+ * \file Meta-template operator implementations
  */
 
 #include "../global/defines.h"

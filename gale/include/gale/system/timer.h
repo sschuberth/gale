@@ -27,8 +27,7 @@
 #define TIMER_H
 
 /**
- * \file
- * Code for timing and benchmarking.
+ * \file Code for timing and benchmarking
  */
 
 #include "gale/global/platform.h"

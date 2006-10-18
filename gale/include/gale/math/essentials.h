@@ -27,8 +27,7 @@
 #define ESSENTIALS_H
 
 /**
- * \file
- * Optimized essential mathematical functions.
+ * \file Optimized essential mathematical functions
  */
 
 #include <limits>
@@ -136,10 +135,10 @@ inline unsigned int getFloorPow2(unsigned int x) {
 #ifdef __GNUC__
     unsigned int result;
     __asm__(
-        "xor eax,eax\n"
-        "bsr ecx,ecx\n"
-        "setnz al\n"
-        "shl eax,cl\n"
+        "xor eax,eax\n\t"
+        "bsr ecx,ecx\n\t"
+        "setnz al\n\t"
+        "shl eax,cl\n\t"
         : "=a" (result)
         : "c" (x)
     );
@@ -167,13 +166,13 @@ inline unsigned int getCeilPow2(unsigned int x) {
 #ifdef __GNUC__
     unsigned int result;
     __asm__(
-        "xor eax,eax\n"
-        "dec ecx\n"
-        "bsr ecx,ecx\n"
-        "cmovz ecx,eax\n"
-        "setnz al\n"
-        "inc eax\n"
-        "shl eax,cl\n"
+        "xor eax,eax\n\t"
+        "dec ecx\n\t"
+        "bsr ecx,ecx\n\t"
+        "cmovz ecx,eax\n\t"
+        "setnz al\n\t"
+        "inc eax\n\t"
+        "shl eax,cl\n\t"
         : "=a" (result)
         : "c" (x)
     );
