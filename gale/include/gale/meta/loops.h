@@ -86,7 +86,7 @@ struct LoopFwd {
     template<typename A>
     static G_INLINE A iterateAbsValues(A const* a) {
         return OP::evaluate(
-                 std::abs(a[index]),
+                 math::abs(a[index]),
                  LoopFwd<index,OP>::iterateAbsValues(a));
     }
 
@@ -153,7 +153,7 @@ struct LoopFwd<1,OP> {
     /// Iterates over a single array of absolute values evaluating a scalar.
     template<typename A>
     static G_INLINE A iterateAbsValues(A const* a) {
-        return std::abs(a[0]);
+        return math::abs(a[0]);
     }
 
     /// Iterates over two arrays adding evaluated values.

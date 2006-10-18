@@ -88,7 +88,7 @@ struct OpArithReci {
     /// Calculates the reciprocal of \a b and stores the result into \a a.
     template<typename A,typename B>
     static G_INLINE void evaluate(A& a,B const& b) {
-        G_ASSERT(std::abs(b)>std::numeric_limits<double>::epsilon())
+        G_ASSERT(math::abs(b)>std::numeric_limits<double>::epsilon())
         a=A(1.0/b);
     }
 };
