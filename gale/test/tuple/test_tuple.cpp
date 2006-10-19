@@ -5,6 +5,8 @@
 
 #include <gale/math/tuple.h>
 #include <gale/math/vector.h>
+#include <gale/math/color.h>
+
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
 
@@ -17,6 +19,7 @@ using gale::meta::OpCmpEqualEps;
 
 void test_tuple();
 void test_vector();
+void test_color();
 
 int main() {
     cout << "CPU vendor: "
@@ -40,6 +43,7 @@ int main() {
 
     test_tuple();
     test_vector();
+    test_color();
 
 #ifdef _WIN32
     system("pause");
@@ -335,4 +339,38 @@ void test_vector() {
 
     t.stop(s);
     cout << "Time elapsed: " << s << " seconds." << endl;
+}
+
+void test_color() {
+    Col3d black=Col3d::BLACK();
+    static Col3d const col3d(Col3d::getMinIntensity(),Col3d::getMinIntensity(),Col3d::getMinIntensity());
+    G_ASSERT(col3d==black);
+
+    Col3f blue=Col3f::BLUE();
+    static Col3f const col3f(Col3f::getMinIntensity(),Col3f::getMinIntensity(),Col3f::getMaxIntensity());
+    G_ASSERT(col3f==blue);
+
+    Col3i green=Col3i::GREEN();
+    static Col3i const col3i(Col3i::getMinIntensity(),Col3i::getMaxIntensity(),Col3i::getMinIntensity());
+    G_ASSERT(col3i==green);
+
+    Col3ui cyan=Col3ui::CYAN();
+    static Col3ui const col3ui(Col3ui::getMinIntensity(),Col3ui::getMaxIntensity(),Col3ui::getMaxIntensity());
+    G_ASSERT(col3ui==cyan);
+
+    Col3s red=Col3s::RED();
+    static Col3s const col3s(Col3s::getMaxIntensity(),Col3s::getMinIntensity(),Col3s::getMinIntensity());
+    G_ASSERT(col3s==red);
+
+    Col3us magenta=Col3us::MAGENTA();
+    static Col3us const col3us(Col3us::getMaxIntensity(),Col3us::getMinIntensity(),Col3us::getMaxIntensity());
+    G_ASSERT(col3us==magenta);
+
+    Col3b yellow=Col3b::YELLOW();
+    static Col3b const col3b(Col3b::getMaxIntensity(),Col3b::getMaxIntensity(),Col3b::getMinIntensity());
+    G_ASSERT(col3b==yellow);
+
+    Col3ub white=Col3ub::WHITE();
+    static Col3ub const col3ub(Col3ub::getMaxIntensity(),Col3ub::getMaxIntensity(),Col3ub::getMaxIntensity());
+    G_ASSERT(col3ub==white);
 }
