@@ -13,10 +13,10 @@ namespace gale {
 namespace math {
 
 /**
- * As partial specialization on class template member functions is not supported
- * by C++, this helper class only has a single template parameter. This way, we
- * can fully specialize only those class template member functions that should
- * not be implictly obtained from the base template.
+ * Helper class only has a single template parameter; needed as partial
+ * specialization on class template member functions is not supported by C++.
+ * This way, we can fully specialize only those class template member functions
+ * that should not be implictly obtained from the base template.
  */
 template<typename T>
 class ColorModel {
@@ -34,6 +34,7 @@ class ColorModel {
     //void RGB2HSV(T r,T g,T b,T& h,T& s,T& v) {}
 };
 
+/// \cond SPECIALIZATION
 template<>
 inline float ColorModel<float>::getMinIntensity() {
     return 0;
@@ -53,6 +54,7 @@ template<>
 inline double ColorModel<double>::getMaxIntensity() {
     return 1;
 }
+/// \endcond
 
 /**
  * Color class implementation based on an RGB-tuple, featuring predefined
