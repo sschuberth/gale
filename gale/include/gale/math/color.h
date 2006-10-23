@@ -13,10 +13,11 @@ namespace gale {
 namespace math {
 
 /**
- * Helper class only has a single template parameter; needed as partial
- * specialization on class template member functions is not supported by C++.
- * This way, we can fully specialize only those class template member functions
- * that should not be implictly obtained from the base template.
+ * Helper class with only a single template parameter; needed as partial
+ * specialization of member functions of template classes with multiple template
+ * parameters is not supported by C++. Using this class we can fully specialize
+ * only those class template member functions that should not be implictly
+ * obtained from the base template.
  */
 template<typename T>
 class ColorModel {
