@@ -139,6 +139,30 @@ class CPUInfo:public global::Singleton<CPUInfo> {
     //@}
 
     /**
+     * \name Methods to determine the number of processing units
+     */
+    //@{
+    unsigned int getCoresPerProcessor() const {
+        if (isIntel()) {
+            return ((m_std_cache_params&0xfc000000)>>26)+1;
+        } else if (isAMD()) {
+            if (hasHTT() && hasCmpLegacy())
+                return (m_std_misc_info&0x00ff0000)>>16;
+            return (m_ext_address_sizes&0x000000ff)+1;
+        }
+        return 1;
+    }
+
+    unsigned int getThreadsPerCore() const {
+        if (hasHTT() && (isIntel() || !hasCmpLegacy())) {
+            unsigned int threads=(m_std_misc_info&0x00ff0000)>>16;
+            return threads/getCoresPerProcessor();
+        }
+        return 1;
+    }
+    //@}
+
+    /**
      * \name Features reported by the standard flags
      */
     //@{
@@ -511,10 +535,14 @@ class CPUInfo:public global::Singleton<CPUInfo> {
 
     char m_vendor[3*4+1]; ///< Stores the vendor string incl. trailing zero.
 
-    int m_std_feat_flags_edx; ///< These store the CPUID standard flags.
+    int m_std_misc_info;      ///< CPUID standard miscellaneous flags.
+    int m_std_cache_params;   ///< CPUID standard cache parameters.
+    int m_ext_address_sizes;  ///< CPUID extended address sizes.
+
+    int m_std_feat_flags_edx; ///< CPUID standard feature flags.
     int m_std_feat_flags_ecx; ///< \copydoc m_std_feat_flags_edx
 
-    int m_ext_feat_flags_edx; ///< These store the CPUID extended flags.
+    int m_ext_feat_flags_edx; ///< CPUID extended feature flags.
     int m_ext_feat_flags_ecx; ///< \copydoc m_ext_feat_flags_edx
 };
 

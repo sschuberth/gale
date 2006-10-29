@@ -32,6 +32,7 @@ namespace system {
 CPUInfo& CPU=CPUInfo::the();
 
 CPUInfo::CPUInfo():
+  m_std_misc_info(0),m_std_cache_params(0),m_ext_address_sizes(0),
   m_std_feat_flags_edx(0),m_std_feat_flags_ecx(0),
   m_ext_feat_flags_edx(0),m_ext_feat_flags_ecx(0)
 {
@@ -42,22 +43,21 @@ CPUInfo::CPUInfo():
     if (!hasCPUID())
         return;
 
-    // Check for CPUID standard feature flags support.
-    if (getMaxCPUIDStdFunc()>0) {
-        // EAX = Processor Signature
-        // EBX = Brand ID etc.
-        // EDX = Standard Feature Flags (part 1)
-        // ECX = Standard Feature Flags (part 2)
+    if (getMaxCPUIDStdFunc()>=1) {
+        // CPUID function output:
+        // EAX = Processor signature
+        // EBX = APIC ID, processor count, CLFLUSH size, brand ID
+        // ECX = Standard feature flags (part 2)
+        // EDX = Standard feature flags (part 1)
 #ifdef __GNUC__
         __asm__(
             "xorl %%eax,%%eax\n\t"
             "incl %%eax\n\t"
             "pushl %%ebx\n\t"
             "cpuid\n\t"
+            "movl %%ebx,%%eax\n\t"
             "popl %%ebx\n\t"
-            : "=d" (m_std_feat_flags_edx), "=c" (m_std_feat_flags_ecx)
-            :
-            : "eax"
+            : "=a" (m_std_misc_info), "=d" (m_std_feat_flags_edx), "=c" (m_std_feat_flags_ecx)
         );
 #else
         __asm {
@@ -65,18 +65,43 @@ CPUInfo::CPUInfo():
             inc eax
             cpuid
             mov eax,this
+            mov [eax]CPUInfo.m_std_misc_info,ebx
             mov [eax]CPUInfo.m_std_feat_flags_edx,edx
             mov [eax]CPUInfo.m_std_feat_flags_ecx,ecx
         }
 #endif
     }
 
-    // Check for CPUID extended feature flags support.
-    if (getMaxCPUIDExtFunc()>0) {
-        // EAX = Reserved (Intel) / Processor Signature (AMD)
-        // EBX = Reserved (Intel) / Brand ID etc. (AMD)
-        // EDX = Extended Feature Flags (part 1)
-        // ECX = Extended Feature Flags (part 2)
+    if (getMaxCPUIDStdFunc()>=4) {
+        // Required to get the number of cores on Intel processors.
+#ifdef __GNUC__
+        __asm__(
+            "movl $0x00000004,%%eax\n\t"
+            "xorl %%ecx,%%ecx\n\t"
+            "pushl %%ebx\n\t"
+            "cpuid\n\t"
+            "popl %%ebx\n\t"
+            : "=a" (m_std_cache_params)
+            :
+            : "%ecx", "%edx"
+        );
+#else
+        __asm {
+            mov eax,00000004h
+            xor ecx,ecx
+            cpuid
+            mov ebx,this
+            mov [ebx]CPUInfo.m_std_cache_params,eax
+        }
+#endif
+    }
+
+    if (getMaxCPUIDExtFunc()>=1) {
+        // CPUID function output:
+        // EAX = Reserved (Intel) / processor signature (AMD)
+        // EBX = Reserved (Intel) / APIC ID etc. (AMD)
+        // ECX = Extended feature flags (part 2)
+        // EDX = Extended feature flags (part 1)
 #ifdef __GNUC__
         __asm__(
             "movl $0x80000001,%%eax\n\t"
@@ -94,6 +119,28 @@ CPUInfo::CPUInfo():
             mov eax,this
             mov [eax]CPUInfo.m_ext_feat_flags_edx,edx
             mov [eax]CPUInfo.m_ext_feat_flags_ecx,ecx
+        }
+#endif
+    }
+
+    if (getMaxCPUIDExtFunc()>=8) {
+        // Required to get the number of cores on AMD processors.
+#ifdef __GNUC__
+        __asm__(
+            "movl $0x80000008,%%eax\n\t"
+            "pushl %%ebx\n\t"
+            "cpuid\n\t"
+            "popl %%ebx\n\t"
+            : "=c" (m_ext_address_sizes)
+            :
+            : "%eax", "%edx"
+        );
+#else
+        __asm {
+            mov eax,80000008h
+            cpuid
+            mov eax,this
+            mov [eax]CPUInfo.m_ext_address_sizes,ecx
         }
 #endif
     }
