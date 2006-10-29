@@ -69,10 +69,11 @@ inline double ColorModel<double>::getMaxIntensity() {
  */
 template<unsigned int N,typename T>
 class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
-    /// This type definition simplifies base class access to identifiers that
+    /// These type definitions simplify base class access to identifiers that
     /// are not visible until instantiation time because they do not dependent
     /// on template arguments.
     typedef TupleBase<N,T,Color<N,T> > Base;
+    typedef ColorModel<T> Model;
 
   public:
     /**
@@ -145,7 +146,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
     /// initialize the static class constants.
     explicit Color(unsigned int mask) {
         meta::LoopFwd<N,meta::OpAssign>::
-          iterateIndexMask(Base::getData(),mask,getMaxIntensity(),getMinIntensity());
+          iterateIndexMask(Base::getData(),mask,Model::getMaxIntensity(),Model::getMinIntensity());
     }
 
     /// Allows to initialize 3-channel colors directly.

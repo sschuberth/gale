@@ -221,7 +221,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
 
     /// Returns the Cartesian length of this vector.
     double getLength() const {
-        return std::sqrt(static_cast<double>(getLengthSquared()));
+        return ::sqrt(static_cast<double>(getLengthSquared()));
     }
 
     /// Normalizes this vector so its length equals 1 (if it is not very small).
@@ -260,14 +260,14 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
 
     /// Returns the angle between this vector and \a v in radians.
     double getAngle(Vector const& v) const {
-        return std::acos(static_cast<double>(getAngleCosine(v)));
+        return ::acos(static_cast<double>(getAngleCosine(v)));
     }
 
     /// Returns a highly accurate calculation of the angle between this vector
     /// and \a v in radians.
     double getAccurateAngle(Vector const& v) const {
         Vector tn=~(*this),vn=~v;
-        return std::atan2(
+        return ::atan2(
                  tn.cross(vn).getLength(),
                  static_cast<double>(tn.dot(vn)));
     }

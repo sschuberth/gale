@@ -32,6 +32,7 @@
  */
 
 #include "../global/defines.h"
+#include "../math/essentials.h"
 
 namespace gale {
 

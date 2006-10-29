@@ -31,6 +31,7 @@
  * Optimized essential mathematical functions
  */
 
+#include <math.h>
 #include <limits>
 
 namespace gale {
@@ -45,14 +46,14 @@ namespace math {
 /// Converts the given \a angle specified in degrees to radians.
 template<typename T>
 inline T convertDegToRad(T const angle) {
-    static T const PI=static_cast<T>(3.14159265358979323846);
+    static T const PI=static_cast<T>(3.1415926535897932384626433832795029);
     return (angle*PI)/180;
 }
 
 /// Converts the given \a angle specified in radians to degrees.
 template<typename T>
 inline T convertRadToDeg(T const angle) {
-    static T const PI=static_cast<T>(3.14159265358979323846);
+    static T const PI=static_cast<T>(3.1415926535897932384626433832795029);
     return (angle*180)/PI;
 }
 
@@ -338,17 +339,17 @@ inline unsigned char abs(unsigned char const x) {
 
 template<>
 inline long abs(long const x) {
-    return labs(x);
+    return ::labs(x);
 }
 
 template<>
 inline double abs(double const x) {
-    return fabs(x);
+    return ::fabs(x);
 }
 
 template<>
 inline float abs(float const x) {
-    return fabsf(x);
+    return ::fabsf(x);
 }
 
 //@}
