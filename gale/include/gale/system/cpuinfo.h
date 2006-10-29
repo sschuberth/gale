@@ -143,11 +143,14 @@ class CPUInfo:public global::Singleton<CPUInfo> {
      */
     //@{
     unsigned int getCoresPerProcessor() const {
-        if (isIntel()) {
+        if (isIntel())
             return ((m_std_cache_params&0xfc000000)>>26)+1;
-        } else if (isAMD()) {
-            if (hasHTT() && hasCmpLegacy())
+        else if (isAMD()) {
+            if (hasHTT() && hasCmpLegacy()) {
+                // This method to determine the number of cores is deprecated
+                // but we use it if it is supported.
                 return (m_std_misc_info&0x00ff0000)>>16;
+            }
             return (m_ext_address_sizes&0x000000ff)+1;
         }
         return 1;
@@ -316,7 +319,9 @@ class CPUInfo:public global::Singleton<CPUInfo> {
     }
 
     /// Returns whether Hyper-Threading Technology capability is present,
-    /// allowing the processor to operate as multiple logical units.
+    /// allowing the processor to operate as multiple logical units (because
+    /// there is either more than one hardware thread per core or more than one
+    /// core per processor available).
     bool hasHTT() const {
         return (m_std_feat_flags_edx&(1<<28))!=0;
     }
