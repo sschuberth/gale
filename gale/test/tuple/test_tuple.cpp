@@ -22,6 +22,13 @@ void test_vector();
 void test_color();
 
 int main() {
+    cout << "Found "
+         << CPU.getCoresPerProcessor()
+         << " core(s) per processor, each supporting "
+         << CPU.getThreadsPerCore()
+         << " hardware thread(s)."
+         << endl;
+
     cout << "CPU vendor: "
          << CPU.getVendorString()
          << endl;
