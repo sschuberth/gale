@@ -34,6 +34,7 @@ int main() {
          << endl;
 
     cout << "Instruction sets:"
+         << (CPU.hasHTT()?" HTT":"")
          << (CPU.hasMMX()?" MMX":"")
          << (CPU.hasMMXExt()?" MMXExt":"")
          << (CPU.has3DNow()?" 3DNow!":"")
