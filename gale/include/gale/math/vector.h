@@ -125,10 +125,10 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     Vector(T const& x,T const& y,T const& z,T const& w):Base(x,y,z,w) {
     }
 
-    /// Conversion constructor to be able to use vectors of different types
-    /// together.
+    /// Converts a vector of different type but with the same amount of
+    /// components to this type.
     template<typename U>
-    Vector(const Vector<N,U>& v) {
+    Vector(Vector<N,U> const& v) {
         meta::LoopFwd<N,meta::OpAssign>::iterate(Base::getData(),v.getData());
     }
     //@}
