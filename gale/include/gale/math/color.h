@@ -22,17 +22,120 @@ namespace math {
 template<typename T>
 class ColorModel {
   public:
-    /// Return the minimum intensity value for a color channel.
+    /// Returns the minimum intensity value for a color channel.
     static T getMinIntensity() {
         return std::numeric_limits<T>::min();
     }
 
-    /// Return the maximum intensity value for a color channel.
+    /// Returns the maximum intensity value for a color channel.
     static T getMaxIntensity() {
         return std::numeric_limits<T>::max();
     }
 
-    //void RGB2HSV(T r,T g,T b,T& h,T& s,T& v) {}
+    /// Converts a color representation from the RGB to the HSV model. All
+    /// channel values are interpreted to range from the value returned by
+    /// getMinIntensity() to the value returned by getMaxIntensity().
+    void RGB2HSV(T const r,T const g,T const b,T& h,T& s,T& v) {
+        const T min=getMinIntensity(),range=getMaxIntensity()-min;
+
+        // Always convert RGB values to range [0,1].
+        double R=clamp(double(r-min)/range,0.0,1.0);
+        double G=clamp(double(g-min)/range,0.0,1.0);
+        double B=clamp(double(b-min)/range,0.0,1.0);
+
+        double m=min(R,G,B);
+        double V=max(R,G,B);
+
+        double delta=V-m;
+        double S=(v>0)?(delta/v):0;
+
+        double H;
+
+        if (S>0) {
+            double rd=(V-R)/delta;
+            double gd=(V-G)/delta;
+            double bd=(V-B)/delta;
+
+            if (OpCmpEqualEps::evaluate(V,R))
+                H=OpCmpEqualEps::evaluate(m,G)?(5+bd):(1-gd);
+            else if (OpCmpEqualEps::evaluate(v,G))
+                H=OpCmpEqualEps::evaluate(m,B)?(1+rd):(3-bd);
+            else
+                H=OpCmpEqualEps::evaluate(m,R)?(3+gd):(5-rd);
+
+            H=(H<6)?(H*60):0;
+        } else {
+            // Achromatic case, actually hue is undefined!
+            H=0;
+        }
+
+        // At this point hue ranges from 0 to 360, saturation and value from 0
+        // to 1. Convert these ranges back to the initial RGB channel range.
+        h=T(H*range/360+min);
+        s=T(S*range+min);
+        v=T(V*range+min);
+    }
+
+    /// Converts a color representation from the HSV to the RGB model. All
+    /// channel values are interpreted to range from the value returned by
+    /// getMinIntensity() to the value returned by getMaxIntensity().
+    void HSV2RGB(T const h,T const s,T const v,T& r,T& g,T& b) {
+        const T min=getMinIntensity(),range=getMaxIntensity()-min;
+
+        // Always convert HSV values to range [0,1].
+        double H=clamp(double(h-min)/range,0.0,1.0);
+        double S=clamp(double(s-min)/range,0.0,1.0);
+        double V=clamp(double(v-min)/range,0.0,1.0);
+
+        double R,G,B;
+
+        if (S>0) {
+            H*=6;
+            long long i=roundToZero(H);
+            double f=H-i;
+
+            double p=V*(1-S);
+            double q=V*(1-S*f);
+            double t=V*(1-S*(1-f));
+
+            switch (i) {
+                case 6:
+                case 0: {
+                    R=V; G=t; B=p;
+                    break;
+                }
+                case 1: {
+                    R=q; G=V; B=p;
+                    break;
+                }
+                case 2: {
+                    R=p; G=V; B=t;
+                    break;
+                }
+                case 3: {
+                    R=p; G=q; B=V;
+                    break;
+                }
+                case 4: {
+                    R=t; G=p; B=V;
+                    break;
+                }
+                case 5: {
+                    R=V; G=p; B=q;
+                    break;
+                }
+            }
+        } else {
+            // Achromatic case, actually hue is undefined!
+            R=G=B=V;
+        }
+
+        // At this point red, green and blue range from 0 to 1. Convert this
+        // range back to the initial HSV channel range.
+        r=T(R*range+min);
+        g=T(G*range+min);
+        b=T(B*range+min);
+    }
 };
 
 /// \cond SPECIALIZATION
@@ -158,10 +261,10 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
     Color(T const& x,T const& y,T const& z,T const& w):Base(x,y,z,w) {
     }
 
-    /// Conversion constructor to be able to use colors of different types
-    /// together.
+    /// Converts a color of different type but with the same amount of channels
+    /// to this type.
     template<typename U>
-    Color(const Color<N,U>& v) {
+    Color(Color<N,U> const& v) {
         meta::LoopFwd<N,meta::OpAssign>::iterate(Base::getData(),v.getData());
     }
     //@}
