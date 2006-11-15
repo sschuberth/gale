@@ -161,7 +161,7 @@ inline double ColorModel<double>::getMaxIntensity() {
 /// \endcond
 
 /**
- * Color class implementation based on an RGB-tuple, featuring predefined
+ * Color class implementation based on an RGB(A)-tuple, featuring predefined
  * constants for commonly used colors, HSV conversion and useful operators.
  *
  * Example usage:
@@ -240,34 +240,177 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
      * \name Constructors
      */
     //@{
-    /// For performance reasons, do not initialize any data by default.
+    /// Initialize to black by default.
     Color() {
+        // Do not allow colors with less than 3 channels.
+        G_ASSERT(N>=3)
+        *this=BLACK();
     }
 
     /// Sets each color channel to either the maximum or minimum intensity
     /// depending on the bits set in \a mask. Bit 0 maps to the first channel,
     /// bit 1 to second one and so on. This constructor is required to
     /// initialize the static class constants.
-    explicit Color(unsigned int mask) {
+    explicit Color(unsigned int mask):m_hsv_outdated(true),m_rgb_outdated(false) {
         meta::LoopFwd<N,meta::OpAssign>::
           iterateIndexMask(Base::getData(),mask,Model::getMaxIntensity(),Model::getMinIntensity());
     }
 
     /// Allows to initialize 3-channel colors directly.
-    Color(T const& x,T const& y,T const& z):Base(x,y,z) {
+    Color(T const& r,T const& g,T const& b):
+      Base(r,g,b),m_hsv_outdated(true),m_rgb_outdated(false)
+    {
     }
 
     /// Allows to initialize 4-channel colors directly.
-    Color(T const& x,T const& y,T const& z,T const& w):Base(x,y,z,w) {
+    Color(T const& r,T const& g,T const& b,T const& a):
+      Base(r,g,b,a),m_hsv_outdated(true),m_rgb_outdated(false)
+    {
     }
 
     /// Converts a color of different type but with the same amount of channels
     /// to this type.
     template<typename U>
-    Color(Color<N,U> const& v) {
+    Color(Color<N,U> const& v):m_hsv_outdated(true),m_rgb_outdated(false) {
         meta::LoopFwd<N,meta::OpAssign>::iterate(Base::getData(),v.getData());
     }
     //@}
+
+    /**
+     * \name RGB(A) color model channel access methods
+     */
+    //@{
+    /// Returns a reference to the red channel.
+    T& getR() {
+        G_ASSERT(N>=1)
+        updateRGB();
+        return Base::m_data[0];
+    }
+
+    /// Assigns a new value to the red channel.
+    void setR(T const& r) {
+        G_ASSERT(N>=1)
+        m_hsv_outdated=true;
+        Base::m_data[0]=r;
+    }
+
+    /// Returns a reference to the green channel.
+    T& getG() {
+        G_ASSERT(N>=2)
+        updateRGB();
+        return Base::m_data[1];
+    }
+
+    /// Assigns a new value to the green channel.
+    void setG(T const& g) {
+        G_ASSERT(N>=2)
+        m_hsv_outdated=true;
+        Base::m_data[1]=g;
+    }
+
+    /// Returns a reference to the blue channel.
+    T& getB() {
+        G_ASSERT(N>=3)
+        updateRGB();
+        return Base::m_data[2];
+    }
+
+    /// Assigns a new value to the blue channel.
+    void setB(T const& b) {
+        G_ASSERT(N>=3)
+        m_hsv_outdated=true;
+        Base::m_data[2]=b;
+    }
+
+    /// Returns a reference to the alpha channel.
+    T& getA() {
+        G_ASSERT(N>=4)
+        return Base::m_data[3];
+    }
+
+    /// Returns a \c constant reference to the alpha channel.
+    T const& getA() const {
+        G_ASSERT(N>=4)
+        return Base::m_data[3];
+    }
+
+    /// Assigns a new value to the alpha channel.
+    void setA(T const& a) {
+        G_ASSERT(N>=4)
+        Base::m_data[3]=a;
+    }
+    //@}
+
+    /**
+     * \name HSV color model channel access methods
+     */
+    //@{
+    /// Returns a reference to the hue channel.
+    T& getH() {
+        G_ASSERT(N>=1)
+        updateHSV();
+        return m_h;
+    }
+
+    /// Assigns a new value to the hue channel.
+    void setH(T const& h) {
+        G_ASSERT(N>=1)
+        m_rgb_outdated=true;
+        m_h=h;
+    }
+
+    /// Returns a reference to the saturation channel.
+    T& getS() {
+        G_ASSERT(N>=2)
+        updateHSV();
+        return m_s;
+    }
+
+    /// Assigns a new value to the saturation channel.
+    void setS(T const& s) {
+        G_ASSERT(N>=2)
+        m_rgb_outdated=true;
+        m_s=s;
+    }
+
+    /// Returns a reference to the value channel.
+    T& getV() {
+        G_ASSERT(N>=3)
+        updateHSV();
+        return m_v;
+    }
+
+    /// Assigns a new value to the value channel.
+    void setV(T const& v) {
+        G_ASSERT(N>=3)
+        m_rgb_outdated=true;
+        m_v=v;
+    }
+    //@}
+
+  private:
+    /// Updates the HSV channels to match the RGB channels if required.
+    void updateHSV() {
+        if (!m_hsv_outdated)
+            return;
+        RGB2HSV(m_data[0],m_data[1],m_data[2],m_h,m_s,m_v);
+        m_hsv_outdated=false;
+    }
+
+    /// Updates the RGB channels to match the HSV channels if required.
+    void updateRGB() {
+        if (!m_rgb_outdated)
+            return;
+        HSV2RGB(m_h,m_s,m_v,m_data[0],m_data[1],m_data[2]);
+        m_rgb_outdated=false;
+    }
+
+    bool m_hsv_outdated; ///< Flag to indicate the validity of the HSV channel variables.
+    bool m_rgb_outdated; ///< Flag to indicate the validity of the RGB channel variables.
+
+    T m_h; ///< Cache variable for the HSV channel values.
+    T m_s; ///< \copydoc m_h
+    T m_v; ///< \copydoc m_h
 };
 
 /**
