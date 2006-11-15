@@ -218,7 +218,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     //@{
     /// Returns the squared Cartesian length of this vector.
     T getLengthSquared() const {
-        return dot(*this);
+        return getDotProduct(*this);
     }
 
     /// Returns the Cartesian length of this vector.
@@ -240,7 +240,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
      */
     //@{
     /// Calculates the cross product between this vector and \a v.
-    Vector cross(Vector const& v) const {
+    Vector getCrossProduct(Vector const& v) const {
         G_ASSERT(N==3)
         return Vector(
             Base::m_data[1]*v.m_data[2] - Base::m_data[2]*v.m_data[1],
@@ -250,14 +250,14 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     }
 
     /// Calculates the dot product between this vector and \a v.
-    T dot(Vector const& v) const {
+    T getDotProduct(Vector const& v) const {
         return meta::LoopFwd<N,meta::OpCalcProd>::
                  iterateCombAdd(Base::getData(),v.getData());
     }
 
     /// Returns the cosine of the angle between this vector and \a v.
     T getAngleCosine(Vector const& v) const {
-        return (~v).dot(~(*this));
+        return (~v).getDotProduct(~(*this));
     }
 
     /// Returns the angle between this vector and \a v in radians.
@@ -270,24 +270,24 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     double getAccurateAngle(Vector const& v) const {
         Vector tn=~(*this),vn=~v;
         return ::atan2(
-                 tn.cross(vn).getLength(),
-                 static_cast<double>(tn.dot(vn)));
+                 tn.getCrossProduct(vn).getLength(),
+                 static_cast<double>(tn.getDotProduct(vn)));
     }
 
     /// Returns a vector which is orthogonal to this vector.
     Vector getOrthoVector() const {
         // Try the x-axis to create an orthogonal vector.
-        Vector v=cross(Vector::X());
+        Vector v=getCrossProduct(Vector::X());
         // If the x-axis is (almost) collinear to this vector, take the y-axis.
         if (v.getLengthSquared()<=std::numeric_limits<T>::epsilon())
-            v=cross(Vector::Y());
+            v=getCrossProduct(Vector::Y());
         return v;
     }
 
     /// Returns whether this vector is collinear to \a v.
     bool isCollinear(Vector const& v) const {
         return meta::OpCmpEqualEps::
-                 evaluate(v.cross(*this).getLengthSquared(),static_cast<T>(0));
+                 evaluate(v.getCrossProduct(*this).getLengthSquared(),static_cast<T>(0));
     }
     //@}
 
@@ -302,12 +302,12 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
 
     /// Calculates the cross product between the vectors \a v and \a w.
     friend Vector operator^(Vector const& v,Vector const& w) {
-        return v.cross(w);
+        return v.getCrossProduct(w);
     }
 
     /// Calculates the dot product between the vectors \a v and \a w.
     friend T operator%(Vector const& v,Vector const& w) {
-        return v.dot(w);
+        return v.getDotProduct(w);
     }
     //@}
 };

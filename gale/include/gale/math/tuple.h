@@ -202,7 +202,7 @@ class TupleBase {
     //@{
     /// Linearly interpolates between \c this tuple and another tuple \a t based
     /// on a scalar \a s. For performance reasons, \a s is not clamped to [0,1].
-    C lerp(C const& t,double s) const {
+    C getLerp(C const& t,double s) const {
         C tmp;
         meta::LoopFwd<N,meta::OpCalcLerp>::
           iterate(tmp.getData(),getData(),t.getData(),s);
