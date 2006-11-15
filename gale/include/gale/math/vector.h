@@ -102,6 +102,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     //@{
     /// For performance reasons, do not initialize any data by default.
     Vector() {
+        // Do not allow vectors with less than 2 components.
+        G_ASSERT(N>=2)
     }
 
     /// Sets each component in the vector to either 0 or 1 depending on the bits
