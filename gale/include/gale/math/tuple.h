@@ -42,13 +42,18 @@ namespace gale {
 
 namespace math {
 
+// Make sure data members are tightly packed.
+#pragma pack(push,1)
+
 /**
  * Tuple base class implementation, with \a N elements of type \a T. Derived
  * classes are specified as \a C to provide the proper return and argument type.
  */
 template<unsigned int N,typename T,class C>
 class TupleBase {
+
   public:
+
     /// Data type definition for external access to the template argument.
     typedef T Type;
 
@@ -56,6 +61,7 @@ class TupleBase {
      * \name Constructors
      */
     //@{
+
     /// For performance reasons, do not initialize any data by default.
     TupleBase() {
     }
@@ -83,12 +89,14 @@ class TupleBase {
         m_data[2]=e2;
         m_data[3]=e3;
     }
+
     //@}
 
     /**
      * \name Element access methods
      */
     //@{
+
     /// Returns a pointer to the internal data array.
     T* getData() {
         return m_data;
@@ -110,12 +118,14 @@ class TupleBase {
     operator T const*() const {
         return getData();
     }
+
     //@}
 
     /**
      * \name Element-wise arithmetic operators
      */
     //@{
+
     /// Increments \c this tuple by another tuple \a t.
     C const& operator+=(C const& t) {
         meta::LoopFwd<N,meta::OpArithInc>::iterate(getData(),t.getData());
@@ -151,12 +161,14 @@ class TupleBase {
         G_ASSERT(math::abs(s)>std::numeric_limits<T>::epsilon())
         return (*this)*=1/s;
     }
+
     //@}
 
     /**
      * \name Extremes determination methods
      */
     //@{
+
     /// Determines the minimum element of \c this tuple.
     T getMinElement() const {
         return meta::LoopFwd<N,meta::OpCalcMin>::iterate(getData());
@@ -194,12 +206,14 @@ class TupleBase {
           iterate(tmp.getData(),getData(),t.getData());
         return tmp;
     }
+
     //@}
 
     /**
      * \name Miscellaneous methods
      */
     //@{
+
     /// Linearly interpolates between \c this tuple and another tuple \a t based
     /// on a scalar \a s. For performance reasons, \a s is not clamped to [0,1].
     C getLerp(C const& t,double s) const {
@@ -208,12 +222,14 @@ class TupleBase {
           iterate(tmp.getData(),getData(),t.getData(),s);
         return tmp;
     }
+
     //@}
 
     /**
      * \name Element-wise arithmetic operators
      */
     //@{
+
     /// Returns tuple \a t unchanged; provided for convenience.
     friend C const& operator+(C const& t) {
         return t;
@@ -269,12 +285,14 @@ class TupleBase {
         meta::LoopFwd<N,meta::OpArithReci>::iterate(tmp.getData(),t.getData());
         return s*tmp;
     }
+
     //@}
 
     /**
      * \name Element-wise comparison operators
      */
     //@{
+
     /// Returns whether all elements in \a t are less than their counterpart in
     /// \a u.
     friend bool operator<(C const& t,C const& u) {
@@ -315,9 +333,15 @@ class TupleBase {
     friend bool operator!=(C const& t,C const& u) {
         return !(t==u);
     }
+
     //@}
 
 #ifndef GALE_TINY
+    /**
+     * \name Streaming input / output methods
+     */
+    //@{
+
     /// Reads tuple values from an input stream.
     friend std::istream& operator>>(std::istream& s,C& t) {
         for (int i=0;i<N;++i)
@@ -332,12 +356,17 @@ class TupleBase {
             s << t[i] << ',';
         return s << t[N-1] << ')';
     }
+
+    //@}
 #endif
 
   protected:
+
     /// Tightly packed array of \a N elements of type \a T.
     T m_data[N];
 };
+
+#pragma pack(pop)
 
 /**
  * Tuple class implementation as an example how to derive from TupleBase. This
@@ -351,10 +380,12 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> > {
     typedef TupleBase<N,T,Tuple<N,T> > Base;
 
   public:
+
     /**
      * \name Constructors
      */
     //@{
+
     /// For performance reasons, do not initialize any data by default.
     Tuple() {
     }
@@ -370,6 +401,7 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> > {
     /// Allows to initialize 4-tuples directly.
     Tuple(T const& e0,T const& e1,T const& e2,T const& e3):Base(e0,e1,e2,e3) {
     }
+
     //@}
 };
 
