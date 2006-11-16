@@ -58,6 +58,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     typedef TupleBase<N,T,Vector<N,T> > Base;
 
   public:
+
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
@@ -65,6 +66,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
      * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14).
      */
     //@{
+
     /// Returns a vector which has all components set to 0.
     static Vector const& ZERO() {
         static Vector const v(0x0);
@@ -94,12 +96,14 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
         static Vector const v(0x8);
         return v;
     }
+
     //@}
 
     /**
      * \name Constructors
      */
     //@{
+
     /// For performance reasons, do not initialize any data by default.
     Vector() {
         // Do not allow vectors with less than 2 components.
@@ -133,12 +137,14 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     Vector(Vector<N,U> const& v) {
         meta::LoopFwd<N,meta::OpAssign>::iterate(Base::getData(),v.getData());
     }
+
     //@}
 
     /**
      * \name Component access methods
      */
     //@{
+
     /// Returns a reference to the x-component.
     T& getX() {
         G_ASSERT(N>=1)
@@ -210,12 +216,14 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
         G_ASSERT(N>=4)
         Base::m_data[3]=w;
     }
+
     //@}
 
     /**
      * \name Magnitude related methods
      */
     //@{
+
     /// Returns the squared Cartesian length of this vector.
     T getLengthSquared() const {
         return getDotProduct(*this);
@@ -227,18 +235,20 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     }
 
     /// Normalizes this vector so its length equals 1 (if it is not very small).
-    Vector const& normalize() {
+    Vector& normalize() {
         double length=getLength();
         if (length>std::numeric_limits<T>::epsilon())
             (*this)/=T(length);
         return *this;
     }
+
     //@}
 
     /**
      * \name Angle related methods
      */
     //@{
+
     /// Calculates the cross product between this vector and \a v.
     Vector getCrossProduct(Vector const& v) const {
         G_ASSERT(N==3)
@@ -289,12 +299,14 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
         return meta::OpCmpEqualEps::
                  evaluate(v.getCrossProduct(*this).getLengthSquared(),static_cast<T>(0));
     }
+
     //@}
 
     /**
      * \name Convenience operators for named methods
      */
     //@{
+
     /// Returns a normalized copy of vector \a v.
     friend Vector operator~(Vector const& v) {
         return Vector(v).normalize();
@@ -309,6 +321,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     friend T operator%(Vector const& v,Vector const& w) {
         return v.getDotProduct(w);
     }
+
     //@}
 };
 
@@ -316,6 +329,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
  * \name Type definitions for use as OpenGL vertices
  */
 //@{
+
 typedef Vector<2,double> Vec2d;
 typedef Vector<2,float> Vec2f;
 typedef Vector<2,int> Vec2i;
@@ -330,6 +344,7 @@ typedef Vector<4,double> Vec4d;
 typedef Vector<4,float> Vec4f;
 typedef Vector<4,int> Vec4i;
 typedef Vector<4,short> Vec4s;
+
 //@}
 
 } // namespace math

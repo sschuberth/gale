@@ -46,7 +46,9 @@ namespace math {
  */
 template<typename T>
 class ColorModel {
+
   public:
+
     /// Returns the minimum intensity value for a color channel.
     static T getMinIntensity() {
         return std::numeric_limits<T>::min();
@@ -205,6 +207,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
     typedef ColorModel<T> Model;
 
   public:
+
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
@@ -212,6 +215,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
      * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14).
      */
     //@{
+
     /// Returns a color which represents black.
     static Color const& BLACK() {
         static Color const c(0x0);
@@ -259,12 +263,14 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
         static Color const c(0x7);
         return c;
     }
+
     //@}
 
     /**
      * \name Constructors
      */
     //@{
+
     /// Initialize to black by default.
     Color() {
         *this=BLACK();
@@ -297,12 +303,14 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
     Color(Color<N,U> const& v):m_hsv_outdated(true),m_rgb_outdated(false) {
         meta::LoopFwd<N,meta::OpAssign>::iterate(Base::getData(),v.getData());
     }
+
     //@}
 
     /**
      * \name RGB(A) color model channel access methods
      */
     //@{
+
     /// Returns a reference to the red channel.
     T& getR() {
         G_ASSERT(N>=1)
@@ -362,12 +370,14 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
         G_ASSERT(N>=4)
         Base::m_data[3]=a;
     }
+
     //@}
 
     /**
      * \name HSV color model channel access methods
      */
     //@{
+
     /// Returns a reference to the hue channel.
     T& getH() {
         G_ASSERT(N>=1)
@@ -409,14 +419,16 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
         m_rgb_outdated=true;
         m_v=v;
     }
+
     //@}
 
     /**
      * \name Color inversion methods
      */
     //@{
+
     /// Inverts this color (if present, the alpha channel is omitted).
-    Color const& invert() {
+    Color& invert() {
         Color tmp=WHITE()-(*this);
         if (N==4)
             tmp.setA(getA());
@@ -430,6 +442,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
     //@}
 
   private:
+
     /// Updates the HSV channels to match the RGB channels if required.
     void updateHSV() {
         if (!m_hsv_outdated)
@@ -458,6 +471,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
  * \name Type definitions for use as OpenGL colors
  */
 //@{
+
 typedef Color<3,double> Col3d;
 typedef Color<3,float> Col3f;
 typedef Color<3,int> Col3i;
@@ -475,6 +489,7 @@ typedef Color<4,short> Col4s;
 typedef Color<4,unsigned short> Col4us;
 typedef Color<4,signed char> Col4b;
 typedef Color<4,unsigned char> Col4ub;
+
 //@}
 
 } // namespace math
