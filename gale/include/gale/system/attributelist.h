@@ -35,13 +35,18 @@ namespace gale {
 
 namespace system {
 
+// Make sure data members are tightly packed.
+#pragma pack(push,1)
+
 /**
  * This class implements a zero terminated list of type / value pairs that is
  * used to pass attributes to several API calls.
  */
 template<typename T,int N=256>
 class AttributeList {
+
   public:
+
     /// Creates an empty list.
     AttributeList() {
         clear();
@@ -103,6 +108,7 @@ class AttributeList {
     }
 
   private:
+
     /// Searches for the given \a type in the list returning its index or -1 if
     /// it cannot be found.
     int find(T type) {
@@ -125,12 +131,16 @@ class AttributeList {
     T m_attributes[N];
 };
 
+#pragma pack(pop)
+
 /**
  * \name Type definitions as required by the WGL_ARB_pixel_format extension
  */
 //@{
+
 typedef AttributeList<int> AttributeListi;
 typedef AttributeList<float> AttributeListf;
+
 //@}
 
 } // namespace system
