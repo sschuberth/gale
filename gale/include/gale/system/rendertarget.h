@@ -9,11 +9,14 @@ namespace system {
  * Dummy
  */
 class RenderTarget {
+
   public:
+
     RenderTarget();
     ~RenderTarget();
 
   protected:
+
     //void createWindow();
 
     /// Dummy

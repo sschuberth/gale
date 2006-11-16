@@ -41,7 +41,9 @@ namespace global {
  */
 template<class C>
 class Singleton {
+
   public:
+
     /// Returns a reference to the one and only instance of this class.
     static C& the() {
         static C instance;
@@ -49,12 +51,14 @@ class Singleton {
     }
 
   protected:
+
     /// Prevent the creation of a new singleton instance.
     Singleton() {}
     /// Prevent the destruction, e.g. via pointer deletion.
     ~Singleton() {}
 
   private:
+
     /// Disable automatic copy constructor generation by the compiler.
     Singleton(Singleton const&);
     /// Disable assignments (which always are self-assignments for singletons).

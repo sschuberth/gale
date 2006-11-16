@@ -41,7 +41,9 @@ namespace system {
  * This is a simple timing class with pause / resume capability.
  */
 class Timer {
+
   public:
+
     /// Suspends the execution of the current thread for the given amount of
     /// milliseconds.
     static void sleep(unsigned int milliseconds) {
@@ -128,6 +130,7 @@ class Timer {
     }
 
   private:
+
     /// \var m_offset
     /// Stores the total time since the last start(), needed for resume().
 
