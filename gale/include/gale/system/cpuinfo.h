@@ -51,6 +51,7 @@ class CPUInfo:public global::Singleton<CPUInfo> {
     friend class global::Singleton<CPUInfo>;
 
   public:
+
     /// Checks if this is a little-endian (as opposed to big-endian) machine.
     bool isLittleEndian() const {
         // See http://sjbaker.org/steve/software/cute_code.html.
@@ -62,24 +63,30 @@ class CPUInfo:public global::Singleton<CPUInfo> {
      * \name CPUID helper methods
      */
     //@{
+
     /// Checks for the presence of the CPUID instruction.
     bool hasCPUID() const;
+
     /// Returns the highest standard function number supported.
     unsigned int getMaxCPUIDStdFunc();
+
     /// Returns the highest extended function number supported.
     unsigned int getMaxCPUIDExtFunc() const;
+
     //@}
 
     /**
      * \name Vendor identification methods
      */
     //@{
+
     /// Return the CPU vendor string.
     char const* getVendorString() const {
         return m_vendor;
     }
 
 #define MAKE_DWORD(a,b,c,d) (a|(int)(b)<<8|(int)(c)<<16|(int)(d)<<24)
+
     /// Returns if this is an Intel CPU.
     bool isIntel() const {
         int const* vendor=reinterpret_cast<int const*>(&m_vendor);
@@ -135,13 +142,17 @@ class CPUInfo:public global::Singleton<CPUInfo> {
             return false;
         return true;
     }
+
 #undef MAKE_DWORD
+
     //@}
 
     /**
      * \name Methods to determine the number of processing units
      */
     //@{
+
+    /// Returns the number of cores per processor package.
     unsigned int getCoresPerProcessor() const {
         if (isIntel())
             return ((m_std_cache_params&0xfc000000)>>26)+1;
@@ -156,6 +167,7 @@ class CPUInfo:public global::Singleton<CPUInfo> {
         return 1;
     }
 
+    /// Returns the number of hardware threads per core.
     unsigned int getThreadsPerCore() const {
         if (hasHTT() && (isIntel() || !hasCmpLegacy())) {
             unsigned int threads=(m_std_misc_info&0x00ff0000)>>16;
@@ -163,6 +175,7 @@ class CPUInfo:public global::Singleton<CPUInfo> {
         }
         return 1;
     }
+
     //@}
 
     /**
@@ -534,6 +547,7 @@ class CPUInfo:public global::Singleton<CPUInfo> {
     //@}
 
   private:
+
     /// Make the constructor private so the class cannot be derived from and
     /// thus complete the Singleton design pattern.
     CPUInfo();
