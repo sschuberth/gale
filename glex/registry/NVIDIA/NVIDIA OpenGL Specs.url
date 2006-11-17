@@ -1,2 +1,3 @@
 [InternetShortcut]
 URL=http://developer.nvidia.com/object/nvidia_opengl_specs.html
+; wget=--cut-dirs=2 --span-hosts --domains=www.nvidia.com,developer.download.nvidia.com
