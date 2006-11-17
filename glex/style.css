@@ -1,0 +1,33 @@
+body {
+    background: url(images/gradient.png) repeat-x;
+    font-family: Arial;
+    text-align: center;
+}
+
+hr {
+    border-style: none;
+    background-color: #c9d0e0;
+    color: #c9d0e0;
+    height: 1px;
+}
+
+img {
+    border-style: none;
+    display: block;
+}
+
+table {
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td {
+    background-color: white;
+    padding: 0px;
+    text-align: left;
+}
+
+td.corner {
+    background-color: transparent;
+}

@@ -4,40 +4,96 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>glex - OpenGL Extension Specification Parser</title>
+    <title>glex - An OpenGL Extension Specification Parser</title>
     <link type="text/css" href="style.css" rel="stylesheet" />
-    <script type="text/javascript" src="functions.js"></script>
 </head>
 
 <body>
-    <table class="center">
+    <table style="width: 50%">
         <tr>
-            <td>
-                <script type="text/javascript">roundedHeader(false,"#c7d1d2")</script>
-                <div class="content">
-                    Enter the URI or URL to OpenGL extension specification text file
-                    (see <a href="http://www.opengl.org/registry/">http://www.opengl.org/registry/</a>):
-                    <form action="">
+            <td class="corner"><img src="images/corner-tl-white.png" alt="" /></td>
+            <td style="width: 100%"></td>
+            <td class="corner"><img src="images/corner-tr-white.png" alt="" /></td>
+        </tr>
+        <tr>
+            <td><!-- Corner spacer --></td>
+            <td style="text-align: center">
+                <h2>glex</h2>
+                <h4>An OpenGL Extension Specification Parser</h4>
+            </td>
+            <td><!-- Corner spacer --></td>
+        </tr>
+        <tr>
+            <td class="corner"><img src="images/corner-bl-white.png" alt="" /></td>
+            <td style="width: 100%"></td>
+            <td class="corner"><img src="images/corner-br-white.png" alt="" /></td>
+        </tr>
+    </table>
+
+    <div style="height: 128px"></div>
+
+    <table style="width: 70%">
+        <tr>
+            <td class="corner"><img src="images/corner-tl.png" alt="" /></td>
+            <td style="width: 100%; background: url(images/edge-t.png) repeat-x"></td>
+            <td class="corner"><img src="images/corner-tr.png" alt="" /></td>
+        </tr>
+        <tr>
+            <td><!-- Corner spacer --></td>
+            <td style="padding: 10px">
+                Enter the URI or URL to OpenGL extension specification text file
+                (see e.g. <a href="http://www.opengl.org/registry/">http://www.opengl.org/registry/</a>):
+                <form action="parse.php">
+                    <p>
                         <input type="file" size="100%" accept="text/*" name="spec" />
                         <input type="button" value="Generate code" />
-                    </form>
-                </div>
-                <script type="text/javascript">roundedHeader(true,"#678285")</script>
+                    </p>
+                </form>
+            </td>
+            <td><!-- Corner spacer --></td>
+        </tr>
+        <tr>
+            <td class="corner"><img src="images/corner-bl.png" alt="" /></td>
+            <td style="width: 100%; background: url(images/edge-b.png) repeat-x"></td>
+            <td class="corner"><img src="images/corner-br.png" alt="" /></td>
+        </tr>
+    </table>
+
+    <div style="height: 128px"></div>
+
+    <table style="width: 50%">
+        <tr>
+            <td class="corner"><img src="images/corner-tl-white.png" alt="" /></td>
+            <td colspan="5" style="width: 100%"></td>
+            <td class="corner"><img src="images/corner-tr-white.png" alt="" /></td>
+        </tr>
+        <tr>
+            <td colspan="7" style="text-align: center; font-size: 8pt">
+                <a href="http://gale.berlios.de/glex/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> hostet at <a href="http://www.berlios.de/">BerliOS</a><br />
+                &nbsp;
             </td>
         </tr>
         <tr>
-            <td>
-                <script type="text/javascript">roundedHeader(false,"#c7d1d2")</script>
-                <div class="content">
-                    <a href="http://validator.w3.org/check?uri=referer">
-                        <img src="http://www.w3.org/Icons/valid-xhtml11" alt="Valid XHTML 1.1" width="88" height="31" />
-                    </a>
-                    <a href="http://jigsaw.w3.org/css-validator/check/referer">
-                        <img src="http://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS" width="88" height="31" />
-                    </a>
-                </div>
-                <script type="text/javascript">roundedHeader(true,"#678285")</script>
+            <td><!-- Corner spacer --></td>
+            <td style="width: 35%"><hr /></td>
+            <td style="text-align: center">
+                <a href="http://validator.w3.org/check?uri=referer">
+                    <img style="display: inline" src="images/valid-xhtml11.png" alt="Valid XHTML 1.1" />
+                </a>
             </td>
+            <td style="width: 5%"><hr /></td>
+            <td style="text-align: center">
+                <a href="http://jigsaw.w3.org/css-validator/check/referer">
+                    <img style="display: inline" src="images/valid-css.png" alt="Valid CSS" />
+                </a>
+            </td>
+            <td style="width: 35%"><hr /></td>
+            <td><!-- Corner spacer --></td>
+        </tr>
+        <tr>
+            <td class="corner"><img src="images/corner-bl-white.png" alt="" /></td>
+            <td colspan="5" style="width: 100%"></td>
+            <td class="corner"><img src="images/corner-br-white.png" alt="" /></td>
         </tr>
     </table>
 </body>
