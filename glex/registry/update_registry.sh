@@ -17,15 +17,17 @@ wget --execute="robots=off" \
      --accept=txt           \
      `sed -rn "s/; wget=(.+)/\1/p" *.url` `sed -rn "s/URL=(.+)/\1/p" *.url`
 
-#TODO: Delete *.txt files if any non-hidden sub-directory exists.
-#rm -f *.txt
-
-# Sort the specs into directories.
-for f in *.txt; do
-    F=`echo $f | tr [a-z] [A-Z]`
-    d=`echo $F | sed -r "s/(W?GL[XU]?_)?([A-Z0-9]+).+/\2/"`
-    mkdir -p $d
-    mv $f $d
-done
+if [ `find -type d -regex "\./[A-Z0-9]+" | wc -l` -gt 0 ]; then
+    # Delete all text files if any non-hidden sub-directory exist.
+    rm -fr *.txt doc/
+else
+    # Sort the specs into directories.
+    for f in *.txt; do
+        F=`echo $f | tr [a-z] [A-Z]`
+        d=`echo $F | sed -r "s/(W?GL[XU]?_)?([A-Z0-9]+).+/\2/"`
+        mkdir -p $d
+        mv $f $d
+    done
+fi
 
 popd > /dev/null
