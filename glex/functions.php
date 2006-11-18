@@ -56,10 +56,13 @@ function parseSpecIntoArray($spec,&$struct) {
     fclose($handle);
 }
 
-function extractProcsToFile($extension,$content) {
+function writeMacroHeader($extension,$content) {
+    global $local;
+
     $file=$extension.'_procs.h';
+    if (!$local)
+        $file=SERVER_TMP_DIRECTORY.$file;
     $handle=fopen($file,'w');
-    $file=strtoupper(strtr($file,'.','_'));
 
     // TODO: Verify / simplify these regular expressions.
     $type="\w+\s*\*?\w+\s*\*?";
@@ -99,6 +102,8 @@ function extractProcsToFile($extension,$content) {
     }
 
     fclose($handle);
+
+    return $file;
 }
 
 function extractTypesToString($content,&$types) {
@@ -122,13 +127,17 @@ function extractTypesToString($content,&$types) {
 }
 
 function writePrototypeHeader($extension,$content) {
+    global $local;
+
     $file=$extension.'.h';
+    if (!$local)
+        $file=SERVER_TMP_DIRECTORY.$file;
     $handle=fopen($file,'w');
-    $file=strtoupper(strtr($file,'.','_'));
+    $guard=strtoupper(strtr($file,'.','_'));
 
     // Write the inclusion guard header.
-    fwrite($handle,"#ifndef $file\n");
-    fwrite($handle,"#define $file\n\n");
+    fwrite($handle,"#ifndef $guard\n");
+    fwrite($handle,"#define $guard\n\n");
 
     fwrite($handle,"#define WIN32_LEAN_AND_MEAN\n");
     fwrite($handle,"#include <windows.h>\n");
@@ -158,13 +167,20 @@ function writePrototypeHeader($extension,$content) {
     fwrite($handle,"#endif\n\n");
 
     // Write the inclusion guard footer.
-    fwrite($handle,"#endif // $file\n");
+    fwrite($handle,"#endif // $guard\n");
 
     fclose($handle);
+
+    return $file;
 }
 
 function writeInitializationCode($extension) {
-    $handle=fopen($extension.'.c','w');
+    global $local;
+
+    $file=$extension.'.c';
+    if (!$local)
+        $file=SERVER_TMP_DIRECTORY.$file;
+    $handle=fopen($file,'w');
 
     fwrite($handle,'#include "'.$extension.'.h"'."\n\n");
 
@@ -187,6 +203,8 @@ function writeInitializationCode($extension) {
     fwrite($handle,"}\n");
 
     fclose($handle);
+
+    return $file;
 }
 
 ?>

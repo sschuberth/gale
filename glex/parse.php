@@ -10,13 +10,15 @@ $argv=$_SERVER['argv'];
 @$spec=$_REQUEST['spec'];
 @$debug=$_REQUEST['debug'];
 
+$local=($argv[0]==$_SERVER['PHP_SELF']);
+
 if (empty($spec)) {
-    if ($argv[0]==$_SERVER['PHP_SELF']) {
+    if ($local) {
         // When run from the command line, the spec has to be passed as an argument.
         exit('Usage: '.basename($argv[0]).' spec=<URI or URL to OpenGL extension specification text file>');
     } else {
         // If the script is run on a web server, prompt for the spec.
-        header("Location: index.html");
+        header('Location: index.html');
     }
 }
 
@@ -51,12 +53,27 @@ if (empty($content))
 // If this extension introduces new procedures and / or functions, create code
 // to initialize them.
 $extension=$struct['Name'];
-extractProcsToFile($extension,$content);
-writePrototypeHeader($extension,$content);
-writeInitializationCode($extension);
 
-//$handle=fopen($extension.'.c','r');
-//echo fgets($handle);
-//fclose($handle);
+$p=writeMacroHeader($extension,$content);
+$h=writePrototypeHeader($extension,$content);
+$c=writeInitializationCode($extension);
+
+//copy($p,"/home/users/eyebex/gale/glex/cache/a.txt");
+
+/*
+$zip=new ZipArchive();
+if ($zip->open('/home/users/eyebex/gale/glex/cache/'.$extension.'.zip',ZIPARCHIVE::CREATE)!==TRUE)
+   echo("Unable to create ZIP archive \"$filename\".");
+$zip->addFile($p);
+$zip->addFile($h);
+$zip->addFile($c);
+$zip->close();
+*/
+
+//header('Location: '.SERVER_TMP_DIRECTORY.$extension.'_procs.h');
+
+$handle=fopen($p,"r");
+echo fgets($handle);
+fclose($handle);
 
 ?>
