@@ -11,13 +11,13 @@ $argv=$_SERVER['argv'];
 @$debug=$_REQUEST['debug'];
 
 if (empty($spec)) {
-    if (empty($argv[0])) {
+    if ($argv[0]==$_SERVER['PHP_SELF']) {
+        // When run from the command line, the spec has to be passed as an argument.
+        exit('Usage: '.basename($argv[0]).' spec=<URI or URL to OpenGL extension specification text file>');
+    } else {
         // If the script is run on a web server, prompt for the spec.
         require_once 'form.php';
         return;
-    } else {
-        // When run from the command line, the spec has to be passed as an argument.
-        exit('Usage: '.basename($argv[0]).' spec=<URI or URL to OpenGL extension specification text file>');
     }
 }
 
@@ -46,13 +46,14 @@ foreach (array_keys($struct) as $section) {
     }
 }
 
+if (empty($content))
+    return;
+
 // If this extension introduces new procedures and / or functions, create code
 // to initialize them.
-if (!empty($content)) {
-    $extension=$struct['Name'];
-    extractProcsToFile($extension,$content);
-    writePrototypeHeader($extension,$content);
-    writeInitializationCode($extension);
-}
+$extension=$struct['Name'];
+extractProcsToFile($extension,$content);
+writePrototypeHeader($extension,$content);
+writeInitializationCode($extension);
 
 ?>
