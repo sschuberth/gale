@@ -39,18 +39,18 @@
             <td class="corner"><img src="images/corner-tr.png" alt="" /></td>
         </tr>
         <tr>
-            <td><!-- Corner spacer --></td>
-            <td style="padding: 10px">
+            <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
+            <td style="background-color: #d3e0e7; padding: 10px">
                 Enter the URI or URL to OpenGL extension specification text file
                 (see e.g. <a href="http://www.opengl.org/registry/">http://www.opengl.org/registry/</a>):
                 <form action="parse.php">
                     <p>
-                        <input type="file" size="100%" accept="text/*" name="spec" />
-                        <input type="button" value="Generate code" />
+                        <input type="text" size="100%" name="spec" />
+                        <input type="submit" value="Generate code" />
                     </p>
                 </form>
             </td>
-            <td><!-- Corner spacer --></td>
+            <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
         </tr>
         <tr>
             <td class="corner"><img src="images/corner-bl.png" alt="" /></td>
