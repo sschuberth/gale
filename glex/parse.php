@@ -16,8 +16,7 @@ if (empty($spec)) {
         exit('Usage: '.basename($argv[0]).' spec=<URI or URL to OpenGL extension specification text file>');
     } else {
         // If the script is run on a web server, prompt for the spec.
-        require_once 'form.php';
-        return;
+        header("Location: index.html");
     }
 }
 
@@ -55,5 +54,9 @@ $extension=$struct['Name'];
 extractProcsToFile($extension,$content);
 writePrototypeHeader($extension,$content);
 writeInitializationCode($extension);
+
+//$handle=fopen($extension.'.c','r');
+//echo fgets($handle);
+//fclose($handle);
 
 ?>
