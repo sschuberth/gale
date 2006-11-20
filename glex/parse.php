@@ -18,7 +18,7 @@ if (empty($spec)) {
         exit('Usage: '.basename($argv[0]).' spec=<URI or URL to OpenGL extension specification text file>');
     } else {
         // If the script is run on a web server, prompt for the spec.
-        header('Location: index.html');
+        header('Location: index.php');
     }
 }
 

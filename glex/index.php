@@ -133,6 +133,7 @@ if (empty($spec)) {
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
                 <a href="http://gale.berlios.de/glex/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a><br />
+                Source code high-lighting was performed by <a href="http://qbnz.com/highlighter/">GeSHi</a><br />
                 &nbsp;
             </td>
         </tr>
