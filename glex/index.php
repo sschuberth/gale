@@ -8,13 +8,28 @@
     <link type="text/css" href="style.css" rel="stylesheet" />
 </head>
 
+<?php
+
+function drawTableBorder($prefix,$color,$edge=false,$colspan=1) {
+    $color_url=urlencode($color);
+
+    echo '<tr>';
+    echo '<td class="corner"><img src="images/corner-'.$prefix.'l-'.$color_url.'.png" alt="" /></td>';
+
+    echo '<td colspan="'.$colspan.'" style="width: 100%; background-color: '.$color;
+    if ($edge)
+        echo '; background-image: url(images/edge-'.$prefix.'.png); background-repeat: repeat-x';
+    echo '"></td>';
+
+    echo '<td class="corner"><img src="images/corner-'.$prefix.'r-'.$color_url.'.png" alt="" /></td>';
+    echo '</tr>';
+}
+
+?>
+
 <body>
     <table style="width: 50%">
-        <tr>
-            <td class="corner"><img src="images/corner-tl-white.png" alt="" /></td>
-            <td style="width: 100%"></td>
-            <td class="corner"><img src="images/corner-tr-white.png" alt="" /></td>
-        </tr>
+        <?php drawTableBorder('t','white'); ?>
         <tr>
             <td><!-- Corner spacer --></td>
             <td style="text-align: center">
@@ -23,21 +38,77 @@
             </td>
             <td><!-- Corner spacer --></td>
         </tr>
-        <tr>
-            <td class="corner"><img src="images/corner-bl-white.png" alt="" /></td>
-            <td style="width: 100%"></td>
-            <td class="corner"><img src="images/corner-br-white.png" alt="" /></td>
-        </tr>
+        <?php drawTableBorder('b','white'); ?>
     </table>
 
-    <div style="height: 128px"></div>
+<?php
+
+if (empty($spec)) {
+    echo '<div style="height: 128px"></div>';
+} else {
+    include_once 'geshi/geshi.php';
+
+    $geshi=&new GeSHi();
+
+    $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
+    $geshi->set_overall_style('background-color: #c7d1d2;');
+    $geshi->set_line_style('background: #d3e0e7;');
+
+    echo '<div style="height: 32px"></div>';
+
+    // writeMacroHeader
+    echo '<table style="width: 70%">';
+        drawTableBorder('t','white');
+        echo '<tr><td><!-- Corner spacer --></td><td>'.basename($p).'</td><td><!-- Corner spacer --></td></tr>';
+        echo '<tr><td><!-- Corner spacer --></td><td>';
+
+        $geshi->load_from_file($p);
+        $geshi->set_language("cpp");
+        echo $geshi->parse_code();
+
+        echo '</td><td><!-- Corner spacer --></td></tr>';
+        drawTableBorder('b','white');
+    echo '</table>';
+
+    echo '<div style="height: 16px"></div>';
+
+    // writePrototypeHeader
+    echo '<table style="width: 70%">';
+        drawTableBorder('t','white');
+        echo '<tr><td><!-- Corner spacer --></td><td>'.basename($h).'</td><td><!-- Corner spacer --></td></tr>';
+        echo '<tr><td><!-- Corner spacer --></td><td>';
+
+        $geshi->load_from_file($h);
+        $geshi->set_language("cpp");
+        echo $geshi->parse_code();
+
+        echo '</td><td><!-- Corner spacer --></td></tr>';
+        drawTableBorder('b','white');
+    echo '</table>';
+
+    echo '<div style="height: 16px"></div>';
+
+    // writeInitializationCode
+    echo '<table style="width: 70%">';
+        drawTableBorder('t','white');
+        echo '<tr><td><!-- Corner spacer --></td><td>'.basename($c).'</td><td><!-- Corner spacer --></td></tr>';
+        echo '<tr><td><!-- Corner spacer --></td><td>';
+
+        $geshi->load_from_file($c);
+        $geshi->set_language("cpp");
+        echo $geshi->parse_code();
+
+        echo '</td><td><!-- Corner spacer --></td></tr>';
+        drawTableBorder('b','white');
+    echo '</table>';
+
+    echo '<div style="height: 32px"></div>';
+}
+
+?>
 
     <table style="width: 70%">
-        <tr>
-            <td class="corner"><img src="images/corner-tl.png" alt="" /></td>
-            <td style="width: 100%; background: url(images/edge-t.png) repeat-x"></td>
-            <td class="corner"><img src="images/corner-tr.png" alt="" /></td>
-        </tr>
+        <?php drawTableBorder('t','#c7d1d2',true); ?>
         <tr>
             <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
             <td style="background-color: #d3e0e7; padding: 10px">
@@ -45,28 +116,20 @@
                 (see e.g. <a href="http://www.opengl.org/registry/">http://www.opengl.org/registry/</a>):
                 <form action="parse.php">
                     <p>
-                        <input type="text" size="100%" name="spec" />
+                        <input type="text" size="100%" name="spec" value="<?= $spec ?>" />
                         <input type="submit" value="Generate code" />
                     </p>
                 </form>
             </td>
             <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
         </tr>
-        <tr>
-            <td class="corner"><img src="images/corner-bl.png" alt="" /></td>
-            <td style="width: 100%; background: url(images/edge-b.png) repeat-x"></td>
-            <td class="corner"><img src="images/corner-br.png" alt="" /></td>
-        </tr>
+        <?php drawTableBorder('b','#678285',true); ?>
     </table>
 
     <div style="height: 128px"></div>
 
     <table style="width: 50%">
-        <tr>
-            <td class="corner"><img src="images/corner-tl-white.png" alt="" /></td>
-            <td colspan="5" style="width: 100%"></td>
-            <td class="corner"><img src="images/corner-tr-white.png" alt="" /></td>
-        </tr>
+        <?php drawTableBorder('t','white',false,5); ?>
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
                 <a href="http://gale.berlios.de/glex/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a><br />
@@ -90,11 +153,7 @@
             <td style="width: 35%"><hr /></td>
             <td><!-- Corner spacer --></td>
         </tr>
-        <tr>
-            <td class="corner"><img src="images/corner-bl-white.png" alt="" /></td>
-            <td colspan="5" style="width: 100%"></td>
-            <td class="corner"><img src="images/corner-br-white.png" alt="" /></td>
-        </tr>
+        <?php drawTableBorder('b','white',false,5); ?>
     </table>
 </body>
 

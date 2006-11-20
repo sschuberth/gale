@@ -1,7 +1,8 @@
 body {
-    background: url(images/gradient.png) repeat-x;
+    background-image: url(images/gradient.png);
+    background-repeat: repeat-x;
+    background-attachment: fixed;
     font-family: Arial;
-    text-align: center;
 }
 
 hr {
@@ -25,7 +26,6 @@ table {
 td {
     background-color: white;
     padding: 0px;
-    text-align: left;
 }
 
 td.corner {

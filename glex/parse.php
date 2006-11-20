@@ -58,22 +58,7 @@ $p=writeMacroHeader($extension,$content);
 $h=writePrototypeHeader($extension,$content);
 $c=writeInitializationCode($extension);
 
-//copy($p,"/home/users/eyebex/gale/glex/cache/a.txt");
-
-/*
-$zip=new ZipArchive();
-if ($zip->open('/home/users/eyebex/gale/glex/cache/'.$extension.'.zip',ZIPARCHIVE::CREATE)!==TRUE)
-   echo("Unable to create ZIP archive \"$filename\".");
-$zip->addFile($p);
-$zip->addFile($h);
-$zip->addFile($c);
-$zip->close();
-*/
-
-//header('Location: '.SERVER_TMP_DIRECTORY.$extension.'_procs.h');
-
-$handle=fopen($p,"r");
-echo fgets($handle);
-fclose($handle);
+if (!$local)
+    require_once 'index.php';
 
 ?>
