@@ -58,48 +58,75 @@ if (empty($spec)) {
 
     // writeMacroHeader
     echo '<table style="width: 70%">';
-        drawTableBorder('t','white');
-        echo '<tr><td><!-- Corner spacer --></td><td>'.basename($p).'</td><td><!-- Corner spacer --></td></tr>';
-        echo '<tr><td><!-- Corner spacer --></td><td>';
+        drawTableBorder('t','white',false,2);
+
+        echo '
+        <tr>
+            <td><!-- Corner spacer --></td>
+            <td>'.basename($p).'</td>
+            <td style="width: 100%; padding-left: 10px"><hr /></td>
+            <td><!-- Corner spacer --></td>
+        </tr>
+        ';
+
+        echo '<tr><td><!-- Corner spacer --></td><td colspan="2">';
 
         $geshi->load_from_file($p);
         $geshi->set_language("cpp");
         echo $geshi->parse_code();
 
         echo '</td><td><!-- Corner spacer --></td></tr>';
-        drawTableBorder('b','white');
+        drawTableBorder('b','white',false,2);
     echo '</table>';
 
     echo '<div style="height: 16px"></div>';
 
     // writePrototypeHeader
     echo '<table style="width: 70%">';
-        drawTableBorder('t','white');
-        echo '<tr><td><!-- Corner spacer --></td><td>'.basename($h).'</td><td><!-- Corner spacer --></td></tr>';
-        echo '<tr><td><!-- Corner spacer --></td><td>';
+        drawTableBorder('t','white',false,2);
+
+        echo '
+        <tr>
+            <td><!-- Corner spacer --></td>
+            <td>'.basename($h).'</td>
+            <td style="width: 100%; padding-left: 10px"><hr /></td>
+            <td><!-- Corner spacer --></td>
+        </tr>
+        ';
+
+        echo '<tr><td><!-- Corner spacer --></td><td colspan="2">';
 
         $geshi->load_from_file($h);
         $geshi->set_language("cpp");
         echo $geshi->parse_code();
 
         echo '</td><td><!-- Corner spacer --></td></tr>';
-        drawTableBorder('b','white');
+        drawTableBorder('b','white',false,2);
     echo '</table>';
 
     echo '<div style="height: 16px"></div>';
 
     // writeInitializationCode
     echo '<table style="width: 70%">';
-        drawTableBorder('t','white');
-        echo '<tr><td><!-- Corner spacer --></td><td>'.basename($c).'</td><td><!-- Corner spacer --></td></tr>';
-        echo '<tr><td><!-- Corner spacer --></td><td>';
+        drawTableBorder('t','white',false,2);
+
+        echo '
+        <tr>
+            <td><!-- Corner spacer --></td>
+            <td>'.basename($c).'</td>
+            <td style="width: 100%; padding-left: 10px"><hr /></td>
+            <td><!-- Corner spacer --></td>
+        </tr>
+        ';
+
+        echo '<tr><td><!-- Corner spacer --></td><td colspan="2">';
 
         $geshi->load_from_file($c);
         $geshi->set_language("cpp");
         echo $geshi->parse_code();
 
         echo '</td><td><!-- Corner spacer --></td></tr>';
-        drawTableBorder('b','white');
+        drawTableBorder('b','white',false,2);
     echo '</table>';
 
     echo '<div style="height: 32px"></div>';
@@ -133,7 +160,7 @@ if (empty($spec)) {
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
                 <a href="http://gale.berlios.de/glex/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a><br />
-                Source code high-lighting was performed by <a href="http://qbnz.com/highlighter/">GeSHi</a><br />
+                Source code high-lighting is performed by <a href="http://qbnz.com/highlighter/">GeSHi</a><br />
                 &nbsp;
             </td>
         </tr>
