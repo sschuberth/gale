@@ -133,7 +133,7 @@ function writePrototypeHeader($extension,$content) {
     if (!$local)
         $file=SERVER_TMP_DIRECTORY.$file;
     $handle=fopen($file,'w');
-    $guard=strtoupper(strtr($file,'.','_'));
+    $guard=strtoupper(strtr(basename($file),'.','_'));
 
     // Write the inclusion guard header.
     fwrite($handle,"#ifndef $guard\n");
