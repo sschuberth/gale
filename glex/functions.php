@@ -140,7 +140,7 @@ function writePrototypeHeader($extension,$content) {
     fwrite($handle,"#define $guard\n\n");
 
     fwrite($handle,"#define WIN32_LEAN_AND_MEAN\n");
-    fwrite($handle,"#include <windows.h>\n");
+    fwrite($handle,"    #include <windows.h>\n");
     fwrite($handle,"#undef WIN32_LEAN_AND_MEAN\n");
     fwrite($handle,"#include <GL/gl.h>\n\n");
 
@@ -159,7 +159,7 @@ function writePrototypeHeader($extension,$content) {
     // Write the code that generates the prototype definitions.
     fwrite($handle,"// List the pointer prototypes for all functions of this extension.\n");
     fwrite($handle,"#define GLEX_PROC(t,n,a) extern t (APIENTRY *n) a\n");
-    fwrite($handle,'#include "'.$extension.'_procs.h"'."\n");
+    fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
     fwrite($handle,"#undef GLEX_PROC\n\n");
 
     fwrite($handle,"#ifdef __cplusplus\n");
@@ -187,7 +187,7 @@ function writeInitializationCode($extension) {
     // Write the code that generates the function pointer variables.
     fwrite($handle,"// Initialize all function pointers to 0.\n");
     fwrite($handle,"#define GLEX_PROC(t,n,a) t (APIENTRY *n) a=0\n");
-    fwrite($handle,'#include "'.$extension.'_procs.h"'."\n");
+    fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
     fwrite($handle,"#undef GLEX_PROC\n\n");
 
     // Write the code that initializes the function pointer variables.
@@ -196,7 +196,7 @@ function writeInitializationCode($extension) {
     fwrite($handle,"    GLboolean r=GL_TRUE;\n\n");
 
     fwrite($handle,"#define GLEX_PROC(t,n,a) r=r&&((n=(void*)wglGetProcAddress(#n))!=0)\n");
-    fwrite($handle,'#include "'.$extension.'_procs.h"'."\n");
+    fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
     fwrite($handle,"#undef GLEX_PROC\n\n");
 
     fwrite($handle,"    return r;\n");
