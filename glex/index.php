@@ -53,6 +53,7 @@ if (empty($spec)) {
     $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
     $geshi->set_overall_style('background-color: #c7d1d2;');
     $geshi->set_line_style('background: #d3e0e7;');
+    $geshi->set_header_type(GESHI_HEADER_DIV);
 
     echo '<div style="height: 32px"></div>';
 
