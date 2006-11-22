@@ -57,10 +57,10 @@ function parseSpecIntoArray($spec,&$struct) {
 }
 
 function writeMacroHeader($extension,$content) {
-    global $local;
+    global $cmdline;
 
     $file=$extension.'_procs.h';
-    if (!$local)
+    if (!$cmdline)
         $file=SERVER_TMP_DIRECTORY.$file;
     $handle=fopen($file,'w');
 
@@ -127,10 +127,10 @@ function writePrototypeHeader($extension,$content) {
         }
     }
 
-    global $local;
+    global $cmdline;
 
     $file=$extension.'.h';
-    if (!$local)
+    if (!$cmdline)
         $file=SERVER_TMP_DIRECTORY.$file;
     $handle=fopen($file,'w');
     $guard=strtoupper(strtr(basename($file),'.','_'));
@@ -175,10 +175,10 @@ function writePrototypeHeader($extension,$content) {
 }
 
 function writeInitializationCode($extension) {
-    global $local;
+    global $cmdline;
 
     $file=$extension.'.c';
-    if (!$local)
+    if (!$cmdline)
         $file=SERVER_TMP_DIRECTORY.$file;
     $handle=fopen($file,'w');
 

@@ -6,14 +6,18 @@ require_once 'functions.php';
 $argc=$_SERVER['argc'];
 $argv=$_SERVER['argv'];
 
-// Suppress any errors in case these variables are not set.
-@$spec=$_REQUEST['spec'];
-@$debug=$_REQUEST['debug'];
+$cmdline=($argv[0]==$_SERVER['PHP_SELF'] || empty($_SERVER['PHP_SELF']));
 
-$local=($argv[0]==$_SERVER['PHP_SELF'] || empty($_SERVER['PHP_SELF']));
+if ($cmdline) {
+    parse_str($argv[1]);
+} else {
+    // Suppress any errors in case these variables are not set.
+    @$spec=$_REQUEST['spec'];
+    @$debug=$_REQUEST['debug'];
+}
 
 if (empty($spec)) {
-    if ($local) {
+    if ($cmdline) {
         // When run from the command line, the spec has to be passed as an argument.
         exit('Usage: '.basename($argv[0]).' spec=<URI or URL to OpenGL extension specification text file>');
     } else {
@@ -50,7 +54,7 @@ foreach (array_keys($struct) as $section) {
 
 if (empty($content)) {
     $error='No valid content found';
-    if ($local) {
+    if ($cmdline) {
         // Print out the error message to the console.
         exit("Error: $error.");
     } else {
@@ -65,25 +69,25 @@ if (empty($content)) {
 // to initialize them.
 $extension=$struct['Name'];
 
-if ($local)
+if ($cmdline)
     echo 'Writing macro header ...';
 $p=writeMacroHeader($extension,$content);
-if ($local)
+if ($cmdline)
     echo ' saved as "'.$p."\".\n";
 
-if ($local)
+if ($cmdline)
     echo 'Writing prototype header ...';
 $h=writePrototypeHeader($extension,$content);
-if ($local)
+if ($cmdline)
     echo ' saved as "'.$h."\".\n";
 
-if ($local)
+if ($cmdline)
     echo 'Writing initialization code ...';
 $c=writeInitializationCode($extension);
-if ($local)
+if ($cmdline)
     echo ' saved as "'.$c."\".\n";
 
-if (!$local)
+if (!$cmdline)
     require_once 'index.php';
 
 ?>
