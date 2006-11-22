@@ -10,7 +10,7 @@ $argv=$_SERVER['argv'];
 @$spec=$_REQUEST['spec'];
 @$debug=$_REQUEST['debug'];
 
-$local=($argv[0]==$_SERVER['PHP_SELF']);
+$local=($argv[0]==$_SERVER['PHP_SELF'] || empty($_SERVER['PHP_SELF']));
 
 if (empty($spec)) {
     if ($local) {
@@ -19,6 +19,7 @@ if (empty($spec)) {
     } else {
         // If the script is run on a web server, prompt for the spec.
         header('Location: index.php');
+        return;
     }
 }
 
@@ -54,9 +55,23 @@ if (empty($content))
 // to initialize them.
 $extension=$struct['Name'];
 
+if ($local)
+    echo 'Writing macro header ...';
 $p=writeMacroHeader($extension,$content);
+if ($local)
+    echo ' saved as "'.$p."\".\n";
+
+if ($local)
+    echo 'Writing prototype header ...';
 $h=writePrototypeHeader($extension,$content);
+if ($local)
+    echo ' saved as "'.$h."\".\n";
+
+if ($local)
+    echo 'Writing initialization code ...';
 $c=writeInitializationCode($extension);
+if ($local)
+    echo ' saved as "'.$c."\".\n";
 
 if (!$local)
     require_once 'index.php';
