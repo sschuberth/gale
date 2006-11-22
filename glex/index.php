@@ -25,6 +25,30 @@ function drawTableBorder($prefix,$color,$edge=false,$colspan=1) {
     echo '</tr>';
 }
 
+function showSourceCode($file) {
+    global $geshi;
+
+    $f=basename($file);
+    echo '
+    <tr>
+        <td><!-- Corner spacer --></td>
+        <td><a href="download.php?file='.$f.'">'.$f.'</a></td>
+        <td style="width: 100%; padding-left: 10px"><hr /></td>
+        <td><!-- Corner spacer --></td>
+    </tr>
+    ';
+
+    echo '<tr>';
+    echo '<td><!-- Corner spacer --></td>';
+
+    $geshi->load_from_file($file);
+    $geshi->set_language("cpp");
+    echo '<td colspan="2">'.$geshi->parse_code().'</td>';
+
+    echo '<td><!-- Corner spacer --></td>';
+    echo '</tr>';
+}
+
 ?>
 
 <body>
@@ -60,23 +84,7 @@ if (empty($spec)) {
     // writeMacroHeader
     echo '<table style="width: 70%">';
         drawTableBorder('t','white',false,2);
-
-        echo '
-        <tr>
-            <td><!-- Corner spacer --></td>
-            <td>'.basename($p).'</td>
-            <td style="width: 100%; padding-left: 10px"><hr /></td>
-            <td><!-- Corner spacer --></td>
-        </tr>
-        ';
-
-        echo '<tr><td><!-- Corner spacer --></td><td colspan="2">';
-
-        $geshi->load_from_file($p);
-        $geshi->set_language("cpp");
-        echo $geshi->parse_code();
-
-        echo '</td><td><!-- Corner spacer --></td></tr>';
+        showSourceCode($p);
         drawTableBorder('b','white',false,2);
     echo '</table>';
 
@@ -85,23 +93,7 @@ if (empty($spec)) {
     // writePrototypeHeader
     echo '<table style="width: 70%">';
         drawTableBorder('t','white',false,2);
-
-        echo '
-        <tr>
-            <td><!-- Corner spacer --></td>
-            <td>'.basename($h).'</td>
-            <td style="width: 100%; padding-left: 10px"><hr /></td>
-            <td><!-- Corner spacer --></td>
-        </tr>
-        ';
-
-        echo '<tr><td><!-- Corner spacer --></td><td colspan="2">';
-
-        $geshi->load_from_file($h);
-        $geshi->set_language("cpp");
-        echo $geshi->parse_code();
-
-        echo '</td><td><!-- Corner spacer --></td></tr>';
+        showSourceCode($h);
         drawTableBorder('b','white',false,2);
     echo '</table>';
 
@@ -110,23 +102,7 @@ if (empty($spec)) {
     // writeInitializationCode
     echo '<table style="width: 70%">';
         drawTableBorder('t','white',false,2);
-
-        echo '
-        <tr>
-            <td><!-- Corner spacer --></td>
-            <td>'.basename($c).'</td>
-            <td style="width: 100%; padding-left: 10px"><hr /></td>
-            <td><!-- Corner spacer --></td>
-        </tr>
-        ';
-
-        echo '<tr><td><!-- Corner spacer --></td><td colspan="2">';
-
-        $geshi->load_from_file($c);
-        $geshi->set_language("cpp");
-        echo $geshi->parse_code();
-
-        echo '</td><td><!-- Corner spacer --></td></tr>';
+        showSourceCode($c);
         drawTableBorder('b','white',false,2);
     echo '</table>';
 
