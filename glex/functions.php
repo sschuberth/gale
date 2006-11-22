@@ -229,7 +229,7 @@ function showSourceCode($file) {
     echo '
     <tr>
         <td><!-- Corner spacer --></td>
-        <td><a href="download.php?file='.$f.'">'.$f.'</a></td>
+        <td><a href="download.php?file='.$f.'">'.$f.'</a>&nbsp;(<a href="download.php?file='.$f.'&unix2dos=1">DOS&nbsp;format</a>)</td>
         <td style="width: 100%; padding-left: 10px"><hr /></td>
         <td><!-- Corner spacer --></td>
     </tr>

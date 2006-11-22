@@ -6,7 +6,10 @@ if (!empty($file)) {
     header('Content-type: text/plain');
     header('Content-Disposition: attachment; filename="'.$file.'"');
 
-    readfile(SERVER_TMP_DIRECTORY.$file);
+    $code=file_get_contents(SERVER_TMP_DIRECTORY.$file);
+    if (!empty($unix2dos))
+        $code=preg_replace('/\n/',"\r\n",$code);
+    echo $code;
     return;
 }
 
