@@ -26,43 +26,64 @@
 
 <?php
 
-if (empty($spec)) {
-    echo '<div style="height: 128px"></div>';
+if (empty($error)) {
+    if (empty($spec)) {
+        echo '<div style="height: 128px"></div>';
+    } else {
+        include_once 'geshi/geshi.php';
+
+        $geshi=&new GeSHi();
+
+        $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
+        $geshi->set_overall_style('background-color: #c7d1d2;');
+        $geshi->set_line_style('background: #d3e0e7;');
+        $geshi->set_header_type(GESHI_HEADER_DIV);
+
+        echo '<div style="height: 32px"></div>';
+
+        // writeMacroHeader
+        echo '<table style="width: 70%">';
+            drawTableBorder('t','white',false,2);
+            showSourceCode($p);
+            drawTableBorder('b','white',false,2);
+        echo '</table>';
+
+        echo '<div style="height: 16px"></div>';
+
+        // writePrototypeHeader
+        echo '<table style="width: 70%">';
+            drawTableBorder('t','white',false,2);
+            showSourceCode($h);
+            drawTableBorder('b','white',false,2);
+        echo '</table>';
+
+        echo '<div style="height: 16px"></div>';
+
+        // writeInitializationCode
+        echo '<table style="width: 70%">';
+            drawTableBorder('t','white',false,2);
+            showSourceCode($c);
+            drawTableBorder('b','white',false,2);
+        echo '</table>';
+
+        echo '<div style="height: 32px"></div>';
+    }
 } else {
-    include_once 'geshi/geshi.php';
-
-    $geshi=&new GeSHi();
-
-    $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
-    $geshi->set_overall_style('background-color: #c7d1d2;');
-    $geshi->set_line_style('background: #d3e0e7;');
-    $geshi->set_header_type(GESHI_HEADER_DIV);
-
     echo '<div style="height: 32px"></div>';
 
-    // writeMacroHeader
-    echo '<table style="width: 70%">';
-        drawTableBorder('t','white',false,2);
-        showSourceCode($p);
-        drawTableBorder('b','white',false,2);
-    echo '</table>';
-
-    echo '<div style="height: 16px"></div>';
-
-    // writePrototypeHeader
-    echo '<table style="width: 70%">';
-        drawTableBorder('t','white',false,2);
-        showSourceCode($h);
-        drawTableBorder('b','white',false,2);
-    echo '</table>';
-
-    echo '<div style="height: 16px"></div>';
-
-    // writeInitializationCode
-    echo '<table style="width: 70%">';
-        drawTableBorder('t','white',false,2);
-        showSourceCode($c);
-        drawTableBorder('b','white',false,2);
+    echo '<table style="width: 50%">';
+        drawTableBorder('t','white');
+        echo '
+        <tr>
+            <td><!-- Corner spacer --></td>
+            <td style="text-align: center">
+                <h2>Error: '.$error.'</h2>
+                <h4>Please make sure the <a href="'.$spec.'">specification file</a> is valid.</h4>
+            </td>
+            <td><!-- Corner spacer --></td>
+        </tr>
+        ';
+        drawTableBorder('b','white');
     echo '</table>';
 
     echo '<div style="height: 32px"></div>';

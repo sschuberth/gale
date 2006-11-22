@@ -48,8 +48,18 @@ foreach (array_keys($struct) as $section) {
     }
 }
 
-if (empty($content))
+if (empty($content)) {
+    $error='No valid content found';
+    if ($local) {
+        // Print out the error message to the console.
+        exit("Error: $error.");
+    } else {
+        // If the script is run on a web server, display an error on the index page.
+        header('Location: index.php?spec='.$spec.'&error='.rawurlencode($error));
+        return;
+    }
     return;
+}
 
 // If this extension introduces new procedures and / or functions, create code
 // to initialize them.
