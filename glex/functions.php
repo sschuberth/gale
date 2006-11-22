@@ -106,27 +106,27 @@ function writeMacroHeader($extension,$content) {
     return $file;
 }
 
-function extractTypesToString($content,&$types) {
-    preg_match_all("/DECLARE_HANDLE.*(.*).*;/U",$content,$matches,PREG_SET_ORDER);
-    foreach ($matches as $type) {
-        list($all)=$type;
-        $types.="$all\n\n";
-    }
-
-    preg_match_all("/typedef(\s+\w+)+\s*;/U",$content,$matches,PREG_SET_ORDER);
-    foreach ($matches as $type) {
-        list($all)=$type;
-        $types.="$all\n\n";
-    }
-
-    preg_match_all("/typedef.*{.*}.*;/U",$content,$matches,PREG_SET_ORDER);
-    foreach ($matches as $type) {
-        list($all)=$type;
-        $types.="$all\n\n";
-    }
-}
-
 function writePrototypeHeader($extension,$content) {
+    function extractTypesToString($content,&$types) {
+        preg_match_all("/DECLARE_HANDLE.*(.*).*;/U",$content,$matches,PREG_SET_ORDER);
+        foreach ($matches as $type) {
+            list($all)=$type;
+            $types.="$all\n\n";
+        }
+
+        preg_match_all("/typedef(\s+\w+)+\s*;/U",$content,$matches,PREG_SET_ORDER);
+        foreach ($matches as $type) {
+            list($all)=$type;
+            $types.="$all\n\n";
+        }
+
+        preg_match_all("/typedef.*{.*}.*;/U",$content,$matches,PREG_SET_ORDER);
+        foreach ($matches as $type) {
+            list($all)=$type;
+            $types.="$all\n\n";
+        }
+    }
+
     global $local;
 
     $file=$extension.'.h';
@@ -205,6 +205,45 @@ function writeInitializationCode($extension) {
     fclose($handle);
 
     return $file;
+}
+
+function drawTableBorder($prefix,$color,$edge=false,$colspan=1) {
+    $color_url=urlencode($color);
+
+    echo '<tr>';
+    echo '<td class="corner"><img src="images/corner-'.$prefix.'l-'.$color_url.'.png" alt="" /></td>';
+
+    echo '<td colspan="'.$colspan.'" style="width: 100%; background-color: '.$color;
+    if ($edge)
+        echo '; background-image: url(images/edge-'.$prefix.'.png); background-repeat: repeat-x';
+    echo '"></td>';
+
+    echo '<td class="corner"><img src="images/corner-'.$prefix.'r-'.$color_url.'.png" alt="" /></td>';
+    echo '</tr>';
+}
+
+function showSourceCode($file) {
+    global $geshi;
+
+    $f=basename($file);
+    echo '
+    <tr>
+        <td><!-- Corner spacer --></td>
+        <td><a href="download.php?file='.$f.'">'.$f.'</a></td>
+        <td style="width: 100%; padding-left: 10px"><hr /></td>
+        <td><!-- Corner spacer --></td>
+    </tr>
+    ';
+
+    echo '<tr>';
+    echo '<td><!-- Corner spacer --></td>';
+
+    $geshi->load_from_file($file);
+    $geshi->set_language("cpp");
+    echo '<td colspan="2">'.$geshi->parse_code().'</td>';
+
+    echo '<td><!-- Corner spacer --></td>';
+    echo '</tr>';
 }
 
 ?>
