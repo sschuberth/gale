@@ -1,5 +1,7 @@
 <?php
 
+require_once 'functions.php';
+
 if (!empty($file)) {
     header('Content-type: text/plain');
     header('Content-Disposition: attachment; filename="'.$file.'"');
@@ -7,8 +9,6 @@ if (!empty($file)) {
     readfile(SERVER_TMP_DIRECTORY.$file);
     return;
 }
-
-require_once 'functions.php';
 
 header('HTTP/1.0 404 Not Found');
 
