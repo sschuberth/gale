@@ -67,7 +67,7 @@ if (empty($content)) {
 
 // If this extension introduces new procedures and / or functions, create code
 // to initialize them.
-$extension=$struct['Name'];
+$extension=GLEX_PREFIX.$struct['Name'];
 
 if ($cmdline)
     echo 'Writing macro header ...';
