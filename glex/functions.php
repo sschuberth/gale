@@ -139,16 +139,24 @@ function writePrototypeHeader($extension,$content) {
     fwrite($handle,"#ifndef $guard\n");
     fwrite($handle,"#define $guard\n\n");
 
-    fwrite($handle,"#define WIN32_LEAN_AND_MEAN\n");
-    fwrite($handle,"    #include <windows.h>\n");
-    fwrite($handle,"#undef WIN32_LEAN_AND_MEAN\n");
+    fwrite($handle,"#ifdef _WIN32\n");
+    fwrite($handle,"    #ifndef WIN32_LEAN_AND_MEAN\n");
+    fwrite($handle,"        #define WIN32_LEAN_AND_MEAN\n");
+    fwrite($handle,"        #include <windows.h>\n");
+    fwrite($handle,"        #undef WIN32_LEAN_AND_MEAN\n");
+    fwrite($handle,"    #else\n");
+    fwrite($handle,"        #include <windows.h>\n");
+    fwrite($handle,"    #endif\n");
+    fwrite($handle,"#endif\n\n");
+
     fwrite($handle,"#include <GL/gl.h>\n\n");
 
     fwrite($handle,"#ifdef __cplusplus\n");
     fwrite($handle,"extern \"C\" {\n");
     fwrite($handle,"#endif\n\n");
 
-    fwrite($handle,'extern GLboolean '.$extension."_init(void);\n\n");
+    fwrite($handle,'extern GLboolean '.$extension."_init(void);\n");
+    fwrite($handle,"extern GLboolean $extension;\n\n");
 
     extractTypesToString($content,$types);
     if (!empty($types)) {
@@ -190,16 +198,18 @@ function writeInitializationCode($extension) {
     fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
     fwrite($handle,"#undef GLEX_PROC\n\n");
 
+    fwrite($handle,"GLboolean $extension=GL_FALSE;\n\n");
+
     // Write the code that initializes the function pointer variables.
     fwrite($handle,"// Get the addresses for all functions of this extension.\n");
     fwrite($handle,'GLboolean '.$extension."_init(void) {\n");
-    fwrite($handle,"    GLboolean r=GL_TRUE;\n\n");
+    fwrite($handle,"    $extension=GL_TRUE;\n\n");
 
-    fwrite($handle,"#define GLEX_PROC(t,n,a) r=r&&((n=(void*)wglGetProcAddress(#n))!=0)\n");
+    fwrite($handle,"#define GLEX_PROC(t,n,a) $extension&=((*((void**)&n)=(void*)wglGetProcAddress(#n))!=0)\n");
     fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
     fwrite($handle,"#undef GLEX_PROC\n\n");
 
-    fwrite($handle,"    return r;\n");
+    fwrite($handle,"    return $extension;\n");
     fwrite($handle,"}\n");
 
     fclose($handle);
