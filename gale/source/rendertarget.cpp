@@ -3,7 +3,7 @@
 #include "gale/global/defines.h"
 #include "gale/global/platform.h"
 
-//#include "../../glex/WGL_ARB_pixel_format.h"
+#include "../../glex/GLEX_WGL_ARB_pixel_format.h"
 
 namespace gale {
 
@@ -65,7 +65,8 @@ RenderTarget::RenderTarget() {
     result=wglMakeCurrent(dc,rc);
     G_ASSERT(result!=FALSE)
 
-    //GLboolean r=WGL_ARB_pixel_format_init();
+    GLEX_WGL_ARB_pixel_format_init();
+    G_ASSERT(GLEX_WGL_ARB_pixel_format!=GL_FALSE)
 
     result=wglMakeCurrent(NULL,NULL);
     G_ASSERT(result!=FALSE)
