@@ -59,11 +59,6 @@ function parseSpecIntoArray($spec,&$struct) {
 function writeMacroHeader($extension,$content) {
     global $cmdline;
 
-    $file=$extension.'_procs.h';
-    if (!$cmdline)
-        $file=SERVER_TMP_DIRECTORY.$file;
-    $handle=fopen($file,'w');
-
     // TODO: Verify / simplify these regular expressions.
     $type="\w+\s*\*?\w+\s*\*?";
     $name="\w+";
@@ -91,14 +86,26 @@ function writeMacroHeader($extension,$content) {
             $arguments_length_max=$length;
     }
 
+    $file=$extension.'_procs.h';
+    if (!$cmdline)
+        $file=SERVER_TMP_DIRECTORY.$file;
+    $handle=fopen($file,'w');
+
+    $i=0;
     foreach ($matches as $procedure) {
+        if ($i++>0)
+            fwrite($handle,"\n");
+
         list($all,$type,$name,$arguments,$argument)=$procedure;
 
         // Write the padded function prototypes to a header file.
         $type=str_pad($type,$type_length_max+1);
         $name=str_pad($name,$name_length_max+1);
         $arguments=str_pad('('.$arguments.')',$arguments_length_max+2);
-        fwrite($handle,"GLEX_PROC( $type, $name, $arguments );\n");
+        fwrite($handle,"GLEX_PROC( $type, glex$name, $arguments );\n");
+        fwrite($handle,"#ifndef gl$name\n");
+        fwrite($handle,"    #define gl$name glex$name\n");
+        fwrite($handle,"#endif\n");
     }
 
     fclose($handle);
@@ -133,6 +140,7 @@ function writePrototypeHeader($extension,$content) {
     if (!$cmdline)
         $file=SERVER_TMP_DIRECTORY.$file;
     $handle=fopen($file,'w');
+
     $guard=strtoupper(strtr(basename($file),'.','_'));
 
     // Write the inclusion guard header.
