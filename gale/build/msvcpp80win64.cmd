@@ -14,7 +14,7 @@ set PATH=%cygwin%;%PATH%
 pushd "%~dp0..\..\glex"
 bash -c "export PATH=/bin && ./registry/update_registry.sh ./registry/OpenGL.org"
 bash -c "export PATH=/bin && ./glex.sh spec=./registry/OpenGL.org/ARB/wgl_pixel_format.txt"
-mv GLEX_*.* ..\gale\include\glex
+mv GLEX_*.* ..\gale\glex
 popd
 
 : Undo any changes to variables.
