@@ -104,13 +104,12 @@ function writeMacroHeader($extension,$content) {
         list($all,$type,$name,$arguments,$argument)=$procedure;
 
         // Write the padded function prototypes to a header file.
-        str_pad($type,$type_length_max+1);
-        $name_nopad=$name;
-        str_pad($name,$name_length_max+1);
-        $arguments=str_pad('('.$arguments.')',$arguments_length_max+2);
-        fwrite($handle,GLEX_PREFIX."PROC( $type, $name, $arguments );\n");
-        fwrite($handle,"#ifndef $name_nopad\n");
-        fwrite($handle,"    #define $name_nopad ".GLEX_PREFIX."$name_nopad\n");
+        $type_pad=str_pad($type,$type_length_max+1);
+        $name_pad=str_pad($name,$name_length_max+1);
+        $arguments_pad=str_pad('('.$arguments.')',$arguments_length_max+2);
+        fwrite($handle,GLEX_PREFIX."PROC( $type_pad, $name_pad, $arguments_pad );\n");
+        fwrite($handle,"#ifndef $name\n");
+        fwrite($handle,"    #define $name_pad".GLEX_PREFIX."$name\n");
         fwrite($handle,"#endif\n");
     }
 
