@@ -3,7 +3,7 @@
 #include "gale/global/defines.h"
 #include "gale/global/platform.h"
 
-#include "../../glex/GLEX_WGL_ARB_pixel_format.h"
+#include "GLEX_WGL_ARB_pixel_format.h"
 
 namespace gale {
 

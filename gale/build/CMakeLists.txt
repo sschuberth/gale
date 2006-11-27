@@ -1,13 +1,14 @@
 SET(project_name "gale")
 SET(header_root "../include")
 SET(source_root "../source")
+SET(glex_root "../glex")
 
 PROJECT(${project_name})
 
 # Specify any required include directories. The specified path is interpreted as
 # relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
 # file are absolute.
-INCLUDE_DIRECTORIES(${header_root})
+INCLUDE_DIRECTORIES(${header_root} ${glex_root})
 
 # Specify where to put the compiled library. This is relative to
 # CMAKE_CURRENT_BINARY_DIR, where the project file is located.
@@ -19,12 +20,13 @@ FILE(GLOB_RECURSE headers "${header_root}/*.h")
 
 # Build a sorted list of files while also specifying the groups they go to.
 FOREACH(header ${headers})
-    # Add the header to the list of files.
-    LIST(APPEND files ${header})
-
     # Determine the name of the group from the header's parent directory name.
     GET_FILENAME_COMPONENT(path ${header} PATH)
     GET_FILENAME_COMPONENT(group ${path} NAME)
+
+    # Add the header to the list of files.
+    LIST(APPEND files ${header})
+    SOURCE_GROUP(${group} FILES ${header})
 
     # Check if there is a source file for this header file, and add it to both
     # the list of files and the group if it exists.
@@ -32,11 +34,20 @@ FOREACH(header ${headers})
     GET_FILENAME_COMPONENT(source "${source_root}/${name}.cpp" ABSOLUTE)
     IF(EXISTS ${source})
         LIST(APPEND files ${source})
-        SOURCE_GROUP(${group} FILES ${header} ${source})
-    ELSE(EXISTS ${source})
-        SOURCE_GROUP(${group} FILES ${header})
+        SOURCE_GROUP(${group} FILES ${source})
     ENDIF(EXISTS ${source})
 ENDFOREACH(header ${headers})
+
+# Add OpenGL extension initialization code to the project.
+GET_FILENAME_COMPONENT(group ${glex_root} NAME)
+
+FILE(GLOB_RECURSE headers "${glex_root}/*.h")
+LIST(APPEND files ${headers})
+SOURCE_GROUP(${group} FILES ${headers})
+
+FILE(GLOB_RECURSE sources "${glex_root}/*.c")
+LIST(APPEND files ${sources})
+SOURCE_GROUP(${group} FILES ${sources})
 
 # This writes absolute paths to the generated files even if relative paths are
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
