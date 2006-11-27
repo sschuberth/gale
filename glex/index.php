@@ -35,7 +35,7 @@ if (empty($error)) {
         $geshi=&new GeSHi();
 
         $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
-        $geshi->set_overall_style('background-color: #c7d1d2;');
+        $geshi->set_overall_style('background-color: #c7d1d2; font-size: small;');
         $geshi->set_line_style('background: #d3e0e7;');
         $geshi->set_header_type(GESHI_HEADER_DIV);
 
