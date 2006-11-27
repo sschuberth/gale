@@ -6,7 +6,7 @@ function parseSpecIntoArray($spec,&$struct) {
     // Parse the sections and contents of the file into an associative array
     // that represents the file structure.
     $handle=@fopen($spec,'r') or
-        exit("Error: Unable to open the file \"$spec\" for reading.");
+        exit('Error: Unable to open the file "'.$spec.'" for reading.');
 
     $section=NULL;
     $content=NULL;
@@ -65,14 +65,19 @@ function writeMacroHeader($extension,$content) {
     $arguments="($type\s*,?\s*)*";
     preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;/",$content,$matches,PREG_SET_ORDER);
 
+    // If there is no lower case prefix, prepend "gl".
+    $match=&$matches[0][2];
+    if ($match>='A' && $match<='Z')
+        $match='gl'.$match;
+
     $type_length_max=0;
     $name_length_max=0;
     $arguments_length_max=0;
 
+    // Get the maximum string lengths for alignment.
     foreach ($matches as $procedure) {
         list($all,$type,$name,$arguments,$argument)=$procedure;
 
-        // Get the maximum string lengths for alignment.
         $length=strlen($type);
         if ($type_length_max<$length)
             $type_length_max=$length;
@@ -99,12 +104,13 @@ function writeMacroHeader($extension,$content) {
         list($all,$type,$name,$arguments,$argument)=$procedure;
 
         // Write the padded function prototypes to a header file.
-        $type=str_pad($type,$type_length_max+1);
-        $name=str_pad($name,$name_length_max+1);
+        str_pad($type,$type_length_max+1);
+        $name_nopad=$name;
+        str_pad($name,$name_length_max+1);
         $arguments=str_pad('('.$arguments.')',$arguments_length_max+2);
-        fwrite($handle,"GLEX_PROC( $type, glex$name, $arguments );\n");
-        fwrite($handle,"#ifndef gl$name\n");
-        fwrite($handle,"    #define gl$name glex$name\n");
+        fwrite($handle,GLEX_PREFIX."PROC( $type, $name, $arguments );\n");
+        fwrite($handle,"#ifndef $name_nopad\n");
+        fwrite($handle,"    #define $name_nopad ".GLEX_PREFIX."$name_nopad\n");
         fwrite($handle,"#endif\n");
     }
 
@@ -174,9 +180,9 @@ function writePrototypeHeader($extension,$content) {
 
     // Write the code that generates the prototype definitions.
     fwrite($handle,"// List the pointer prototypes for all functions of this extension.\n");
-    fwrite($handle,"#define GLEX_PROC(t,n,a) extern t (APIENTRY *n) a\n");
+    fwrite($handle,'#define '.GLEX_PREFIX.'PROC(t,n,a) extern t (APIENTRY *'.GLEX_PREFIX."##n) a\n");
     fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
-    fwrite($handle,"#undef GLEX_PROC\n\n");
+    fwrite($handle,'#undef '.GLEX_PREFIX."PROC\n\n");
 
     fwrite($handle,"#ifdef __cplusplus\n");
     fwrite($handle,"} // extern \"C\"\n");
@@ -202,9 +208,9 @@ function writeInitializationCode($extension) {
 
     // Write the code that generates the function pointer variables.
     fwrite($handle,"// Initialize all function pointers to 0.\n");
-    fwrite($handle,"#define GLEX_PROC(t,n,a) t (APIENTRY *n) a=0\n");
+    fwrite($handle,'#define '.GLEX_PREFIX.'PROC(t,n,a) t (APIENTRY *'.GLEX_PREFIX."##n) a=0\n");
     fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
-    fwrite($handle,"#undef GLEX_PROC\n\n");
+    fwrite($handle,'#undef '.GLEX_PREFIX."PROC\n\n");
 
     fwrite($handle,"GLboolean $extension=GL_FALSE;\n\n");
 
@@ -213,9 +219,9 @@ function writeInitializationCode($extension) {
     fwrite($handle,'GLboolean '.$extension."_init(void) {\n");
     fwrite($handle,"    $extension=GL_TRUE;\n\n");
 
-    fwrite($handle,"#define GLEX_PROC(t,n,a) $extension&=((*((void**)&n)=(void*)wglGetProcAddress(#n))!=0)\n");
+    fwrite($handle,'#define '.GLEX_PREFIX."PROC(t,n,a) $extension&=((*((void**)&".GLEX_PREFIX."##n)=(void*)wglGetProcAddress(#n))!=0)\n");
     fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
-    fwrite($handle,"#undef GLEX_PROC\n\n");
+    fwrite($handle,'#undef '.GLEX_PREFIX."PROC\n\n");
 
     fwrite($handle,"    return $extension;\n");
     fwrite($handle,"}\n");
