@@ -74,7 +74,7 @@ class ColorModel {
         double V=max(R,G,B);
 
         double delta=V-m;
-        double S=(v>0)?(delta/v):0;
+        double S=(V>0)?(delta/V):0;
 
         double H;
 
@@ -83,12 +83,16 @@ class ColorModel {
             double gd=(V-G)/delta;
             double bd=(V-B)/delta;
 
-            if (OpCmpEqualEps::evaluate(V,R))
-                H=OpCmpEqualEps::evaluate(m,G)?(5+bd):(1-gd);
-            else if (OpCmpEqualEps::evaluate(v,G))
-                H=OpCmpEqualEps::evaluate(m,B)?(1+rd):(3-bd);
-            else
-                H=OpCmpEqualEps::evaluate(m,R)?(3+gd):(5-rd);
+            if (R==V) {
+                // Red channel is the maximum, determine the minimum.
+                H=(G==m)?(5+bd):(1-gd);
+            } else if (G==V) {
+                // Green channel is the maximum, determine the minimum.
+                H=(B==m)?(1+rd):(3-bd);
+            } else {
+                // Blue channel is the maximum, determine the minimum.
+                H=(R==m)?(3+gd):(5-rd);
+            }
 
             H=(H<6)?(H*60):0;
         } else {
