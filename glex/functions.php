@@ -16,27 +16,32 @@ function parseSpecIntoArray($spec,&$struct) {
         $line=rtrim(fgets($handle));
         ++$i;
 
-        if (strlen($line)>OPENGL_SPEC_MAX_CHARS_PER_LINE)
+        if (strlen($line)>OPENGL_SPEC_MAX_CHARS_PER_LINE) {
             echo "Warning: Line $i exceeds the maximum of ".OPENGL_SPEC_MAX_CHARS_PER_LINE." characters.\n";
+        }
 
         // We can stop parsing when we have reached e.g. the revision history.
-        if (is_int(strpos($line,OPENGL_SPEC_BREAK_STRING)))
+        if (is_int(strpos($line,OPENGL_SPEC_BREAK_STRING))) {
             break;
+        }
 
         // Skip empty lines right from the start.
         $ltline=ltrim($line);
-        if (empty($ltline))
+        if (empty($ltline)) {
             continue;
+        }
 
         if ($line!=$ltline) {
             // Switch to content parsing mode until a new section header is found.
-            if (!empty($content))
+            if (!empty($content)) {
                 $content.=' ';
+            }
             $content.=$ltline;
         } else {
             // Skip comments as shown in the OpenGL extension document template.
-            if ($line[0]=='*')
+            if ($line[0]=='*') {
                 continue;
+            }
 
             // Add any new section and (possibly empty) content to the structure array.
             if (!is_null($section) && !is_null($content)) {
@@ -46,8 +51,9 @@ function parseSpecIntoArray($spec,&$struct) {
             }
 
             // Switch to section parsing mode until indented text in found.
-            if (!empty($section))
+            if (!empty($section)) {
                 $section.=' ';
+            }
             $section.=$line;
         }
     }
@@ -67,8 +73,9 @@ function writeMacroHeader($extension,$content) {
 
     // If there is no lower case prefix, prepend "gl".
     $match=&$matches[0][2];
-    if ($match>='A' && $match<='Z')
+    if ($match>='A' && $match<='Z') {
         $match='gl'.$match;
+    }
 
     $type_length_max=0;
     $name_length_max=0;
@@ -79,27 +86,32 @@ function writeMacroHeader($extension,$content) {
         list($all,$type,$name,$arguments,$argument)=$procedure;
 
         $length=strlen($type);
-        if ($type_length_max<$length)
+        if ($type_length_max<$length) {
             $type_length_max=$length;
+        }
 
         $length=strlen($name);
-        if ($name_length_max<$length)
+        if ($name_length_max<$length) {
             $name_length_max=$length;
+        }
 
         $length=strlen($arguments);
-        if ($arguments_length_max<$length)
+        if ($arguments_length_max<$length) {
             $arguments_length_max=$length;
+        }
     }
 
     $file=$extension.'_procs.h';
-    if (!$cmdline)
+    if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
+    }
     $handle=fopen($file,'w');
 
     $i=0;
     foreach ($matches as $procedure) {
-        if ($i++>0)
+        if ($i++>0) {
             fwrite($handle,"\n");
+        }
 
         list($all,$type,$name,$arguments,$argument)=$procedure;
 
@@ -142,8 +154,9 @@ function writePrototypeHeader($extension,$content) {
     global $cmdline;
 
     $file=$extension.'.h';
-    if (!$cmdline)
+    if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
+    }
     $handle=fopen($file,'w');
 
     $guard=strtoupper(strtr(basename($file),'.','_'));
@@ -199,8 +212,9 @@ function writeInitializationCode($extension) {
     global $cmdline;
 
     $file=$extension.'.c';
-    if (!$cmdline)
+    if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
+    }
     $handle=fopen($file,'w');
 
     fwrite($handle,'#include "'.$extension.'.h"'."\n\n");
@@ -237,8 +251,9 @@ function drawTableBorder($prefix,$color,$edge=false,$colspan=1) {
     echo '<td class="corner"><img src="images/corner-'.$prefix.'l-'.$color_url.'.png" alt="" /></td>';
 
     echo '<td colspan="'.$colspan.'" style="width: 100%; background-color: '.$color;
-    if ($edge)
+    if ($edge) {
         echo '; background-image: url(images/edge-'.$prefix.'.png); background-repeat: repeat-x';
+    }
     echo '"></td>';
 
     echo '<td class="corner"><img src="images/corner-'.$prefix.'r-'.$color_url.'.png" alt="" /></td>';
