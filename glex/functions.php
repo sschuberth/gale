@@ -65,16 +65,26 @@ function parseSpecIntoArray($spec,&$struct) {
 function writeMacroHeader($extension,$content) {
     global $cmdline;
 
+    /*
+     * Oddities
+     *
+     * No trailing semicolons and multi-line procedure declarations:
+     * http://oss.sgi.com/projects/ogl-sample/registry/ARB/shader_objects.txt
+     *
+     */
+
     // TODO: Verify / simplify these regular expressions.
     $type="\w+\s*\*?\w+\s*\*?";
     $name="\w+";
     $arguments="($type\s*,?\s*)*";
-    preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;/",$content,$matches,PREG_SET_ORDER);
+    preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;?/",$content,$matches,PREG_SET_ORDER);
 
     // If there is no lower case prefix, prepend "gl".
-    $match=&$matches[0][2];
-    if ($match>='A' && $match<='Z') {
-        $match='gl'.$match;
+    for ($i=0;$i<count($matches);++$i) {
+        $match=&$matches[$i][2];
+        if ($match[0]>='A' && $match[0]<='Z') {
+            $match='gl'.$match;
+        }
     }
 
     $type_length_max=0;
