@@ -74,7 +74,7 @@ function writeMacroHeader($extension,$content) {
      */
 
     // TODO: Verify / simplify these regular expressions.
-    $type="\w+\s*\*?\w+\s*\*?";
+    $type="\w+\s*\**\w+\s*\**";
     $name="\w+";
     $arguments="($type\s*,?\s*)*";
     preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;?/",$content,$matches,PREG_SET_ORDER);
