@@ -17,6 +17,7 @@
             <td><!-- Corner spacer --></td>
             <td style="text-align: center">
                 <h2>glex</h2>
+                <div style="font-size: 8pt">$Revision$ &bull; $Date$</div>
                 <h4>An OpenGL Extension Specification Parser</h4>
             </td>
             <td><!-- Corner spacer --></td>
@@ -141,7 +142,7 @@ if (empty($error)) {
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
                 &nbsp;
-                This is revision $Revision$ which was committed on $Date$
+                $Revision$ &bull; $Date$
             </td>
         </tr>
         <?php drawTableBorder('b','white',false,5); ?>
