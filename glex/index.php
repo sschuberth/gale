@@ -138,6 +138,11 @@ if (empty($error)) {
             <td style="width: 35%"><hr /></td>
             <td><!-- Corner spacer --></td>
         </tr>
+        <tr>
+            <td colspan="7" style="text-align: center; font-size: 8pt">
+                This is revision $Revision$ which was committed on $Date$.
+            </td>
+        </tr>
         <?php drawTableBorder('b','white',false,5); ?>
     </table>
 </body>

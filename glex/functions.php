@@ -67,6 +67,11 @@ function writeMacroHeader($extension,$content) {
 
     /*
      * Oddities
+     * --------
+     *
+     * Non-standard section caption for new procedures and functions, incl. a
+     * trailing colon:
+     * http://developer.download.nvidia.com/opengl/specs/WGL_nv_gpu_affinity.txt
      *
      * No trailing semicolons and multi-line procedure declarations:
      * http://oss.sgi.com/projects/ogl-sample/registry/ARB/shader_objects.txt
