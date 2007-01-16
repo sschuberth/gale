@@ -67,8 +67,10 @@ function writeMacroHeader($extension,$content) {
         $patterns=array(
             "/(^|\W)(\w+ARB)/",
             "/(^|\W)(boolean)/",
+            "/(^|\W)(clampd)/",
             "/(^|\W)(double)/",
             "/(^|\W)(enum)/",
+            "/(^|\W)(clampf)/",
             "/(^|\W)(float)/",
             "/(^|\W)(uint)/",
             "/(^|\W)(int)/",
@@ -156,7 +158,8 @@ function writeMacroHeader($extension,$content) {
         $type_pad=str_pad($type,$type_length_max+1);
         $name_pad=str_pad($name,$name_length_max+1);
         $arguments_pad=str_pad('('.$arguments.')',$arguments_length_max+2);
-        fwrite($handle,GLEX_PREFIX."PROC( $type_pad, $name_pad, $arguments_pad );\n");
+        //fwrite($handle,GLEX_PREFIX."PROC( $type_pad, $name_pad, $arguments_pad );\n");
+        fwrite($handle,GLEX_PREFIX."PROC( $type_pad, $name_pad, ($arguments) );\n");
         fwrite($handle,"#ifndef $name\n");
         fwrite($handle,"    #define $name_pad".GLEX_PREFIX."$name\n");
         fwrite($handle,"#endif\n");

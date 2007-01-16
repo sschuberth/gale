@@ -66,6 +66,15 @@ if (empty($error)) {
             drawTableBorder('b','white',false,2);
         echo '</table>';
 
+        echo '<div style="height: 16px"></div>';
+
+        // GLEX_globals.h
+        echo '<table style="width: 70%">';
+            drawTableBorder('t','white',false,2);
+            showSourceCode('GLEX_globals.h');
+            drawTableBorder('b','white',false,2);
+        echo '</table>';
+
         echo '<div style="height: 32px"></div>';
     }
 } else {
