@@ -63,6 +63,22 @@ function parseSpecIntoArray($spec,&$struct) {
 }
 
 function writeMacroHeader($extension,$content) {
+    function addDataTypePrefix(&$arguments) {
+        $patterns=array(
+            "/(^|\W)(\w+ARB)/",
+            "/(^|\W)(boolean)/",
+            "/(^|\W)(double)/",
+            "/(^|\W)(enum)/",
+            "/(^|\W)(float)/",
+            "/(^|\W)(uint)/",
+            "/(^|\W)(int)/",
+            "/(^|\W)(ushort)/",
+            "/(^|\W)(short)/",
+            "/(^|\W)(sizei)/"
+        );
+        $arguments=preg_replace($patterns,"\\1GL\\2",$arguments);
+    }
+
     global $cmdline;
 
     /*
@@ -84,12 +100,18 @@ function writeMacroHeader($extension,$content) {
     $arguments="($type\s*,?\s*)*";
     preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;?/",$content,$matches,PREG_SET_ORDER);
 
-    // If there is no lower case prefix, prepend "gl".
     for ($i=0;$i<count($matches);++$i) {
+        // For custom data types, prepend "GL".
+        addDataTypePrefix($matches[$i][1]);
+
+        // If there is no lower case prefix, prepend "gl" to the name.
         $match=&$matches[$i][2];
         if ($match[0]>='A' && $match[0]<='Z') {
             $match='gl'.$match;
         }
+
+        // For custom data types, prepend "GL".
+        addDataTypePrefix($matches[$i][3]);
     }
 
     $type_length_max=0;
@@ -191,6 +213,8 @@ function writePrototypeHeader($extension,$content) {
     fwrite($handle,"#endif\n\n");
 
     fwrite($handle,"#include <GL/gl.h>\n\n");
+
+    fwrite($handle,"#include \"GLEX_globals.h\"\n\n");
 
     fwrite($handle,"#ifdef __cplusplus\n");
     fwrite($handle,"extern \"C\" {\n");
