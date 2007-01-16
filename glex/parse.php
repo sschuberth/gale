@@ -79,29 +79,28 @@ $extension=GLEX_PREFIX.$struct['Name'];
 
 if ($cmdline) {
     echo 'Writing macro header ...';
-}
-$p=writeMacroHeader($extension,$content);
-if ($cmdline) {
+    $p=writeMacroHeader($extension,$content);
     echo ' saved as "'.$p."\".\n";
-}
 
-if ($cmdline) {
     echo 'Writing prototype header ...';
-}
-$h=writePrototypeHeader($extension,$content);
-if ($cmdline) {
+    $h=writePrototypeHeader($extension,$content);
     echo ' saved as "'.$h."\".\n";
-}
 
-if ($cmdline) {
     echo 'Writing initialization code ...';
-}
-$c=writeInitializationCode($extension);
-if ($cmdline) {
+    $c=writeInitializationCode($extension);
     echo ' saved as "'.$c."\".\n";
-}
 
-if (!$cmdline) {
+    $g='GLEX_globals.h';
+    if (file_exists($g)===FALSE) {
+        echo 'Copying globals header ...';
+        copy(dirname($argv[0]).'/'.$g,$g);
+        echo ' saved as "'.$g."\".\n";
+    }
+} else {
+    $p=writeMacroHeader($extension,$content);
+    $h=writePrototypeHeader($extension,$content);
+    $c=writeInitializationCode($extension);
+
     require_once 'index.php';
 }
 

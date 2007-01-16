@@ -1,2 +1,2 @@
 #!/bin/bash
-php -f parse.php $*
+php -f `dirname $0`/parse.php $*
