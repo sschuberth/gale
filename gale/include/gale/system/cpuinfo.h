@@ -565,7 +565,7 @@ class CPUInfo:public global::Singleton<CPUInfo> {
     int m_ext_feat_flags_ecx; ///< \copydoc m_ext_feat_flags_edx
 };
 
-/// For convenience, offer a pre-defined instance of the CPUInfo class.
+/// For convenience, offer a predefined instance of the CPUInfo class.
 extern CPUInfo& CPU;
 
 } // namespace system

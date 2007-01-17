@@ -63,7 +63,7 @@ class AttributeList {
         int pos=find(type);
         if (pos>0) {
             // Replace its value if the type already exists.
-            m_attributes[pos+1]=value
+            m_attributes[pos+1]=value;
             return false;
         }
 
@@ -125,10 +125,8 @@ class AttributeList {
         return -1;
     }
 
-    /// Current size of the list, i.e. the index of the terminating zero.
-    int m_size;
-    /// Tightly packed array of type / value pairs.
-    T m_attributes[N];
+    int m_size; ///< Current size of the list, i.e. the index of the terminating zero.
+    T m_attributes[N]; ///< Tightly packed array of type / value pairs.
 };
 
 #pragma pack(pop)
