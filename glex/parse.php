@@ -46,21 +46,35 @@ if ($debug==1) {
 }
 
 // Search for the section where new procedures and functions are defined.
+$remaining=2;
 foreach (array_keys($struct) as $section) {
     // We need to find strings like these (and variations):
     // "New Procedures and Functions"
     // "New Procedures, Functions and Structures:"
     if (preg_match('/New\W+Procedures\W+\w*\W*Functions/',$section)>0) {
-        $content=$struct[$section];
+        $procs=$struct[$section];
         if ($debug==1) {
             echo "*** debug *** Dumping procedures and functions section content\n";
-            echo $content."\n";
+            echo $procs."\n";
         }
+        --$remaining;
+    }
+
+    if (preg_match('/New\W+Tokens/',$section)>0) {
+        $tokens=$struct[$section];
+        if ($debug==1) {
+            echo "*** debug *** Dumping tokens section content\n";
+            echo $tokens."\n";
+        }
+        --$remaining;
+    }
+
+    if ($remaining==0) {
         break;
     }
 }
 
-if (empty($content)) {
+if (empty($procs)) {
     $error='No valid content found';
     if ($cmdline) {
         // Print out the error message to the console.
@@ -79,11 +93,11 @@ $extension=GLEX_PREFIX.$struct['Name'];
 
 if ($cmdline) {
     echo 'Writing macro header ...';
-    $p=writeMacroHeader($extension,$content);
+    $p=writeMacroHeader($extension,$procs);
     echo ' saved as "'.$p."\".\n";
 
     echo 'Writing prototype header ...';
-    $h=writePrototypeHeader($extension,$content);
+    $h=writePrototypeHeader($extension,$procs,$tokens);
     echo ' saved as "'.$h."\".\n";
 
     echo 'Writing initialization code ...';
@@ -97,8 +111,8 @@ if ($cmdline) {
         echo ' saved as "'.$g."\".\n";
     }
 } else {
-    $p=writeMacroHeader($extension,$content);
-    $h=writePrototypeHeader($extension,$content);
+    $p=writeMacroHeader($extension,$procs);
+    $h=writePrototypeHeader($extension,$procs);
     $c=writeInitializationCode($extension);
 
     require_once 'index.php';

@@ -62,7 +62,7 @@ function parseSpecIntoArray($spec,&$struct) {
     fclose($handle);
 }
 
-function writeMacroHeader($extension,$content) {
+function writeMacroHeader($extension,$procs) {
     function addDataTypePrefix(&$arguments) {
         $patterns=array(
             "/(^|\W)(\w+ARB)/",
@@ -100,7 +100,7 @@ function writeMacroHeader($extension,$content) {
     $type="\w+\s*\**\w+\s*\**";
     $name="\w+";
     $arguments="($type\s*,?\s*)*";
-    preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;?/",$content,$matches,PREG_SET_ORDER);
+    preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;?/",$procs,$matches,PREG_SET_ORDER);
 
     for ($i=0;$i<count($matches);++$i) {
         // For custom data types, prepend "GL".
@@ -170,25 +170,53 @@ function writeMacroHeader($extension,$content) {
     return $file;
 }
 
-function writePrototypeHeader($extension,$content) {
-    function extractTypesToString($content,&$types) {
-        preg_match_all("/DECLARE_HANDLE.*(.*).*;/U",$content,$matches,PREG_SET_ORDER);
+function writePrototypeHeader($extension,$procs,$tokens) {
+    function extractTypesToString($procs,&$types) {
+        preg_match_all("/DECLARE_HANDLE.*(.*).*;/U",$procs,$matches,PREG_SET_ORDER);
         foreach ($matches as $type) {
+            // Convert the array to a string and append it.
             list($all)=$type;
             $types.="$all\n\n";
         }
 
-        preg_match_all("/typedef(\s+\w+)+\s*;/U",$content,$matches,PREG_SET_ORDER);
+        preg_match_all("/typedef(\s+\w+)+\s*;/U",$procs,$matches,PREG_SET_ORDER);
         foreach ($matches as $type) {
+            // Convert the array to a string and append it.
             list($all)=$type;
             $types.="$all\n\n";
         }
 
-        preg_match_all("/typedef.*{.*}.*;/U",$content,$matches,PREG_SET_ORDER);
+        preg_match_all("/typedef.*{.*}.*;/U",$procs,$matches,PREG_SET_ORDER);
         foreach ($matches as $type) {
+            // Convert the array to a string and append it.
             list($all)=$type;
             $types.="$all\n\n";
         }
+    }
+
+    function extractTokensToString($tokens,&$defines) {
+        $name_length_max=0;
+        preg_match_all("/(\w+)\s+((0x)?[0-9a-fA-F]{4})/U",$tokens,$matches,PREG_SET_ORDER);
+
+        for ($i=0;$i<count($matches);++$i) {
+            $match=&$matches[$i][1];
+            if (!preg_match("/^W?GL_/",$match)) {
+                $match='GL_'.$match;
+            }
+
+            $name_length=strlen($match);
+            if ($name_length>$name_length_max) {
+                $name_length_max=$name_length;
+            }
+        }
+
+        foreach ($matches as $define) {
+            // Convert the array entries to strings.
+            list(,$name,$number)=$define;
+            $defines.='#define '.str_pad($name,$name_length_max+1).$number."\n";
+        }
+
+        $defines.="\n";
     }
 
     global $cmdline;
@@ -219,18 +247,24 @@ function writePrototypeHeader($extension,$content) {
 
     fwrite($handle,"#include \"GLEX_globals.h\"\n\n");
 
+    extractTokensToString($tokens,$defines);
+    if (!empty($defines)) {
+        fwrite($handle,"// List the defined tokens introduced by this extension.\n");
+        fwrite($handle,$defines);
+    }
+
+    extractTypesToString($procs,$types);
+    if (!empty($types)) {
+        fwrite($handle,"// List the data types introduced by this extension.\n");
+        fwrite($handle,$types);
+    }
+
     fwrite($handle,"#ifdef __cplusplus\n");
     fwrite($handle,"extern \"C\" {\n");
     fwrite($handle,"#endif\n\n");
 
     fwrite($handle,'extern GLboolean '.$extension."_init(void);\n");
     fwrite($handle,"extern GLboolean $extension;\n\n");
-
-    extractTypesToString($content,$types);
-    if (!empty($types)) {
-        fwrite($handle,"// List the data types introduced by this extension.\n");
-        fwrite($handle,$types);
-    }
 
     // Write the code that generates the prototype definitions.
     fwrite($handle,"// List the pointer prototypes for all functions of this extension.\n");
