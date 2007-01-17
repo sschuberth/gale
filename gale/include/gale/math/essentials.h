@@ -121,7 +121,9 @@ inline long long roundToEven(float const f) {
     // there is no need to save and restore the floating-point control word like
     // the C runtime does (see
     // http://web.archive.org/web/20041011125702/http://www.self-similar.com/rounding.html).
+
 #ifdef __GNUC__
+
     long long i;
     __asm__(
         "fistpl %0\n\t"
@@ -130,7 +132,9 @@ inline long long roundToEven(float const f) {
         : "st"
     );
     return i;
+
 #elif defined(_MSC_VER) && !defined(_WIN64)
+
     // MSVC 8.0 does not support inline assembly on the x64 platform.
     long long i;
     __asm {
@@ -138,17 +142,21 @@ inline long long roundToEven(float const f) {
         fistp i
     }
     return i;
+
 #else
+
     union {
         double f;
         long long i;
     } u;
+
     // Add a float bias that shifts the mantissa to the right, and then subtract
     // the bias as an integer again (see
     // http://groups.google.de/group/comp.graphics.algorithms/tree/browse_frm/thread/5099095b1cd1a78a/2b72601d013c7a0f).
     u.f=static_cast<double>(3LL<<51);
     u.f+=static_cast<double>(f);
     return u.i-0x4338000000000000;
+
 #endif
 }
 
@@ -160,6 +168,7 @@ inline long long roundToZero(float const f) {
         float f;
         long i;
     } u;
+
     // For positive numbers, this returns roundToEven(f-u.i). For negative
     // numbers, an additional two instructions are required negate this "magic"
     // number (see http://web.archive.org/web/20041011125702/http://www.self-similar.com/rounding.html).
@@ -188,6 +197,7 @@ inline long getLSBSet(unsigned int const x) {
         return -1;
 
 #ifdef __GNUC__
+
     long result;
     __asm__(
         "bsf %%ecx,%%eax\n\t"
@@ -196,19 +206,24 @@ inline long getLSBSet(unsigned int const x) {
         : "cc"
     );
     return result;
+
 #elif defined(_MSC_VER) && !defined(_WIN64)
+
     // MSVC 8.0 does not support inline assembly on the x64 platform.
     __asm {
         mov ebx,x
         bsf eax,ebx
     }
+
 #else
+
     long index=0;
     while ((x&1)==0) {
         ++index;
         x>>=1;
     }
     return index;
+
 #endif
 }
 
@@ -218,6 +233,7 @@ inline long getMSBSet(unsigned int const x) {
         return -1;
 
 #ifdef __GNUC__
+
     long result;
     __asm__(
         "bsr %%ecx,%%eax\n\t"
@@ -226,19 +242,24 @@ inline long getMSBSet(unsigned int const x) {
         : "cc"
     );
     return result;
+
 #elif defined(_MSC_VER) && !defined(_WIN64)
+
     // MSVC 8.0 does not support inline assembly on the x64 platform.
     __asm {
         mov ebx,x
         bsr eax,ebx
     }
+
 #else
+
     long index=31;
     while ((x&(1UL<<31))==0) {
         --index;
         x<<=1;
     }
     return index;
+
 #endif
 }
 
@@ -246,6 +267,7 @@ inline long getMSBSet(unsigned int const x) {
 /// for \a x=0 which returns 0.
 inline unsigned int getFloorPow2(unsigned int const x) {
 #ifdef __GNUC__
+
     unsigned int result;
     __asm__(
         "xor eax,eax\n\t"
@@ -256,7 +278,9 @@ inline unsigned int getFloorPow2(unsigned int const x) {
         : "c" (x)
     );
     return result;
+
 #elif defined(_MSC_VER) && !defined(_WIN64)
+
     // MSVC 8.0 does not support inline assembly on the x64 platform.
     __asm {
         mov ecx,x
@@ -265,11 +289,14 @@ inline unsigned int getFloorPow2(unsigned int const x) {
         setnz al
         shl eax,cl
     }
+
 #else
+
     long i=getMSBSet(x);
     if (i<0)
         return 0;
     return 1UL<<static_cast<unsigned int>(i);
+
 #endif
 }
 
@@ -277,6 +304,7 @@ inline unsigned int getFloorPow2(unsigned int const x) {
 /// except for \a x=0 and \a x>2147483648 which returns 0.
 inline unsigned int getCeilPow2(unsigned int const x) {
 #ifdef __GNUC__
+
     unsigned int result;
     __asm__(
         "xor eax,eax\n\t"
@@ -290,7 +318,9 @@ inline unsigned int getCeilPow2(unsigned int const x) {
         : "c" (x)
     );
     return result;
+
 #elif defined(_MSC_VER) && !defined(_WIN64)
+
     // MSVC 8.0 does not support inline assembly on the x64 platform.
     __asm {
         mov ecx,x
@@ -302,11 +332,14 @@ inline unsigned int getCeilPow2(unsigned int const x) {
         inc eax
         shl eax,cl
     }
+
 #else
+
     if (x==0)
         return 0;
     long i=getMSBSet(x-1)+1;
     return 1UL<<static_cast<unsigned int>(i);
+
 #endif
 }
 

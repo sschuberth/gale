@@ -49,7 +49,9 @@ CPUInfo::CPUInfo():
         // EBX = APIC ID, processor count, CLFLUSH size, brand ID
         // ECX = Standard feature flags (part 2)
         // EDX = Standard feature flags (part 1)
+
 #ifdef __GNUC__
+
         __asm__(
             "xorl %%eax,%%eax\n\t"
             "incl %%eax\n\t"
@@ -59,7 +61,9 @@ CPUInfo::CPUInfo():
             "popl %%ebx\n\t"
             : "=a" (m_std_misc_info), "=d" (m_std_feat_flags_edx), "=c" (m_std_feat_flags_ecx)
         );
+
 #else
+
         __asm {
             xor eax,eax
             inc eax
@@ -69,12 +73,15 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_std_feat_flags_edx,edx
             mov [eax]CPUInfo.m_std_feat_flags_ecx,ecx
         }
+
 #endif
     }
 
     if (getMaxCPUIDStdFunc()>=4) {
         // Required to get the number of cores on Intel processors.
+
 #ifdef __GNUC__
+
         __asm__(
             "movl $0x00000004,%%eax\n\t"
             "xorl %%ecx,%%ecx\n\t"
@@ -85,7 +92,9 @@ CPUInfo::CPUInfo():
             :
             : "%ecx", "%edx"
         );
+
 #else
+
         __asm {
             mov eax,00000004h
             xor ecx,ecx
@@ -93,6 +102,7 @@ CPUInfo::CPUInfo():
             mov ebx,this
             mov [ebx]CPUInfo.m_std_cache_params,eax
         }
+
 #endif
     }
 
@@ -102,7 +112,9 @@ CPUInfo::CPUInfo():
         // EBX = Reserved (Intel) / APIC ID etc. (AMD)
         // ECX = Extended feature flags (part 2)
         // EDX = Extended feature flags (part 1)
+
 #ifdef __GNUC__
+
         __asm__(
             "movl $0x80000001,%%eax\n\t"
             "pushl %%ebx\n\t"
@@ -112,7 +124,9 @@ CPUInfo::CPUInfo():
             :
             : "%eax"
         );
+
 #else
+
         __asm {
             mov eax,80000001h
             cpuid
@@ -120,12 +134,15 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_ext_feat_flags_edx,edx
             mov [eax]CPUInfo.m_ext_feat_flags_ecx,ecx
         }
+
 #endif
     }
 
     if (getMaxCPUIDExtFunc()>=8) {
         // Required to get the number of cores on AMD processors.
+
 #ifdef __GNUC__
+
         __asm__(
             "movl $0x80000008,%%eax\n\t"
             "pushl %%ebx\n\t"
@@ -135,13 +152,16 @@ CPUInfo::CPUInfo():
             :
             : "%eax", "%edx"
         );
+
 #else
+
         __asm {
             mov eax,80000008h
             cpuid
             mov eax,this
             mov [eax]CPUInfo.m_ext_address_sizes,ecx
         }
+
 #endif
     }
 }
@@ -251,16 +271,22 @@ __declspec(naked) unsigned int CPUInfo::getMaxCPUIDStdFunc() {
         xor eax,eax
         cpuid
         pop edi
+
 #ifdef __INTEL_COMPILER
+
         mov [edi+CPUInfo.m_vendor],ebx
         mov [edi+CPUInfo.m_vendor+4],edx
         mov [edi+CPUInfo.m_vendor+8],ecx
+
 #else
+
         lea edi,[edi]CPU.m_vendor
         mov [edi],ebx
         mov [edi+4],edx
         mov [edi+8],ecx
+
 #endif
+
         pop edi
         pop ebx
         ret

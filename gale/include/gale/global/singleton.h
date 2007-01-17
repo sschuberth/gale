@@ -54,6 +54,7 @@ class Singleton {
 
     /// Prevent the creation of a new singleton instance.
     Singleton() {}
+
     /// Prevent the destruction, e.g. via pointer deletion.
     ~Singleton() {}
 
@@ -61,6 +62,7 @@ class Singleton {
 
     /// Disable automatic copy constructor generation by the compiler.
     Singleton(Singleton const&);
+
     /// Disable assignments (which always are self-assignments for singletons).
     Singleton& operator=(Singleton const&);
 };

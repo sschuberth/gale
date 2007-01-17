@@ -337,6 +337,7 @@ class TupleBase {
     //@}
 
 #ifndef GALE_TINY
+
     /**
      * \name Streaming input / output methods
      */
@@ -358,12 +359,12 @@ class TupleBase {
     }
 
     //@}
+
 #endif
 
   protected:
 
-    /// Tightly packed array of \a N elements of type \a T.
-    T m_data[N];
+    T m_data[N]; ///< Tightly packed array of \a N elements of type \a T.
 };
 
 #pragma pack(pop)

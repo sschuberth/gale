@@ -207,6 +207,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
     /// are not visible until instantiation time because they do not dependent
     /// on template arguments.
     typedef TupleBase<N,T,Color<N,T> > Base;
+
     /// \copydoc Base
     typedef ColorModel<T> Model;
 
