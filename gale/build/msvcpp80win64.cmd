@@ -10,11 +10,14 @@ if "%1" == "" (
 set OLD_PATH=%PATH%
 set PATH=%cygwin%;%PATH%
 
+pushd "%~dp0..\glex"
+
 : Download and parse the OpenGL extension registry.
-pushd "%~dp0..\..\glex"
-bash -c "export PATH=/bin && ./registry/update_registry.sh ./registry/OpenGL.org"
-bash -c "export PATH=/bin && ./glex.sh spec=./registry/OpenGL.org/ARB/wgl_pixel_format.txt"
-mv GLEX_*.* ..\gale\glex
+bash -c "export PATH=/bin && ../../glex/registry/update_registry.sh ../../glex/registry/OpenGL.org"
+
+: List the extensions used in the project.
+bash -c "export PATH=/bin && ../../glex/glex.sh spec=../../glex/registry/OpenGL.org/ARB/wgl_pixel_format.txt"
+
 popd
 
 : Undo any changes to variables.
