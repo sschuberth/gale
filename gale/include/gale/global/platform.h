@@ -68,4 +68,6 @@
     #include <unistd.h>
 #endif
 
+#include <GL/gl.h>
+
 #endif // PLATFORM_H
