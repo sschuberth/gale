@@ -112,7 +112,7 @@ if ($cmdline) {
     }
 } else {
     $p=writeMacroHeader($extension,$procs);
-    $h=writePrototypeHeader($extension,$procs);
+    $h=writePrototypeHeader($extension,$procs,$tokens);
     $c=writeInitializationCode($extension);
 
     require_once 'index.php';
