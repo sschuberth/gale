@@ -2,6 +2,14 @@
 
 require_once 'constants.php';
 
+function getFunctionsRevision() {
+    return '$Revision$';
+}
+
+function getFunctionsDate() {
+    return '$Date$';
+}
+
 function parseSpecIntoArray($spec,&$struct) {
     // Parse the sections and contents of the file into an associative array
     // that represents the file structure.
@@ -216,7 +224,9 @@ function writePrototypeHeader($extension,$procs,$tokens) {
             $defines.='#define '.str_pad($name,$name_length_max+1).$number."\n";
         }
 
-        $defines.="\n";
+        if (!empty($defines)) {
+            $defines.="\n";
+        }
     }
 
     global $cmdline;

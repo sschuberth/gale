@@ -150,7 +150,7 @@ if (empty($error)) {
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
                 &nbsp;<br />
-                $Revision$ &bull; $Date$
+                <?= getFunctionsRevision(); ?> &bull; <?= getFunctionsDate(); ?>
             </td>
         </tr>
         <?php drawTableBorder('b','white',false,5); ?>
