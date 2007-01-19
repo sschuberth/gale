@@ -21,7 +21,8 @@ void test_tuple();
 void test_vector();
 void test_color();
 
-int main() {
+int main()
+{
     cout << "Found "
          << CPU.getCoresPerProcessor()
          << " core(s) per processor, each supporting "
@@ -59,7 +60,8 @@ int main() {
     return 0;
 }
 
-void test_tuple() {
+void test_tuple()
+{
     cout << "Check construction of objects ..."
          << endl;
     Tuple<2,int> t2i_a(1,2),t2i_b(rand(),rand());
@@ -257,7 +259,8 @@ void test_tuple() {
     }
 }
 
-void test_vector() {
+void test_vector()
+{
     double s;
     Timer t;
     unsigned int ms;
@@ -352,7 +355,8 @@ void test_vector() {
     cout << "Time elapsed: " << s << " seconds." << endl;
 }
 
-void test_color() {
+void test_color()
+{
     Col3d black=Col3d::BLACK();
     static Col3d const col3d(Col3d::getMinIntensity(),Col3d::getMinIntensity(),Col3d::getMinIntensity());
     G_ASSERT(col3d==black)

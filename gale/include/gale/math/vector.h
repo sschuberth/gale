@@ -51,7 +51,8 @@ namespace math {
  * \endcode
  */
 template<unsigned int N,typename T>
-class Vector:public TupleBase<N,T,Vector<N,T> > {
+class Vector:public TupleBase<N,T,Vector<N,T> >
+{
     /// This type definition simplifies base class access to identifiers that
     /// are not visible until instantiation time because they do not dependent
     /// on template arguments.
@@ -237,8 +238,9 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     /// Normalizes this vector so its length equals 1 (if it is not very small).
     Vector& normalize() {
         double length=getLength();
-        if (length>std::numeric_limits<T>::epsilon())
+        if (length>std::numeric_limits<T>::epsilon()) {
             (*this)/=T(length);
+        }
         return *this;
     }
 
@@ -288,9 +290,12 @@ class Vector:public TupleBase<N,T,Vector<N,T> > {
     Vector getOrthoVector() const {
         // Try the x-axis to create an orthogonal vector.
         Vector v=getCrossProduct(Vector::X());
+
         // If the x-axis is (almost) collinear to this vector, take the y-axis.
-        if (v.getLengthSquared()<=std::numeric_limits<T>::epsilon())
+        if (v.getLengthSquared()<=std::numeric_limits<T>::epsilon()) {
             v=getCrossProduct(Vector::Y());
+        }
+
         return v;
     }
 

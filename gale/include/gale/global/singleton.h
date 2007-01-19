@@ -40,8 +40,8 @@ namespace global {
  * C++" by Scott Meyers (Addison-Wesley, 1996a), item 26.
  */
 template<class C>
-class Singleton {
-
+class Singleton
+{
   public:
 
     /// Returns a reference to the one and only instance of this class.

@@ -45,8 +45,8 @@ namespace system {
  * used to pass attributes to several API calls.
  */
 template<typename T,int N=256>
-class AttributeList {
-
+class AttributeList
+{
   public:
 
     /// Creates an empty list.
@@ -88,8 +88,9 @@ class AttributeList {
         // Remove the attribute by overwriting it with succeeding attributes.
         while (pos<m_size) {
             m_attributes[pos]=m_attributes[pos+2];
-            if (m_attributes[pos]==0)
+            if (m_attributes[pos]==0) {
                 break;
+            }
             ++pos;
             m_attributes[pos]=m_attributes[pos+2];
             ++pos;
@@ -118,10 +119,12 @@ class AttributeList {
         while (i<m_size) {
             // Avoid warnings about floating-point comparisons being unreliable.
             int type_int=static_cast<int>(m_attributes[i]);
-            if (type_int==0)
+            if (type_int==0) {
                 break;
-            if (type_int==static_cast<int>(type))
+            }
+            if (type_int==static_cast<int>(type)) {
                 return i;
+            }
             i+=2;
         }
         return -1;

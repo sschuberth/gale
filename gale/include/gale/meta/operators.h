@@ -39,7 +39,8 @@ namespace gale {
 namespace meta {
 
 /// Assignment operator.
-struct OpAssign {
+struct OpAssign
+{
     /// Sets \a a to \a b (used e.g. to explicitly cast to type \a A).
     template<typename A,typename B>
     static G_INLINE void evaluate(A& a,B const& b) {
@@ -48,7 +49,8 @@ struct OpAssign {
 };
 
 /// Negating assignment operator.
-struct OpAssignNeg {
+struct OpAssignNeg
+{
     /// Negates \a b and stores the result into \a a.
     template<typename A,typename B>
     static G_INLINE void evaluate(A& a,B const& b) {
@@ -57,7 +59,8 @@ struct OpAssignNeg {
 };
 
 /// Increment operator.
-struct OpArithInc {
+struct OpArithInc
+{
     /// Adds \a b to \a a.
     template<typename A,typename B>
     static G_INLINE void evaluate(A& a,B const& b) {
@@ -66,7 +69,8 @@ struct OpArithInc {
 };
 
 /// Decrement operator.
-struct OpArithDec {
+struct OpArithDec
+{
     /// Subtracts \a b from \a a.
     template<typename A,typename B>
     static G_INLINE void evaluate(A& a,B const& b) {
@@ -75,7 +79,8 @@ struct OpArithDec {
 };
 
 /// Multiplication operator.
-struct OpArithMul {
+struct OpArithMul
+{
     /// Multiplies \a a by \a b.
     template<typename A,typename B>
     static G_INLINE void evaluate(A& a,B const& b) {
@@ -84,7 +89,8 @@ struct OpArithMul {
 };
 
 /// Reciprocal operator.
-struct OpArithReci {
+struct OpArithReci
+{
     /// Calculates the reciprocal of \a b and stores the result into \a a.
     template<typename A,typename B>
     static G_INLINE void evaluate(A& a,B const& b) {
@@ -94,7 +100,8 @@ struct OpArithReci {
 };
 
 /// Boolean "less" comparison operator.
-struct OpCmpLess {
+struct OpCmpLess
+{
     /// Returns whether \a a is less than \a b.
     template<typename A,typename B>
     static G_INLINE bool evaluate(A const& a,B const& b) {
@@ -103,7 +110,8 @@ struct OpCmpLess {
 };
 
 /// Boolean "less or equal" comparison operator.
-struct OpCmpLessEqual {
+struct OpCmpLessEqual
+{
     /// Returns whether \a a is less than or equal to \a b.
     template<typename A,typename B>
     static G_INLINE bool evaluate(A const& a,B const& b) {
@@ -112,7 +120,8 @@ struct OpCmpLessEqual {
 };
 
 /// Boolean "greater" comparison operator.
-struct OpCmpGreater {
+struct OpCmpGreater
+{
     /// Returns whether \a a is greater than \a b.
     template<typename A,typename B>
     static G_INLINE bool evaluate(A const& a,B const& b) {
@@ -121,7 +130,8 @@ struct OpCmpGreater {
 };
 
 /// Boolean "greater or equal" comparison operator.
-struct OpCmpGreaterEqual {
+struct OpCmpGreaterEqual
+{
     /// Returns whether \a a is greater than or equal to \a b.
     template<typename A,typename B>
     static G_INLINE bool evaluate(A const& a,B const& b) {
@@ -130,7 +140,8 @@ struct OpCmpGreaterEqual {
 };
 
 /// Boolean "equal" comparison operator.
-struct OpCmpEqualEps {
+struct OpCmpEqualEps
+{
     /// Returns whether \a a equals \a b using an epsilon-environment depending
     /// on the data type's precision.
     template<typename T>
@@ -143,7 +154,8 @@ struct OpCmpEqualEps {
 };
 
 /// Minimum determination operator.
-struct OpCalcMin {
+struct OpCalcMin
+{
     /// Returns the minimum of \a a and \a b which need to be of the same data
     /// type so casts (and thus temporary copies) can be avoided.
     template<typename T>
@@ -153,7 +165,8 @@ struct OpCalcMin {
 };
 
 /// Maximum determination operator.
-struct OpCalcMax {
+struct OpCalcMax
+{
     /// Returns the maximum of \a a and \a b which need to be of the same data
     /// type so casts (and thus temporary copies) can be avoided.
     template<typename T>
@@ -163,7 +176,8 @@ struct OpCalcMax {
 };
 
 /// Linear interpolation operator.
-struct OpCalcLerp {
+struct OpCalcLerp
+{
     /// Returns the linear interpolation between \a a and \a b based on \a c,
     /// casted to type \a A.
     template<typename A,typename B,typename C>
@@ -173,7 +187,8 @@ struct OpCalcLerp {
 };
 
 /// Product calculation operator.
-struct OpCalcProd {
+struct OpCalcProd
+{
     /// Returns the product of \a a times \a b.
     template<typename A,typename B>
     static G_INLINE A evaluate(A const& a,B const& b) {

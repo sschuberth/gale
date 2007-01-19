@@ -47,7 +47,8 @@ namespace system {
  * - AMD CPUID Specification
  *   http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/25481.pdf
  */
-class CPUInfo:public global::Singleton<CPUInfo> {
+class CPUInfo:public global::Singleton<CPUInfo>
+{
     friend class global::Singleton<CPUInfo>;
 
   public:
@@ -90,56 +91,80 @@ class CPUInfo:public global::Singleton<CPUInfo> {
     /// Returns if this is an Intel CPU.
     bool isIntel() const {
         int const* vendor=reinterpret_cast<int const*>(&m_vendor);
-        if (*vendor!=MAKE_DWORD('G','e','n','u'))
+        if (*vendor!=MAKE_DWORD('G','e','n','u')) {
             return false;
+        }
+
         ++vendor;
-        if (*vendor!=MAKE_DWORD('i','n','e','I'))
+        if (*vendor!=MAKE_DWORD('i','n','e','I')) {
             return false;
+        }
+
         ++vendor;
-        if (*vendor!=MAKE_DWORD('n','t','e','l'))
+        if (*vendor!=MAKE_DWORD('n','t','e','l')) {
             return false;
+        }
+
         return true;
     }
 
     /// Returns if this is an AMD CPU.
     bool isAMD() const {
         int const* vendor=reinterpret_cast<int const*>(&m_vendor);
-        if (*vendor!=MAKE_DWORD('A','u','t','h'))
+        if (*vendor!=MAKE_DWORD('A','u','t','h')) {
             return false;
+        }
+
         ++vendor;
-        if (*vendor!=MAKE_DWORD('e','n','t','i'))
+        if (*vendor!=MAKE_DWORD('e','n','t','i')) {
             return false;
+        }
+
         ++vendor;
-        if (*vendor!=MAKE_DWORD('c','A','M','D'))
+        if (*vendor!=MAKE_DWORD('c','A','M','D')) {
             return false;
+        }
+
         return true;
     }
 
     /// Returns if this is a Cyrix / VIA CPU.
     bool isCyrix() const {
         int const* vendor=reinterpret_cast<int const*>(&m_vendor);
-        if (*vendor!=MAKE_DWORD('C','y','r','i'))
+        if (*vendor!=MAKE_DWORD('C','y','r','i')) {
             return false;
+        }
+
         ++vendor;
-        if (*vendor!=MAKE_DWORD('x','I','n','s'))
+        if (*vendor!=MAKE_DWORD('x','I','n','s')) {
             return false;
+        }
+
         ++vendor;
-        if (*vendor!=MAKE_DWORD('t','e','a','d'))
+        if (*vendor!=MAKE_DWORD('t','e','a','d')) {
             return false;
+        }
+
         return true;
     }
 
     /// Returns if this is a Centaur / VIA CPU.
     bool isCentaur() const {
         int const* vendor=reinterpret_cast<int const*>(&m_vendor);
-        if (*vendor!=MAKE_DWORD('C','e','n','t'))
+        if (*vendor!=MAKE_DWORD('C','e','n','t')) {
             return false;
+        }
+
         ++vendor;
-        if (*vendor!=MAKE_DWORD('a','u','r','H'))
+        if (*vendor!=MAKE_DWORD('a','u','r','H')) {
             return false;
+        }
+
         ++vendor;
-        if (*vendor!=MAKE_DWORD('a','u','l','s'))
+        if (*vendor!=MAKE_DWORD('a','u','l','s')) {
             return false;
+        }
+
         return true;
     }
 
@@ -154,9 +179,9 @@ class CPUInfo:public global::Singleton<CPUInfo> {
 
     /// Returns the number of cores per processor package.
     unsigned int getCoresPerProcessor() const {
-        if (isIntel())
+        if (isIntel()) {
             return ((m_std_cache_params&0xfc000000)>>26)+1;
-        else if (isAMD()) {
+        } else if (isAMD()) {
             if (hasHTT() && hasCmpLegacy()) {
                 // This method to determine the number of cores is deprecated
                 // but we use it if it is supported.

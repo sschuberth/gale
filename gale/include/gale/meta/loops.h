@@ -43,7 +43,8 @@ namespace meta {
  * elements in at least one array, evaluating \a OP on the elements.
  */
 template<unsigned int NUM,class OP>
-struct LoopFwd {
+struct LoopFwd
+{
     enum {
         index=NUM-1 ///< Stores the array index to use in this recursion.
     };
@@ -119,7 +120,8 @@ struct LoopFwd {
  * and to stop the meta-recursion.
  */
 template<class OP>
-struct LoopFwd<1,OP> {
+struct LoopFwd<1,OP>
+{
     /// Iterates over a destination array applying a scalar.
     template<typename A,typename B>
     static G_INLINE void iterate(A* a,B const& b) {

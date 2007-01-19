@@ -40,8 +40,8 @@ namespace system {
 /**
  * This is a simple timing class with pause / resume capability.
  */
-class Timer {
-
+class Timer
+{
   public:
 
     /// Suspends the execution of the current thread for the given amount of

@@ -50,8 +50,8 @@ namespace math {
  * classes are specified as \a C to provide the proper return and argument type.
  */
 template<unsigned int N,typename T,class C>
-class TupleBase {
-
+class TupleBase
+{
   public:
 
     /// Data type definition for external access to the template argument.
@@ -345,16 +345,18 @@ class TupleBase {
 
     /// Reads tuple values from an input stream.
     friend std::istream& operator>>(std::istream& s,C& t) {
-        for (int i=0;i<N;++i)
+        for (int i=0;i<N;++i) {
             s >> t[i];
+        }
         return s;
     }
 
     /// Writes tuple values to an output stream.
     friend std::ostream& operator<<(std::ostream& s,C const& t) {
         s << '(';
-        for (int i=0;i<N-1;++i)
+        for (int i=0;i<N-1;++i) {
             s << t[i] << ',';
+        }
         return s << t[N-1] << ')';
     }
 
@@ -374,7 +376,8 @@ class TupleBase {
  * adds no functionality but shows how to get rid of the C template argument.
  */
 template<unsigned int N,typename T>
-class Tuple:public TupleBase<N,T,Tuple<N,T> > {
+class Tuple:public TupleBase<N,T,Tuple<N,T> >
+{
     /// This type definition simplifies base class access to identifiers that
     /// are not visible until instantiation time because they do not dependent
     /// on template arguments.

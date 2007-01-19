@@ -45,14 +45,16 @@ namespace math {
 
 /// Converts the given \a angle specified in degrees to radians.
 template<typename T>
-inline T convertDegToRad(T const angle) {
+inline T convertDegToRad(T const angle)
+{
     static T const PI=static_cast<T>(3.1415926535897932384626433832795029);
     return (angle*PI)/180;
 }
 
 /// Converts the given \a angle specified in radians to degrees.
 template<typename T>
-inline T convertRadToDeg(T const angle) {
+inline T convertRadToDeg(T const angle)
+{
     static T const PI=static_cast<T>(3.1415926535897932384626433832795029);
     return (angle*180)/PI;
 }
@@ -66,43 +68,50 @@ inline T convertRadToDeg(T const angle) {
 
 /// Returns the minimum value among \a a and \a b.
 template<typename T>
-inline T min(T const a,T const b) {
+inline T min(T const a,T const b)
+{
     return a<b?a:b;
 }
 
 /// Returns the minimum value among \a a, \a b and \a c.
 template<typename T>
-inline T min(T const a,T const b,T const c) {
+inline T min(T const a,T const b,T const c)
+{
     return min(min(a,b),c);
 }
 
 /// Returns the minimum value among \a a, \a b, \a c and \a d.
 template<typename T>
-inline T min(T const a,T const b,T const c,T const d) {
+inline T min(T const a,T const b,T const c,T const d)
+{
     return min(min(a,b,c),d);
 }
 
 /// Returns the maximum value among \a a and \a b.
 template<typename T>
-inline T max(T const a,T const b) {
+inline T max(T const a,T const b)
+{
     return a>b?a:b;
 }
 
 /// Returns the maximum value among \a a, \a b and \a c.
 template<typename T>
-inline T max(T const a,T const b,T const c) {
+inline T max(T const a,T const b,T const c)
+{
     return max(max(a,b),c);
 }
 
 /// Returns the maximum value among \a a, \a b, \a c and \a d.
 template<typename T>
-inline T max(T const a,T const b,T const c,T const d) {
+inline T max(T const a,T const b,T const c,T const d)
+{
     return max(max(a,b,c),d);
 }
 
 /// Clamps \a x to the range specified by \a a and \a b.
 template<typename T>
-inline T clamp(T const x,T const a,T const b) {
+inline T clamp(T const x,T const a,T const b)
+{
     return min(max(a,x),b);
 }
 
@@ -116,7 +125,8 @@ inline T clamp(T const x,T const a,T const b) {
 /// Rounds \a f to the nearest integer (to the even one in case of ambiguity).
 /// This is the default rounding mode on x86 platforms, so the floating-point
 /// control word is not modified.
-inline long long roundToEven(float const f) {
+inline long long roundToEven(float const f)
+{
     // By default, the Pentium's fistp instruction does a "round to even", so
     // there is no need to save and restore the floating-point control word like
     // the C runtime does (see
@@ -163,7 +173,8 @@ inline long long roundToEven(float const f) {
 /// Rounds \a f to the nearest integer towards zero (truncating the number).
 /// This is the default ANSI C rounding mode; use this method instead of a cast
 /// to an integer as it is faster.
-inline long long roundToZero(float const f) {
+inline long long roundToZero(float const f)
+{
     union {
         float f;
         long i;
@@ -185,16 +196,20 @@ inline long long roundToZero(float const f) {
 //@{
 
 /// Returns whether \a x is an exact power of two.
-inline bool isPowerOf2(unsigned int const x) {
-    if (x==0)
+inline bool isPowerOf2(unsigned int const x)
+{
+    if (x==0) {
         return false;
+    }
     return (x&(x-1))==0;
 }
 
 /// Returns the position of the least significant bit set in \a x.
-inline long getLSBSet(unsigned int const x) {
-    if (x==0)
+inline long getLSBSet(unsigned int const x)
+{
+    if (x==0) {
         return -1;
+    }
 
 #ifdef __GNUC__
 
@@ -228,9 +243,11 @@ inline long getLSBSet(unsigned int const x) {
 }
 
 /// Returns the position of the most significant bit set in \a x.
-inline long getMSBSet(unsigned int const x) {
-    if (x==0)
+inline long getMSBSet(unsigned int const x)
+{
+    if (x==0) {
         return -1;
+    }
 
 #ifdef __GNUC__
 
@@ -265,7 +282,8 @@ inline long getMSBSet(unsigned int const x) {
 
 /// Returns the largest power of 2 that is smaller than or equal to \a x, except
 /// for \a x=0 which returns 0.
-inline unsigned int getFloorPow2(unsigned int const x) {
+inline unsigned int getFloorPow2(unsigned int const x)
+{
 #ifdef __GNUC__
 
     unsigned int result;
@@ -293,8 +311,9 @@ inline unsigned int getFloorPow2(unsigned int const x) {
 #else
 
     long i=getMSBSet(x);
-    if (i<0)
+    if (i<0) {
         return 0;
+    }
     return 1UL<<static_cast<unsigned int>(i);
 
 #endif
@@ -302,7 +321,8 @@ inline unsigned int getFloorPow2(unsigned int const x) {
 
 /// Returns the smallest power of 2 that is greater than or equal to \a x,
 /// except for \a x=0 and \a x>2147483648 which returns 0.
-inline unsigned int getCeilPow2(unsigned int const x) {
+inline unsigned int getCeilPow2(unsigned int const x)
+{
 #ifdef __GNUC__
 
     unsigned int result;
@@ -335,8 +355,9 @@ inline unsigned int getCeilPow2(unsigned int const x) {
 
 #else
 
-    if (x==0)
+    if (x==0) {
         return 0;
+    }
     long i=getMSBSet(x-1)+1;
     return 1UL<<static_cast<unsigned int>(i);
 
@@ -351,37 +372,44 @@ inline unsigned int getCeilPow2(unsigned int const x) {
 //@{
 
 template<typename T>
-inline T abs(T const x) {
+inline T abs(T const x)
+{
     return ::abs(x);
 }
 
 template<>
-inline unsigned int abs(unsigned int const x) {
+inline unsigned int abs(unsigned int const x)
+{
     return x;
 }
 
 template<>
-inline unsigned short abs(unsigned short const x) {
+inline unsigned short abs(unsigned short const x)
+{
     return x;
 }
 
 template<>
-inline unsigned char abs(unsigned char const x) {
+inline unsigned char abs(unsigned char const x)
+{
     return x;
 }
 
 template<>
-inline long abs(long const x) {
+inline long abs(long const x)
+{
     return ::labs(x);
 }
 
 template<>
-inline double abs(double const x) {
+inline double abs(double const x)
+{
     return ::fabs(x);
 }
 
 template<>
-inline float abs(float const x) {
+inline float abs(float const x)
+{
     return ::fabsf(x);
 }
 

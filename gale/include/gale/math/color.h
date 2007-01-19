@@ -45,8 +45,8 @@ namespace math {
  * obtained from the base template.
  */
 template<typename T>
-class ColorModel {
-
+class ColorModel
+{
   public:
 
     /// Returns the minimum intensity value for a color channel.
@@ -171,22 +171,26 @@ class ColorModel {
 
 /// \cond SPECIALIZATION
 template<>
-inline float ColorModel<float>::getMinIntensity() {
+inline float ColorModel<float>::getMinIntensity()
+{
     return 0;
 }
 
 template<>
-inline float ColorModel<float>::getMaxIntensity() {
+inline float ColorModel<float>::getMaxIntensity()
+{
     return 1;
 }
 
 template<>
-inline double ColorModel<double>::getMinIntensity() {
+inline double ColorModel<double>::getMinIntensity()
+{
     return 0;
 }
 
 template<>
-inline double ColorModel<double>::getMaxIntensity() {
+inline double ColorModel<double>::getMaxIntensity()
+{
     return 1;
 }
 /// \endcond
@@ -202,7 +206,8 @@ inline double ColorModel<double>::getMaxIntensity() {
  * \endcode
  */
 template<unsigned int N,typename T>
-class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
+class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
+{
     /// This type definition simplifies base class access to identifiers that
     /// are not visible until instantiation time because they do not dependent
     /// on template arguments.
@@ -435,8 +440,9 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
     /// Inverts this color (if present, the alpha channel is omitted).
     Color& invert() {
         Color tmp=WHITE()-(*this);
-        if (N==4)
+        if (N==4) {
             tmp.setA(getA());
+        }
         return *this=tmp;
     }
 
@@ -450,16 +456,18 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T> {
 
     /// Updates the HSV channels to match the RGB channels if required.
     void updateHSV() {
-        if (!m_hsv_outdated)
+        if (!m_hsv_outdated) {
             return;
+        }
         RGB2HSV(m_data[0],m_data[1],m_data[2],m_h,m_s,m_v);
         m_hsv_outdated=false;
     }
 
     /// Updates the RGB channels to match the HSV channels if required.
     void updateRGB() {
-        if (!m_rgb_outdated)
+        if (!m_rgb_outdated) {
             return;
+        }
         HSV2RGB(m_h,m_s,m_v,m_data[0],m_data[1],m_data[2]);
         m_rgb_outdated=false;
     }
