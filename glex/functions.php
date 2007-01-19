@@ -74,17 +74,21 @@ function writeMacroHeader($extension,$procs) {
     function addDataTypePrefix(&$arguments) {
         $patterns=array(
             "/(^|\W)(\w+ARB)/",
-            "/(^|\W)(boolean)/",
-            "/(^|\W)(clampd)/",
-            "/(^|\W)(double)/",
             "/(^|\W)(enum)/",
-            "/(^|\W)(clampf)/",
-            "/(^|\W)(float)/",
-            "/(^|\W)(uint)/",
-            "/(^|\W)(int)/",
-            "/(^|\W)(ushort)/",
+            "/(^|\W)(boolean)/",
+            "/(^|\W)(bitfield)/",
+            "/(^|\W)(byte)/",
             "/(^|\W)(short)/",
-            "/(^|\W)(sizei)/"
+            "/(^|\W)(int)/",
+            "/(^|\W)(sizei)/",
+            "/(^|\W)(ubyte)/",
+            "/(^|\W)(ushort)/",
+            "/(^|\W)(uint)/",
+            "/(^|\W)(float)/",
+            "/(^|\W)(clampf)/",
+            "/(^|\W)(double)/",
+            "/(^|\W)(clampd)/",
+            "/(^|\W)(void)/"
         );
         $arguments=preg_replace($patterns,"\\1GL\\2",$arguments);
     }
