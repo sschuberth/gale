@@ -28,27 +28,24 @@ function parseSpecIntoArray($spec,&$struct) {
             echo "Warning: Line $i exceeds the maximum of ".OPENGL_SPEC_MAX_CHARS_PER_LINE." characters.\n";
         }
 
-        // We can stop parsing when we have reached e.g. the revision history.
-        if (is_int(strpos($line,OPENGL_SPEC_BREAK_STRING))) {
-            break;
-        }
-
-        // Skip empty lines right from the start.
+        // Skip comments and empty lines right from the start.
         $ltline=ltrim($line);
-        if (empty($ltline)) {
+        if ($line[0]=='*' || empty($ltline)) {
             continue;
         }
 
-        if ($line!=$ltline) {
+        // Be sure to make a string comparison even if the strings only consist
+        // of numbers.
+        if ($line!==$ltline) {
             // Switch to content parsing mode until a new section header is found.
             if (!empty($content)) {
                 $content.=' ';
             }
             $content.=$ltline;
         } else {
-            // Skip comments as shown in the OpenGL extension document template.
-            if ($line[0]=='*') {
-                continue;
+            // We can stop parsing when we have reached e.g. the revision history.
+            if (is_int(strpos($line,OPENGL_SPEC_BREAK_SECTION))) {
+                break;
             }
 
             // Add any new section and (possibly empty) content to the structure array.
