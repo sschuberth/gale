@@ -31,6 +31,8 @@
  * Convenience data structures
  */
 
+#include "../global/defines.h"
+
 namespace gale {
 
 namespace system {

@@ -31,7 +31,7 @@
  * Means to identify CPUs and their features in detail
  */
 
-#include "gale/global/singleton.h"
+#include "../global/singleton.h"
 
 namespace gale {
 
