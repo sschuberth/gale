@@ -1,30 +1,48 @@
-#ifndef RENDERTARGET_H
-#define RENDERTARGET_H
+#ifndef RENDERCONTEXT_H
+#define RENDERCONTEXT_H
+
+#include "../global/platform.h"
 
 namespace gale {
 
 namespace system {
 
-/**
- * Dummy
- */
-class RenderTarget {
-
+class RenderContext
+{
   public:
 
-    RenderTarget();
-    ~RenderTarget();
+    RenderContext();
+    ~RenderContext();
+
+    virtual HWND getWindowHandle() const {
+        return m_wnd;
+    }
+
+    virtual HDC getDeviceHandle() const {
+        return m_dc;
+    }
+
+    virtual HGLRC getRenderHandle() const {
+        return m_rc;
+    }
 
   protected:
 
-    //void createWindow();
+    void destroy();
 
-    /// Dummy
-    static unsigned int s_instances;
+    static ATOM s_atom;
+
+  private:
+
+    static int s_instances;
+
+    HWND m_wnd;
+    HDC m_dc;
+    HGLRC m_rc;
 };
 
 } // namespace system
 
 } // namespace gale
 
-#endif // RENDERTARGET_H
+#endif // RENDERCONTEXT_H
