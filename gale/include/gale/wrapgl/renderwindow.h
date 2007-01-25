@@ -74,7 +74,7 @@ class RenderWindow:private system::RenderContext
 
     /// Starts the event processing and does not return until the window gets
     /// closed. Event handlers are called accordingly.
-    void handleEvents();
+    void processEvents();
 
     /// Event handler that gets called when there are no messages to process.
     /// When it returns \c true a repaint will be triggered, on \c false the

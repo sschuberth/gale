@@ -114,7 +114,7 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attribs,LP
     G_ASSERT(result!=FALSE)
 }
 
-void RenderWindow::handleEvents()
+void RenderWindow::processEvents()
 {
     MSG msg;
 
