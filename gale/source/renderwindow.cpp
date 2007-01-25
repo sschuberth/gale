@@ -16,19 +16,24 @@ LRESULT CALLBACK RenderWindow::WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPAR
 
     switch (uMsg) {
         // This is sent to a window after its size has changed.
-        //case WM_SIZE: {
-        //    _this->onSize();
-        //    break;
-        //}
+        case WM_SIZE: {
+            _this->onSize();
+            break;
+        }
 
         // This is sent to a window when a portion should be painted.
-        //case WM_PAINT: {
-        //    _this->onPaint();
-        //    glFlush();
-        //    SwapBuffers(_this->getDeviceHandle());
-        //    ValidateRect(hWnd,NULL);
-        //    break;
-        //}
+        case WM_PAINT: {
+            _this->onPaint();
+            glFlush();
+
+            // Due to WGL_DOUBLE_BUFFER_ARB we always should have a double-buffer.
+            SwapBuffers(_this->getDeviceHandle());
+
+            // Notify Windows that we have finished painting.
+            ValidateRect(hWnd,NULL);
+
+            break;
+        }
 
         // This is sent to a window when it should terminate.
         case WM_CLOSE: {
@@ -86,9 +91,9 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attribs,LP
 
     // Make sure some required attributes are specified.
     AttributeListi attrs=attribs;
+    attrs.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
     attrs.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
     attrs.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
-    attrs.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
     attrs.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
 
     // Set the device context to the first pixel format that matches the
@@ -107,6 +112,28 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attribs,LP
 
     result=wglMakeCurrent(m_dc,m_rc);
     G_ASSERT(result!=FALSE)
+}
+
+void RenderWindow::handleEvents()
+{
+    MSG msg;
+
+    do {
+        // Idle once in the beginning to initialize and then if there are no
+        // messages to process.
+        if (onIdle()) {
+            InvalidateRect(getWindowHandle(),NULL,FALSE);
+        } else {
+            // Relinquish the rest of the time slice.
+            Sleep(0);
+        }
+
+        // Dispatch all messages in the queue.
+        while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    } while (msg.message!=WM_QUIT);
 }
 
 } // namespace wrapgl
