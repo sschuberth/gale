@@ -57,7 +57,12 @@ class AttributeList
     /// Deletes all attributes in the list.
     void clear() {
         m_size=0;
-        m_attributes[m_size]=0;
+        m_attributes[0]=0;
+    }
+
+    /// Returns the number of entries in the list, i.e. 0 if the list is empty.
+    int getSize() const {
+        return m_size;
     }
 
     /// Appends / replaces the specified \a type and \a value to / in the list.
