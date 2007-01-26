@@ -35,7 +35,7 @@
 #include "gale/system/rendercontext.h"
 
 #include "GLEX_WGL_ARB_pixel_format.h"
-//#include "GLEX_WGL_ARB_pixel_format_float.h"
+#include "GLEX_ARB_color_buffer_float.h"
 
 namespace gale {
 
