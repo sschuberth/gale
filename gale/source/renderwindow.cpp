@@ -56,13 +56,17 @@ LRESULT CALLBACK RenderWindow::WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPAR
     return 0;
 }
 
-RenderWindow::RenderWindow(int width,int height,AttributeListi const& attribs,LPCTSTR title)
+RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi const& attribs,LPCTSTR title)
 {
     if (GLEX_WGL_ARB_pixel_format!=GL_TRUE) {
         // Initialize the needed OpenGL extensions.
         GLEX_WGL_ARB_pixel_format_init();
         G_ASSERT(GLEX_WGL_ARB_pixel_format!=GL_FALSE)
     }
+
+    RECT rect={0,0,client_width,client_height};
+    BOOL result=AdjustWindowRect(&rect,WS_OVERLAPPEDWINDOW,FALSE);
+    G_ASSERT(result!=FALSE)
 
     // Create a render window and get its device context.
     m_wnd=CreateWindow(
@@ -71,8 +75,8 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attribs,LP
     /* dwStyle      */ WS_OVERLAPPEDWINDOW,
     /* x            */ CW_USEDEFAULT,
     /* y            */ 0,
-    /* nWidth       */ width,
-    /* nHeight      */ height,
+    /* nWidth       */ rect.right-rect.left,
+    /* nHeight      */ rect.bottom-rect.top,
     /* hWndParent   */ HWND_DESKTOP,
     /* hMenu        */ NULL,
     /* hInstance    */ NULL,
@@ -100,7 +104,7 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attribs,LP
     // specified attributes.
     GLint format;
     UINT count;
-    BOOL result=wglChoosePixelFormatARB(m_dc,attrs,NULL,1,&format,&count);
+    result=wglChoosePixelFormatARB(m_dc,attrs,NULL,1,&format,&count);
     G_ASSERT(result!=FALSE)
 
     result=SetPixelFormat(m_dc,format,NULL);

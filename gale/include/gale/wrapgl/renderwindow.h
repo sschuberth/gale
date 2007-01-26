@@ -50,10 +50,11 @@ class RenderWindow:private system::RenderContext
 {
   public:
 
-    /// Creates a window of the given \a width and \a height to render to. The
-    /// properties of the pixel format to use are determined by \a attribs, and
-    /// \a title specifies the caption. The window will be hidden initially.
-    RenderWindow(int width,int height,system::AttributeListi const& attribs,LPCTSTR title);
+    /// Creates a window with a client size of the given \a width and \a height
+    /// to render to. The properties of the pixel format to use are determined
+    /// by \a attribs, and \a title specifies the caption. The window will be
+    /// hidden initially.
+    RenderWindow(int client_width,int client_height,system::AttributeListi const& attribs,LPCTSTR title);
 
     /// Returns the handle to the render window.
     HWND getWindowHandle() const {
