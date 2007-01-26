@@ -10,6 +10,22 @@ function getFunctionsDate() {
     return '$Date$';
 }
 
+/*
+ * Parsing Oddities
+ * ----------------
+ *
+ * Non-standard section caption for new procedures and functions, incl. a
+ * trailing colon:
+ * http://developer.download.nvidia.com/opengl/specs/WGL_nv_gpu_affinity.txt
+ *
+ * No trailing semicolons and multi-line procedure declarations:
+ * http://oss.sgi.com/projects/ogl-sample/registry/ARB/shader_objects.txt
+ *
+ * New GLX token specified with 8 hex-digits:
+ * http://www.opengl.org/registry/specs/ARB/color_buffer_float.txt
+ *
+ */
+
 function parseSpecIntoArray($spec,&$struct) {
     // Parse the sections and contents of the file into an associative array
     // that represents the file structure.
@@ -91,19 +107,6 @@ function writeMacroHeader($extension,$procs) {
     }
 
     global $cmdline;
-
-    /*
-     * Oddities
-     * --------
-     *
-     * Non-standard section caption for new procedures and functions, incl. a
-     * trailing colon:
-     * http://developer.download.nvidia.com/opengl/specs/WGL_nv_gpu_affinity.txt
-     *
-     * No trailing semicolons and multi-line procedure declarations:
-     * http://oss.sgi.com/projects/ogl-sample/registry/ARB/shader_objects.txt
-     *
-     */
 
     // TODO: Verify / simplify these regular expressions.
     $type="\w+\s*\**\w+\s*\**";
@@ -205,11 +208,11 @@ function writePrototypeHeader($extension,$procs,$tokens) {
 
     function extractTokensToString($tokens,&$defines) {
         $name_length_max=0;
-        preg_match_all("/(\w+)\s+((0x)?[0-9a-fA-F]{4})/U",$tokens,$matches,PREG_SET_ORDER);
+        preg_match_all("/(\w+)\s+(0x[0-9a-fA-F]+)/",$tokens,$matches,PREG_SET_ORDER);
 
         for ($i=0;$i<count($matches);++$i) {
             $match=&$matches[$i][1];
-            if (!preg_match("/^W?GL_/",$match)) {
+            if (!preg_match("/^W?GLX?_/",$match)) {
                 $match='GL_'.$match;
             }
 
@@ -316,7 +319,7 @@ function writeInitializationCode($extension) {
 
     // Write the code that initializes the function pointer variables.
     fwrite($handle,"// Get the addresses for all functions of this extension.\n");
-    fwrite($handle,'GLboolean '.$extension."_init(void) {\n");
+    fwrite($handle,'GLboolean '.$extension."_init(void)\n{\n");
     fwrite($handle,"    $extension=GL_TRUE;\n\n");
 
     fwrite($handle,'#define '.GLEX_PREFIX."PROC(t,n,a) $extension&=((*((void**)&".GLEX_PREFIX."##n)=(void*)wglGetProcAddress(#n))!=0)\n");
