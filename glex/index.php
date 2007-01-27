@@ -6,6 +6,13 @@
 <head>
     <title>glex - An OpenGL Extension Specification Parser</title>
     <link type="text/css" href="style.css" rel="stylesheet" />
+    <script type="text/javascript">
+        function openWindow(URL) {
+            if (URL.length>0) {
+                window.open(URL,'spec').focus();
+            }
+        }
+    </script>
 </head>
 
 <?php require_once 'functions.php'; ?>
@@ -105,12 +112,13 @@ if (empty($error)) {
         <tr>
             <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
             <td style="background-color: #d3e0e7; padding: 10px">
-                Enter the URI or URL to OpenGL extension specification text file
+                Enter the URL to OpenGL extension specification text file
                 (see e.g. <a href="http://www.opengl.org/registry/">http://www.opengl.org/registry/</a>):
                 <form action="parse.php">
-                    <p>
+                    <p style="white-space: nowrap">
                         <input type="text" size="100%" name="spec" value="<?= $spec ?>" />
                         <input type="submit" value="Generate code" />
+                        <input type="button" value="Jump to URL" onclick="openWindow(this.form.spec.value); return false" />
                     </p>
                 </form>
             </td>
