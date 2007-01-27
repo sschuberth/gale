@@ -39,7 +39,7 @@ namespace math {
 
 /**
  * Vector class implementation based on a tuple, featuring common linear algebra
- * and specialized computer graphic math.
+ * and math specialized on computer graphics.
  *
  * Example usage:
  * \code
