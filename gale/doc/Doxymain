@@ -3,11 +3,13 @@
 <h2>Introduction</h2>
 As stated on the <a href="http://developer.berlios.de/projects/gale/">project page</a>, the "Graphics Abstraction Layer & Engine" is a object oriented wrapper for OpenGL and its extensions. GALE is designed to be modern, lightweight and self-consistent, and is particularly targeted at Demo Scene effects, tech demos and GPGPU applications.
 
+There also is a sub-project to GALE called <a href="http://gale.berlios.de/glex/">GLEX</a>, an "OpenGL Extension Specification Parser", which is used to turn a single OpenGL extension specification text file or URL into a set of compact C source files that can be easily included into existing projects to initialize the desired extension.
+
 \htmlonly
 <div style="text-align: center">GALE is generously hosted by</div>
 <br>
 <div style="text-align: center">
-	<a href="http://developer.berlios.de"><img src="http://developer.berlios.de/bslogo.php?group_id=0" width="124" height="32" border="0" alt="BerliOS Logo"></a>
+	<a href="http://developer.berlios.de/"><img src="http://developer.berlios.de/bslogo.php?group_id=0" width="124" height="32" border="0" alt="BerliOS Logo"></a>
 </div>
 \endhtmlonly
 */
