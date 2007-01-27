@@ -22,7 +22,7 @@
         <?php drawTableBorder('t','white'); ?>
         <tr>
             <td><!-- Corner spacer --></td>
-            <td style="text-align: center">
+            <td style="text-align: center; background-image: url(images/title.png)">
                 <h2>glex</h2>
                 <h4>An OpenGL Extension Specification Parser</h4>
             </td>
@@ -133,7 +133,7 @@ if (empty($error)) {
         <?php drawTableBorder('t','white',false,5); ?>
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
-                <a href="http://gale.berlios.de/glex/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a><br />
+            <a href="http://gale.berlios.de/glex/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a> (a <a href="http://threekings.tk/gale/glex/">mirror</a> is also available)<br />
                 Source code high-lighting is performed by <a href="http://qbnz.com/highlighter/">GeSHi</a><br />
                 &nbsp;
             </td>
