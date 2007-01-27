@@ -64,6 +64,8 @@ class TupleBase
 
     /// For performance reasons, do not initialize any data by default.
     TupleBase() {
+        // Do not allow tuples with less than 2 components.
+        G_ASSERT(N>=2)
     }
 
     /// Allows to initialize 2-tuples directly.
