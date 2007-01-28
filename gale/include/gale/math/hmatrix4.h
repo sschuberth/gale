@@ -41,6 +41,9 @@ namespace gale {
 
 namespace math {
 
+// Make sure data members are tightly packed.
+#pragma pack(push,1)
+
 /**
  * Homogeneous matrix class implementation based on column vectors. The matrix
  * is stored column-major in memory as required by OpenGL, i.e. the position
@@ -141,7 +144,7 @@ class HMatrix4
     //@}
 
     /**
-     * \name Element-wise arithmetic operators with matrices
+     * \name Arithmetic matrix to matrix operators
      */
     //@{
 
@@ -217,7 +220,7 @@ class HMatrix4
     //@}
 
     /**
-     * \name Element-wise arithmetic operators with vectors
+     * \name Arithmetic matrix to vector operators
      */
     //@{
 
@@ -244,7 +247,7 @@ class HMatrix4
     //@}
 
     /**
-     * \name Element-wise arithmetic operators with scalars
+     * \name Arithmetic matrix to scalar operators
      */
     //@{
 
@@ -256,6 +259,33 @@ class HMatrix4
     /// Multiplies all elements of matrix \a m by the scalar \a s.
     friend HMatrix4 operator*(T s,HMatrix4 const& m) {
         return m*s;
+    }
+
+    /// Divides all elements of matrix \a m by the scalar \a s.
+    friend HMatrix4 operator/(HMatrix4 const& m,T s) {
+        return m*(1/s);
+    }
+
+    //@}
+
+    /**
+     * \name Comparison operators
+     */
+    //@{
+
+    /// Returns whether all elements in \a m equal their counterpart in \a n
+    /// using an epsilon-environment depending on the precision of \a T.
+    friend bool operator==(HMatrix4 const& m,HMatrix4 const& n) {
+        return m.normal   == n.normal
+            && m.up       == n.up
+            && m.look     == n.look
+            && m.position == n.position;
+    }
+
+    /// Returns whether the elements in \a m are not equal to their counterparts
+    /// in \a n using an epsilon-environment depending on the precision of \a T.
+    friend bool operator!=(HMatrix4 const& m,HMatrix4 const& n) {
+        return !(m==n);
     }
 
     //@}
@@ -274,8 +304,8 @@ class HMatrix4
         return *this;
     }
 
-    /// Inverts this matrix; the product of a matrix and its inverse equals the
-    /// identity matrix.
+    /// Inverts this matrix if it is orthonormal; the product of a matrix and
+    /// its inverse equals the identity matrix.
     HMatrix4& invert() {
         position=Vec(-position%normal,-position%up,-position%look);
 
@@ -286,6 +316,23 @@ class HMatrix4
         tmp=(*this)(2,1); (*this)(2,1)=(*this)(1,2); (*this)(1,2)=tmp;
 
         return *this;
+    }
+
+    //@}
+
+    /**
+     * \name Convenience operators for named methods
+     */
+    //@{
+
+    /// Returns an orthonormalized copy of matrix \a m.
+    friend HMatrix4 operator~(HMatrix4 const& m) {
+        return HMatrix4(m).orthonormalize();
+    }
+
+    /// Returns an inverted copy of matrix \a m.
+    friend HMatrix4 operator!(HMatrix4 const& m) {
+        return HMatrix4(m).invert();
     }
 
     //@}
@@ -343,6 +390,8 @@ class HMatrix4
 
     T m_c3w;      ///< The fourth component of the fourth column vector (always 1).
 };
+
+#pragma pack(pop)
 
 /**
  * \name Type definitions for use as OpenGL matrices
