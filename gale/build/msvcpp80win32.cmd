@@ -1,6 +1,6 @@
 @echo off
 
-call common.cmd
+call common.cmd %1
 
 : (Re-)create an empty output directory.
 rmdir /s /q "%~dpn0" 2> nul
