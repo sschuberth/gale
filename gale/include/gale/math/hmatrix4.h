@@ -356,7 +356,7 @@ class HMatrix4
 
     //@}
 
-#endif
+#endif // GALE_TINY
 
   public:
 

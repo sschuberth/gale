@@ -38,4 +38,4 @@ DWORD Timer::s_mask=0;
 
 } // namespace gale
 
-#endif
+#endif // _WIN32

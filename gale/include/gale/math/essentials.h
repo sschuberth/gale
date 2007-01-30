@@ -167,7 +167,7 @@ inline long long roundToEven(float const f)
     u.f+=static_cast<double>(f);
     return u.i-0x4338000000000000;
 
-#endif
+#endif // __GNUC__
 }
 
 /// Rounds \a f to the nearest integer towards zero (truncating the number).
@@ -239,7 +239,7 @@ inline long getLSBSet(unsigned int const x)
     }
     return index;
 
-#endif
+#endif // __GNUC__
 }
 
 /// Returns the position of the most significant bit set in \a x.
@@ -277,7 +277,7 @@ inline long getMSBSet(unsigned int const x)
     }
     return index;
 
-#endif
+#endif // __GNUC__
 }
 
 /// Returns the largest power of 2 that is smaller than or equal to \a x, except
@@ -316,7 +316,7 @@ inline unsigned int getFloorPow2(unsigned int const x)
     }
     return 1UL<<static_cast<unsigned int>(i);
 
-#endif
+#endif // __GNUC__
 }
 
 /// Returns the smallest power of 2 that is greater than or equal to \a x,
@@ -361,7 +361,7 @@ inline unsigned int getCeilPow2(unsigned int const x)
     long i=getMSBSet(x-1)+1;
     return 1UL<<static_cast<unsigned int>(i);
 
-#endif
+#endif // __GNUC__
 }
 
 //@}

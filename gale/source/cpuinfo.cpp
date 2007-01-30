@@ -74,7 +74,7 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_std_feat_flags_ecx,ecx
         }
 
-#endif
+#endif // __GNUC__
     }
 
     if (getMaxCPUIDStdFunc()>=4) {
@@ -103,7 +103,7 @@ CPUInfo::CPUInfo():
             mov [ebx]CPUInfo.m_std_cache_params,eax
         }
 
-#endif
+#endif // __GNUC__
     }
 
     if (getMaxCPUIDExtFunc()>=1) {
@@ -135,7 +135,7 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_ext_feat_flags_ecx,ecx
         }
 
-#endif
+#endif // __GNUC__
     }
 
     if (getMaxCPUIDExtFunc()>=8) {
@@ -162,7 +162,7 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_ext_address_sizes,ecx
         }
 
-#endif
+#endif // __GNUC__
     }
 }
 
@@ -290,7 +290,7 @@ __declspec(naked) unsigned int CPUInfo::getMaxCPUIDStdFunc()
         mov [edi+4],edx
         mov [edi+8],ecx
 
-#endif
+#endif // __INTEL_COMPILER
 
         pop edi
         pop ebx

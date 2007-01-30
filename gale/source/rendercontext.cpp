@@ -75,7 +75,7 @@ RenderContext::RenderContext()
 
     // TODO: Linux code.
 
-#endif
+#endif // _WIN32
 }
 
 RenderContext::~RenderContext()
