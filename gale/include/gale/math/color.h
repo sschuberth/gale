@@ -38,7 +38,7 @@ namespace gale {
 namespace math {
 
 /**
- * Helper class with only a single template parameter; needed as partial
+ * Helper class with only a single template parameter; needed because partial
  * specialization of member functions of template classes with multiple template
  * parameters is not supported by C++. Using this class we can fully specialize
  * only those class template member functions that should not be implictly
