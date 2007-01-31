@@ -16,7 +16,7 @@ SET(LIBRARY_OUTPUT_PATH "../../lib" CACHE INTERNAL "" FORCE)
 
 # Recursively add source code files. The specified path is relative to
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
-FILE(GLOB_RECURSE headers "${header_root}/*.h")
+FILE(GLOB_RECURSE headers "${header_root}/*.h" "${header_root}/*.inl")
 
 # Build a sorted list of files while also specifying the groups they go to.
 FOREACH(header ${headers})
