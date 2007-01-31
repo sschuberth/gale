@@ -364,12 +364,16 @@ class TupleBase
 
     //@}
 
-#endif
+#endif // GALE_TINY
 
   protected:
 
     T m_data[N]; ///< Tightly packed array of \a N elements of type \a T.
 };
+
+#ifdef GALE_SSE
+    #include "tuple_sse.inl"
+#endif
 
 #pragma pack(pop)
 

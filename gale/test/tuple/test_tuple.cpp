@@ -1,8 +1,3 @@
-#include <stdlib.h>
-
-#include <ctime>
-#include <iostream>
-
 #include <gale/math/tuple.h>
 #include <gale/math/vector.h>
 #include <gale/math/color.h>
@@ -10,12 +5,17 @@
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
 
-using namespace std;
+#include <stdlib.h>
+
+#include <ctime>
+#include <iostream>
 
 using namespace gale::math;
 using namespace gale::system;
 
 using gale::meta::OpCmpEqualEps;
+
+using namespace std;
 
 void test_tuple();
 void test_vector();
@@ -62,6 +62,60 @@ int main()
 
 void test_tuple()
 {
+#ifdef GALE_SSE
+    cout << "Check SIMD implementation ..."
+         << endl;
+    float t4f_a0=2.0f,t4f_a1=3.0f,t4f_a2=5.0f,t4f_a3=7.0f;
+    float t4f_b0=9.0f,t4f_b1=8.0f,t4f_b2=7.0f,t4f_b3=6.0f;
+
+    Tuple<4,float> t4f_a(t4f_a0,t4f_a1,t4f_a2,t4f_a3);
+    Tuple<4,float> t4f_b(t4f_b0,t4f_b1,t4f_b2,t4f_b3);
+
+    Tuple<4,float> t4f_c=t4f_a.getMinElements(t4f_b);
+    G_ASSERT(t4f_c[0]==gale::math::min(t4f_a0,t4f_b0))
+    G_ASSERT(t4f_c[1]==gale::math::min(t4f_a1,t4f_b1))
+    G_ASSERT(t4f_c[2]==gale::math::min(t4f_a2,t4f_b2))
+    G_ASSERT(t4f_c[3]==gale::math::min(t4f_a3,t4f_b3))
+
+    G_ASSERT(t4f_c<=t4f_a && t4f_c<=t4f_b)
+
+    t4f_c=t4f_a.lerpTo(t4f_b,0.5);
+    G_ASSERT(t4f_c[0]==(t4f_a0+t4f_b0)/2)
+    G_ASSERT(t4f_c[1]==(t4f_a1+t4f_b1)/2)
+    G_ASSERT(t4f_c[2]==(t4f_a2+t4f_b2)/2)
+    G_ASSERT(t4f_c[3]==(t4f_a3+t4f_b3)/2)
+
+    t4f_c=-t4f_a+t4f_b;
+    G_ASSERT(t4f_c[0]==-t4f_a0+t4f_b0)
+    G_ASSERT(t4f_c[1]==-t4f_a1+t4f_b1)
+    G_ASSERT(t4f_c[2]==-t4f_a2+t4f_b2)
+    G_ASSERT(t4f_c[3]==-t4f_a3+t4f_b3)
+
+    t4f_a=t4f_b*t4f_c;
+    G_ASSERT(t4f_a[0]==t4f_b[0]*t4f_c[0])
+    G_ASSERT(t4f_a[1]==t4f_b[1]*t4f_c[1])
+    G_ASSERT(t4f_a[2]==t4f_b[2]*t4f_c[2])
+    G_ASSERT(t4f_a[3]==t4f_b[3]*t4f_c[3])
+
+    t4f_c=t4f_a*t4f_b[3];
+    G_ASSERT(t4f_c[0]==t4f_a[0]*t4f_b[3])
+    G_ASSERT(t4f_c[1]==t4f_a[1]*t4f_b[3])
+    G_ASSERT(t4f_c[2]==t4f_a[2]*t4f_b[3])
+    G_ASSERT(t4f_c[3]==t4f_a[3]*t4f_b[3])
+
+    t4f_c=t4f_a/t4f_b[3];
+    G_ASSERT(OpCmpEqualEps::evaluate(t4f_c[0],t4f_a[0]/t4f_b[3],0.000001f))
+    G_ASSERT(OpCmpEqualEps::evaluate(t4f_c[1],t4f_a[1]/t4f_b[3],0.000001f))
+    G_ASSERT(OpCmpEqualEps::evaluate(t4f_c[2],t4f_a[2]/t4f_b[3],0.000001f))
+    G_ASSERT(OpCmpEqualEps::evaluate(t4f_c[3],t4f_a[3]/t4f_b[3],0.000001f))
+
+    t4f_a=2.0f/t4f_c;
+    G_ASSERT(OpCmpEqualEps::evaluate(t4f_a[0],2.0f/t4f_c[0],0.001f))
+    G_ASSERT(OpCmpEqualEps::evaluate(t4f_a[1],2.0f/t4f_c[1],0.001f))
+    G_ASSERT(OpCmpEqualEps::evaluate(t4f_a[2],2.0f/t4f_c[2],0.001f))
+    G_ASSERT(OpCmpEqualEps::evaluate(t4f_a[3],2.0f/t4f_c[3],0.001f))
+#endif
+
     cout << "Check construction of objects ..."
          << endl;
     Tuple<2,int> t2i_a(1,2),t2i_b(rand(),rand());
