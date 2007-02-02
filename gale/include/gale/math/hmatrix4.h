@@ -64,6 +64,98 @@ class HMatrix4
     /// Definition of the type of vector used as the columns for the matrix.
     typedef Vector<3,T> Vec;
 
+    /// Inner factory class to easily create commonly used homogeneous matrices.
+    struct Factory
+    {
+        /// Creates a rotation matrix about the x-axis for the given \a angle.
+        static HMatrix4 RotationX(double angle) {
+            double s=::sin(angle),c=::cos(angle);
+
+            return HMatrix4(
+                Vec::X(),
+                Vec(0, T( c), T( s)),
+                Vec(0, T(-s), T( c)),
+                Vec::ZERO()
+            );
+        }
+
+        /// Creates a rotation matrix about the y-axis for the given \a angle.
+        static HMatrix4 RotationY(double angle) {
+            double s=::sin(angle),c=::cos(angle);
+
+            return HMatrix4(
+                Vec(T( c), 0, T(-s)),
+                Vec::Y(),
+                Vec(T( s), 0, T( c)),
+                Vec::ZERO()
+            );
+        }
+
+        /// Creates a rotation matrix about the z-axis for the given \a angle.
+        static HMatrix4 RotationZ(double angle) {
+            double s=::sin(angle),c=::cos(angle);
+
+            return HMatrix4(
+                Vec(T( c), T( s), 0),
+                Vec(T(-s), T( c), 0),
+                Vec::Z(),
+                Vec::ZERO()
+            );
+        }
+
+        /// Creates a rotation matrix about the given normalized \a axis for the
+        /// given \a angle.
+        static HMatrix4 Rotation(Vec const& axis,double angle) {
+            double s=::sin(angle),c=1-::cos(angle);
+            double xs=s*axis.getX(),ys=s*axis.getY(),zs=s*axis.getZ();
+            double xc=c*axis.getX(),yc=c*axis.getY(),zc=c*axis.getZ();
+
+            return HMatrix4(
+                Vec(T(1-c + xc*axis.getX()), T( zs + xc*axis.getY()), T(-ys + xc*axis.getZ())),
+                Vec(T(-zs + yc*axis.getX()), T(1-c + yc*axis.getY()), T( xs + yc*axis.getZ())),
+                Vec(T( ys + zc*axis.getX()), T(-xs + zc*axis.getY()), T(1-c + zc*axis.getZ())),
+                Vec::ZERO()
+            );
+        }
+
+        /// Creates a translation matrix for the given \a distance along
+        /// the normalized \a direction.
+        static HMatrix4 Translation(Vec const& direction,T distance=1) {
+            return HMatrix4(
+                Vec::X(),
+                Vec::Y(),
+                Vec::Z(),
+                direction*distance,
+                Vec::ZERO()
+            );
+        }
+
+        /// Creates a scaling matrix for the given factors along the \a x, \a y
+        /// and \a z axes.
+        static HMatrix4 Scaling(T x,T y,T z) {
+            return HMatrix4(
+                Vec(x,0,0),
+                Vec(0,y,0),
+                Vec(0,0,z),
+                Vec::ZERO()
+            );
+        }
+
+        /// Creates a matrix to project a point in space onto the plane
+        /// specified by its normalized \a normal.
+        static HMatrix4 Projection(Vec const& normal) {
+            T a=normal.getX(),b=normal.getY(),c=normal.getZ();
+            T aa=a*a,bb=b*b,cc=c*c;
+
+            return HMatrix4(
+                Vec(bb+cc,  -a*b,  -a*c),
+                Vec( -b*a, aa+cc,  -b*c),
+                Vec( -c*a,  -c*b, aa+bb),
+                Vec::ZERO()
+            );
+        }
+    };
+
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",

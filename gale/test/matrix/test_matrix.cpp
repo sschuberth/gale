@@ -58,6 +58,12 @@ int main()
     G_ASSERT(a==b/2)
     G_ASSERT(b-a==a)
 
+    HMat4f projection=HMat4f::Factory::Projection(Vec3f::X());
+    G_ASSERT(projection*Vec3f::X()==Vec3f::ZERO())
+    G_ASSERT(projection*Vec3f::Y()==Vec3f::Y())
+    G_ASSERT(projection*Vec3f::Z()==Vec3f::Z())
+    G_ASSERT(projection*Vec3f(1,1,1)==Vec3f(0,1,1))
+
 #ifdef _WIN32
     system("pause");
 #endif
