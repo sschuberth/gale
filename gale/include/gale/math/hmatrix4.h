@@ -46,8 +46,8 @@ namespace math {
 
 /**
  * Homogeneous matrix class implementation based on column vectors. The matrix
- * is stored column-major in memory as required by OpenGL, i.e. the position
- * vector components are located at offsets 12, 13 and 14.
+ * is stored in column-major order in memory as required by OpenGL, i.e. the
+ * position vector components are located at offsets 12, 13 and 14.
  *
  * Example usage:
  * \code
@@ -164,7 +164,13 @@ class HMatrix4
      */
     //@{
 
-    /// Returns a vector which has all components set to 0.
+    /// Returns a matrix which has all components set to 0.
+    static HMatrix4 const& ZERO() {
+        static HMatrix4 const m(Vec::ZERO(),Vec::ZERO(),Vec::ZERO(),Vec::ZERO());
+        return m;
+    }
+
+    /// Returns the identity matrix (regarding multiplication).
     static HMatrix4 const& IDENTITY() {
         static HMatrix4 const m(Vec::X(),Vec::Y(),Vec::Z(),Vec::ZERO());
         return m;
