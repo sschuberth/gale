@@ -255,6 +255,10 @@ function writePrototypeHeader($extension,$procs,$tokens) {
     fwrite($handle,"    #else\n");
     fwrite($handle,"        #include <windows.h>\n");
     fwrite($handle,"    #endif\n");
+    fwrite($handle,"#else\n");
+    fwrite($handle,"    #ifdef __linux\n");
+    fwrite($handle,"        // TODO: Linux support.\n");
+    fwrite($handle,"    #endif\n");
     fwrite($handle,"#endif\n\n");
 
     fwrite($handle,"#include <GL/gl.h>\n\n");
@@ -274,7 +278,7 @@ function writePrototypeHeader($extension,$procs,$tokens) {
     }
 
     fwrite($handle,"#ifdef __cplusplus\n");
-    fwrite($handle,"extern \"C\" {\n");
+    fwrite($handle,"extern \"C\"\n{\n");
     fwrite($handle,"#endif\n\n");
 
     fwrite($handle,'extern GLboolean '.$extension."_init(void);\n");
