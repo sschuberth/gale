@@ -110,12 +110,12 @@ class Matrix4
 
     /// Returns a pointer to the matrix data in memory.
     T* getData() {
-        return normal;
+        return m_c0;
     }
 
     /// Returns a \c constant pointer to the matrix data in memory
     T const* getData() const {
-        return normal;
+        return m_c0;
     }
 
     /// Casts \c this matrix to a pointer of type \a T. As an intended side
