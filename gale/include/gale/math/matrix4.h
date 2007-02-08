@@ -97,7 +97,7 @@ class Matrix4
 
     /// Initialize the column vectors with vectors \a c0 to \a c3.
     Matrix4(Vec const& c0,Vec const& c1,Vec const& c2,Vec const& c3):
-      m_c0(c0),m_c1(c1),m_c2(c2),m_c3(c3)
+      c0(c0),c1(c1),c2(c2),c3(c3)
     {
     }
 
@@ -110,12 +110,12 @@ class Matrix4
 
     /// Returns a pointer to the matrix data in memory.
     T* getData() {
-        return m_c0;
+        return c0;
     }
 
     /// Returns a \c constant pointer to the matrix data in memory
     T const* getData() const {
-        return m_c0;
+        return c0;
     }
 
     /// Casts \c this matrix to a pointer of type \a T. As an intended side
@@ -153,19 +153,19 @@ class Matrix4
 
     /// Increments \c this matrix by another matrix \a m.
     Matrix4 const& operator+=(Matrix4 const& m) {
-        m_c0+=m.m_c0;
-        m_c1+=m.m_c1;
-        m_c2+=m.m_c2;
-        m_c3+=m.m_c3;
+        c0+=m.c0;
+        c1+=m.c1;
+        c2+=m.c2;
+        c3+=m.c3;
         return *this;
     }
 
     /// Decrements \c this matrix by another matrix \a m.
     Matrix4 const& operator-=(Matrix4 const& m) {
-        m_c0-=m.m_c0;
-        m_c1-=m.m_c1;
-        m_c2-=m.m_c2;
-        m_c3-=m.m_c3;
+        c0-=m.c0;
+        c1-=m.c1;
+        c2-=m.c2;
+        c3-=m.c3;
         return *this;
     }
 
@@ -181,7 +181,7 @@ class Matrix4
 
     /// Returns the negation of matrix \a m.
     friend Matrix4 operator-(Matrix4 const& m) {
-        return Matrix4(-m.m_c0,-m.m_c1,-m.m_c2,-m.m_c3);
+        return Matrix4(-m.c0,-m.c1,-m.c2,-m.c3);
     }
 
     /// Returns the sum of matrices \a m and \a n.
@@ -248,7 +248,7 @@ class Matrix4
 
     /// Multiplies all elements of matrix \a m by the scalar \a s.
     friend Matrix4 operator*(Matrix4 const& m,T s) {
-        return Matrix4(m.m_c0*s,m.m_c1*s,m.m_c2*s,m.m_c3*s);
+        return Matrix4(m.c0*s,m.c1*s,m.c2*s,m.c3*s);
     }
 
     /// Multiplies all elements of matrix \a m by the scalar \a s.
@@ -271,10 +271,10 @@ class Matrix4
     /// Returns whether all elements in \a m equal their counterpart in \a n
     /// using an epsilon-environment depending on the precision of \a T.
     friend bool operator==(Matrix4 const& m,Matrix4 const& n) {
-        return m.m_c0 == n.m_c0
-            && m.m_c1 == n.m_c1
-            && m.m_c2 == n.m_c2
-            && m.m_c3 == n.m_c3;
+        return m.c0 == n.c0
+            && m.c1 == n.c1
+            && m.c2 == n.c2
+            && m.c3 == n.c3;
     }
 
     /// Returns whether the elements in \a m are not equal to their counterparts
@@ -294,24 +294,24 @@ class Matrix4
 
     /// Reads a matrix from an input stream.
     friend std::istream& operator>>(std::istream& s,Matrix4& m) {
-        return s >> m.m_c0 >> m.m_c1 >> m.m_c2 >> m.m_c3;
+        return s >> m.c0 >> m.c1 >> m.c2 >> m.c3;
     }
 
     /// Writes a matrix to an output stream.
     friend std::ostream& operator<<(std::ostream& s,Matrix4 const& m) {
-        return s << '[' << m.m_c0 << ',' << m.m_c1 << ',' << m.m_c2 << ',' << m.m_c3 << ']';
+        return s << '[' << m.c0 << ',' << m.c1 << ',' << m.c2 << ',' << m.c3 << ']';
     }
 
     //@}
 
 #endif // GALE_TINY
 
-  private:
+  public:
 
-    Vec m_c0; ///< The first column vector.
-    Vec m_c1; ///< The second column vector.
-    Vec m_c2; ///< The third column vector.
-    Vec m_c3; ///< The fourth column vector.
+    Vec c0; ///< The first column vector.
+    Vec c1; ///< The second column vector.
+    Vec c2; ///< The third column vector.
+    Vec c3; ///< The fourth column vector.
 };
 
 #pragma pack(pop)

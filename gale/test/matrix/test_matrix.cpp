@@ -8,9 +8,6 @@
 using namespace std;
 
 using namespace gale::math;
-//using namespace gale::system;
-
-using gale::meta::OpCmpEqualEps;
 
 int main()
 {
@@ -45,7 +42,7 @@ int main()
     m.orthonormalize();
     n=!m;
 
-    HMat4f a(m.normal,m.up,m.look,m.position);
+    HMat4f a(m.c0,m.c1,m.c2,m.c3);
     m*=n;
 
     cout << m << endl;

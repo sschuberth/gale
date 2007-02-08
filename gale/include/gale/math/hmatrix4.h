@@ -189,10 +189,9 @@ class HMatrix4
     {
     }
 
-    /// Initialize the column vectors with "normal" vector \a n, "open" vector
-    /// \a o, "approach" vector \a a and "position" vector \a p.
-    HMatrix4(Vec const& n,Vec const& o,Vec const& a,Vec const& p):
-      normal(n),m_c0w(0),up(o),m_c1w(0),look(a),m_c2w(0),position(p),m_c3w(1)
+    /// Initialize the column vectors with vectors \a c0, \a c1, \a c2 and \a c3.
+    HMatrix4(Vec const& c0,Vec const& c1,Vec const& c2,Vec const& c3):
+      c0(c0),m_c0w(0),c1(c1),m_c1w(0),c2(c2),m_c2w(0),c3(c3),m_c3w(1)
     {
     }
 
@@ -205,12 +204,12 @@ class HMatrix4
 
     /// Returns a pointer to the matrix data in memory.
     T* getData() {
-        return normal;
+        return c0.getData();
     }
 
     /// Returns a \c constant pointer to the matrix data in memory
     T const* getData() const {
-        return normal;
+        return c0.getData();
     }
 
     /// Casts \c this matrix to a pointer of type \a T. As an intended side
@@ -248,19 +247,19 @@ class HMatrix4
 
     /// Increments \c this matrix by another matrix \a m.
     HMatrix4 const& operator+=(HMatrix4 const& m) {
-        normal   += m.normal;
-        up       += m.up;
-        look     += m.look;
-        position += m.position;
+        c0+=m.c0;
+        c1+=m.c1;
+        c2+=m.c2;
+        c3+=m.c3;
         return *this;
     }
 
     /// Decrements \c this matrix by another matrix \a m.
     HMatrix4 const& operator-=(HMatrix4 const& m) {
-        normal   -= m.normal;
-        up       -= m.up;
-        look     -= m.look;
-        position -= m.position;
+        c0-=m.c0;
+        c1-=m.c1;
+        c2-=m.c2;
+        c3-=m.c3;
         return *this;
     }
 
@@ -281,7 +280,7 @@ class HMatrix4
 
     /// Returns the negation of matrix \a m.
     friend HMatrix4 operator-(HMatrix4 const& m) {
-        return HMatrix4(-m.normal,-m.up,-m.look,-m.position);
+        return HMatrix4(-m.c0,-m.c1,-m.c2,-m.c3);
     }
 
     /// Returns the sum of matrices \a m and \a n.
@@ -351,7 +350,7 @@ class HMatrix4
 
     /// Multiplies all elements of matrix \a m by the scalar \a s.
     friend HMatrix4 operator*(HMatrix4 const& m,T s) {
-        return HMatrix4(m.normal*s,m.up*s,m.look*s,m.position*s);
+        return HMatrix4(m.c0*s,m.c1*s,m.c2*s,m.c3*s);
     }
 
     /// Multiplies all elements of matrix \a m by the scalar \a s.
@@ -374,10 +373,10 @@ class HMatrix4
     /// Returns whether all elements in \a m equal their counterpart in \a n
     /// using an epsilon-environment depending on the precision of \a T.
     friend bool operator==(HMatrix4 const& m,HMatrix4 const& n) {
-        return m.normal   == n.normal
-            && m.up       == n.up
-            && m.look     == n.look
-            && m.position == n.position;
+        return m.c0==n.c0
+            && m.c1==n.c1
+            && m.c2==n.c2
+            && m.c3==n.c3;
     }
 
     /// Returns whether the elements in \a m are not equal to their counterparts
@@ -393,21 +392,21 @@ class HMatrix4
      */
     //@{
 
-    /// Orthonormalizes this matrix so the normal, up and look vectors are
-    // normalized and orthogonal to each other.
+    /// Orthonormalizes this matrix so the column vectors are normalized and
+    /// orthogonal to each other.
     HMatrix4& orthonormalize() {
-        normal.normalize();
-        up=~(look^normal);
-        look=~(normal^up);
+        c0.normalize();
+        c1=~(c2^c0);
+        c2=~(c0^c1);
         return *this;
     }
 
     /// Inverts this matrix if it is orthonormal; the product of a matrix and
     /// its inverse equals the identity matrix.
     HMatrix4& invert() {
-        position=Vec(-position%normal,-position%up,-position%look);
+        c3=Vec(-c3%c0,-c3%c1,-c3%c2);
 
-        // Transpose the normal, up and look vectors.
+        // Transpose the column vectors.
         T tmp;
         tmp=(*this)(1,0); (*this)(1,0)=(*this)(0,1); (*this)(0,1)=tmp;
         tmp=(*this)(2,0); (*this)(2,0)=(*this)(0,2); (*this)(0,2)=tmp;
@@ -444,12 +443,12 @@ class HMatrix4
 
     /// Reads a matrix from an input stream.
     friend std::istream& operator>>(std::istream& s,HMatrix4& m) {
-        return s >> m.normal >> m.up >> m.look >> m.position;
+        return s >> m.c0 >> m.c1 >> m.c2 >> m.c3;
     }
 
     /// Writes a matrix to an output stream.
     friend std::ostream& operator<<(std::ostream& s,HMatrix4 const& m) {
-        return s << '[' << m.normal << ',' << m.up << ',' << m.look << ',' << m.position << ']';
+        return s << '[' << m.c0 << ',' << m.c1 << ',' << m.c2 << ',' << m.c3 << ']';
     }
 
     //@}
@@ -458,35 +457,35 @@ class HMatrix4
 
   public:
 
-    Vec normal;   ///< Three components of the first column vector.
+    Vec c0;  ///< Three components of the first column vector.
 
   private:
 
-    T m_c0w;      ///< The fourth component of the first column vector (always 0).
+    T m_c0w; ///< The fourth component of the first column vector (always 0).
 
   public:
 
-    Vec up;       ///< Three components of the second column vector.
+    Vec c1;  ///< Three components of the second column vector.
 
   private:
 
-    T m_c1w;      ///< The fourth component of the second column vector (always 0).
+    T m_c1w; ///< The fourth component of the second column vector (always 0).
 
   public:
 
-    Vec look;     ///< Three components of the third column vector.
+    Vec c2;  ///< Three components of the third column vector.
 
   private:
 
-    T m_c2w;      ///< The fourth component of the third column vector (always 0).
+    T m_c2w; ///< The fourth component of the third column vector (always 0).
 
   public:
 
-    Vec position; ///< Three components of the fourth column vector.
+    Vec c3;  ///< Three components of the fourth column vector.
 
   private:
 
-    T m_c3w;      ///< The fourth component of the fourth column vector (always 1).
+    T m_c3w; ///< The fourth component of the fourth column vector (always 1).
 };
 
 #pragma pack(pop)
