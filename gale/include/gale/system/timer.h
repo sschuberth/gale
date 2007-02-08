@@ -144,7 +144,7 @@ class Timer
     /// This is a reference counter for the instances of this class.
     static unsigned int s_instances;
     /// Needed restore the affinity mask after the last instance's destruction.
-    static DWORD s_mask;
+    static DWORD_PTR s_mask;
 
     long long m_offset,m_start,m_stop;
 #else
