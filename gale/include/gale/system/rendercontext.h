@@ -45,6 +45,16 @@ class RenderContext
 {
   public:
 
+    /// Returns a handle to the currently active rendering context.
+    static HGLRC getCurrent() {
+        return wglGetCurrentContext();
+    }
+
+    /// Makes this the thread's currently active rendering context.
+    bool setCurrent() {
+        return wglMakeCurrent(getDeviceHandle(),getRenderHandle())!=FALSE;
+    }
+
     /// Creates a minimal render context.
     RenderContext();
 

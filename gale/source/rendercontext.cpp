@@ -66,8 +66,8 @@ RenderContext::RenderContext()
     }
     ++s_instances;
 
-    if (wglGetCurrentContext()==NULL) {
-        result=wglMakeCurrent(m_dc,m_rc);
+    if (getCurrent()==NULL) {
+        result=setCurrent();
         G_ASSERT(result!=FALSE)
     }
 
@@ -98,7 +98,7 @@ void RenderContext::destroy()
 
     // Call the virtual getter-methods instead of accessing the member variables
     // directly so derived classes can use this method with their own handles.
-    if (wglGetCurrentContext()==getRenderHandle()) {
+    if (getCurrent()==getRenderHandle()) {
         result=wglMakeCurrent(NULL,NULL);
         G_ASSERT(result!=FALSE)
     }
