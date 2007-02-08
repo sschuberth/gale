@@ -17,7 +17,7 @@ LRESULT CALLBACK RenderWindow::WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPAR
     switch (uMsg) {
         // This is sent to a window after its size has changed.
         case WM_SIZE: {
-            _this->onSize();
+            _this->onSize(LOWORD(lParam),HIWORD(lParam));
             break;
         }
 
@@ -114,7 +114,7 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
     m_rc=wglCreateContext(m_dc);
     G_ASSERT(m_rc!=NULL)
 
-    result=wglMakeCurrent(m_dc,m_rc);
+    result=setCurrent();
     G_ASSERT(result!=FALSE)
 }
 

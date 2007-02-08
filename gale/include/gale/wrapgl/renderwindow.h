@@ -31,8 +31,8 @@
  * Render window implementation
  */
 
-#include "gale/system/attributelist.h"
-#include "gale/system/rendercontext.h"
+#include "../system/attributelist.h"
+#include "../system/rendercontext.h"
 
 #include "GLEX_WGL_ARB_pixel_format.h"
 #include "GLEX_ARB_color_buffer_float.h"
@@ -85,7 +85,7 @@ class RenderWindow:private system::RenderContext
     }
 
     /// Event handler that gets called after a window has changed its size.
-    virtual void onSize() {
+    virtual void onSize(int width,int height) {
     }
 
     /// Event handler that gets called when a window portion should be painted.
