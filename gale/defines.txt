@@ -1,0 +1,7 @@
+If GALE_SSE is defined, GALE uses SSE instructions on x86 machines to speed up
+certain calculations. Currently, only float 4-tuples and derived classes benefit
+from this define.
+
+If GALE_TINY is defined, GALE does not use any external libraries (which
+includes the STL an even the C runtime) to reduce the executable size. As a
+result, several convenience or debugging methods will not be available.
