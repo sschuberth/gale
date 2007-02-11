@@ -147,7 +147,7 @@ class Matrix4
     //@}
 
     /**
-     * \name Arithmetic matrix to matrix operators
+     * \name Arithmetic matrix / matrix operators
      */
     //@{
 
@@ -213,7 +213,7 @@ class Matrix4
     //@}
 
     /**
-     * \name Arithmetic matrix to vector operators
+     * \name Arithmetic matrix / vector operators
      */
     //@{
 
@@ -242,7 +242,7 @@ class Matrix4
     //@}
 
     /**
-     * \name Arithmetic matrix to scalar operators
+     * \name Arithmetic matrix / scalar operators
      */
     //@{
 

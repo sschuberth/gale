@@ -181,7 +181,7 @@ class TupleBase
 
     /// Returns the quotient of tuples \a t and \a u.
     friend C operator/(C const& t,C const& u) {
-        // The value of t is checked downstream in OpArithReci.
+        // The value of u is checked downstream in OpArithReci.
         return C(t)/=u;
     }
 
@@ -216,7 +216,7 @@ class TupleBase
 
     /// Performs scalar division from the right of each element.
     friend C operator/(C const& t,T s) {
-        // The value of t is checked downstream in operator/=(T s).
+        // The value of s is checked downstream in operator/=(T s).
         return C(t)/=s;
     }
 

@@ -241,7 +241,7 @@ class HMatrix4
     //@}
 
     /**
-     * \name Arithmetic matrix to matrix operators
+     * \name Arithmetic matrix / matrix operators
      */
     //@{
 
@@ -263,12 +263,12 @@ class HMatrix4
         return *this;
     }
 
-    /// Multiplies \c this matrix by another matrix \a m.
+    /// Multiplies \c this matrix with matrix \a m.
     HMatrix4 const& operator*=(HMatrix4 const& m) {
         return *this=(*this)*m;
     }
 
-    /// Divides \c this matrix by another matrix \a m.
+    /// Multiplies \c this matrix with the inverse of matrix \a m.
     HMatrix4 const& operator/=(HMatrix4 const& m) {
         return *this=(*this)/m;
     }
@@ -317,7 +317,7 @@ class HMatrix4
     //@}
 
     /**
-     * \name Arithmetic matrix to vector operators
+     * \name Arithmetic matrix / vector operators
      */
     //@{
 
@@ -344,7 +344,7 @@ class HMatrix4
     //@}
 
     /**
-     * \name Arithmetic matrix to scalar operators
+     * \name Arithmetic matrix / scalar operators
      */
     //@{
 

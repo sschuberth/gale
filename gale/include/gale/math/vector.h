@@ -249,7 +249,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
      */
     //@{
 
-    /// Calculates the cross product between this vector and \a v.
+    /// Calculates the cross product between this vector and vector \a v.
     Vector getCrossProduct(Vector const& v) const {
         G_ASSERT(N==3)
         return Vector(
@@ -259,24 +259,24 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         );
     }
 
-    /// Calculates the dot product between this vector and \a v.
+    /// Calculates the dot product between this vector and vector \a v.
     T getDotProduct(Vector const& v) const {
         return meta::LoopFwd<N,meta::OpCalcProd>::
                  iterateCombAdd(Base::getData(),v.getData());
     }
 
-    /// Returns the cosine of the angle between this vector and \a v.
+    /// Returns the cosine of the angle between this vector and vector \a v.
     T getAngleCosine(Vector const& v) const {
-        return (~v).getDotProduct(~(*this));
+        return (~(*this)).getDotProduct(~v);
     }
 
-    /// Returns the angle between this vector and \a v in radians.
+    /// Returns the angle between this vector and vector \a v in radians.
     double getAngle(Vector const& v) const {
         return ::acos(static_cast<double>(getAngleCosine(v)));
     }
 
     /// Returns a highly accurate calculation of the angle between this vector
-    /// and \a v in radians.
+    /// and vector \a v in radians.
     double getAccurateAngle(Vector const& v) const {
         Vector tn=~(*this),vn=~v;
         return ::atan2(
@@ -284,7 +284,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
                  static_cast<double>(tn.getDotProduct(vn)));
     }
 
-    /// Returns a vector which is orthogonal to this vector.
+    /// Returns an arbitrary vector which is orthogonal to this vector.
     Vector getOrthoVector() const {
         // Try the x-axis to create an orthogonal vector.
         Vector v=getCrossProduct(Vector::X());
@@ -297,7 +297,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return v;
     }
 
-    /// Returns whether this vector is collinear to \a v.
+    /// Returns whether this vector is collinear to vector \a v.
     bool isCollinear(Vector const& v) const {
         return meta::OpCmpEqualEps::
                  evaluate(v.getCrossProduct(*this).getLengthSquared(),static_cast<T>(0));
