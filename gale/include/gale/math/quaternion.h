@@ -26,12 +26,22 @@
 #ifndef QUATERNION_H
 #define QUATERNION_H
 
+/**
+ * \file
+ * Linear algebra quaternion routines
+ */
+
 #include "hmatrix4.h"
 
 namespace gale {
 
 namespace math {
 
+/**
+ * Quaternion class implementation based on a scalar for the real number part
+ * and a vector for the imaginary number part, featuring common linear algebra
+ * and math operations specialized on computer graphics.
+ */
 template<typename T>
 class Quaternion
 {
@@ -381,8 +391,15 @@ class Quaternion
     Vec imag; ///< Imaginary number parts of the quaternion.
 };
 
+/**
+ * \name Convenience type definitions
+ */
+//@{
+
 typedef Quaternion<double> Quatd;
 typedef Quaternion<float> Quatf;
+
+//@}
 
 } // namespace math
 

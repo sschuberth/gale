@@ -217,7 +217,7 @@ inline ScaleBias<T> BiasScale<T>::getInverse() const {
 }
 
 /**
- * \name Type definitions for convenience
+ * \name Convenience type definitions
  */
 //@{
 
