@@ -1,7 +1,9 @@
 #include <gale/wrapgl/renderwindow.h>
+#include <gale/wrapgl/camera.h>
 
 #include <iostream>
 
+using namespace gale::math;
 using namespace gale::system;
 using namespace gale::wrapgl;
 
@@ -36,11 +38,60 @@ class TestWindow:public RenderWindow
         return true;
     }
 
-    void onPaint() {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glClearColor(0,0,float(i)/255.0f,0);
+    void onSize(int width,int height) {
+        //m_camera.setViewport();
     }
 
+    void onPaint() {
+        static Vec3f vertices[8]={
+            Vec3f(-1.0f, -1.0f, 0.0f),
+            Vec3f(+1.0f, -1.0f, 0.0f),
+            Vec3f(+1.0f, +1.0f, 0.0f),
+            Vec3f(-1.0f, +1.0f, 0.0f),
+            //Vec3f(-1.0f, -1.0f, +1.0f),
+            //Vec3f(+1.0f, -1.0f, +1.0f),
+            //Vec3f(+1.0f, +1.0f, +1.0f),
+            //Vec3f(-1.0f, +1.0f, +1.0f),
+            Vec3f(+1.0f, -1.0f, -1.0f),
+            Vec3f(-1.0f, -1.0f, -1.0f),
+            Vec3f(-1.0f, +1.0f, -1.0f),
+            Vec3f(+1.0f, +1.0f, -1.0f)
+        };
+
+        static GLuint indices[]={
+            // Front & back quadrilaterals.
+            0,1,2,3,
+            4,5,6,7,
+            // Bottom & top quadrilaterals.
+            5,4,1,0,
+            3,2,7,6,
+            // Right & left quadrilaterals.
+            1,4,7,2,
+            5,0,3,6
+        };
+
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_LIGHTING);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(1,0,0,0);
+        G_ASSERT(glGetError()==GL_NO_ERROR);
+
+        GLint v[4];
+        glGetIntegerv(GL_VIEWPORT,v);
+        cout << v[2] << endl;
+        cout << v[3] << endl;
+        //glVertexPointer(3,GL_FLOAT,0,vertices);
+        //G_ASSERT(glGetError()==GL_NO_ERROR);
+
+        //glDrawElements(GL_QUADS,6*4,GL_UNSIGNED_INT,indices);
+        //G_ASSERT(glGetError()==GL_NO_ERROR);
+    }
+
+  private:
+
+    Camera m_camera;
     int i;
 };
 
