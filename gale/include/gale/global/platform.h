@@ -63,6 +63,15 @@
     #endif
 
     #include <windows.h>
+
+    /**
+     * \def PFD_SUPPORT_COMPOSITION
+     * Pixel format flag to enable composition of OpenGL contexts in Windows Vista
+     * (see http://www.opengl.org/pipeline/article/vol003_7/).
+     */
+    #ifndef PFD_SUPPORT_COMPOSITION
+        #define PFD_SUPPORT_COMPOSITION 0x00008000
+    #endif
 #else
     #include <sys/times.h>
     #include <unistd.h>
