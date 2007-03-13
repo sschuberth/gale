@@ -54,7 +54,7 @@ class AttributeList
         clear();
     }
 
-    /// Deletes all attributes in the list.
+    /// Marks the list as empty.
     void clear() {
         m_size=0;
         m_attributes[0]=0;

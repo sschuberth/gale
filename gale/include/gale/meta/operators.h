@@ -62,9 +62,9 @@ struct OpAssignNeg
 struct OpArithInc
 {
     /// Adds \a b to \a a.
-    template<typename A,typename B>
-    static G_INLINE void evaluate(A& a,B const& b) {
-        a+=A(b);
+    template<typename T>
+    static G_INLINE void evaluate(T& a,T const& b) {
+        a+=b;
     }
 };
 
@@ -72,9 +72,9 @@ struct OpArithInc
 struct OpArithDec
 {
     /// Subtracts \a b from \a a.
-    template<typename A,typename B>
-    static G_INLINE void evaluate(A& a,B const& b) {
-        a-=A(b);
+    template<typename T>
+    static G_INLINE void evaluate(T& a,T const& b) {
+        a-=b;
     }
 };
 
@@ -82,9 +82,9 @@ struct OpArithDec
 struct OpArithMul
 {
     /// Multiplies \a a by \a b.
-    template<typename A,typename B>
-    static G_INLINE void evaluate(A& a,B const& b) {
-        a*=A(b);
+    template<typename T>
+    static G_INLINE void evaluate(T& a,T const& b) {
+        a*=b;
     }
 };
 
@@ -92,10 +92,10 @@ struct OpArithMul
 struct OpArithReci
 {
     /// Calculates the reciprocal of \a b and stores the result into \a a.
-    template<typename A,typename B>
-    static G_INLINE void evaluate(A& a,B const& b) {
-        G_ASSERT(math::abs(b)>std::numeric_limits<double>::epsilon())
-        a=A(1.0/b);
+    template<typename T>
+    static G_INLINE void evaluate(T& a,T const& b) {
+        G_ASSERT(math::abs(b)>std::numeric_limits<T>::epsilon())
+        a=1/b;
     }
 };
 
@@ -103,8 +103,8 @@ struct OpArithReci
 struct OpCmpLess
 {
     /// Returns whether \a a is less than \a b.
-    template<typename A,typename B>
-    static G_INLINE bool evaluate(A const& a,B const& b) {
+    template<typename T>
+    static G_INLINE bool evaluate(T const& a,T const& b) {
         return a<b;
     }
 };
@@ -113,8 +113,8 @@ struct OpCmpLess
 struct OpCmpLessEqual
 {
     /// Returns whether \a a is less than or equal to \a b.
-    template<typename A,typename B>
-    static G_INLINE bool evaluate(A const& a,B const& b) {
+    template<typename T>
+    static G_INLINE bool evaluate(T const& a,T const& b) {
         return a<=b;
     }
 };
@@ -123,8 +123,8 @@ struct OpCmpLessEqual
 struct OpCmpGreater
 {
     /// Returns whether \a a is greater than \a b.
-    template<typename A,typename B>
-    static G_INLINE bool evaluate(A const& a,B const& b) {
+    template<typename T>
+    static G_INLINE bool evaluate(T const& a,T const& b) {
         return a>b;
     }
 };
@@ -133,8 +133,8 @@ struct OpCmpGreater
 struct OpCmpGreaterEqual
 {
     /// Returns whether \a a is greater than or equal to \a b.
-    template<typename A,typename B>
-    static G_INLINE bool evaluate(A const& a,B const& b) {
+    template<typename T>
+    static G_INLINE bool evaluate(T const& a,T const& b) {
         return a>=b;
     }
 };
@@ -143,7 +143,7 @@ struct OpCmpGreaterEqual
 struct OpCmpEqualEps
 {
     /// Returns whether \a a equals \a b using an epsilon-environment depending
-    /// on the data type's precision.
+    /// on the precision of \a T.
     template<typename T>
     static G_INLINE bool evaluate(
       T const& a,T const& b,
@@ -178,11 +178,11 @@ struct OpCalcMax
 /// Linear interpolation operator.
 struct OpCalcLerp
 {
-    /// Returns the linear interpolation between \a a and \a b based on \a c,
-    /// casted to type \a A.
-    template<typename A,typename B,typename C>
-    static G_INLINE A evaluate(A const& a,B const& b,C const& c) {
-        return A(a+(b-a)*c);
+    /// Returns the linear interpolation between \a a and \a b based on \a c.
+    template<typename T,typename U>
+    static G_INLINE T evaluate(T const& a,T const& b,U const& c) {
+        G_ASSERT(0<=c && c<=1)
+        return a+(b-a)*c;
     }
 };
 
@@ -190,9 +190,9 @@ struct OpCalcLerp
 struct OpCalcProd
 {
     /// Returns the product of \a a times \a b.
-    template<typename A,typename B>
-    static G_INLINE A evaluate(A const& a,B const& b) {
-        return A(a*b);
+    template<typename T>
+    static G_INLINE T evaluate(T const& a,T const& b) {
+        return a*b;
     }
 };
 
