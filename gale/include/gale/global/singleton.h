@@ -36,7 +36,7 @@ namespace gale {
 namespace global {
 
 /**
- * A singleton design pattern implementation as described in "More Effective
+ * Singleton design pattern implementation as described in "More Effective
  * C++" by Scott Meyers (Addison-Wesley, 1996a), item 26.
  */
 template<class C>

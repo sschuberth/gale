@@ -41,8 +41,8 @@ namespace system {
 #pragma pack(push,1)
 
 /**
- * This class implements a zero terminated list of type / value pairs that is
- * used to pass attributes to several API calls.
+ * Zero terminated list of type / value pairs that is used to pass attributes to
+ * several API calls.
  */
 template<typename T,int N=256>
 class AttributeList

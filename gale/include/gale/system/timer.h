@@ -38,7 +38,7 @@ namespace gale {
 namespace system {
 
 /**
- * This is a simple timing class with pause / resume capability.
+ * Simple timing class with pause / resume capability.
  */
 class Timer
 {
