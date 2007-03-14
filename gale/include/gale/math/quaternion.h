@@ -38,9 +38,9 @@ namespace gale {
 namespace math {
 
 /**
- * Quaternion class implementation based on a scalar for the real number part
- * and a vector for the imaginary number part, featuring common linear algebra
- * and math operations specialized on computer graphics.
+ * Quaternion implementation based on a scalar for the real number part and a
+ * vector for the imaginary number part. It has common linear algebra and math
+ * operations specialized on computer graphics.
  */
 template<typename T>
 class Quaternion
