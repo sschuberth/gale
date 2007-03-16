@@ -110,8 +110,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// and so on. This constructor is required to initialize the static class
     /// constants.
     explicit Vector(unsigned int mask) {
-        meta::LoopFwd<N,meta::OpAssign>::
-          iterateIndexMask(Base::getData(),mask);
+        meta::LoopFwd<N,meta::OpAssign>::iterateIndexMask(Base::getData(),mask);
     }
 
     /// For performance reasons, do not initialize any data by default.
@@ -261,8 +260,10 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Calculates the dot product between this vector and vector \a v.
     T getDotProduct(Vector const& v) const {
-        return meta::LoopFwd<N,meta::OpCalcProd>::
-                 iterateCombAdd(Base::getData(),v.getData());
+        return meta::LoopFwd<N,meta::OpCalcProd>::iterateCombAdd(
+            Base::getData(),
+            v.getData()
+        );
     }
 
     /// Returns the cosine of the angle between this vector and vector \a v.
@@ -279,9 +280,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// and vector \a v in radians.
     double getAccurateAngle(Vector const& v) const {
         Vector tn=~(*this),vn=~v;
-        return ::atan2(
-                 tn.getCrossProduct(vn).getLength(),
-                 static_cast<double>(tn.getDotProduct(vn)));
+        double dot=tn.getDotProduct(vn);
+        return ::atan2(tn.getCrossProduct(vn).getLength(),dot);
     }
 
     /// Returns an arbitrary vector which is orthogonal to this vector.
@@ -299,8 +299,10 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns whether this vector is collinear to vector \a v.
     bool isCollinear(Vector const& v) const {
-        return meta::OpCmpEqualEps::
-                 evaluate(v.getCrossProduct(*this).getLengthSquared(),static_cast<T>(0));
+        return meta::OpCmpEqualEps::evaluate(
+            v.getCrossProduct(*this).getLengthSquared(),
+            static_cast<T>(0)
+        );
     }
 
     //@}
