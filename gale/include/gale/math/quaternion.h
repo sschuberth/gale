@@ -81,22 +81,17 @@ class Quaternion
     //@{
 
     /// For performance reasons, do not initialize any data by default.
-    Quaternion() {
-    }
+    Quaternion() {}
 
     /// Initialized the quaternion to the given \a real number part and the
     /// imaginary number parts given as \a imag.
     Quaternion(T real,Vec const& imag):
-      real(real),imag(imag)
-    {
-    }
+      real(real),imag(imag) {}
 
     /// Creates a quaternion representing the orientation given by an \a angle
     /// and a normalized \a axis.
     Quaternion(double angle,Vec const& axis):
-      real(T(::cos(angle*0.5))),imag(T(::sin(angle*0.5))*axis)
-    {
-    }
+      real(T(::cos(angle*0.5))),imag(T(::sin(angle*0.5))*axis) {}
 
     //@}
 

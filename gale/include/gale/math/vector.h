@@ -114,20 +114,16 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     }
 
     /// For performance reasons, do not initialize any data by default.
-    Vector() {
-    }
+    Vector() {}
 
     /// Allows to initialize 2-vectors directly.
-    Vector(T const& x,T const& y):Base(x,y) {
-    }
+    Vector(T const& x,T const& y):Base(x,y) {}
 
     /// Allows to initialize 3-vectors directly.
-    Vector(T const& x,T const& y,T const& z):Base(x,y,z) {
-    }
+    Vector(T const& x,T const& y,T const& z):Base(x,y,z) {}
 
     /// Allows to initialize 4-vectors directly.
-    Vector(T const& x,T const& y,T const& z,T const& w):Base(x,y,z,w) {
-    }
+    Vector(T const& x,T const& y,T const& z,T const& w):Base(x,y,z,w) {}
 
     /// Converts a vector of different type but with the same amount of
     /// components to this type.

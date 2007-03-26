@@ -15,8 +15,7 @@ class TupleBase<4,float,C>
     //@{
 
     /// For performance reasons, do not initialize any data by default.
-    TupleBase() {
-    }
+    TupleBase() {}
 
     /// Allows to initialize 4-tuples directly.
     TupleBase(float const& e0,float const& e1,float const& e2,float const& e3) {

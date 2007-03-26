@@ -397,20 +397,16 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> >
     //@{
 
     /// For performance reasons, do not initialize any data by default.
-    Tuple() {
-    }
+    Tuple() {}
 
     /// Allows to initialize 2-tuples directly.
-    Tuple(T const& e0,T const& e1):Base(e0,e1) {
-    }
+    Tuple(T const& e0,T const& e1):Base(e0,e1) {}
 
     /// Allows to initialize 3-tuples directly.
-    Tuple(T const& e0,T const& e1,T const& e2):Base(e0,e1,e2) {
-    }
+    Tuple(T const& e0,T const& e1,T const& e2):Base(e0,e1,e2) {}
 
     /// Allows to initialize 4-tuples directly.
-    Tuple(T const& e0,T const& e1,T const& e2,T const& e3):Base(e0,e1,e2,e3) {
-    }
+    Tuple(T const& e0,T const& e1,T const& e2,T const& e3):Base(e0,e1,e2,e3) {}
 
     //@}
 };
