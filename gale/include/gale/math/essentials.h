@@ -35,6 +35,7 @@
     #define _USE_MATH_DEFINES
 #endif
 #include <math.h>
+#include <xmmintrin.h>
 
 #include <limits>
 
@@ -116,7 +117,7 @@ inline T max(T const a,T const b,T const c,T const d)
 template<typename T>
 inline T clamp(T const x,T const a,T const b)
 {
-    return min(max(a,x),b);
+    return (a<b)?min(max(a,x),b):min(max(b,x),a);
 }
 
 //@}
@@ -133,8 +134,7 @@ inline long long roundToEven(float const f)
 {
     // By default, the Pentium's fistp instruction does a "round to even", so
     // there is no need to save and restore the floating-point control word like
-    // the C runtime does (see
-    // http://web.archive.org/web/20041011125702/http://www.self-similar.com/rounding.html).
+    // the C runtime does (see http://www.self-similar.com/rounding.html).
 
 #ifdef __GNUC__
 
@@ -159,17 +159,7 @@ inline long long roundToEven(float const f)
 
 #else
 
-    union {
-        double f;
-        long long i;
-    } u;
-
-    // Add a float bias that shifts the mantissa to the right, and then subtract
-    // the bias as an integer again (see
-    // http://groups.google.de/group/comp.graphics.algorithms/tree/browse_frm/thread/5099095b1cd1a78a/2b72601d013c7a0f).
-    u.f=static_cast<double>(3LL<<51);
-    u.f+=static_cast<double>(f);
-    return u.i-0x4338000000000000;
+    return static_cast<long long>(f+0.5f);
 
 #endif // __GNUC__
 }
@@ -177,19 +167,17 @@ inline long long roundToEven(float const f)
 /// Rounds \a f to the nearest integer towards zero (truncating the number).
 /// This is the default ANSI C rounding mode; use this method instead of a cast
 /// to an integer as it is faster.
-inline long long roundToZero(float const f)
+inline long roundToZero(float const f)
 {
-    union {
-        float f;
-        long i;
-    } u;
+#ifdef GALE_SSE
 
-    // For positive numbers, this returns roundToEven(f-u.i). For negative
-    // numbers, an additional two instructions are required negate this "magic"
-    // number (see http://web.archive.org/web/20041011125702/http://www.self-similar.com/rounding.html).
-    u.f=f;
-    u.i=(u.i&0x80000000)|0x3efffffe;
-    return roundToEven(f-u.f);
+    return _mm_cvttss_si32(_mm_set_ss(f));
+
+#else
+
+    return static_cast<long>(f);
+
+#endif
 }
 
 //@}
@@ -208,7 +196,8 @@ inline bool isPowerOf2(unsigned int const x)
     return (x&(x-1))==0;
 }
 
-/// Returns the position of the least significant bit set in \a x.
+/// Returns the position of the least significant bit set in \a x (the least
+/// significant bit has index 0).
 inline long getLSBSet(unsigned int const x)
 {
     if (x==0) {
@@ -246,7 +235,8 @@ inline long getLSBSet(unsigned int const x)
 #endif // __GNUC__
 }
 
-/// Returns the position of the most significant bit set in \a x.
+/// Returns the position of the most significant bit set in \a x (the least
+/// significant bit has index 0).
 inline long getMSBSet(unsigned int const x)
 {
     if (x==0) {
@@ -274,8 +264,9 @@ inline long getMSBSet(unsigned int const x)
 
 #else
 
-    long index=31;
-    while ((x&(1UL<<31))==0) {
+    unsigned int const MSB=(1UL<<(sizeof(x)+1))-1;
+    long index=MSB;
+    while ((x&(1UL<<MSB))==0) {
         --index;
         x<<=1;
     }
