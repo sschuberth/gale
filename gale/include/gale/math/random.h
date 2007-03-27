@@ -28,6 +28,8 @@
 
 #include <time.h>
 
+#include "quaternion.h"
+
 /**
  * \file
  * Pseudo Random Number Generators (PRNG)
@@ -134,6 +136,22 @@ class RandomBase
     /// Returns a floating-point random number in range ]0,range].
     T getRandomExcl0N(T range) {
         return getRandomExcl01()*range;
+    }
+
+    /// Returns a random normalized vector.
+    Vector<3,T> getVector() {
+        Vector<3,T> v;
+        do {
+            v.setX(getRandom0N(2)-1);
+            v.setY(getRandom0N(2)-1);
+            v.setZ(getRandom0N(2)-1);
+        } while (v.getLengthSquared()>1);
+        return v.normalize();
+    }
+
+    /// Returns a random normalized quaternion.
+    Quaternion<T> getQuaternion() {
+        return Quaternion<T>(getRandom0ExclN(static_cast<T>(2*M_PI)),getVector());
     }
 
     //@}
