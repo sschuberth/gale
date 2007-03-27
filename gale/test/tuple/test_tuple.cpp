@@ -1,3 +1,4 @@
+#include <gale/math/random.h>
 #include <gale/math/tuple.h>
 #include <gale/math/vector.h>
 #include <gale/math/color.h>
@@ -16,6 +17,8 @@ using namespace gale::system;
 using gale::meta::OpCmpEqualEps;
 
 using namespace std;
+
+RandomEcuyerf r;
 
 void test_tuple();
 void test_vector();
@@ -47,8 +50,6 @@ int main()
          << ((CPU.isIntel() && CPU.hasEM64T())?" EM64T":"")
          << ((CPU.isAMD() && CPU.hasAMD64())?" AMD64":"")
          << endl;
-
-    srand(static_cast<unsigned int>(time(NULL)));
 
     test_tuple();
     test_vector();
@@ -118,21 +119,21 @@ void test_tuple()
 
     cout << "Check construction of objects ..."
          << endl;
-    Tuple<2,int> t2i_a(1,2),t2i_b(rand(),rand());
+    Tuple<2,int> t2i_a(1,2),t2i_b(r.getRandom(),r.getRandom());
 
     Tuple<3,float> t3f_a(3.0f,4.0f,5.0f);
     Tuple<3,float> t3f_b(
-        static_cast<float>(rand()),
-        static_cast<float>(rand()),
-        static_cast<float>(rand())
+        static_cast<float>(r.getRandom()),
+        static_cast<float>(r.getRandom()),
+        static_cast<float>(r.getRandom())
     );
 
     Tuple<4,double> t4d_a(5.0,6.0,7.0,8.0);
     Tuple<4,double> t4d_b(
-        static_cast<double>(rand()),
-        static_cast<double>(rand()),
-        static_cast<double>(rand()),
-        static_cast<double>(rand())
+        static_cast<double>(r.getRandom()),
+        static_cast<double>(r.getRandom()),
+        static_cast<double>(r.getRandom()),
+        static_cast<double>(r.getRandom())
     );
 
     cout << t2i_a << ", " << t2i_b << endl;
@@ -257,9 +258,9 @@ void test_tuple()
          << endl;
     {
         Tuple<3,float> tmp(
-            static_cast<float>(rand()),
-            static_cast<float>(rand()),
-            static_cast<float>(rand())
+            static_cast<float>(r.getRandom()),
+            static_cast<float>(r.getRandom()),
+            static_cast<float>(r.getRandom())
         );
 
         Tuple<3,float> res=((t3f_a+t3f_b)-t3f_b)*tmp;
