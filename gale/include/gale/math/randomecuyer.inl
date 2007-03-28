@@ -4,20 +4,8 @@
  * 10^26) and it uses only three 32-bit integers to store its state (see
  * http://root.cern.ch/root/html/TRandom2.html).
  */
-class RandomEcuyer
+struct RandomEcuyerImpl
 {
-    template<typename,class> friend class RandomBase;
-
-    /**
-     * \name Constructors
-     */
-    //@{
-
-    /// Do not allow to explicitly create instances of this class.
-    RandomEcuyer() {}
-
-    //@}
-
     /**
      * \name Methods required by the base class template
      */
@@ -84,7 +72,7 @@ class RandomEcuyer
  */
 //@{
 
-typedef RandomBase<double,RandomEcuyer> RandomEcuyerd;
-typedef RandomBase<float,RandomEcuyer> RandomEcuyerf;
+typedef RandomBase<double,RandomEcuyerImpl> RandomEcuyerd;
+typedef RandomBase<float,RandomEcuyerImpl> RandomEcuyerf;
 
 //@}
