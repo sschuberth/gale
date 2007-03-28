@@ -7,12 +7,12 @@ project or have been granted access to the source code repository, please make
 sure you adhere to these rules. After all, there is no rule without exceptions,
 so the most important rule should always be:
 
-  "Use common sense!"
+    "Use common sense!"
 
 In case of doubt, you may refer to resources on the Internet like the excellent
 
-  C++ FAQ Lite
-  http://www.parashift.com/c++-faq-lite/
+    C++ FAQ Lite
+    http://www.parashift.com/c++-faq-lite/
 
 or contact me.
 
