@@ -60,9 +60,9 @@ struct RandomEcuyerImpl
      */
     //@{
 
-    unsigned int m_seed0; ///< First seed number.
-    unsigned int m_seed1; ///< Second seed number.
-    unsigned int m_seed2; ///< Third seed number.
+    unsigned int m_seed0; ///< The first seed number.
+    unsigned int m_seed1; ///< The second seed number.
+    unsigned int m_seed2; ///< The third seed number.
 
     //@}
 };
