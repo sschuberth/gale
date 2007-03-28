@@ -214,25 +214,53 @@ class Matrix4
      */
     //@{
 
-    /// Multiplies vector \a v from the right to matrix \a m.
-    friend Vec operator*(Matrix4 const& m,Vec const& v) {
+    /// Multiplies this matrix from the left to column vector \a v (resulting in
+    /// a column vector).
+    Vec multFromLeftTo(Vec const& v) const {
         // 16 scalar multiplications, 12 scalar additions.
         return Vec(
-            m[0]*v[0] + m[4]*v[1] + m[8]*v[2]  + m[12]*v[3],
-            m[1]*v[0] + m[5]*v[1] + m[9]*v[2]  + m[13]*v[3],
-            m[2]*v[0] + m[6]*v[1] + m[10]*v[2] + m[14]*v[3],
-            m[3]*v[0] + m[7]*v[1] + m[11]*v[2] + m[15]*v[3]
+            c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]*v[3],
+            c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]*v[3],
+            c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2]*v[3],
+            c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3]*v[3]
         );
     }
 
-    /// Multiplies vector \a v from the left to matrix \a m.
-    friend Vec operator*(Vec const& v,Matrix4 const& m) {
+    /// Multiplies this matrix from the right to row vector \a v (resulting in a
+    /// row vector).
+    Vec multFromRightTo(Vec const& v) const {
         // 16 scalar multiplications, 12 scalar additions.
         return Vec(
-            m[0]*v[0]  + m[1]*v[1]  + m[2]*v[2]  + m[3]*v[3],
-            m[4]*v[0]  + m[5]*v[1]  + m[6]*v[2]  + m[7]*v[3],
-            m[8]*v[0]  + m[9]*v[1]  + m[10]*v[2] + m[11]*v[3],
-            m[12]*v[0] + m[13]*v[1] + m[14]*v[2] + m[15]*v[3]
+            v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + v[3]*c0[3],
+            v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + v[3]*c1[3],
+            v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2] + v[3]*c2[3],
+            v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + v[3]*c3[3]
+        );
+    }
+
+    /// Multiplies this matrix from the left to column vector \a v (resulting in
+    /// a column vector) using homogeneous coordinates.
+    Vector<3,T> multFromLeftTo(Vector<3,T> const& v) const {
+        // 15 scalar multiplications, 12 scalar additions.
+        T v4=c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3];
+        T s=v4 ? 1.0f/v4 : 1.0f;
+        return Vec(
+            s*(c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]),
+            s*(c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]),
+            s*(c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2])
+        );
+    }
+
+    /// Multiplies this matrix from the right to row vector \a v (resulting in a
+    /// row vector) using homogeneous coordinates.
+    Vector<3,T> multFromRightTo(Vector<3,T> const& v) const {
+        // 15 scalar multiplications, 12 scalar additions.
+        T v4=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + c3[3];
+        T s=v4 ? 1.0f/v4 : 1.0f;
+        return Vec(
+            s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + c0[3]),
+            s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + c1[3]),
+            s*(v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2] + c2[3])
         );
     }
 
@@ -278,6 +306,25 @@ class Matrix4
     /// in \a n using an epsilon-environment depending on the precision of \a T.
     friend bool operator!=(Matrix4 const& m,Matrix4 const& n) {
         return !(m==n);
+    }
+
+    //@}
+
+    /**
+     * \name Convenience operators for named methods
+     */
+    //@{
+
+    /// Multiplies matrix \a m from the left to column vector \a v (resulting in
+    /// a column vector).
+    friend Vec operator*(Matrix4 const& m,Vec const& v) {
+        return m.multFromLeftTo(v);
+    }
+
+    /// Multiplies matrix \a m from the left to column vector \a v (resulting in
+    /// a column vector) using homogeneous coordinates.
+    friend Vector<3,T> operator*(Matrix4 const& m,Vector<3,T> const& v) {
+        return m.multFromLeftTo(v);
     }
 
     //@}
