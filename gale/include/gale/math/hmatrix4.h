@@ -67,7 +67,8 @@ class HMatrix4
     /// Inner factory class to easily create commonly used homogeneous matrices.
     struct Factory
     {
-        /// Creates a rotation matrix about the x-axis for the given \a angle.
+        /// Creates a rotation matrix about the x-axis for the given \a angle in
+        /// radians.
         static HMatrix4 RotationX(double angle) {
             double s=::sin(angle),c=::cos(angle);
 
@@ -79,7 +80,8 @@ class HMatrix4
             );
         }
 
-        /// Creates a rotation matrix about the y-axis for the given \a angle.
+        /// Creates a rotation matrix about the y-axis for the given \a angle in
+        /// radians.
         static HMatrix4 RotationY(double angle) {
             double s=::sin(angle),c=::cos(angle);
 
@@ -91,7 +93,8 @@ class HMatrix4
             );
         }
 
-        /// Creates a rotation matrix about the z-axis for the given \a angle.
+        /// Creates a rotation matrix about the z-axis for the given \a angle in
+        /// radians.
         static HMatrix4 RotationZ(double angle) {
             double s=::sin(angle),c=::cos(angle);
 
@@ -104,7 +107,7 @@ class HMatrix4
         }
 
         /// Creates a rotation matrix about the given normalized \a axis for the
-        /// given \a angle.
+        /// given \a angle in radians.
         static HMatrix4 Rotation(Vec const& axis,double angle) {
             double s=::sin(angle),c=1-::cos(angle);
             double xs=s*axis.getX(),ys=s*axis.getY(),zs=s*axis.getZ();
@@ -125,8 +128,7 @@ class HMatrix4
                 Vec::X(),
                 Vec::Y(),
                 Vec::Z(),
-                direction*distance,
-                Vec::ZERO()
+                direction*distance
             );
         }
 
@@ -185,15 +187,11 @@ class HMatrix4
 
     /// For performance reasons, do not initialize the whole matrix by default.
     HMatrix4():
-      m_c0w(0),m_c1w(0),m_c2w(0),m_c3w(1)
-    {
-    }
+      m_c0w(0),m_c1w(0),m_c2w(0),m_c3w(1) {}
 
     /// Initialize the column vectors with vectors \a c0, \a c1, \a c2 and \a c3.
     HMatrix4(Vec const& c0,Vec const& c1,Vec const& c2,Vec const& c3):
-      c0(c0),m_c0w(0),c1(c1),m_c1w(0),c2(c2),m_c2w(0),c3(c3),m_c3w(1)
-    {
-    }
+      c0(c0),m_c0w(0),c1(c1),m_c1w(0),c2(c2),m_c2w(0),c3(c3),m_c3w(1) {}
 
     //@}
 
@@ -321,23 +319,27 @@ class HMatrix4
      */
     //@{
 
-    /// Multiplies vector \a v from the right to matrix \a m.
-    friend Vec operator*(HMatrix4 const& m,Vec const& v) {
+    /// Multiplies this matrix from the left to column vector \a v (resulting in
+    /// a column vector).
+    Vec multFromLeftTo(Vec const& v) const {
         // 9 scalar multiplications, 9 scalar additions (includes translation).
         return Vec(
-            m[0]*v[0] + m[4]*v[1] + m[8]*v[2]  + m[12],
-            m[1]*v[0] + m[5]*v[1] + m[9]*v[2]  + m[13],
-            m[2]*v[0] + m[6]*v[1] + m[10]*v[2] + m[14]
+            c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0],
+            c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1],
+            c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2]
         );
     }
 
-    /// Multiplies vector \a v from the left to matrix \a m.
-    friend Vec operator*(Vec const& v,HMatrix4 const& m) {
-        // 9 scalar multiplications, 9 scalar additions (includes translation).
+    /// Multiplies this matrix from the right to row vector \a v (resulting in a
+    /// row vector).
+    Vec multFromRightTo(Vec const& v) const {
+        // 15 scalar multiplications, 9 scalar additions (includes translation).
+        T v4=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + m_c3w;
+        T s=v4 ? 1.0f/v4 : 1.0f;
         return Vec(
-            m[0]*v[0] + m[1]*v[1] + m[2]*v[2]  + m[12],
-            m[4]*v[0] + m[5]*v[1] + m[6]*v[2]  + m[13],
-            m[8]*v[0] + m[9]*v[1] + m[10]*v[2] + m[14]
+            s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2]),
+            s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2]),
+            s*(v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2])
         );
     }
 
@@ -421,6 +423,12 @@ class HMatrix4
      * \name Convenience operators for named methods
      */
     //@{
+
+    /// Multiplies matrix \a m from the left to column vector \a v (resulting in
+    /// a column vector).
+    friend Vec operator*(HMatrix4 const& m,Vec const& v) {
+        return m.multFromLeftTo(v);
+    }
 
     /// Returns an orthonormalized copy of matrix \a m.
     friend HMatrix4 operator~(HMatrix4 const& m) {
