@@ -1,7 +1,7 @@
 Introduction
 ============
 
-This documents lists some general conventions I think of as being senseful and
+This documents lists some general conventions I think of as being sensible and
 that I try to follow in this project. If you are going to submit patches to the
 project or have been granted access to the source code repository, please make
 sure you adhere to these rules. After all, there is no rule without exceptions,
@@ -16,29 +16,49 @@ In case of doubt, you may refer to resources on the Internet like the excellent
 
 or contact me.
 
-Coding
-======
+Conventions
+===========
 
-Formatting
-----------
+Source Formatting
+-----------------
 
-- Use four spaces for indenting, no tabs.
+- Use four spaces for indenting, no tabs. Even when used carefully, tabs cause
+  too much formatting errors between editors with different tab settings.
+
+- Use exactly one space between language construct and the opening parenthesis
+  (e.g. "if (", "while (") and no white-spaces between function names or macros
+  and the opening parenthesis (e.g. "strcat(", "printf("). This helps to
+  visually distinguish these.
 
 - The line length should not exceed 80 characters. Lines of code that are harder
-  to understand if reformatted are and exception, but it is a must for comments.
+  to understand if they are reformatted are an exception, but it is a must for
+  comments. As many terminals still wrap longer lines, this is a big help when
+  viewing the code.
+
+- Write all comments (even regular / non-Doxygen comments) as if they were
+  official documentation. This means to use proper spelling, grammar and
+  punctuation. Besides being good style, this helps to write clear comments for
+  others to understand.
 
 Data Types
 ----------
 
 - Do not introduce type definitions for primitive data types, the given types
-  are well-defined on both Windows and Linux, for 32-bit and 64-bit.
+  are well-defined on both Windows and Linux, for 32-bit and 64-bit. There
+  already enough type definitions for the same data types across third-party
+  libraries.
 
 - Use the most common and shortest names, be explicit about unsigned data types.
   I.e. instead of "signed long" write "int", instead of "unsigned" write
-  "unsigned int".
+  "unsigned int". Being canonical and explicit about this eases reading the code.
 
 General Coding
 --------------
+
+- Define macros all upper case and in such a way that they can be called without
+  a trailing semicolon, i.e. not "c=min(a,b);" but "c=MIN(a,b)". This helps to
+  visually identify macros in the code and avoids errors if one forgets to add
+  the semicolon.
 
 - When declaring pointers, always write the "*" next to the data type, not next
   to the variable name. Do not declare pointer and non-pointer variables of the
@@ -51,9 +71,66 @@ General Coding
     int* data;
     int counter;
 
-  for clarity.
+  for clarity. As the "*" does semantically belong to the data type, not the to
+  variable, it is just consequent to reflect this in the formatting.
 
-- Put the "const" modifier always to the right of what is constant. As you have
-  no choice when declaring "const" methods, it makes sense to always use that
-  rule for consistency, e.g. instead of "char const* input" use "char const*
-  input".
+- Write the "const" modifier always to the right of the entity that is constant,
+  i.e. use "int const PI=3;". As you have no choice when declaring "const"
+  methods, it makes sense to always use that rule for consistency.
+
+- Use indented blocks (enclosed by curly braces) even for single lines of code.
+  It is much more error prone to use and harder to debug code like
+
+    if (flag) puts("Yippee!");
+
+  than
+
+    if (flag) {
+        puts("Yippee!");
+    }
+
+  as one might forget to add curly braces when they are desired and its unclear
+  when the statement gets executed.
+
+- Avoid deep nesting of conditions, so instead of
+
+    if (cond1) {
+        // ...
+        if (cond2) {
+            // ...
+            if (cond3) {
+                // ...
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+
+  you should prefer
+
+    if (!cond1) {
+        return false;
+    }
+
+    // ...
+
+    if (!cond2) {
+        return false;
+    }
+
+    // ...
+
+    if (!cond3) {
+        return false;
+    }
+
+    // ...
+
+    return true;
+
+  as it is much easier to read and consumes less horizontal space.
