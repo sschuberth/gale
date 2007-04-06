@@ -49,12 +49,12 @@ class ColorModel
 {
   public:
 
-    /// Returns the minimum intensity value for a color channel.
+    /// Returns the minimum intensity value allowed for a color channel.
     static T getMinIntensity() {
         return std::numeric_limits<T>::min();
     }
 
-    /// Returns the maximum intensity value for a color channel.
+    /// Returns the maximum intensity value allowed for a color channel.
     static T getMaxIntensity() {
         return std::numeric_limits<T>::max();
     }
@@ -468,8 +468,8 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         m_rgb_outdated=false;
     }
 
-    bool m_hsv_outdated; ///< Flag to indicate the validity of the HSV channel variables.
-    bool m_rgb_outdated; ///< Flag to indicate the validity of the RGB channel variables.
+    bool m_hsv_outdated; ///< Dirty-flag for the HSV channel cache variables.
+    bool m_rgb_outdated; ///< Dirty-flag for the RGB channel cache variables.
 
     T m_h; ///< Cache variable for the HSV channel values.
     T m_s; ///< \copydoc m_h
