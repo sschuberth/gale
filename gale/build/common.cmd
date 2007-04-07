@@ -5,22 +5,26 @@
 
 : Add the Cygwin binary directory to the PATH.
 if "%1" == "" (
-    set cygwin="C:\cygwin\bin"
+    set CYGWIN="C:\cygwin\bin"
 ) else (
-    set cygwin="%1"
+    set CYGWIN="%1"
 )
 
+echo *** Assuming Cygwin to be installed at %CYGWIN% ...
+
 set OLD_PATH=%PATH%
-set PATH=%cygwin%;%PATH%
+set PATH=%CYGWIN%;%PATH%
 
 pushd "%~dp0..\glex"
 
 : Download and parse the OpenGL extension registry if needed.
 if not exist "..\..\glex\registry\OpenGL.org\ARB\color_buffer_float.txt" (
+    echo *** Generating local OpenGL registry ...
     bash -c "export PATH=/bin && ../../glex/registry/update_registry.sh ../../glex/registry/OpenGL.org"
 )
 
 : List the extensions used in the project.
+echo *** Parsing required OpenGL extensions ...
 bash -c "export PATH=/bin && ../../glex/glex.sh spec=../../glex/registry/OpenGL.org/ARB/color_buffer_float.txt"
 bash -c "export PATH=/bin && ../../glex/glex.sh spec=../../glex/registry/OpenGL.org/ARB/wgl_pixel_format.txt"
 
@@ -29,4 +33,4 @@ popd
 : Undo any changes to variables.
 set PATH=%OLD_PATH%
 set OLD_PATH=
-set cygwin=
+set CYGWIN=
