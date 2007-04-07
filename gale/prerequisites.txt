@@ -1,0 +1,32 @@
+In order to create the build system and compile GALE, you will need the
+following software to be installed on your development machine. Note that while
+newer or older versions than the ones listed might work well, they are untested:
+
+Common
+======
+
+- CMake 2.4.x (http://www.cmake.org/)
+- Doxygen 1.5.2 (http://www.doxygen.org/)
+
+Windows
+=======
+
+- Cygwin (http://www.cygwin.com/) with the packages
+    * bash
+    * coreutils
+    * findutils
+    * php (from http://jabberwock.vm.bytemark.co.uk/~maxb/cygphp/)
+    * sed
+    * wget
+- Visual Studio .NET 2003 or Visual Studio 2005
+
+Linux
+=====
+
+- GNU BASH (http://www.gnu.org/software/bash/)
+- GNU Coreutils (http://www.gnu.org/software/coreutils/)
+- GNU Findutils (http://www.gnu.org/software/findutils/)
+- PHP (http://www.php.net/)
+- Sed (http://sed.sourceforge.net/)
+- Wget (http://www.gnu.org/software/wget/)
+- GCC 4.1.x (http://gcc.gnu.org/)
