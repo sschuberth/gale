@@ -45,10 +45,8 @@ namespace math {
  * be implictly obtained from the base template.
  */
 template<typename T>
-class ColorModel
+struct ColorModel
 {
-  public:
-
     /// Returns the minimum intensity value allowed for a color channel.
     static T getMinIntensity() {
         return std::numeric_limits<T>::min();
@@ -62,7 +60,7 @@ class ColorModel
     /// Converts a color representation from the RGB to the HSV model. All
     /// channel values are interpreted to range from the value returned by
     /// getMinIntensity() to the value returned by getMaxIntensity().
-    void RGB2HSV(T const r,T const g,T const b,T& h,T& s,T& v) {
+    static void RGB2HSV(T const r,T const g,T const b,T& h,T& s,T& v) {
         const T min=getMinIntensity(),range=getMaxIntensity()-min;
 
         // Always convert RGB values to range [0,1].
@@ -110,7 +108,7 @@ class ColorModel
     /// Converts a color representation from the HSV to the RGB model. All
     /// channel values are interpreted to range from the value returned by
     /// getMinIntensity() to the value returned by getMaxIntensity().
-    void HSV2RGB(T const h,T const s,T const v,T& r,T& g,T& b) {
+    static void HSV2RGB(T const h,T const s,T const v,T& r,T& g,T& b) {
         const T min=getMinIntensity(),range=getMaxIntensity()-min;
 
         // Always convert HSV values to range [0,1].
