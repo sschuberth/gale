@@ -44,9 +44,9 @@ namespace math {
  * Example usage:
  * \code
  * glBegin(GL_LINE_LOOP);
- *     glVertex3f(Vec3f::X());
- *     glVertex3f(Vec3f::Y());
- *     glVertex3f(Vec3f::Z());
+ *     glVertex3fv(Vec3f::X());
+ *     glVertex3fv(Vec3f::Y());
+ *     glVertex3fv(Vec3f::Z());
  * glEnd();
  * \endcode
  */
