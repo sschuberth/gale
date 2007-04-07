@@ -41,6 +41,13 @@ namespace math {
  * Quaternion implementation based on a scalar for the real number part and a
  * vector for the imaginary number part. It has common linear algebra and math
  * operations specialized on computer graphics.
+ *
+ * Example usage:
+ * \code
+ * Quatf q(convDegToRad(45.0f),Vec3f::Z());
+ * HMat4f m=q.getMatrix();
+ * glMultMatrixf(m);
+ * \endcode
  */
 template<typename T>
 class Quaternion
@@ -331,7 +338,8 @@ class Quaternion
         return HMat(
             Vec(T(1-s*(yy+zz)), T(  s*(xy+wz)), T(  s*(xz-wy))),
             Vec(T(  s*(xy-wz)), T(1-s*(xx+zz)), T(  s*(yz+wx))),
-            Vec(T(  s*(xz+wy)), T(  s*(yz-wx)), T(1-s*(xx+yy)))
+            Vec(T(  s*(xz+wy)), T(  s*(yz-wx)), T(1-s*(xx+yy))),
+            Vec::ZERO()
         );
     }
 
