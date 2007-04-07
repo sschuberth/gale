@@ -45,8 +45,10 @@ namespace math {
 #pragma pack(push,1)
 
 /**
- * Matrix class implementation based on column vectors. The matrix is stored in
- * column-major order in memory as required by OpenGL.
+ * Matrix class implementation based on column vectors. The matrix is stored as
+ * 4x4 numbers organized in column-major order in memory as required by OpenGL,
+ * i.e. the matrix entry at row r (0 <= r <= 3) and column c (0 <= c <= 3) is
+ * located at offset i = c*4 + r.
  *
  * Example usage:
  * \code
@@ -128,14 +130,14 @@ class Matrix4
     }
 
     /// Returns a reference to the data element located at \a row and \a column.
-    /// Despite in maths, usually, the index runs from 0 to 3.
+    /// Despite usual in maths, the index starts at 0 (not 1).
     T& operator()(unsigned int row,unsigned int column) {
         G_ASSERT(row<4 && column<4)
         return (*this)[(column<<2)+row];
     }
 
     /// Returns a constant reference to the data element located at \a row and
-    /// \a column. Despite in maths, usually, the index runs from 0 to 3.
+    /// \a column. Despite usual in maths, the index starts at 0 (not 1).
     T const& operator()(unsigned int row,unsigned int column) const {
         G_ASSERT(row<4 && column<4)
         return (*this)[(column<<2)+row];
