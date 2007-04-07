@@ -279,11 +279,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
      */
     //@{
 
-    /// Initialize to black by default.
-    Color() {
-        *this=BLACK();
-    }
-
     /// Sets each color channel to either the maximum or minimum intensity
     /// depending on the bits set in \a mask. Bit 0 maps to the first channel,
     /// bit 1 to second one and so on. This constructor is required to
@@ -291,6 +286,11 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     explicit Color(unsigned int mask):m_hsv_outdated(true),m_rgb_outdated(false) {
         meta::LoopFwd<N,meta::OpAssign>::
           iterateIndexMask(Base::getData(),mask,Model::getMaxIntensity(),Model::getMinIntensity());
+    }
+
+    /// Initialize to black by default.
+    Color() {
+        *this=BLACK();
     }
 
     /// Allows to initialize 3-channel colors directly.
