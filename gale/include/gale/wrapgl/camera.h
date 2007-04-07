@@ -16,8 +16,8 @@ class Camera
 {
   public:
 
-	//PerspectiveCamera(const Vector3f& position=Vector3f(0,0,5),const Vector3f& look_target=Vector3f::ZERO(),
-	//	const Vector3f& up_direction=Vector3f::Y());
+    //PerspectiveCamera(const Vector3f& position=Vector3f(0,0,5),const Vector3f& look_target=Vector3f::ZERO(),
+    //const Vector3f& up_direction=Vector3f::Y());
     Camera() {
         setViewport();
         modelview=math::HMat4f::IDENTITY();
