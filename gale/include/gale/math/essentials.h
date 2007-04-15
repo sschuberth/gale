@@ -49,25 +49,25 @@ namespace math {
 //@{
 
 /// Converts the given \a angle specified in degrees to radians.
-inline double convDegToRad(double angle)
+inline double convDegToRad(double const angle)
 {
     return (static_cast<double>(M_PI)*angle)/180.0;
 }
 
 /// Converts the given \a angle specified in degrees to radians.
-inline float convDegToRad(float angle)
+inline float convDegToRad(float const angle)
 {
     return (static_cast<float>(M_PI)*angle)/180.0f;
 }
 
 /// Converts the given \a angle specified in radians to degrees.
-inline double convRadToDeg(double angle)
+inline double convRadToDeg(double const angle)
 {
     return (angle*180.0)/static_cast<double>(M_PI);
 }
 
 /// Converts the given \a angle specified in radians to degrees.
-inline float convRadToDeg(float angle)
+inline float convRadToDeg(float const angle)
 {
     return (angle*180.0f)/static_cast<float>(M_PI);
 }
@@ -273,14 +273,61 @@ inline long getMSBSet(unsigned int const x)
 #else
 
     unsigned int const MSB=(1UL<<(sizeof(x)+1))-1;
+    unsigned int const mask=1UL<<MSB;
+
+    // At this point, we know there is at least one bit set.
     long index=MSB;
-    while ((x&(1UL<<MSB))==0) {
+    while ((x&mask)==0) {
         --index;
         x<<=1;
     }
     return index;
 
 #endif // __GNUC__
+}
+
+/// Returns the number of leading (most significant) zero bits in \a x.
+inline long countLeadingZeroBits(unsigned int const x)
+{
+    if (x==0) {
+        return 1<<(sizeof(x)+1);
+    }
+
+#ifdef __GNUC__
+
+    long result;
+    __asm__(
+        "bsr %%ecx,%%eax\n\t"
+        "xorl $31,%%eax\n\t"
+        : "=a" (result)
+        : "c" (x)
+        : "cc"
+    );
+    return result;
+
+#elif defined(_MSC_VER) && !defined(_WIN64)
+
+    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    __asm {
+        mov ebx,x
+        bsr eax,ebx
+        xor eax,31
+    }
+
+#else
+
+    unsigned int const MSB=(1UL<<(sizeof(x)+1))-1;
+    unsigned int const mask=1UL<<MSB;
+
+    // At this point, we know there is at least one bit set.
+    long count=0;
+    while ((x&mask)==0) {
+        ++count;
+        x<<=1;
+    }
+    return count;
+
+#endif
 }
 
 /// Returns the largest power of 2 that is smaller than or equal to \a x, except
