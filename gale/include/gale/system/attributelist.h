@@ -110,8 +110,13 @@ class AttributeList
         return m_attributes;
     }
 
-    /// Returns a constant pointer to the attribute list in memory.
+    /// Returns a pointer to the constant attribute list in memory.
     operator T const*() const {
+        return m_attributes;
+    }
+
+    /// Returns a constant pointer to the constant attribute list in memory.
+    operator T const* const() const {
         return m_attributes;
     }
 

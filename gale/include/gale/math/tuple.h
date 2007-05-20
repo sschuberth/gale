@@ -115,9 +115,15 @@ class TupleBase
         return getData();
     }
 
-    /// Casts \c this tuple to a \c constant pointer of type \a T. As an
-    /// intended side effect, this also provides indexed data access.
+    /// Casts \c this tuple to a pointer of type \a T \c const. As an intended
+    /// side effect, this also provides indexed data access.
     operator T const*() const {
+        return getData();
+    }
+
+    /// Casts \c this tuple to a \c constant pointer of type \a T \c const. As
+    /// an intended side effect, this also provides indexed data access.
+    operator T const* const() const {
         return getData();
     }
 
