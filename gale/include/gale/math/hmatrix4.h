@@ -223,12 +223,6 @@ class HMatrix4
         return getData();
     }
 
-    /// Casts \c this matrix to a \c constant pointer of type \a T \c const. As
-    /// an intended side effect, this also provides indexed data access.
-    operator T const* const() const {
-        return getData();
-    }
-
     /// Returns a reference to the data element located at \a row and \a column.
     /// Despite usual in maths, the index starts at 0 (not 1).
     T& operator()(unsigned int row,unsigned int column) {
