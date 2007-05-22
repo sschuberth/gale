@@ -1,3 +1,28 @@
+/*                                     __
+ *                      .-----..---.-.|  |.-----.
+ *                      |  _  ||  _  ||  ||  -__|
+ *                      |___  ||___._||__||_____|
+ * This file is part of |_____| the Graphics Abstraction Layer & Engine,
+ * see the project page at http://developer.berlios.de/projects/gale/
+ *
+ * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #include "gale/system/rendercontext.h"
 
 #include "gale/global/defines.h"
@@ -33,10 +58,11 @@ LRESULT CALLBACK RenderContext::WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPA
 
 RenderContext::RenderContext()
 {
-#ifdef _WIN32
-
     // We only need to create one rendering context once for all instances.
     if (s_instances==0) {
+
+#ifdef _WIN32
+
         // Register a minimal class whose windows allocate a unique device context.
         WNDCLASS cls;
         memset(&cls,0,sizeof(cls));
@@ -87,14 +113,15 @@ RenderContext::RenderContext()
         // Create and activate a rendering context.
         s_handle.render=wglCreateContext(s_handle.device);
         G_ASSERT(s_handle.render!=NULL)
-    }
-    ++s_instances;
 
 #else
 
-    // TODO: Linux code.
+        // TODO: Linux code.
 
 #endif // _WIN32
+
+    }
+    ++s_instances;
 }
 
 RenderContext::~RenderContext()

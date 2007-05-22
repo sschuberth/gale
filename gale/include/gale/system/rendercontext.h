@@ -49,11 +49,12 @@ class RenderContext
      * This structure encapsulates the variables that identify a render context.
      */
     struct Handle {
+        /// Constructor to simplify handle initialization.
         Handle(HDC device=NULL,HGLRC render=NULL):
           device(device),render(render) {}
 
-        HDC device;
-        HGLRC render;
+        HDC device;   ///< Handle to the Windows device context.
+        HGLRC render; ///< Handle to the Windows render context.
     };
 
     /// Returns the active render context for the current thread.
@@ -91,16 +92,14 @@ class RenderContext
     /// Handles window messages and forwards them to the event handlers.
     virtual LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
 
-    /// Identifier for the registered window class.
-    static ATOM s_atom;
+    static ATOM s_atom;     ///< Identifier for the registered window class.
 
   private:
 
     /// Forwards window messages to the window specific message handler.
     static LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
 
-    /// Counter for the number of instances.
-    static int s_instances;
+    static int s_instances; ///< Counter for the number of instances.
 
     static HWND s_window;   ///< Handle to the hidden window.
     static Handle s_handle; ///< Handle to the render context.
