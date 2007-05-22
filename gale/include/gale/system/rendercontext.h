@@ -45,14 +45,20 @@ class RenderContext
 {
   public:
 
-    /// Returns a handle to the currently active rendering context.
-    static HGLRC getCurrent() {
-        return wglGetCurrentContext();
-    }
+    /**
+     * This structure encapsulates the variables that identify a render context.
+     */
+    struct Handle {
+        Handle(HDC device=NULL,HGLRC render=NULL):
+          device(device),render(render) {}
 
-    /// Makes this the thread's currently active rendering context.
-    bool setCurrent() {
-        return wglMakeCurrent(getDeviceHandle(),getRenderHandle())!=FALSE;
+        HDC device;
+        HGLRC render;
+    };
+
+    /// Returns the active render context for the current thread.
+    static Handle getCurrent() {
+        return Handle(wglGetCurrentDC(),wglGetCurrentContext());
     }
 
     /// Creates a minimal render context.
@@ -61,21 +67,19 @@ class RenderContext
     /// Frees all resources allocated by the render context.
     ~RenderContext();
 
-    /// Returns the handle to the hidden window associated with this render
-    /// context.
+    /// Returns the handle for the window associated with this render context.
     virtual HWND getWindowHandle() const {
-        return m_wnd;
+        return s_window;
     }
 
-    /// Returns the handle to the device context associated with this render
-    /// context.
-    virtual HDC getDeviceHandle() const {
-        return m_dc;
+    /// Returns the handle for this render context.
+    virtual Handle getContextHandle() const {
+        return Handle(s_handle.device,s_handle.render);
     }
 
-    /// Returns the handle to the render context.
-    virtual HGLRC getRenderHandle() const {
-        return m_rc;
+    /// Sets this to be the active render context for the current thread.
+    bool setCurrent() {
+        return wglMakeCurrent(s_handle.device,s_handle.render)!=FALSE;
     }
 
   protected:
@@ -84,17 +88,22 @@ class RenderContext
     /// class, so the method can be used by derived classes.
     void destroy();
 
+    /// Handles window messages and forwards them to the event handlers.
+    virtual LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
+
     /// Identifier for the registered window class.
     static ATOM s_atom;
 
   private:
 
+    /// Forwards window messages to the window specific message handler.
+    static LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
+
     /// Counter for the number of instances.
     static int s_instances;
 
-    HWND m_wnd; ///< Handle to the hidden window.
-    HDC m_dc;   ///< Handle to the device context.
-    HGLRC m_rc; ///< Handle to the render context.
+    static HWND s_window;   ///< Handle to the hidden window.
+    static Handle s_handle; ///< Handle to the render context.
 };
 
 } // namespace system

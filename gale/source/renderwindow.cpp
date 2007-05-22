@@ -6,58 +6,10 @@ namespace gale {
 
 namespace wrapgl {
 
-LRESULT CALLBACK RenderWindow::WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
-{
-    // Using a dynamic_cast here would be safer, but that requires RTTI support.
-    RenderWindow *_this=reinterpret_cast<RenderWindow*>(GetWindowLong(hWnd,GWL_USERDATA));
-    if (!_this) {
-        return DefWindowProc(hWnd,uMsg,wParam,lParam);
-    }
-
-    switch (uMsg) {
-        // This is sent to a window after its size has changed.
-        case WM_SIZE: {
-            _this->onSize(LOWORD(lParam),HIWORD(lParam));
-            break;
-        }
-
-        // This is sent to a window when a portion should be painted.
-        case WM_PAINT: {
-            _this->onPaint();
-            glFlush();
-
-            // Due to WGL_DOUBLE_BUFFER_ARB we always should have a double-buffer.
-            SwapBuffers(_this->getDeviceHandle());
-
-            // Notify Windows that we have finished painting.
-            ValidateRect(hWnd,NULL);
-
-            break;
-        }
-
-        // This is sent to a window when it should terminate.
-        case WM_CLOSE: {
-            _this->onClose();
-            _this->destroy();
-            break;
-        }
-
-        // This is sent to a window after it is removed from screen.
-        case WM_DESTROY: {
-            PostQuitMessage(0);
-            break;
-        }
-
-        default: {
-            return DefWindowProc(hWnd,uMsg,wParam,lParam);
-        }
-    }
-
-    return 0;
-}
-
 RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi const& attribs,LPCTSTR title)
 {
+    RenderContext::setCurrent();
+
     if (GLEX_WGL_ARB_pixel_format!=GL_TRUE) {
         // Initialize the needed OpenGL extensions.
         GLEX_WGL_ARB_pixel_format_init();
@@ -69,7 +21,7 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
     G_ASSERT(result!=FALSE)
 
     // Create a render window and get its device context.
-    m_wnd=CreateWindow(
+    m_window=CreateWindow(
     /* lpClassName  */ MAKEINTATOM(s_atom),
     /* lpWindowName */ title,
     /* dwStyle      */ WS_OVERLAPPEDWINDOW,
@@ -80,18 +32,12 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
     /* hWndParent   */ HWND_DESKTOP,
     /* hMenu        */ NULL,
     /* hInstance    */ NULL,
-    /* lpParam      */ NULL
+    /* lpParam      */ this
     );
-    G_ASSERT(m_wnd!=NULL)
+    G_ASSERT(m_window!=NULL)
 
-    m_dc=GetWindowDC(m_wnd);
-    G_ASSERT(m_dc!=NULL)
-
-    // Set the window user data to a pointer to this object instance.
-    SetWindowLong(m_wnd,GWL_USERDATA,reinterpret_cast<LONG>(this));
-
-    // Subclass the window class by setting a new window procedure.
-    SetWindowLong(m_wnd,GWL_WNDPROC,reinterpret_cast<LONG>(WindowProc));
+    m_handle.device=GetWindowDC(m_window);
+    G_ASSERT(m_handle.device!=NULL)
 
     // Make sure some required attributes are specified.
     AttributeListi attrs=attribs;
@@ -104,15 +50,15 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
     // specified attributes.
     GLint format;
     UINT count;
-    result=wglChoosePixelFormatARB(m_dc,attrs,NULL,1,&format,&count);
+    result=wglChoosePixelFormatARB(m_handle.device,attrs,NULL,1,&format,&count);
     G_ASSERT(result!=FALSE)
 
-    result=SetPixelFormat(m_dc,format,NULL);
+    result=SetPixelFormat(m_handle.device,format,NULL);
     G_ASSERT(result!=FALSE)
 
     // Create and activate a rendering context.
-    m_rc=wglCreateContext(m_dc);
-    G_ASSERT(m_rc!=NULL)
+    m_handle.render=wglCreateContext(m_handle.device);
+    G_ASSERT(m_handle.render!=NULL)
 
     result=setCurrent();
     G_ASSERT(result!=FALSE)
@@ -138,6 +84,44 @@ void RenderWindow::processEvents()
             DispatchMessage(&msg);
         }
     } while (msg.message!=WM_QUIT);
+}
+
+LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
+{
+    switch (uMsg) {
+        // This is sent to a window after its size has changed.
+        case WM_SIZE: {
+            onSize(LOWORD(lParam),HIWORD(lParam));
+            break;
+        }
+
+        // This is sent to a window when a portion should be painted.
+        case WM_PAINT: {
+            onPaint();
+            glFlush();
+
+            // Due to WGL_DOUBLE_BUFFER_ARB we always should have a double-buffer.
+            SwapBuffers(getContextHandle().device);
+
+            // Notify Windows that we have finished painting.
+            ValidateRect(getWindowHandle(),NULL);
+
+            break;
+        }
+
+        // This is sent to a window when it should terminate.
+        case WM_CLOSE: {
+            onClose();
+            destroy();
+            break;
+        }
+
+        default: {
+            return RenderContext::handleMessage(uMsg,wParam,lParam);
+        }
+    }
+
+    return 0;
 }
 
 } // namespace wrapgl

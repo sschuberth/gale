@@ -46,7 +46,7 @@ namespace wrapgl {
  * WGL_ARB_pixel_format and WGL_ARB_pixel_format_float extensions to specify the
  * desired pixel format.
  */
-class RenderWindow:private system::RenderContext
+class RenderWindow:public system::RenderContext
 {
   public:
 
@@ -56,21 +56,19 @@ class RenderWindow:private system::RenderContext
     /// hidden initially.
     RenderWindow(int client_width,int client_height,system::AttributeListi const& attribs,LPCTSTR title);
 
-    /// Returns the handle to the render window.
+    /// Returns the handle for the window associated with this render context.
     HWND getWindowHandle() const {
-        return m_wnd;
+        return m_window;
     }
 
-    /// Returns the handle to the device context associated with this render
-    /// window.
-    HDC getDeviceHandle() const {
-        return m_dc;
+    /// Returns the handle for this render context.
+    Handle getContextHandle() const {
+        return Handle(m_handle.device,m_handle.render);
     }
 
-    /// Returns the handle to the render context associated with this render
-    /// window.
-    HGLRC getRenderHandle() const {
-        return m_rc;
+    /// Sets this to be the active render context for the current thread.
+    bool setCurrent() {
+        return wglMakeCurrent(m_handle.device,m_handle.render)!=FALSE;
     }
 
     /// Starts the event processing and does not return until the window gets
@@ -85,27 +83,23 @@ class RenderWindow:private system::RenderContext
     }
 
     /// Event handler that gets called after a window has changed its size.
-    virtual void onSize(int width,int height) {
-    }
+    virtual void onSize(int width,int height) {}
 
     /// Event handler that gets called when a window portion should be painted.
-    virtual void onPaint() {
-    }
+    virtual void onPaint() {}
 
     /// Event handler that gets called when a window should terminate.
-    virtual void onClose() {
-    }
+    virtual void onClose() {}
 
   protected:
 
     /// Handles window messages and forwards them to the event handlers.
-    static LRESULT CALLBACK WindowProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
+    LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
 
   private:
 
-    HWND m_wnd; ///< Handle to the render window.
-    HDC m_dc;   ///< Handle to the device context.
-    HGLRC m_rc; ///< Handle to the render context.
+    HWND m_window;   ///< Handle to the render window.
+    Handle m_handle; ///< Handle to the render context.
 };
 
 } // namespace wrapgl
