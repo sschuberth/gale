@@ -40,6 +40,7 @@ class TestWindow:public RenderWindow
 
     void onSize(int width,int height) {
         //m_camera.setViewport();
+        cout << "Window size: " << width << " x " << height << endl;
     }
 
     void onPaint() {
@@ -78,10 +79,10 @@ class TestWindow:public RenderWindow
         glClearColor(1,0,0,0);
         G_ASSERT(glGetError()==GL_NO_ERROR);
 
+        m_camera.activate(*this);
         GLint v[4];
         glGetIntegerv(GL_VIEWPORT,v);
-        cout << v[2] << endl;
-        cout << v[3] << endl;
+        cout << "Viewport size: " << v[2] << " x " << v[3] << endl;
         //glVertexPointer(3,GL_FLOAT,0,vertices);
         //G_ASSERT(glGetError()==GL_NO_ERROR);
 

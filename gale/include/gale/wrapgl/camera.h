@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "../system/rendercontext.h"
+#include "../system/rendersurface.h"
 #include "../math/hmatrix4.h"
 #include "../math/matrix4.h"
 
@@ -16,28 +16,37 @@ class Camera
 {
   public:
 
-    //PerspectiveCamera(const Vector3f& position=Vector3f(0,0,5),const Vector3f& look_target=Vector3f::ZERO(),
-    //const Vector3f& up_direction=Vector3f::Y());
     Camera() {
-        setViewport();
+        screen.x=screen.y=0;
+        screen.width=screen.height=-1;
+
         modelview=math::HMat4f::IDENTITY();
         projection=math::Mat4d::IDENTITY();
     }
 
-    void setViewport() {
-        if (system::RenderContext::getCurrent()) {
-            glGetIntegerv(GL_VIEWPORT,&m_view_x);
-        } else {
-            m_view_x=m_view_y=0;
-            m_view_width=m_view_height=1;
+    void setScreenSpace(RenderWindow const& window) {
+        // Perform lazy initialization.
+        if (screen.width<0 || screen.height<0) {
+            glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&screen));
         }
-    }
 
-    void setViewport(GLint view_x,GLint view_y,GLsizei view_width,GLsizei view_height) {
-        m_view_x      = math::max(0,view_x);
-        m_view_y      = math::max(0,view_y);
-        m_view_width  = math::max(1,view_width);
-        m_view_height = math::max(1,view_height);
+        // Get the window's client area size.
+        RECT rect;
+        BOOL result=GetClientRect(window.getWindowHandle(),&rect);
+        G_ASSERT(result!=FALSE)
+
+        // If the desired screen space is smaller than the window, we need to
+        // enable scissoring to avoid glClear to affect the whole window plane.
+        if (screen.x>0 || (screen.x<0 && screen.width<rect.right-screen.x)
+         || screen.y>0 || (screen.y<0 && screen.height<rect.bottom-screen.y)) {
+            glScissor(screen.x,screen.y,screen.width,screen.height);
+            glEnable(GL_SCISSOR_TEST);
+        } else {
+            glDisable(GL_SCISSOR_TEST);
+        }
+
+        // Set the viewport OpenGL should render to.
+        glViewport(screen.x,screen.y,screen.width,screen.height);
     }
 
     /// Sets the camera to orthographic projection using the specified clipping.
@@ -98,16 +107,12 @@ class Camera
         projection[15] = 0.0;
     }
 
-  private:
-
-    /// Upper left origin of the viewport.
-    GLint m_view_x,m_view_y;
-
-    /// Width and height of the viewport. These are not GLsizei to be able to
-    /// get the viewport via glGetIntegerv().
-    GLint m_view_width,m_view_height;
-
-  public:
+    struct ScreenSpace {
+        GLint x;        ///< Upper left origin of the screen space.
+        GLint y;        ///< \copydoc x
+        GLsizei width;  ///< Size of the screen space.
+        GLsizei height; ///< Size of the screen space.
+    } screen;
 
     math::HMat4f modelview;
     math::Mat4d projection;
