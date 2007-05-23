@@ -32,7 +32,7 @@
  */
 
 #include "../system/attributelist.h"
-#include "../system/rendercontext.h"
+#include "../system/rendersurface.h"
 
 #include "GLEX_WGL_ARB_pixel_format.h"
 #include "GLEX_ARB_color_buffer_float.h"

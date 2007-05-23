@@ -23,7 +23,7 @@
  *
  */
 
-#include "gale/system/rendercontext.h"
+#include "gale/system/rendersurface.h"
 
 #include "gale/global/defines.h"
 

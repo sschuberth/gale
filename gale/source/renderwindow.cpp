@@ -40,9 +40,16 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
 
     if (GLEX_WGL_ARB_pixel_format!=GL_TRUE) {
         // Initialize an OpenGL extension for more sophisticated selection of a
-        // pixel format.
+        // pixel format (see http://www.opengl.org/registry/specs/ARB/wgl_pixel_format.txt).
         GLEX_WGL_ARB_pixel_format_init();
         G_ASSERT(GLEX_WGL_ARB_pixel_format!=GL_FALSE)
+    }
+
+    if (GLEX_ARB_color_buffer_float!=GL_TRUE) {
+        // Initialize an OpenGL extension for support of floating-point RGBA
+        // pixel formats (see http://www.opengl.org/registry/specs/ARB/color_buffer_float.txt).
+        GLEX_ARB_color_buffer_float_init();
+        G_ASSERT(GLEX_ARB_color_buffer_float!=GL_FALSE)
     }
 
     RECT rect={0,0,client_width,client_height};
@@ -146,6 +153,7 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
         }
 
         default: {
+            // Handle more elementary messages in the base class.
             return RenderSurface::handleMessage(uMsg,wParam,lParam);
         }
     }
