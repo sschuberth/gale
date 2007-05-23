@@ -31,21 +31,20 @@ namespace gale {
 
 namespace system {
 
-ATOM RenderContext::s_atom=0;
+ATOM RenderSurface::s_atom=0;
+int RenderSurface::s_instances=0;
 
-int RenderContext::s_instances=0;
+RenderSurface::WindowHandle RenderSurface::s_window=NULL;
+RenderSurface::ContextHandle RenderSurface::s_handle=NULL;
 
-HWND RenderContext::s_window=NULL;
-RenderContext::Handle RenderContext::s_handle=NULL;
-
-LRESULT CALLBACK RenderContext::WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
+LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
     // Using a dynamic_cast here would be safer, but that requires RTTI support.
-    RenderContext *_this=reinterpret_cast<RenderContext*>(GetWindowLong(hWnd,GWL_USERDATA));
+    RenderSurface *_this=reinterpret_cast<RenderSurface*>(GetWindowLong(hWnd,GWL_USERDATA));
 
     if (uMsg==WM_CREATE) {
         LPVOID params=reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;
-        _this=static_cast<RenderContext*>(params);
+        _this=static_cast<RenderSurface*>(params);
         SetWindowLongA(hWnd,GWL_USERDATA,(LONG)_this);
     }
 
@@ -56,7 +55,7 @@ LRESULT CALLBACK RenderContext::WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPA
     return _this->handleMessage(uMsg,wParam,lParam);
 }
 
-RenderContext::RenderContext()
+RenderSurface::RenderSurface()
 {
     // We only need to create one rendering context once for all instances.
     if (s_instances==0) {
@@ -124,7 +123,7 @@ RenderContext::RenderContext()
     ++s_instances;
 }
 
-RenderContext::~RenderContext()
+RenderSurface::~RenderSurface()
 {
     --s_instances;
     if (s_instances<=0) {
@@ -138,9 +137,9 @@ RenderContext::~RenderContext()
     }
 }
 
-void RenderContext::destroy()
+void RenderSurface::destroy()
 {
-    Handle handle=getContextHandle();
+    ContextHandle handle=getContextHandle();
 
     BOOL result=wglDeleteContext(handle.render);
     G_ASSERT(result!=FALSE)
@@ -152,7 +151,7 @@ void RenderContext::destroy()
     G_ASSERT(result!=FALSE)
 }
 
-LRESULT RenderContext::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
+LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
     switch (uMsg) {
         // This is sent to a window after it is removed from screen.

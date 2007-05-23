@@ -23,12 +23,12 @@
  *
  */
 
-#ifndef RENDERCONTEXT_H
-#define RENDERCONTEXT_H
+#ifndef RENDERSURFACE_H
+#define RENDERSURFACE_H
 
 /**
  * \file
- * Render context abstraction
+ * Render surface abstraction
  */
 
 #include "../global/platform.h"
@@ -38,19 +38,20 @@ namespace gale {
 namespace system {
 
 /**
- * This class serves as a base for everything that requires a render context to
- * be present, e.g. initializing OpenGL extensions.
+ * This class serves as a base for everything that requires a render surface,
+ * e.g. initializing OpenGL extensions, on- and off-screen render buffers etc.
  */
-class RenderContext
+class RenderSurface
 {
   public:
 
-    /**
-     * This structure encapsulates the variables that identify a render context.
-     */
-    struct Handle {
+    /// Type definition for a window handle that belongs to the render surface.
+    typedef HWND WindowHandle;
+
+    /// Type definition for a context handle that identifies a render surface.
+    struct ContextHandle {
         /// Constructor to simplify handle initialization.
-        Handle(HDC device=NULL,HGLRC render=NULL):
+        ContextHandle(HDC device=NULL,HGLRC render=NULL):
           device(device),render(render) {}
 
         HDC device;   ///< Handle to the Windows device context.
@@ -58,28 +59,28 @@ class RenderContext
     };
 
     /// Returns the active render context for the current thread.
-    static Handle getCurrent() {
-        return Handle(wglGetCurrentDC(),wglGetCurrentContext());
+    static ContextHandle getCurrentContext() {
+        return ContextHandle(wglGetCurrentDC(),wglGetCurrentContext());
     }
 
-    /// Creates a minimal render context.
-    RenderContext();
+    /// Creates a minimal render surface with a hidden window.
+    RenderSurface();
 
-    /// Frees all resources allocated by the render context.
-    ~RenderContext();
+    /// Frees all resources allocated by the render surface.
+    ~RenderSurface();
 
-    /// Returns the handle for the window associated with this render context.
-    virtual HWND getWindowHandle() const {
+    /// Returns the handle to the window associated with this render surface.
+    virtual WindowHandle getWindowHandle() const {
         return s_window;
     }
 
-    /// Returns the handle for this render context.
-    virtual Handle getContextHandle() const {
-        return Handle(s_handle.device,s_handle.render);
+    /// Returns the handle to the context associated with this render surface.
+    virtual ContextHandle getContextHandle() const {
+        return ContextHandle(s_handle.device,s_handle.render);
     }
 
     /// Sets this to be the active render context for the current thread.
-    bool setCurrent() {
+    bool setCurrentContext() {
         return wglMakeCurrent(s_handle.device,s_handle.render)!=FALSE;
     }
 
@@ -93,20 +94,19 @@ class RenderContext
     virtual LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
 
     static ATOM s_atom;     ///< Identifier for the registered window class.
+    static int s_instances; ///< Counter for the number of instances.
 
   private:
 
     /// Forwards window messages to the window specific message handler.
-    static LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
+    static LRESULT CALLBACK WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
 
-    static int s_instances; ///< Counter for the number of instances.
-
-    static HWND s_window;   ///< Handle to the hidden window.
-    static Handle s_handle; ///< Handle to the render context.
+    static WindowHandle s_window;  ///< Handle to the hidden window.
+    static ContextHandle s_handle; ///< Handle to the render context.
 };
 
 } // namespace system
 
 } // namespace gale
 
-#endif // RENDERCONTEXT_H
+#endif // RENDERSURFACE_H

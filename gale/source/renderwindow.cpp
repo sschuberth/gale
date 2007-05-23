@@ -33,11 +33,14 @@ namespace wrapgl {
 
 RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi const& attribs,LPCTSTR title)
 {
-    BOOL result=RenderContext::setCurrent();
+    // Activate the minimal render surface to get a context for OpenGL extension
+    // initialization.
+    BOOL result=RenderSurface::setCurrentContext();
     G_ASSERT(result!=FALSE)
 
     if (GLEX_WGL_ARB_pixel_format!=GL_TRUE) {
-        // Initialize the needed OpenGL extensions.
+        // Initialize an OpenGL extension for more sophisticated selection of a
+        // pixel format.
         GLEX_WGL_ARB_pixel_format_init();
         G_ASSERT(GLEX_WGL_ARB_pixel_format!=GL_FALSE)
     }
@@ -86,7 +89,7 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
     m_handle.render=wglCreateContext(m_handle.device);
     G_ASSERT(m_handle.render!=NULL)
 
-    result=setCurrent();
+    result=setCurrentContext();
     G_ASSERT(result!=FALSE)
 }
 
@@ -143,7 +146,7 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
         }
 
         default: {
-            return RenderContext::handleMessage(uMsg,wParam,lParam);
+            return RenderSurface::handleMessage(uMsg,wParam,lParam);
         }
     }
 

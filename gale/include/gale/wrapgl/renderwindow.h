@@ -46,7 +46,7 @@ namespace wrapgl {
  * WGL_ARB_pixel_format and WGL_ARB_pixel_format_float extensions to specify the
  * desired pixel format.
  */
-class RenderWindow:public system::RenderContext
+class RenderWindow:public system::RenderSurface
 {
   public:
 
@@ -57,17 +57,17 @@ class RenderWindow:public system::RenderContext
     RenderWindow(int client_width,int client_height,system::AttributeListi const& attribs,LPCTSTR title);
 
     /// Returns the handle for the window associated with this render context.
-    HWND getWindowHandle() const {
+    WindowHandle getWindowHandle() const {
         return m_window;
     }
 
     /// Returns the handle for this render context.
-    Handle getContextHandle() const {
-        return Handle(m_handle.device,m_handle.render);
+    ContextHandle getContextHandle() const {
+        return ContextHandle(m_handle.device,m_handle.render);
     }
 
     /// Sets this to be the active render context for the current thread.
-    bool setCurrent() {
+    bool setCurrentContext() {
         return wglMakeCurrent(m_handle.device,m_handle.render)!=FALSE;
     }
 
@@ -98,8 +98,8 @@ class RenderWindow:public system::RenderContext
 
   private:
 
-    HWND m_window;   ///< Handle to the render window.
-    Handle m_handle; ///< Handle to the render context.
+    WindowHandle m_window;  ///< Handle to the render window.
+    ContextHandle m_handle; ///< Handle to the render context.
 };
 
 } // namespace wrapgl
