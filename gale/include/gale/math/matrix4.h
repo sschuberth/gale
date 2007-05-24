@@ -66,6 +66,62 @@ class Matrix4
     /// Definition of the type of vector used as the columns for the matrix.
     typedef Vector<4,T> Vec;
 
+    /// Inner factory class to easily create commonly used matrices.
+    struct Factory
+    {
+        /// Creates a orthographic projection matrix for the given clipping
+        /// coordinates.
+        static Matrix4 OrthographicProjection(
+          double clip_top,
+          double clip_bottom,
+          double clip_left,
+          double clip_right,
+          double clip_near=-1.0,
+          double clip_far=1.0)
+        {
+            double xs=clip_right+clip_left;
+            double xd=clip_right-clip_left;
+
+            double ys=clip_top+clip_bottom;
+            double yd=clip_top-clip_bottom;
+
+            double zs=clip_far+clip_near;
+            double zd=clip_far-clip_near;
+
+            return Matrix4(
+                Vec(2.0/xd,    0.0,     0.0,  0.0),
+                Vec(   0.0, 2.0/yd,     0.0,  0.0),
+                Vec(   0.0,    0.0, -2.0/zd, -1.0),
+                Vec(-xs/xd, -ys/yd,  -zs/zd,  1.0)
+            );
+        }
+
+        /// Creates a perspective projection matrix for a viewport of the given
+        /// \a view_width and \a view_height, a vertical field of view of \a fov
+        /// and clipping planes located at \a clip_near and \a clip_far.
+        static Matrix4 PerspectiveProjection(
+          int view_width,
+          int view_height,
+          double fov=M_PI*0.25,
+          double clip_near=0.001,
+          double clip_far=1000.0)
+        {
+            double f=1.0/::tan(fov*0.5);
+            double a=static_cast<double>(view_width)/view_height;
+
+            double s=clip_near+clip_far;
+            double d=clip_near-clip_far;
+            double p=clip_near*clip_far;
+
+            return Matrix4(
+                Vec(f/a, 0.0,     0.0,  0.0),
+                Vec(0.0,   f,     0.0,  0.0),
+                Vec(0.0, 0.0,     s/d, -1.0),
+                Vec(0.0, 0.0, 2.0*p/d,  0.0)
+            );
+        }
+    };
+
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",

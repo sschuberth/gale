@@ -21,10 +21,10 @@ class Camera
         screen.width=screen.height=-1;
 
         modelview=math::HMat4f::IDENTITY();
-        projection=math::Mat4d::IDENTITY();
+        projection=math::Mat4d::Factory::PerspectiveProjection();
     }
 
-    void setScreenSpace(RenderWindow const& window) {
+    void applyScreenSpace(RenderWindow const& window) {
         // Perform lazy initialization.
         if (screen.width<0 || screen.height<0) {
             glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&screen));
@@ -49,69 +49,11 @@ class Camera
         glViewport(screen.x,screen.y,screen.width,screen.height);
     }
 
-    /// Sets the camera to orthographic projection using the specified clipping.
-    void setOrthographic(
-      double clip_top,       double clip_bottom,
-      double clip_left,      double clip_right,
-      double clip_near=-1.0, double clip_far=1.0)
-    {
-        double r_l=clip_right-clip_left;
-        double t_b=clip_top-clip_bottom;
-        double f_n=clip_far-clip_near;
-
-        projection[0]  = 2.0/r_l;
-        projection[1]  = 0.0;
-        projection[2]  = 0.0;
-        projection[3]  = 0.0;
-
-        projection[4]  = 0.0;
-        projection[5]  = 2.0/t_b;
-        projection[6]  = 0.0;
-        projection[7]  = 0.0;
-
-        projection[8]  = 0.0;
-        projection[9]  = 0.0;
-        projection[10] = -2.0/f_n;
-        projection[11] = -1.0;
-
-        projection[12] = -(clip_right+clip_left)/r_l;
-        projection[13] = -(clip_top+clip_bottom)/t_b;
-        projection[14] = -(clip_far+clip_near)/f_n;
-        projection[15] = 1.0;
-    }
-
-    // fov ]0,180[
-    void setPerspective(double fov=M_PI*0.25,double clip_near=0.001,double clip_far=1000.0) {
-        double f=1.0/::tan(fov*0.5);
-        double a=static_cast<double>(m_view_width)/m_view_height;
-        double d=clip_near-clip_far;
-
-        projection[0]  = f/a;
-        projection[1]  = 0.0;
-        projection[2]  = 0.0;
-        projection[3]  = 0.0;
-
-        projection[4]  = 0.0;
-        projection[5]  = f;
-        projection[6]  = 0.0;
-        projection[7]  = 0.0;
-
-        projection[8]  = 0.0;
-        projection[9]  = 0.0;
-        projection[10] = (clip_near+clip_far)/d;
-        projection[11] = -1.0;
-
-        projection[12] = 0.0;
-        projection[13] = 0.0;
-        projection[14] = 2.0*clip_near*clip_far/d;
-        projection[15] = 0.0;
-    }
-
     struct ScreenSpace {
         GLint x;        ///< Upper left origin of the screen space.
         GLint y;        ///< \copydoc x
         GLsizei width;  ///< Size of the screen space.
-        GLsizei height; ///< Size of the screen space.
+        GLsizei height; ///< \copydoc width
     } screen;
 
     math::HMat4f modelview;
