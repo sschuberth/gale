@@ -53,7 +53,7 @@ class RenderWindow:public system::RenderSurface
     /// Creates a window with a client size of the given \a width and \a height
     /// to render to. The properties of the pixel format to use are determined
     /// by \a attribs, and \a title specifies the caption. The window will be
-    /// hidden initially.
+    /// hidden initially, but it will become the current rendering context.
     RenderWindow(int client_width,int client_height,system::AttributeListi const& attribs,LPCTSTR title);
 
     /// Returns the handle for the window associated with this render context.
@@ -83,7 +83,7 @@ class RenderWindow:public system::RenderSurface
     }
 
     /// Event handler that gets called after a window has changed its size.
-    virtual void onSize(int width,int height) {}
+    virtual void onResize(int width,int height) {}
 
     /// Event handler that gets called when a window portion should be painted.
     virtual void onPaint() {}
