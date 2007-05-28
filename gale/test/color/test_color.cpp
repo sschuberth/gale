@@ -1,7 +1,7 @@
 #include "../test_window.h"
 
-#include "gale/math/color.h"
-#include "gale/math/random.h"
+#include <gale/math/color.h>
+#include <gale/math/random.h>
 
 using namespace gale::math;
 using namespace gale::wrapgl;
