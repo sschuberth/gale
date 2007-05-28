@@ -127,7 +127,7 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
     switch (uMsg) {
         // This is sent to a window after its size has changed.
         case WM_SIZE: {
-            onSize(LOWORD(lParam),HIWORD(lParam));
+            onResize(LOWORD(lParam),HIWORD(lParam));
             break;
         }
 
