@@ -16,48 +16,79 @@ class Camera
 {
   public:
 
-    Camera() {
-        screen.x=screen.y=0;
-        screen.width=screen.height=-1;
-
-        modelview=math::HMat4f::IDENTITY();
-        projection=math::Mat4d::Factory::PerspectiveProjection();
-    }
-
-    void applyScreenSpace(RenderWindow const& window) {
-        // Perform lazy initialization.
-        if (screen.width<0 || screen.height<0) {
-            glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&screen));
-        }
-
-        // Get the window's client area size.
-        RECT rect;
-        BOOL result=GetClientRect(window.getWindowHandle(),&rect);
-        G_ASSERT(result!=FALSE)
-
-        // If the desired screen space is smaller than the window, we need to
-        // enable scissoring to avoid glClear to affect the whole window plane.
-        if (screen.x>0 || (screen.x<0 && screen.width<rect.right-screen.x)
-         || screen.y>0 || (screen.y<0 && screen.height<rect.bottom-screen.y)) {
-            glScissor(screen.x,screen.y,screen.width,screen.height);
-            glEnable(GL_SCISSOR_TEST);
-        } else {
-            glDisable(GL_SCISSOR_TEST);
-        }
-
-        // Set the viewport OpenGL should render to.
-        glViewport(screen.x,screen.y,screen.width,screen.height);
-    }
-
+    /// Stores the location and size of the surface portion that the camera
+    /// renders to.
     struct ScreenSpace {
-        GLint x;        ///< Upper left origin of the screen space.
-        GLint y;        ///< \copydoc x
-        GLsizei width;  ///< Size of the screen space.
-        GLsizei height; ///< \copydoc width
-    } screen;
+        GLint x;        ///< Left origin of the screen space.
+        GLint y;        ///< Upper origin of the screen space.
+        GLsizei width;  ///< Width of the screen space.
+        GLsizei height; ///< Height of the screen space.
+    };
 
-    math::HMat4f modelview;
-    math::Mat4d projection;
+    Camera(system::RenderSurface const& surface):
+      m_surface(surface),m_screen_dirty(false) {
+        // Initialize the camera screen space to the current OpenGL viewport.
+        glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&m_screen));
+
+        // Set a perspective camera with no transformation by default.
+        setModelview(math::HMat4f::IDENTITY());
+        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height));
+    }
+
+    system::RenderSurface const& getSurface() const {
+        return m_surface;
+    }
+
+    void setScreenSpaceOrigin(int x,int y) {
+        m_screen.x=x;
+        m_screen.y=y;
+        m_screen_dirty=true;
+    }
+
+    void setScreenSpaceDimensions(int width,int height) {
+        m_screen.width=width;
+        m_screen.height=height;
+        m_screen_dirty=true;
+    }
+
+    ScreenSpace const& getScreenSpace() const {
+        return m_screen;
+    }
+
+    void setModelview(math::HMat4f const& modelview) {
+        m_modelview=modelview;
+        m_modelview_dirty=true;
+    }
+
+    math::HMat4f const& getModelview() const {
+        return m_modelview;
+    }
+
+    void setProjection(math::Mat4d const& projection) {
+        m_projection=projection;
+        m_projection_dirty=true;
+    }
+
+    math::Mat4d const& getProjection() const {
+        return m_projection;
+    }
+
+    void apply();
+
+  protected:
+
+    static Camera* s_current;
+
+    system::RenderSurface const& m_surface; ///< The surface that the camera is attached to.
+
+    ScreenSpace m_screen; ///< The camera's current screen space.
+    bool m_screen_dirty;
+
+    math::HMat4f m_modelview; ///< Transformation matrix of the camera.
+    bool m_modelview_dirty;
+
+    math::Mat4d m_projection; ///< Projection matrix of the camera.
+    bool m_projection_dirty;
 };
 
 #pragma pack(pop)
