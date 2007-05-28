@@ -58,12 +58,23 @@ class RenderSurface
         HGLRC render; ///< Handle to the Windows render context.
     };
 
+    /// Simple structure to hold the dimensions of a render surface.
+    struct Dimensions {
+        /// Constructor to simplify dimensions initialization.
+        Dimensions(int width=0,int height=0):
+          width(width),height(height) {}
+
+        int width;  ///< Width of the render surface.
+        int height; ///< Height of the render surface.
+    };
+
     /// Returns the active render context for the current thread.
     static ContextHandle getCurrentContext() {
         return ContextHandle(wglGetCurrentDC(),wglGetCurrentContext());
     }
 
-    /// Creates a minimal render surface with a hidden window.
+    /// Creates a minimal render surface with a hidden window without changing
+    /// the current rendering context.
     RenderSurface();
 
     /// Frees all resources allocated by the render surface.
@@ -82,6 +93,13 @@ class RenderSurface
     /// Sets this to be the active render context for the current thread.
     bool setCurrentContext() {
         return wglMakeCurrent(s_handle.device,s_handle.render)!=FALSE;
+    }
+
+    /// Returns both the width and height of this render surface.
+    virtual Dimensions getSize() const {
+        RECT rect;
+        GetClientRect(getWindowHandle(),&rect);
+        return Dimensions(rect.right,rect.bottom);
     }
 
   protected:
