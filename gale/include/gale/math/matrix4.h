@@ -72,10 +72,10 @@ class Matrix4
         /// Creates a orthographic projection matrix for the given clipping
         /// coordinates.
         static Matrix4 OrthographicProjection(
-          double clip_top,
-          double clip_bottom,
           double clip_left,
           double clip_right,
+          double clip_bottom,
+          double clip_top,
           double clip_near=-1.0,
           double clip_far=1.0)
         {
