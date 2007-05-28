@@ -37,7 +37,7 @@ CPUInfo::CPUInfo():
   m_ext_feat_flags_edx(0),m_ext_feat_flags_ecx(0)
 {
     // Null-terminate the vendor string.
-    m_vendor[0]=m_vendor[3*4]=0;
+    m_vendor[0]=m_vendor[3*4]='\0';
 
     // Until now, the ECX register contains the "this" pointer.
     if (!hasCPUID())
