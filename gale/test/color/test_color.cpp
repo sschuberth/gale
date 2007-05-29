@@ -6,11 +6,11 @@
 using namespace gale::math;
 using namespace gale::wrapgl;
 
-class TestColorWindow:public TestWindow
+class TestWindow:public DefaultWindow
 {
   public:
 
-    TestColorWindow():TestWindow("test_color"),m_value(255),m_mode(0) {
+    TestWindow():DefaultWindow("test_color"),m_value(255),m_mode(0) {
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     }
 
@@ -92,7 +92,8 @@ class TestColorWindow:public TestWindow
                     color.setH(i);
                     x1=((i+1)*step_x)>>16;
 
-                    color.setA(roundToEven(m_value*m_rand.getRandom01()));
+                    long long alpha=roundToEven(m_value*m_rand.getRandom01());
+                    color.setA(static_cast<Col4ub::Type>(alpha));
                     glColor4ubv(color);
                     glVertex2i(x0,y0);
                     glVertex2i(x1,y0);
@@ -125,7 +126,7 @@ class TestColorWindow:public TestWindow
 
 int main()
 {
-    TestColorWindow window;
+    TestWindow window;
 
     ShowWindow(window.getWindowHandle(),SW_SHOW);
     window.processEvents();

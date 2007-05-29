@@ -9,7 +9,7 @@
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(disable:4355)
 
-class TestWindow:public gale::wrapgl::RenderWindow
+class DefaultWindow:public gale::wrapgl::RenderWindow
 {
   public:
 
@@ -27,7 +27,7 @@ class TestWindow:public gale::wrapgl::RenderWindow
         return attribs;
     }
 
-    TestWindow(LPCTSTR title):
+    DefaultWindow(LPCTSTR title):
       RenderWindow(500,500,getDefaultAttributes(),title),m_camera(*this) {
         std::cout << "Vendor   : " << glGetString(GL_VENDOR) << std::endl;
         std::cout << "Renderer : " << glGetString(GL_RENDERER) << std::endl;

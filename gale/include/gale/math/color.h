@@ -120,7 +120,7 @@ struct ColorModel
 
         if (S>0) {
             H*=6;
-            long long i=roundToZero(H);
+            long i=roundToZero(static_cast<float>(H));
             double f=H-i;
 
             double p=V*(1-S);
