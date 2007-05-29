@@ -1,10 +1,12 @@
-#ifndef TEST_WINDOW
-#define TEST_WINDOW
+#ifndef DEFAULTWINDOW
+#define DEFAULTWINDOW
 
-#include <gale/wrapgl/renderwindow.h>
-#include <gale/wrapgl/camera.h>
+#include "gale/wrapgl/renderwindow.h"
+#include "gale/wrapgl/camera.h"
 
-#include <iostream>
+#ifndef NDEBUG
+    #include <iostream>
+#endif
 
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(disable:4355)
@@ -29,9 +31,11 @@ class DefaultWindow:public gale::wrapgl::RenderWindow
 
     DefaultWindow(LPCTSTR title):
       RenderWindow(500,500,getDefaultAttributes(),title),m_camera(*this) {
+#ifndef NDEBUG
         std::cout << "Vendor   : " << glGetString(GL_VENDOR) << std::endl;
         std::cout << "Renderer : " << glGetString(GL_RENDERER) << std::endl;
         std::cout << "Version  : " << glGetString(GL_VERSION) << std::endl;
+#endif
     }
 
   protected:
@@ -42,4 +46,4 @@ class DefaultWindow:public gale::wrapgl::RenderWindow
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(default:4355)
 
-#endif // TEST_WINDOW
+#endif // DEFAULTWINDOW
