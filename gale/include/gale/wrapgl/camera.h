@@ -18,9 +18,9 @@ namespace wrapgl {
 #pragma pack(push,1)
 
 /**
- * This class defines a camera with a modelview and projection matrix that
- * projects onto a given screen space portion of the render surface that it is
- * attached to.
+ * This class defines a camera with a modelview transformation and projection
+ * matrix that projects onto a given screen space portion of the render surface
+ * that it is attached to.
  */
 class Camera
 {
