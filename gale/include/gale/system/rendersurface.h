@@ -96,7 +96,7 @@ class RenderSurface
     }
 
     /// Returns both the width and height of this render surface.
-    virtual Dimensions getSize() const {
+    virtual Dimensions getDimensions() const {
         RECT rect;
         GetClientRect(getWindowHandle(),&rect);
         return Dimensions(rect.right,rect.bottom);

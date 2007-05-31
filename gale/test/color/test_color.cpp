@@ -12,6 +12,9 @@ class TestWindow:public DefaultWindow
 
     TestWindow():DefaultWindow("test_color"),m_value(255),m_mode(0) {
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+        // Set the clear color to red to see if scissoring works.
+        glClearColor(1,0,0,0);
     }
 
     bool onIdle() {
@@ -37,19 +40,20 @@ class TestWindow:public DefaultWindow
     }
 
     void onPaint() {
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        m_camera.apply();
-
         unsigned int const QUADS_X=256;
         unsigned int const QUADS_Y=256;
 
         // Use fixed point integer math.
-        Camera::ScreenSpace screen=m_camera.getScreenSpace();
-        unsigned step_x=(screen.width<<16)/QUADS_X;
-        unsigned step_y=(screen.height<<16)/QUADS_Y;
+        RenderSurface::Dimensions dims=getDimensions();
+        unsigned step_x=(dims.width<<16)/QUADS_X;
+        unsigned step_y=(dims.height<<16)/QUADS_Y;
 
         if (m_mode<2) {
+            m_camera.setScreenSpaceOrigin(0,0);
+            m_camera.setScreenSpaceDimensions(dims.width,dims.height);
+            m_camera.apply();
+            glClear(GL_COLOR_BUFFER_BIT);
+
             Col3ub color;
             color.setV(m_value);
             glBegin(GL_QUADS);
@@ -75,6 +79,11 @@ class TestWindow:public DefaultWindow
             }
             glEnd();
         } else {
+            m_camera.setScreenSpaceOrigin(dims.width/4,dims.height/4);
+            m_camera.setScreenSpaceDimensions(dims.width/2,dims.height/2);
+            m_camera.apply();
+            glClear(GL_COLOR_BUFFER_BIT);
+
             glEnable(GL_BLEND);
 
             m_rand.setSeed(0);
