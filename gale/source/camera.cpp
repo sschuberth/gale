@@ -6,7 +6,8 @@ namespace wrapgl {
 
 Camera* Camera::s_current=NULL;
 
-void Camera::apply() {
+void Camera::apply()
+{
     bool camera_changed=(s_current!=this);
 
     if (camera_changed || m_screen_changed) {

@@ -199,13 +199,15 @@ struct ScaleBias
 };
 
 template<typename T>
-inline BiasScale<T>::BiasScale(ScaleBias<T> const& other) {
+inline BiasScale<T>::BiasScale(ScaleBias<T> const& other)
+{
     bias=other.bias/other.scale;
     scale=other.scale;
 }
 
 template<typename T>
-inline ScaleBias<T> BiasScale<T>::getInverse() const {
+inline ScaleBias<T> BiasScale<T>::getInverse() const
+{
     if (scale==0) {
         return ScaleBias<T>(0,0);
     }
