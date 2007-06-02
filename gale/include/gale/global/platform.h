@@ -62,6 +62,18 @@
         #define WIN32_LEAN_AND_MEAN 1
     #endif
 
+    /**
+     * \def _WIN32_WINNT
+     * Assume at least Windows 2000 to get some additional defines
+     * (see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winprog/winprog/using_the_windows_headers.asp).
+     */
+    #if defined(_WIN32_WINNT) && _WIN32_WINNT<0x0500
+        #undef _WIN32_WINNT
+    #endif
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x0500
+    #endif
+
     #include <windows.h>
 
     /**
