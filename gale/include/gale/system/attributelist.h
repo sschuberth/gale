@@ -49,6 +49,9 @@ class AttributeList
 {
   public:
 
+    /// Data type definition for external access to the template argument.
+    typedef T Type;
+
     /// Creates an empty list.
     AttributeList() {
         clear();

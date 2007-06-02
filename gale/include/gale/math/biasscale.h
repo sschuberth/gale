@@ -46,6 +46,9 @@ struct ScaleBias;
 template<typename T>
 struct BiasScale
 {
+    /// Data type definition for external access to the template argument.
+    typedef T Type;
+
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
@@ -121,6 +124,9 @@ struct BiasScale
 template<typename T>
 struct ScaleBias
 {
+    /// Data type definition for external access to the template argument.
+    typedef T Type;
+
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",

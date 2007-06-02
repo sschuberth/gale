@@ -63,6 +63,9 @@ class Matrix4
 {
   public:
 
+    /// Data type definition for external access to the template argument.
+    typedef T Type;
+
     /// Definition of the type of vector used as the columns for the matrix.
     typedef Vector<4,T> Vec;
 

@@ -47,6 +47,9 @@ class RandomBase
 {
   public:
 
+    /// Data type definition for external access to the template argument.
+    typedef T Type;
+
     /**
      * \name Constructors
      */

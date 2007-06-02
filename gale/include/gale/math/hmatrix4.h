@@ -62,6 +62,9 @@ class HMatrix4
 {
   public:
 
+    /// Data type definition for external access to the template argument.
+    typedef T Type;
+
     /// Definition of the type of vector used as the columns for the matrix.
     typedef Vector<3,T> Vec;
 
@@ -109,7 +112,7 @@ class HMatrix4
 
         /// Creates a rotation matrix about the given normalized \a axis for the
         /// given \a angle in radians.
-        static HMatrix4 Rotation(Vec const& axis,double angle) {
+        static HMatrix4 Rotation(double angle,Vec const& axis) {
             double s=::sin(angle),c=1-::cos(angle);
             double xs=s*axis.getX(),ys=s*axis.getY(),zs=s*axis.getZ();
             double xc=c*axis.getX(),yc=c*axis.getY(),zc=c*axis.getZ();
