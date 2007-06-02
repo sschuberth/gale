@@ -108,7 +108,7 @@ void RenderWindow::processEvents()
         // Idle once in the beginning to initialize and then if there are no
         // messages to process.
         if (onIdle()) {
-            InvalidateRect(getWindowHandle(),NULL,FALSE);
+            repaint();
         } else {
             // Relinquish the rest of the time slice.
             Sleep(0);

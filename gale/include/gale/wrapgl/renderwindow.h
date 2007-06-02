@@ -75,6 +75,12 @@ class RenderWindow:public system::RenderSurface
     /// closed. Event handlers are called accordingly.
     void processEvents();
 
+    /// Invalidates the whole window and requests to repaint its contents.
+    void repaint() {
+        InvalidateRect(getWindowHandle(),NULL,FALSE);
+        UpdateWindow(getWindowHandle());
+    }
+
     /// Event handler that gets called when there are no messages to process.
     /// When it returns \c true a repaint will be triggered, on \c false the
     /// thread's remaining time slice will be relinquished.
