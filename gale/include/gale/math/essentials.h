@@ -60,6 +60,18 @@ inline float convDegToRad(float const angle)
     return (static_cast<float>(M_PI)*angle)/180.0f;
 }
 
+/// Converts the given \a angle specified in degrees to radians.
+inline float convDegToRad(int const angle)
+{
+    return (static_cast<float>(M_PI)*angle)/180.0f;
+}
+
+/// Converts the given \a angle specified in degrees to radians.
+inline float convDegToRad(short const angle)
+{
+    return (static_cast<float>(M_PI)*angle)/180.0f;
+}
+
 /// Converts the given \a angle specified in radians to degrees.
 inline double convRadToDeg(double const angle)
 {
@@ -68,6 +80,18 @@ inline double convRadToDeg(double const angle)
 
 /// Converts the given \a angle specified in radians to degrees.
 inline float convRadToDeg(float const angle)
+{
+    return (angle*180.0f)/static_cast<float>(M_PI);
+}
+
+/// Converts the given \a angle specified in radians to degrees.
+inline float convRadToDeg(int const angle)
+{
+    return (angle*180.0f)/static_cast<float>(M_PI);
+}
+
+/// Converts the given \a angle specified in radians to degrees.
+inline float convRadToDeg(short const angle)
 {
     return (angle*180.0f)/static_cast<float>(M_PI);
 }
