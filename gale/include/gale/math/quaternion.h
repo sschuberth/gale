@@ -100,8 +100,11 @@ class Quaternion
 
     /// Creates a quaternion representing the orientation given by an \a angle
     /// and a normalized \a axis.
-    Quaternion(double angle,Vec const& axis):
-      real(T(::cos(angle*0.5))),imag(T(::sin(angle*0.5))*axis) {}
+    Quaternion(Vec const& axis,double angle) {
+        double half=angle*0.5;
+        real=static_cast<T>(::cos(half));
+        imag=static_cast<T>(::sin(half))*axis;
+    }
 
     //@}
 
