@@ -52,7 +52,7 @@ namespace math {
  *
  * Example usage:
  * \code
- * Quatf q(convDegToRad(45.0f),Vec3f::Z());
+ * Quatf q(Vec3f::Z(),convDegToRad(45.0f));
  * HMat4f m=q.getMatrix();
  * glMultMatrixf(m);
  * \endcode

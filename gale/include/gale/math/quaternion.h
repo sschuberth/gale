@@ -44,7 +44,7 @@ namespace math {
  *
  * Example usage:
  * \code
- * Quatf q(convDegToRad(45.0f),Vec3f::Z());
+ * Quatf q(Vec3f::Z(),convDegToRad(45.0f));
  * HMat4f m=q.getMatrix();
  * glMultMatrixf(m);
  * \endcode
@@ -98,8 +98,8 @@ class Quaternion
     Quaternion(T real,Vec const& imag):
       real(real),imag(imag) {}
 
-    /// Creates a quaternion representing the orientation given by an \a angle
-    /// and a normalized \a axis.
+    /// Creates a quaternion representing the orientation given by a normalized
+    /// \a axis and an \a angle.
     Quaternion(Vec const& axis,double angle) {
         double half=angle*0.5;
         real=static_cast<T>(::cos(half));
