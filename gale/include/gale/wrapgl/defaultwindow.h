@@ -1,5 +1,35 @@
+/*                                     __
+ *                      .-----..---.-.|  |.-----.
+ *                      |  _  ||  _  ||  ||  -__|
+ *                      |___  ||___._||__||_____|
+ * This file is part of |_____| the Graphics Abstraction Layer & Engine,
+ * see the project page at http://developer.berlios.de/projects/gale/
+ *
+ * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #ifndef DEFAULTWINDOW
 #define DEFAULTWINDOW
+
+/**
+ * \file
+ * Default window and camera navigation implementation
+ */
 
 #include "gale/wrapgl/renderwindow.h"
 #include "gale/wrapgl/camera.h"
@@ -15,19 +45,26 @@ namespace wrapgl {
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(disable:4355)
 
+/**
+ * This class provides a convenient default window along with camera navigation
+ * using the mouse to be able to easily implement applications that require
+ * simple scene interaction.
+ */
 class DefaultWindow:public RenderWindow
 {
   public:
 
+    /// Defines bit masks for mouse events.
     enum MouseEvent {
-        ME_BUTTON_NONE   = 0x00,
-        ME_BUTTON_LEFT   = 0x01,
-        ME_BUTTON_MIDDLE = 0x02,
-        ME_BUTTON_RIGHT  = 0x04,
-        ME_BUTTON_WHEEL  = 0x08
+        ME_BUTTON_NONE   = 0x00, ///< No mouse button was pressed.
+        ME_BUTTON_LEFT   = 0x01, ///< The left mouse button was pressed.
+        ME_BUTTON_MIDDLE = 0x02, ///< The middle mouse button was pressed.
+        ME_BUTTON_RIGHT  = 0x04, ///< The right mouse button was pressed.
+        ME_WHEEL_SCROLL  = 0x08  ///< The mouse wheel was scrolled.
     };
 
-    static system::AttributeListi const& getDefaultAttributes() {
+    /// Returns the default pixel format attributes to use.
+    static system::AttributeListi const& getPixelAttributes() {
         static system::AttributeListi attribs;
         if (attribs.getSize()==0) {
             attribs.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
@@ -41,23 +78,30 @@ class DefaultWindow:public RenderWindow
         return attribs;
     }
 
+    /// Creates a window with reasonable defaults set.
     DefaultWindow(LPCTSTR title):
-      RenderWindow(500,500,getDefaultAttributes(),title),m_camera(*this) {
+      RenderWindow(500,500,getPixelAttributes(),title),m_camera(*this) {
 #ifndef NDEBUG
         std::cout << "Vendor   : " << glGetString(GL_VENDOR) << std::endl;
         std::cout << "Renderer : " << glGetString(GL_RENDERER) << std::endl;
         std::cout << "Version  : " << glGetString(GL_VERSION) << std::endl;
 #endif
+
+        // Move the camera back to be able to see objects at the origin.
         m_camera.setPosition(math::Vec3f(0,0,5));
     }
 
+    /// Captures the Escape key to quit the application.
     virtual void onKeyEvent(char key) {
         if (key==VK_ESCAPE) {
             exit(0);
         }
     }
 
+    /// Translates mouse events into camera movements.
     virtual void onMouseEvent(int x,int y,int wheel,int event) {
+        using namespace math;
+
         static int mouse_prev_x=0,mouse_prev_y=0;
 
         // This is positive if the mouse cursor was moved to the right.
@@ -74,19 +118,19 @@ class DefaultWindow:public RenderWindow
                 m_camera.elevate(static_cast<float>(-mouse_diff_y)/100);
             }
 
-            if (event&ME_BUTTON_WHEEL) {
+            if (event&ME_WHEEL_SCROLL) {
                 m_camera.zoom(static_cast<float>(-wheel)/50000);
             }
 
             // Rotate the camera.
 
             if (event&ME_BUTTON_LEFT) {
-                m_camera.pitch(math::convDegToRad(-mouse_diff_y)/10);
-                m_camera.yaw(math::convDegToRad(-mouse_diff_x)/10);
+                m_camera.pitch(convDegToRad(-mouse_diff_y)/10);
+                m_camera.rotate(Vec3f::Y(),convDegToRad(-mouse_diff_x)/10);
             }
 
             if (event&ME_BUTTON_RIGHT) {
-                m_camera.roll(math::convDegToRad(-mouse_diff_x)/10);
+                m_camera.roll(convDegToRad(-mouse_diff_x)/10);
             }
 
             repaint();
@@ -100,21 +144,9 @@ class DefaultWindow:public RenderWindow
 
     /// Handles window messages and forwards them to the event handlers.
     LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam) {
-        switch (uMsg) {
-            // The WM_ACTIVATE message is sent to both the window being
-            // activated and the window being deactivated. If the windows use
-            // the same input queue, the message is sent synchronously, first to
-            // the window procedure of the top-level window being deactivated,
-            // then to the window procedure of the top-level window being
-            // activated. If the windows use different input queues, the message
-            // is sent asynchronously, so the window is activated immediately.
-            //case WM_ACTIVATE: {
-            //    if (LOWORD(wParam)==WA_ACTIVE) {
-            //        SetCapture(getWindowHandle());
-            //    }
-            //    break;
-            //}
+        static bool capture=false;
 
+        switch (uMsg) {
             // The WM_CHAR message is posted to the window with the keyboard
             // focus when a WM_KEYDOWN message is translated by the
             // TranslateMessage function. The WM_CHAR message contains the
@@ -139,7 +171,22 @@ class DefaultWindow:public RenderWindow
                 if (wParam&MK_RBUTTON) {
                     event|=ME_BUTTON_RIGHT;
                 }
-                onMouseEvent(LOWORD(lParam),HIWORD(lParam),0,event);
+
+                // Toggle the mouse capture when buttons get pressed or released.
+                if (event==ME_BUTTON_NONE) {
+                    if (capture) {
+                        ReleaseCapture();
+                        capture=false;
+                    }
+                } else {
+                    if (!capture) {
+                        SetCapture(getWindowHandle());
+                        capture=true;
+                    }
+                }
+
+                short x=LOWORD(lParam),y=HIWORD(lParam);
+                onMouseEvent(x,y,0,event);
                 break;
             }
 
@@ -147,8 +194,9 @@ class DefaultWindow:public RenderWindow
             // mouse wheel is rotated. The DefWindowProc function propagates the
             // message to the window's parent.
             case WM_MOUSEWHEEL: {
-                short wheel=HIWORD(wParam);
-                onMouseEvent(LOWORD(lParam),HIWORD(lParam),wheel*WHEEL_DELTA,ME_BUTTON_WHEEL);
+                short wheel=HIWORD(wParam)*WHEEL_DELTA;
+                onMouseEvent(LOWORD(lParam),HIWORD(lParam),wheel,ME_WHEEL_SCROLL);
+                break;
             }
 
             default: {
@@ -160,7 +208,7 @@ class DefaultWindow:public RenderWindow
         return 0;
     }
 
-    wrapgl::Camera m_camera;
+    wrapgl::Camera m_camera; ///< The window's default camera.
 };
 
 // warning C4355: 'this' : used in base member initializer list
