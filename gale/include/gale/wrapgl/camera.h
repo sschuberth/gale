@@ -173,8 +173,7 @@ class Camera
     //@}
 
     /**
-     * \name Relative transformations in the camera coordinate system ("first
-     * person view")
+     * \name Relative transformations in the camera coordinate system
      */
     //@{
 
