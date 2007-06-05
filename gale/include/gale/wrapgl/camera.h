@@ -1,3 +1,28 @@
+/*                                     __
+ *                      .-----..---.-.|  |.-----.
+ *                      |  _  ||  _  ||  ||  -__|
+ *                      |___  ||___._||__||_____|
+ * This file is part of |_____| the Graphics Abstraction Layer & Engine,
+ * see the project page at http://developer.berlios.de/projects/gale/
+ *
+ * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #ifndef CAMERA_H
 #define CAMERA_H
 
@@ -7,7 +32,7 @@
  */
 
 #include "../system/rendersurface.h"
-#include "../math/hmatrix4.h"
+#include "../math/quaternion.h"
 #include "../math/matrix4.h"
 
 namespace gale {
@@ -20,7 +45,10 @@ namespace wrapgl {
 /**
  * This class defines a camera with a modelview transformation and projection
  * matrix that projects onto a given screen space portion of the render surface
- * that it is attached to.
+ * that it is attached to. The camera's coordinate system equals OpenGL's, i.e.
+ * it is a right-handed coordinate system where the camera looks forward long
+ * the negative z-axis, the positive y-axis marks the "up" direction and the
+ * positive x-axis marks the "right" direction.
  */
 class Camera
 {
@@ -53,6 +81,11 @@ class Camera
         return m_surface;
     }
 
+    /// Returns the currently set screen space.
+    ScreenSpace const& getScreenSpace() const {
+        return m_screen;
+    }
+
     /// Sets screen space origin to use.
     void setScreenSpaceOrigin(int x,int y) {
         m_screen.x=x;
@@ -67,9 +100,9 @@ class Camera
         m_screen_changed=true;
     }
 
-    /// Returns the currently set screen space.
-    ScreenSpace const& getScreenSpace() const {
-        return m_screen;
+    /// Returns the current modelview transformation matrix.
+    math::HMat4f const& getModelview() const {
+        return m_modelview;
     }
 
     /// Sets the modelview transformation matrix.
@@ -78,9 +111,9 @@ class Camera
         m_modelview_changed=true;
     }
 
-    /// Returns the current modelview transformation matrix.
-    math::HMat4f const& getModelview() const {
-        return m_modelview;
+    /// Returns the current projection matrix.
+    math::Mat4d const& getProjection() const {
+        return m_projection;
     }
 
     /// Sets the projection matrix.
@@ -89,14 +122,126 @@ class Camera
         m_projection_changed=true;
     }
 
-    /// Returns the current projection matrix.
-    math::Mat4d const& getProjection() const {
-        return m_projection;
+    /// Activates the camera by applying all its settings to the current render
+    /// context. If \a force is \c true, the camera settings are also applied if
+    /// they did not change.
+    void apply(bool force=false);
+
+    /**
+     * \name Absolute transformations in the world coordinate system
+     */
+    //@{
+
+    /// Sets the camera's location to the given \a position.
+    math::Vec3f const& getPosition() {
+        return m_modelview.c3;
     }
 
-    /// Activates the camera by applying all its settings to the current render
-    /// context.
-    void apply();
+    /// Sets the camera's location to the given \a position.
+    void setPosition(math::Vec3f const& position) {
+        m_modelview.c3=position;
+        m_modelview_changed=true;
+    }
+
+    /// Makes the camera look at the given \a point. If \a flip is \c true, the
+    /// camera is allowed to flip in order to minimize the "right" angle between
+    /// old and new orientation.
+    void setLookTarget(math::Vec3f const& point,bool flip=false) {
+        using namespace math;
+        HMat4f::Vec const& position=m_modelview.c3;
+
+        HMat4f::Vec& backward=m_modelview.c2;
+        HMat4f::Vec& up=m_modelview.c1;
+
+        HMat4f::Vec right=m_modelview.c0;
+
+        backward=~(position-point);
+        right=~(up^backward);
+
+        // Flip the "right" vector if its angle to the original vector is
+        // greater than 90°.
+        if (flip && right%m_modelview.c0<0) {
+            right=-right;
+        }
+
+        up=~(backward^right);
+
+        m_modelview.c0=right;
+        m_modelview_changed=true;
+    }
+
+    //@}
+
+    /**
+     * \name Relative transformations in the camera coordinate system ("first
+     * person view")
+     */
+    //@{
+
+    /// Moves the camera right (for a positive \a distance) or left along its
+    /// x-axis.
+    void strafe(float distance) {
+        math::HMat4f::Vec& position=m_modelview.c3;
+        math::HMat4f::Vec const& right=m_modelview.c0;
+        position+=right*distance;
+
+        m_modelview_changed=true;
+    }
+
+    /// Moves the camera up (for a positive \a distance) or down along its
+    /// y-axis.
+    void elevate(float distance) {
+        math::HMat4f::Vec& position=m_modelview.c3;
+        math::HMat4f::Vec const& up=m_modelview.c1;
+        position+=up*distance;
+
+        m_modelview_changed=true;
+    }
+
+    /// Moves the camera backward (for a positive \a distance) or forward along
+    /// its z-axis.
+    void zoom(float distance) {
+        math::HMat4f::Vec& position=m_modelview.c3;
+        math::HMat4f::Vec const& backward=m_modelview.c2;
+        position+=backward*distance;
+
+        m_modelview_changed=true;
+    }
+
+    /// Rotates the camera around the given \a axis about the given \a angle.
+    void rotate(math::Vec3f const& axis,double angle) {
+        math::Quatf q(~axis,angle);
+
+        // Normalize the vectors to avoid rounding errors.
+        m_modelview.c0=~(q*m_modelview.c0);
+        m_modelview.c1=~(q*m_modelview.c1);
+        m_modelview.c2=~(q*m_modelview.c2);
+
+        m_modelview_changed=true;
+    }
+
+    /// Rotates the camera about its x-axis. For a positive \a angle, the camera
+    /// will look up.
+    void pitch(double angle) {
+        math::HMat4f::Vec const& right=m_modelview.c0;
+        rotate(right,angle);
+    }
+
+    /// Rotates the camera about its y-axis. For a positive \a angle, the camera
+    /// will look left.
+    void yaw(double angle) {
+        math::HMat4f::Vec const& up=m_modelview.c1;
+        rotate(up,angle);
+    }
+
+    /// Rotates the camera about its z-axis. For a positive \a angle, the camera
+    /// will tilt left.
+    void roll(double angle) {
+        math::HMat4f::Vec const& backward=m_modelview.c2;
+        rotate(backward,angle);
+    }
+
+    //@}
 
   protected:
 
