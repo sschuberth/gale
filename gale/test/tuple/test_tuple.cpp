@@ -246,7 +246,7 @@ void test_tuple()
     cout << "Check linear interpolation ..."
          << endl;
     {
-        const double s=0.63;
+        double const s=0.63;
         Tuple<4,double> tmp=t4d_a.getLerp(t4d_b,s);
         G_ASSERT(OpCmpEqualEps::evaluate(tmp[0],t4d_a[0]+(t4d_b[0]-t4d_a[0])*s))
         G_ASSERT(OpCmpEqualEps::evaluate(tmp[1],t4d_a[1]+(t4d_b[1]-t4d_a[1])*s))

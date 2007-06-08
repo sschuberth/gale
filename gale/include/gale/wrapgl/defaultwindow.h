@@ -79,8 +79,8 @@ class DefaultWindow:public RenderWindow
     }
 
     /// Creates a window with reasonable defaults set.
-    DefaultWindow(LPCTSTR title):
-      RenderWindow(500,500,getPixelAttributes(),title),m_camera(*this) {
+    DefaultWindow(LPCTSTR title,int client_width=500,int client_height=500):
+      RenderWindow(client_width,client_height,getPixelAttributes(),title),m_camera(*this) {
 #ifndef NDEBUG
         std::cout << "Vendor   : " << glGetString(GL_VENDOR) << std::endl;
         std::cout << "Renderer : " << glGetString(GL_RENDERER) << std::endl;
