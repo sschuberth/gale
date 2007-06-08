@@ -1,7 +1,7 @@
 #ifndef RENDERBUFFER_H
 #define RENDERBUFFER_H
 
-class RenderBuffer:public RenderContext
+class RenderBuffer:public RenderSurface
 {
 };
 
