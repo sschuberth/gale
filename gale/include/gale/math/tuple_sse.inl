@@ -207,7 +207,7 @@ class TupleBase<4,float,C>
 
     /// Linearly interpolates between \c this tuple and another tuple \a t based
     /// on a scalar \a s. For performance reasons, \a s is not clamped to [0,1].
-    C lerpTo(C const& t,float s) const {
+    C getLerp(C const& t,float s) const {
         C tmp;
         tmp.m_simd=
             _mm_add_ps(

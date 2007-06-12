@@ -289,7 +289,7 @@ class Quaternion
     Quaternion getLerp(Quaternion const& q,double s) const {
         return ~Quaternion(
             T(real+s*(q.real-real)),
-            imag.lerp(q.imag,s)
+            imag.getLerp(q.imag,s)
         );
     }
 
@@ -299,7 +299,7 @@ class Quaternion
     Quaternion getSlerp(Quaternion const& q,double s) const {
         T dot=getAngleCosine(q);
 
-        if (OpCmpEqualEps::evaluate(dot,T(1))) {
+        if (meta::OpCmpEqualEps::evaluate(dot,T(1))) {
             // For very small angles just interpolate linearly.
             return getLerp(q,s);
         }
