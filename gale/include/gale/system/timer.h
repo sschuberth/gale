@@ -38,7 +38,7 @@ namespace gale {
 namespace system {
 
 /**
- * Simple timing class with pause / resume capability.
+ * Simple timing class with resume capability.
  */
 class Timer
 {
@@ -54,8 +54,8 @@ class Timer
 #endif
     }
 
-    /// The default constructor starts the timing, so there no need to call
-    /// start() manually. On Windows, this also locks the current thread to the
+    /// The default constructor resets the timing, so there no need to call
+    /// reset() manually. On Windows, this also locks the current thread to the
     /// first CPU for compatibility.
     Timer() {
 #ifdef _WIN32
@@ -67,7 +67,7 @@ class Timer
         }
         ++s_instances;
 #endif
-        start();
+        reset();
     }
 
 #ifdef _WIN32
@@ -83,14 +83,24 @@ class Timer
     }
 #endif
 
-    /// Starts the timing from zero.
-    bool start() {
+    /// Resets the timing to start from zero.
+    bool reset() {
         m_offset=0;
-        return resume();
+        return start();
     }
 
-    /// Stops the timing and returns the elapsed amount of seconds. Timing may
-    /// be continued by calling resume().
+    /// Sets a new start time for the timer.
+    bool start() {
+#ifdef _WIN32
+        return QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_start))!=FALSE;
+#else
+        m_start=times(NULL);
+        return m_start!=-1;
+#endif
+    }
+
+    /// Returns the elapsed time in seconds since reset() was called and stops
+    /// the timing. It may be resumed by calling start() again.
     bool stop(double& seconds) {
 #ifdef _WIN32
         bool result=(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_stop))!=FALSE);
@@ -119,26 +129,22 @@ class Timer
         return result;
     }
 
-    /// Resumes the timing without resetting the timer.
-    bool resume() {
-#ifdef _WIN32
-        return QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_start))!=FALSE;
-#else
-        m_start=times(NULL);
-        return m_start!=-1;
-#endif
+    /// Returns the elapsed time in seconds since reset() was called without
+    /// stopping the timing.
+    bool getElapsedSeconds(double& seconds) {
+        return stop(seconds) && start();
     }
 
   private:
 
     /// \var m_offset
-    /// Stores the total time since the last start(), needed for resume().
+    /// Stores the total time since the last reset.
 
     /// \var m_start
-    /// Stores the time when start() was called the last time.
+    /// Stores the last time when start() was called.
 
     /// \var m_stop
-    /// Stores the time when stop() was called the last time.
+    /// Stores the last time when stop() was called.
 
 #ifdef _WIN32
     /// This is a reference counter for the instances of this class.
