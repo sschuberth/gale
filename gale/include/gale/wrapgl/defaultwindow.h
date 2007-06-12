@@ -86,9 +86,6 @@ class DefaultWindow:public RenderWindow
         std::cout << "Renderer : " << glGetString(GL_RENDERER) << std::endl;
         std::cout << "Version  : " << glGetString(GL_VERSION) << std::endl;
 #endif
-
-        // Move the camera back to be able to see objects at the origin.
-        m_camera.setPosition(math::Vec3f(0,0,5));
     }
 
     /// Captures the Escape key to quit the application.

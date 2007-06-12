@@ -35,7 +35,6 @@ class TestWindow:public DefaultWindow
     }
 
     void onResize(int width,int height) {
-        m_camera.setScreenSpaceDimensions(width,height);
         m_camera.setProjection(Mat4d::Factory::OrthographicProjection(0,width,0,height));
     }
 

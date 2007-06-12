@@ -72,8 +72,10 @@ class Matrix4
     /// Inner factory class to easily create commonly used matrices.
     struct Factory
     {
-        /// Creates a orthographic projection matrix for the given clipping
-        /// coordinates.
+        /// Creates an orthographic projection matrix with the points in the
+        /// near clipping at \a clip_left, \a clip_bottom and at \a clip_right,
+        /// \a clip_top being mapped to the lower left and upper right window
+        /// corners respectively.
         static Matrix4 OrthographicProjection(
           double clip_left,
           double clip_right,
@@ -82,20 +84,20 @@ class Matrix4
           double clip_near=-1.0,
           double clip_far=1.0)
         {
-            double xs=clip_right+clip_left;
-            double xd=clip_right-clip_left;
+            double rpl=clip_right+clip_left;
+            double rml=clip_right-clip_left;
 
-            double ys=clip_top+clip_bottom;
-            double yd=clip_top-clip_bottom;
+            double tpb=clip_top+clip_bottom;
+            double tmb=clip_top-clip_bottom;
 
-            double zs=clip_far+clip_near;
-            double zd=clip_far-clip_near;
+            double fpn=clip_far+clip_near;
+            double fmn=clip_far-clip_near;
 
             return Matrix4(
-                Vec(2.0/xd,    0.0,     0.0,  0.0),
-                Vec(   0.0, 2.0/yd,     0.0,  0.0),
-                Vec(   0.0,    0.0, -2.0/zd, -1.0),
-                Vec(-xs/xd, -ys/yd,  -zs/zd,  1.0)
+                Vec( 2.0/rml,      0.0,      0.0, 0.0),
+                Vec(     0.0,  2.0/tmb,      0.0, 0.0),
+                Vec(     0.0,      0.0, -2.0/fmn, 0.0),
+                Vec(-rpl/rml, -tpb/tmb, -fpn/fmn, 1.0)
             );
         }
 
