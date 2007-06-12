@@ -68,7 +68,8 @@ class TestWindow:public DefaultWindow
 
     TestWindow():DefaultWindow("test_slerp",800,600),m_pause(false),m_freeze(false)
     {
-        //m_camera.setPosition(math::Vec3f(0,0,8));
+        // Move the camera back to be able to see objects at the origin.
+        m_camera.setPosition(Vec3f(0,0,8));
 
         // Specify two random orientations.
         RandomEcuyerf rand;
@@ -86,13 +87,16 @@ class TestWindow:public DefaultWindow
     }
 
     bool onIdle() {
+        double elapsed;
+
         if (m_pause) {
             m_timer.start();
             return false;
         }
 
         if (m_freeze) {
-            if (m_timer.getElapsedSeconds()<1.0) {
+            m_timer.getElapsedSeconds(elapsed);
+            if (elapsed<1.0) {
                 return false;
             }
             m_freeze=false;
@@ -101,7 +105,8 @@ class TestWindow:public DefaultWindow
 
         static double t=0.0,sign=1.0;
 
-        double step=sign*m_timer.getElapsedSeconds()/5;
+        m_timer.getElapsedSeconds(elapsed);
+        double step=sign*elapsed/5;
         m_timer.start();
 
         t+=step;
@@ -116,8 +121,9 @@ class TestWindow:public DefaultWindow
             m_freeze=true;
         }
 
-        m_k=m_k0.slerp(m_k1,t);
-        m_p=Vec3f(float(sin(convDegToRad(t*180-90)))*CUBE_AMPLITUDE);
+        m_k=m_k0.getSlerp(m_k1,t);
+        float x=static_cast<float>(sin(convDegToRad(t*180.0-90.0))*CUBE_AMPLITUDE);
+        m_p=Vec3f(x,0,0);
 
         return true;
     }
@@ -131,12 +137,12 @@ class TestWindow:public DefaultWindow
         glClearColor(0.0f,0.0f,0.0f,0.4f);
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-        m_camera->apply();
+        m_camera.apply();
 
         HMat4f m;
 
         m=m_k.getMatrix();
-        m.setPosition(m_p);
+        m.setPositionVector(m_p);
         glPushMatrix();
         glMultMatrixf(m);
         drawCube(1.0);
@@ -146,7 +152,7 @@ class TestWindow:public DefaultWindow
 
         // First orientation (and position).
         m=m_k0.getMatrix();
-        m.setPosition(Vec3f(-CUBE_AMPLITUDE));
+        m.setPositionVector(Vec3f(-CUBE_AMPLITUDE,0,0));
         glPushMatrix();
         glMultMatrixf(m);
         drawCube(1.0);
@@ -154,7 +160,7 @@ class TestWindow:public DefaultWindow
 
         // Second orientation (and position).
         m=m_k1.getMatrix();
-        m.setPosition(Vec3f(CUBE_AMPLITUDE));
+        m.setPositionVector(Vec3f(CUBE_AMPLITUDE,0,0));
         glPushMatrix();
         glMultMatrixf(m);
         drawCube(1.0);
