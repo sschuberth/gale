@@ -182,7 +182,7 @@ struct OpCalcLerp
     template<typename T,typename U>
     static G_INLINE T evaluate(T const& a,T const& b,U const& c) {
         G_ASSERT(0<=c && c<=1)
-        return a+(b-a)*c;
+        return T(a+(b-a)*c);
     }
 };
 
