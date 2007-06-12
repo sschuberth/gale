@@ -105,6 +105,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
      */
     //@{
 
+  protected:
+
     /// Sets each component in the vector to either 0 or 1 depending on the bits
     /// set in \a mask. Bit 0 maps to the first component, bit 1 to second one
     /// and so on. This constructor is required to initialize the static class
@@ -112,6 +114,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     explicit Vector(unsigned int mask) {
         meta::LoopFwd<N,meta::OpAssign>::iterateIndexMask(Base::getData(),mask);
     }
+
+  public:
 
     /// For performance reasons, do not initialize any data by default.
     Vector() {}
