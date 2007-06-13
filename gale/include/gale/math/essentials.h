@@ -35,7 +35,10 @@
     #define _USE_MATH_DEFINES
 #endif
 #include <math.h>
-#include <xmmintrin.h>
+
+#ifdef GALE_SSE
+    #include <xmmintrin.h>
+#endif
 
 #include <limits>
 
@@ -162,15 +165,19 @@ inline T clamp(T const x,T const a,T const b)
 /// Rounds \a f to the nearest integer (to the even one in case of ambiguity).
 /// This is the default rounding mode on x86 platforms, so the floating-point
 /// control word is not modified.
-inline long long roundToEven(float const f)
+inline long roundToEven(float const f)
 {
     // By default, the Pentium's fistp instruction does a "round to even", so
     // there is no need to save and restore the floating-point control word like
     // the C runtime does (see http://www.self-similar.com/rounding.html).
 
-#ifdef __GNUC__
+#ifdef GALE_SSE
 
-    long long i;
+    return _mm_cvtss_si32(_mm_set_ss(f));
+
+#elif defined(__GNUC__)
+
+    long i;
     __asm__(
         "fistpl %0\n\t"
         : "=m" (i)
@@ -182,7 +189,7 @@ inline long long roundToEven(float const f)
 #elif defined(_MSC_VER) && !defined(_WIN64)
 
     // MSVC 8.0 does not support inline assembly on the x64 platform.
-    long long i;
+    long i;
     __asm {
         fld f
         fistp i
@@ -191,7 +198,7 @@ inline long long roundToEven(float const f)
 
 #else
 
-    return static_cast<long long>(f+0.5f);
+    return static_cast<long>(f+0.5f);
 
 #endif // __GNUC__
 }
@@ -201,7 +208,28 @@ inline long long roundToEven(float const f)
 /// to an integer as it is faster.
 inline long roundToZero(float const f)
 {
-#ifdef GALE_SSE
+#if defined(GALE_SSE3) && defined(__GNUC__)
+
+    long i;
+    __asm__(
+        "fisttpl %0\n\t"
+        : "=m" (i)
+        : "t" (f)
+        : "st"
+    );
+    return i;
+
+#elif defined(GALE_SSE3) && defined(_MSC_VER) && !defined(_WIN64)
+
+    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    long i;
+    __asm {
+        fld f
+        fisttp i
+    }
+    return i;
+
+#elif defined(GALE_SSE)
 
     return _mm_cvttss_si32(_mm_set_ss(f));
 
