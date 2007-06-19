@@ -480,27 +480,9 @@ inline T abs(T const x)
 }
 
 template<>
-inline unsigned int abs(unsigned int const x)
+inline long double abs(long double const x)
 {
-    return x;
-}
-
-template<>
-inline unsigned short abs(unsigned short const x)
-{
-    return x;
-}
-
-template<>
-inline unsigned char abs(unsigned char const x)
-{
-    return x;
-}
-
-template<>
-inline long abs(long const x)
-{
-    return ::labs(x);
+    return ::fabsl(x);
 }
 
 template<>
@@ -513,6 +495,30 @@ template<>
 inline float abs(float const x)
 {
     return ::fabsf(x);
+}
+
+template<>
+inline long long abs(long long const x)
+{
+#ifdef __GNUC__
+
+    return ::llabs(x);
+
+#elif defined(_MSC_VER)
+
+    return ::_abs64(x);
+
+#else
+
+    return ::abs(x);
+
+#endif
+}
+
+template<>
+inline long abs(long const x)
+{
+    return ::labs(x);
 }
 
 //@}
