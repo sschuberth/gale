@@ -154,7 +154,7 @@ class RandomBase
 
     /// Returns a random normalized quaternion.
     Quaternion<T> getQuaternion() {
-        return Quaternion<T>(getRandom0ExclN(static_cast<T>(2*M_PI)),getVector());
+        return Quaternion<T>(getVector(),getRandom0ExclN(static_cast<T>(2*M_PI)));
     }
 
     //@}
