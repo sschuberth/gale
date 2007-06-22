@@ -241,6 +241,12 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return *this;
     }
 
+    /// Returns whether all elements equal their counterpart in \a v with regard
+    /// to the tolerance \a t.
+    bool equals(Vector const& v,T t=1e-6) {
+        return (v-*this).getLengthSquared()<=t*t;
+    }
+
     //@}
 
     /**

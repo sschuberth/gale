@@ -369,7 +369,7 @@ void test_vector()
 
     cout << "Check the cross product operator ..."
          << endl;
-    G_ASSERT((Vec3i::X()^Vec3i::Y())==Vec3i::Z())
+    G_ASSERT((Vec3i::X()^Vec3i::Y()).equals(Vec3i::Z()))
 
     cout << "Check angle related methods ..."
          << endl;
@@ -379,9 +379,9 @@ void test_vector()
 
     cout << "Check getting an orthogonal vector ..."
          << endl;
-    G_ASSERT(Vec3f::X().getOrthoVector()==Vec3f::Z())
-    G_ASSERT(Vec3f::Y().getOrthoVector()==-Vec3f::Z())
-    G_ASSERT(Vec3f::Z().getOrthoVector()==Vec3f::Y())
+    G_ASSERT(Vec3f::X().getOrthoVector().equals(Vec3f::Z()))
+    G_ASSERT(Vec3f::Y().getOrthoVector().equals(-Vec3f::Z()))
+    G_ASSERT(Vec3f::Z().getOrthoVector().equals(Vec3f::Y()))
 
     cout << "Check unary sign, conversion constructor and collinear methods ..."
          << endl;
