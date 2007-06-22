@@ -357,7 +357,7 @@ class Matrix4
     //@{
 
     /// Returns whether all elements in \a m equal their counterpart in \a n
-    /// using an epsilon-environment depending on the precision of \a T.
+    /// with regard to a tolerance depending on the precision of data type \a T.
     friend bool operator==(Matrix4 const& m,Matrix4 const& n) {
         return m.c0 == n.c0
             && m.c1 == n.c1
@@ -366,7 +366,8 @@ class Matrix4
     }
 
     /// Returns whether the elements in \a m are not equal to their counterparts
-    /// in \a n using an epsilon-environment depending on the precision of \a T.
+    /// in \a n with regard to a tolerance depending on the precision of data
+    /// type \a T.
     friend bool operator!=(Matrix4 const& m,Matrix4 const& n) {
         return !(m==n);
     }

@@ -213,10 +213,7 @@ class TupleBase<4,float,C>
             _mm_add_ps(
                 m_simd,
                 _mm_mul_ps(
-                    _mm_sub_ps(
-                        t.m_simd,
-                        m_simd
-                    ),
+                    _mm_sub_ps(t.m_simd,m_simd),
                     _mm_set1_ps(s)
                 )
             );
@@ -254,14 +251,13 @@ class TupleBase<4,float,C>
         return _mm_movemask_ps(_mm_cmpge_ps(t.m_simd,u.m_simd))==0xf;
     }
 
-    /// Returns whether all elements in \a t equal their counterpart in \a u
-    /// using an epsilon-environment depending on the precision of \a float.
+    /// Returns whether all elements in \a t equal their counterpart in \a u.
     friend bool operator==(C const& t,C const& u) {
         return _mm_movemask_ps(_mm_cmpeq_ps(t.m_simd,u.m_simd))==0xf;
     }
 
     /// Returns whether the elements in \a t are not equal to their counterparts
-    /// in \a u using an epsilon-environment depending on the precision of \a float.
+    /// in \a u.
     friend bool operator!=(C const& t,C const& u) {
         return !(t==u);
     }

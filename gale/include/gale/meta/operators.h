@@ -142,8 +142,8 @@ struct OpCmpGreaterEqual
 /// Boolean "equal" comparison operator.
 struct OpCmpEqualEps
 {
-    /// Returns whether \a a equals \a b using an epsilon-environment depending
-    /// on the precision of \a T.
+    /// Returns whether \a a equals \a b with regard to a tolerance depending on the
+    /// precision of data type \a T.
     template<typename T>
     static G_INLINE bool evaluate(
       T const& a,T const& b,

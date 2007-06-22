@@ -324,14 +324,15 @@ class TupleBase
     }
 
     /// Returns whether all elements in \a t equal their counterpart in \a u
-    /// using an epsilon-environment depending on the precision of \a T.
+    /// with regard to a tolerance depending on the precision of data type \a T.
     friend bool operator==(C const& t,C const& u) {
         return meta::LoopFwd<N,meta::OpCmpEqualEps>::
                  iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether the elements in \a t are not equal to their counterparts
-    /// in \a u using an epsilon-environment depending on the precision of \a T.
+    /// in \a u with regard to a tolerance depending on the precision of data
+    /// type \a T.
     friend bool operator!=(C const& t,C const& u) {
         return !(t==u);
     }
