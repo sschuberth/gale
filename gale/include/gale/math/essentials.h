@@ -36,6 +36,8 @@
 #endif
 #include <math.h>
 
+#include <stdlib.h>
+
 #ifdef GALE_SSE
     #include <xmmintrin.h>
 #endif
@@ -469,35 +471,41 @@ inline unsigned int getCeilPow2(unsigned int const x)
 //@}
 
 /**
- * \name Template specializations for the abs() functions
+ * \name Overloaded functions to calculate the absolute value
  */
 //@{
 
-template<typename T>
-inline T abs(T const x)
+/// This is needed as a dummy for template methods.
+inline unsigned int abs(unsigned int const x)
+{
+    return x;
+}
+
+/// This is needed as a dummy for template methods.
+inline unsigned long abs(unsigned long const x)
+{
+    return x;
+}
+
+/// This is needed as a dummy for template methods.
+inline unsigned long long abs(unsigned long long const x)
+{
+    return x;
+}
+
+/// Calls the appropriate run-time function.
+inline int abs(int const x)
 {
     return ::abs(x);
 }
 
-template<>
-inline long double abs(long double const x)
+/// Calls the appropriate run-time function.
+inline long abs(long const x)
 {
-    return ::fabsl(x);
+    return ::labs(x);
 }
 
-template<>
-inline double abs(double const x)
-{
-    return ::fabs(x);
-}
-
-template<>
-inline float abs(float const x)
-{
-    return ::fabsf(x);
-}
-
-template<>
+/// Calls the appropriate run-time function.
 inline long long abs(long long const x)
 {
 #ifdef __GNUC__
@@ -515,10 +523,22 @@ inline long long abs(long long const x)
 #endif
 }
 
-template<>
-inline long abs(long const x)
+/// Calls the appropriate run-time function.
+inline float abs(float const x)
 {
-    return ::labs(x);
+    return ::fabsf(x);
+}
+
+/// Calls the appropriate run-time function.
+inline double abs(double const x)
+{
+    return ::fabs(x);
+}
+
+/// Calls the appropriate run-time function.
+inline long double abs(long double const x)
+{
+    return ::fabsl(x);
 }
 
 //@}
