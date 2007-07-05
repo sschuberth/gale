@@ -1,5 +1,5 @@
 body {
-    background-image: url(images/gradient.png);
+    background-image: url(gradient.php?width=1&height=2000&top=004276&bottom=b2b6bf);
     background-repeat: repeat-x;
     background-attachment: fixed;
     font-family: Arial;
