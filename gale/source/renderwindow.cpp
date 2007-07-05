@@ -31,7 +31,8 @@ namespace gale {
 
 namespace wrapgl {
 
-RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi const& attribs,LPCTSTR title)
+RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi const& attribs,LPCTSTR title):
+  m_timeout(0)
 {
     // Activate the minimal render surface to get a context for OpenGL extension
     // initialization.
@@ -124,6 +125,15 @@ void RenderWindow::processEvents()
 
 LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
+    if (m_timeout>0) {
+        double elapsed;
+        m_timer.getElapsedSeconds(elapsed);
+        if (elapsed>=m_timeout) {
+            onTimeout();
+            m_timer.reset();
+        }
+    }
+
     switch (uMsg) {
         // This is sent to a window after its size has changed.
         case WM_SIZE: {

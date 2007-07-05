@@ -33,6 +33,7 @@
 
 #include "../system/attributelist.h"
 #include "../system/rendersurface.h"
+#include "../system/timer.h"
 
 #include "GLEX_WGL_ARB_pixel_format.h"
 #include "GLEX_ARB_color_buffer_float.h"
@@ -71,6 +72,17 @@ class RenderWindow:public system::RenderSurface
         return wglMakeCurrent(m_handle.device,m_handle.render)!=FALSE;
     }
 
+    /// Returns the currently set timeout value in seconds.
+    double getTimeout() const {
+        return m_timeout;
+    }
+
+    /// Sets the current \a timeout value in seconds. Any non-positive value
+    /// (which includes 0) disables the timeout handler.
+    void setTimeout(double timeout) {
+        m_timeout=timeout;
+    }
+
     /// Starts the event processing and does not return until the window gets
     /// closed. Event handlers are called accordingly.
     void processEvents();
@@ -88,6 +100,9 @@ class RenderWindow:public system::RenderSurface
         return false;
     }
 
+    /// Event handler that gets called when the timeout value has been reached.
+    virtual void onTimeout() {}
+
     /// Event handler that gets called after a window has changed its size.
     virtual void onResize(int width,int height) {}
 
@@ -101,6 +116,9 @@ class RenderWindow:public system::RenderSurface
 
     /// Handles window messages and forwards them to the event handlers.
     LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
+
+    double m_timeout;
+    system::Timer m_timer;
 
   private:
 
