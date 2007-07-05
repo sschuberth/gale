@@ -66,8 +66,7 @@ class TestWindow:public DefaultWindow
 {
   public:
 
-    TestWindow():DefaultWindow("test_slerp",800,600),m_pause(false),m_freeze(false)
-    {
+    TestWindow():DefaultWindow("test_slerp",800,600),m_pause(false),m_freeze(false) {
         // Move the camera back to be able to see objects at the origin.
         m_camera.setPosition(Vec3f(0,0,8));
 
@@ -80,17 +79,17 @@ class TestWindow:public DefaultWindow
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
 
-        glBlendFunc(GL_DST_ALPHA,GL_ONE_MINUS_DST_ALPHA);
+        glPolygonMode(GL_FRONT,GL_LINE);
 
-        // Start timing.
-        m_timer.start();
+        // Try to get 25 FPS even when events need to be processed.
+        setTimeout(1.0/25.0);
     }
 
     bool onIdle() {
         double elapsed;
 
         if (m_pause) {
-            m_timer.start();
+            m_timer.reset();
             return false;
         }
 
@@ -100,14 +99,14 @@ class TestWindow:public DefaultWindow
                 return false;
             }
             m_freeze=false;
-            m_timer.start();
+            m_timer.reset();
         }
 
         static double t=0.0,sign=1.0;
 
         m_timer.getElapsedSeconds(elapsed);
         double step=sign*elapsed/5;
-        m_timer.start();
+        m_timer.reset();
 
         t+=step;
         if (t<0.0) {
@@ -128,18 +127,25 @@ class TestWindow:public DefaultWindow
         return true;
     }
 
+    void onTimeout() {
+        // We will never be idle if the queue is filled with mouse and paint
+        // events, so make sure we get an animation anyways.
+        onIdle();
+    }
+
     void onResize(int width,int height) {
         m_camera.setScreenSpaceDimensions(width,height);
         m_camera.setProjection(Mat4d::Factory::PerspectiveProjection(width,height));
     }
 
     void onPaint() {
-        glClearColor(0.0f,0.0f,0.0f,0.4f);
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
         m_camera.apply();
 
         HMat4f m;
+
+        glColor3f(1.0f,1.0f,1.0f);
 
         m=m_k.getMatrix();
         m.setPositionVector(m_p);
@@ -148,7 +154,7 @@ class TestWindow:public DefaultWindow
         drawCube(1.0);
         glPopMatrix();
 
-        glEnable(GL_BLEND);
+        glColor3f(0.5f,0.5f,0.5f);
 
         // First orientation (and position).
         m=m_k0.getMatrix();
@@ -165,14 +171,45 @@ class TestWindow:public DefaultWindow
         glMultMatrixf(m);
         drawCube(1.0);
         glPopMatrix();
-
-        glDisable(GL_BLEND);
     }
 
-    void onKeyPress(char key) {
+    void onKeyEvent(char key) {
         if (key=='p') {
             m_pause=!m_pause;
+        } else {
+            DefaultWindow::onKeyEvent(key);
         }
+    }
+
+    void onMouseEvent(int x,int y,int wheel,int event) {
+        static int mouse_prev_x=0,mouse_prev_y=0;
+
+        // This is positive if the mouse cursor was moved to the right.
+        int mouse_diff_x=x-mouse_prev_x;
+
+        // This is positive if the mouse cursor was moved downwards.
+        int mouse_diff_y=y-mouse_prev_y;
+
+        if (event!=ME_BUTTON_NONE) {
+            if (event&ME_BUTTON_LEFT) {
+                m_camera.rotate(m_camera.getModelview().getUpVector(),convDegToRad(-mouse_diff_x)*0.5);
+                m_camera.rotate(m_camera.getModelview().getRightVector(),convDegToRad(-mouse_diff_y)*0.5);
+            }
+
+            if (event&ME_BUTTON_MIDDLE) {
+                m_camera.strafe(static_cast<float>(-mouse_diff_x)/100);
+                m_camera.elevate(static_cast<float>(mouse_diff_y)/100);
+            }
+
+            if (event&ME_BUTTON_RIGHT) {
+                m_camera.zoom(convDegToRad(mouse_diff_y));
+            }
+
+            repaint();
+        }
+
+        mouse_prev_x=x;
+        mouse_prev_y=y;
     }
 
   private:
@@ -182,29 +219,6 @@ class TestWindow:public DefaultWindow
     Timer m_timer;
     bool m_pause,m_freeze;
 };
-
-//void TestWindow::onMouseMove(int x,int y,MouseEvent event) {
-//    static int mouse_prev_x=0,mouse_prev_y=0;
-//    int diff_x=x-mouse_prev_x,diff_y=y-mouse_prev_y;
-//
-//    if (event&MOUSE_BUTTON_LEFT) {
-//        m_camera->rotate(m_camera->getUpDirection(),DEG2RAD(-diff_x)*0.5);
-//        m_camera->rotate(m_camera->getNormalDirection(),DEG2RAD(-diff_y)*0.5);
-//        repaint();
-//    }
-//    if (event&MOUSE_BUTTON_MIDDLE) {
-//        m_camera->strafe(float(-diff_x)/144);
-//        m_camera->fly(float(diff_y)/144);
-//        repaint();
-//    }
-//    if (event&MOUSE_BUTTON_RIGHT) {
-//        m_camera->zoom(float(diff_y)/20);
-//        repaint();
-//    }
-//
-//    mouse_prev_x=x;
-//    mouse_prev_y=y;
-//}
 
 // Enable memory leak detection, see:
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
