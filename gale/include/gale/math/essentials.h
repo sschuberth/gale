@@ -340,8 +340,17 @@ inline long getMSBSet(unsigned int const x)
 #endif // __GNUC__
 }
 
+/// Returns the number of set bits in \a x.
+inline unsigned int countSetBits(unsigned int x) {
+    x =    ((x & 0xaaaaaaaa) >>  1) + (x & 0x55555555);
+    x =    ((x & 0xcccccccc) >>  2) + (x & 0x33333333);
+    x =    ((x & 0xf0f0f0f0) >>  4) + (x & 0x0f0f0f0f);
+    x =    ((x & 0xff00ff00) >>  8) + (x & 0x00ff00ff);
+    return ((x & 0xffff0000) >> 16) + (x & 0x0000ffff);
+}
+
 /// Returns the number of leading (most significant) zero bits in \a x.
-inline long countLeadingZeroBits(unsigned int const x)
+inline unsigned int countLeadingZeroBits(unsigned int const x)
 {
     if (x==0) {
         return 1<<(sizeof(x)+1);
@@ -349,7 +358,7 @@ inline long countLeadingZeroBits(unsigned int const x)
 
 #ifdef __GNUC__
 
-    long result;
+    unsigned int result;
     __asm__(
         "bsr %%ecx,%%eax\n\t"
         "xorl $31,%%eax\n\t"
@@ -374,7 +383,7 @@ inline long countLeadingZeroBits(unsigned int const x)
     unsigned int const mask=1UL<<MSB;
 
     // At this point, we know there is at least one bit set.
-    long count=0;
+    unsigned int count=0;
     while ((x&mask)==0) {
         ++count;
         x<<=1;
