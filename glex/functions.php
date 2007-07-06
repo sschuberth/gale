@@ -169,9 +169,11 @@ function writeMacroHeader($extension,$procs) {
         // Write the padded function prototypes to a header file.
         $type_pad=str_pad($type,$type_length_max+1);
         $name_pad=str_pad($name,$name_length_max+1);
-        $arguments_pad=str_pad('('.$arguments.')',$arguments_length_max+2);
+
+        //$arguments_pad=str_pad('('.$arguments.')',$arguments_length_max+2);
         //fwrite($handle,GLEX_PREFIX."PROC( $type_pad, $name_pad, $arguments_pad );\n");
         fwrite($handle,GLEX_PREFIX."PROC( $type_pad, $name_pad, ($arguments) );\n");
+
         fwrite($handle,"#ifndef $name\n");
         fwrite($handle,"    #define $name_pad".GLEX_PREFIX."$name\n");
         fwrite($handle,"#endif\n");
@@ -183,29 +185,6 @@ function writeMacroHeader($extension,$procs) {
 }
 
 function writePrototypeHeader($extension,$procs,$tokens) {
-    function extractTypesToString($procs,&$types) {
-        preg_match_all("/DECLARE_HANDLE.*(.*).*;/U",$procs,$matches,PREG_SET_ORDER);
-        foreach ($matches as $type) {
-            // Convert the array to a string and append it.
-            list($all)=$type;
-            $types.="$all\n\n";
-        }
-
-        preg_match_all("/typedef(\s+\w+)+\s*;/U",$procs,$matches,PREG_SET_ORDER);
-        foreach ($matches as $type) {
-            // Convert the array to a string and append it.
-            list($all)=$type;
-            $types.="$all\n\n";
-        }
-
-        preg_match_all("/typedef.*{.*}.*;/U",$procs,$matches,PREG_SET_ORDER);
-        foreach ($matches as $type) {
-            // Convert the array to a string and append it.
-            list($all)=$type;
-            $types.="$all\n\n";
-        }
-    }
-
     function extractTokensToString($tokens,&$defines) {
         $name_length_max=0;
         preg_match_all("/(\w+)\s+(0x[0-9a-fA-F]+)/",$tokens,$matches,PREG_SET_ORDER);
@@ -230,6 +209,38 @@ function writePrototypeHeader($extension,$procs,$tokens) {
 
         if (!empty($defines)) {
             $defines.="\n";
+        }
+    }
+
+    function extractTypesToString($procs,&$types) {
+        preg_match_all("/DECLARE_HANDLE.*(.*).*;/U",$procs,$matches,PREG_SET_ORDER);
+        foreach ($matches as $type) {
+            // Convert the array to a string and append it.
+            list($all)=$type;
+            $types.="$all\n\n";
+        }
+
+        preg_match_all("/typedef(\s+\w+)+\s*;/U",$procs,$matches,PREG_SET_ORDER);
+        foreach ($matches as $type) {
+            // Convert the array to a string and append it.
+            list($all)=$type;
+            $types.="$all\n\n";
+        }
+
+        preg_match_all("/(typedef.*{)(.*)(}.*;)/U",$procs,$matches,PREG_SET_ORDER);
+        foreach ($matches as $type) {
+            // Indent the inner of a structure and append it.
+            $all=$type[1]."\n";
+            $tok=strtok($type[2],';');
+            while ($tok!==false) {
+                $trimtok=trim($tok);
+                if (!empty($trimtok)) {
+                    $all.='    '.$trimtok.";\n";
+                }
+                $tok=strtok(';');
+            }
+            $all.=$type[3];
+            $types.="$all\n\n";
         }
     }
 
