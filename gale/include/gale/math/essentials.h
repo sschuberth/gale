@@ -104,29 +104,75 @@ inline float convRadToDeg(short const angle)
 //@}
 
 /**
+ * \name Bit juggling functions
+ */
+//@{
+
+/// Returns the number of leading (most significant) zero bits in \a x.
+inline unsigned int countLeadingZeroBits(unsigned int const x)
+{
+    if (x==0) {
+        return 1<<(sizeof(x)+1);
+    }
+
+#ifdef __GNUC__
+
+    unsigned int result;
+    __asm__(
+        "bsr %%ecx,%%eax\n\t"
+        "xorl $31,%%eax\n\t"
+        : "=a" (result)
+        : "c" (x)
+        : "cc"
+    );
+    return result;
+
+#elif defined(_MSC_VER) && !defined(_WIN64)
+
+    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    __asm {
+        mov ebx,x
+        bsr eax,ebx
+        xor eax,31
+    }
+
+#else
+
+    unsigned int const MSB=(1UL<<(sizeof(x)+1))-1;
+    unsigned int const mask=1UL<<MSB;
+
+    // At this point, we know there is at least one bit set.
+    unsigned int count=0;
+    while ((x&mask)==0) {
+        ++count;
+        x<<=1;
+    }
+    return count;
+
+#endif
+}
+
+/// Returns the number of set bits in \a x.
+inline unsigned int countSetBits(unsigned int x) {
+    x =    ((x & 0xaaaaaaaa) >>  1) + (x & 0x55555555);
+    x =    ((x & 0xcccccccc) >>  2) + (x & 0x33333333);
+    x =    ((x & 0xf0f0f0f0) >>  4) + (x & 0x0f0f0f0f);
+    x =    ((x & 0xff00ff00) >>  8) + (x & 0x00ff00ff);
+    return ((x & 0xffff0000) >> 16) + (x & 0x0000ffff);
+}
+
+//@}
+
+/**
  * \name Extremes determination related functions
  */
 //@{
 
-/// Returns the minimum value among \a a and \a b.
+/// Clamps \a x to the range specified by \a a and \a b.
 template<typename T>
-inline T min(T const a,T const b)
+inline T clamp(T const x,T const a,T const b)
 {
-    return a<b?a:b;
-}
-
-/// Returns the minimum value among \a a, \a b and \a c.
-template<typename T>
-inline T min(T const a,T const b,T const c)
-{
-    return min(min(a,b),c);
-}
-
-/// Returns the minimum value among \a a, \a b, \a c and \a d.
-template<typename T>
-inline T min(T const a,T const b,T const c,T const d)
-{
-    return min(min(a,b,c),d);
+    return (a<b)?min(max(a,x),b):min(max(b,x),a);
 }
 
 /// Returns the maximum value among \a a and \a b.
@@ -150,11 +196,25 @@ inline T max(T const a,T const b,T const c,T const d)
     return max(max(a,b,c),d);
 }
 
-/// Clamps \a x to the range specified by \a a and \a b.
+/// Returns the minimum value among \a a and \a b.
 template<typename T>
-inline T clamp(T const x,T const a,T const b)
+inline T min(T const a,T const b)
 {
-    return (a<b)?min(max(a,x),b):min(max(b,x),a);
+    return a<b?a:b;
+}
+
+/// Returns the minimum value among \a a, \a b and \a c.
+template<typename T>
+inline T min(T const a,T const b,T const c)
+{
+    return min(min(a,b),c);
+}
+
+/// Returns the minimum value among \a a, \a b, \a c and \a d.
+template<typename T>
+inline T min(T const a,T const b,T const c,T const d)
+{
+    return min(min(a,b,c),d);
 }
 
 //@}
@@ -245,17 +305,165 @@ inline long roundToZero(float const f)
 //@}
 
 /**
+ * \name Overloaded functions to calculate the absolute value
+ */
+//@{
+
+/// This is needed as a dummy for template methods.
+inline unsigned int abs(unsigned int const x)
+{
+    return x;
+}
+
+/// This is needed as a dummy for template methods.
+inline unsigned long abs(unsigned long const x)
+{
+    return x;
+}
+
+/// This is needed as a dummy for template methods.
+inline unsigned long long abs(unsigned long long const x)
+{
+    return x;
+}
+
+/// Calls the appropriate run-time function.
+inline int abs(int const x)
+{
+    return ::abs(x);
+}
+
+/// Calls the appropriate run-time function.
+inline long abs(long const x)
+{
+    return ::labs(x);
+}
+
+/// Calls the appropriate run-time function.
+inline long long abs(long long const x)
+{
+#ifdef __GNUC__
+
+    return ::llabs(x);
+
+#elif defined(_MSC_VER)
+
+    return ::_abs64(x);
+
+#else
+
+    return ::abs(x);
+
+#endif
+}
+
+/// Calls the appropriate run-time function.
+inline float abs(float const x)
+{
+    return ::fabsf(x);
+}
+
+/// Calls the appropriate run-time function.
+inline double abs(double const x)
+{
+    return ::fabs(x);
+}
+
+/// Calls the appropriate run-time function.
+inline long double abs(long double const x)
+{
+    return ::fabsl(x);
+}
+
+//@}
+
+/**
  * \name Power-Of-2 (POT) related functions
  */
 //@{
 
-/// Returns whether \a x is an exact power of two.
-inline bool isPowerOf2(unsigned int const x)
+/// Returns the smallest power of 2 that is greater than or equal to \a x,
+/// except for \a x=0 and \a x>2147483648 which returns 0.
+inline unsigned int getCeilPow2(unsigned int const x)
 {
-    if (x==0) {
-        return false;
+#ifdef __GNUC__
+
+    unsigned int result;
+    __asm__(
+        "xor eax,eax\n\t"
+        "dec ecx\n\t"
+        "bsr ecx,ecx\n\t"
+        "cmovz ecx,eax\n\t"
+        "setnz al\n\t"
+        "inc eax\n\t"
+        "shl eax,cl\n\t"
+        : "=a" (result)
+        : "c" (x)
+    );
+    return result;
+
+#elif defined(_MSC_VER) && !defined(_WIN64)
+
+    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    __asm {
+        mov ecx,x
+        xor eax,eax
+        dec ecx
+        bsr ecx,ecx
+        cmovz ecx,eax
+        setnz al
+        inc eax
+        shl eax,cl
     }
-    return (x&(x-1))==0;
+
+#else
+
+    if (x==0) {
+        return 0;
+    }
+    long i=getMSBSet(x-1)+1;
+    return 1UL<<static_cast<unsigned int>(i);
+
+#endif // __GNUC__
+}
+
+/// Returns the largest power of 2 that is smaller than or equal to \a x, except
+/// for \a x=0 which returns 0.
+inline unsigned int getFloorPow2(unsigned int const x)
+{
+#ifdef __GNUC__
+
+    unsigned int result;
+    __asm__(
+        "xor eax,eax\n\t"
+        "bsr ecx,ecx\n\t"
+        "setnz al\n\t"
+        "shl eax,cl\n\t"
+        : "=a" (result)
+        : "c" (x)
+    );
+    return result;
+
+#elif defined(_MSC_VER) && !defined(_WIN64)
+
+    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    __asm {
+        mov ecx,x
+        xor eax,eax
+        bsr ecx,ecx
+        setnz al
+        shl eax,cl
+    }
+
+#else
+
+    long i=getMSBSet(x);
+    if (i<0) {
+        return 0;
+    }
+    return 1UL<<static_cast<unsigned int>(i);
+
+#endif // __GNUC__
 }
 
 /// Returns the position of the least significant bit set in \a x (the least
@@ -340,214 +548,13 @@ inline long getMSBSet(unsigned int const x)
 #endif // __GNUC__
 }
 
-/// Returns the number of set bits in \a x.
-inline unsigned int countSetBits(unsigned int x) {
-    x =    ((x & 0xaaaaaaaa) >>  1) + (x & 0x55555555);
-    x =    ((x & 0xcccccccc) >>  2) + (x & 0x33333333);
-    x =    ((x & 0xf0f0f0f0) >>  4) + (x & 0x0f0f0f0f);
-    x =    ((x & 0xff00ff00) >>  8) + (x & 0x00ff00ff);
-    return ((x & 0xffff0000) >> 16) + (x & 0x0000ffff);
-}
-
-/// Returns the number of leading (most significant) zero bits in \a x.
-inline unsigned int countLeadingZeroBits(unsigned int const x)
+/// Returns whether \a x is an exact power of two.
+inline bool isPowerOf2(unsigned int const x)
 {
     if (x==0) {
-        return 1<<(sizeof(x)+1);
+        return false;
     }
-
-#ifdef __GNUC__
-
-    unsigned int result;
-    __asm__(
-        "bsr %%ecx,%%eax\n\t"
-        "xorl $31,%%eax\n\t"
-        : "=a" (result)
-        : "c" (x)
-        : "cc"
-    );
-    return result;
-
-#elif defined(_MSC_VER) && !defined(_WIN64)
-
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
-    __asm {
-        mov ebx,x
-        bsr eax,ebx
-        xor eax,31
-    }
-
-#else
-
-    unsigned int const MSB=(1UL<<(sizeof(x)+1))-1;
-    unsigned int const mask=1UL<<MSB;
-
-    // At this point, we know there is at least one bit set.
-    unsigned int count=0;
-    while ((x&mask)==0) {
-        ++count;
-        x<<=1;
-    }
-    return count;
-
-#endif
-}
-
-/// Returns the largest power of 2 that is smaller than or equal to \a x, except
-/// for \a x=0 which returns 0.
-inline unsigned int getFloorPow2(unsigned int const x)
-{
-#ifdef __GNUC__
-
-    unsigned int result;
-    __asm__(
-        "xor eax,eax\n\t"
-        "bsr ecx,ecx\n\t"
-        "setnz al\n\t"
-        "shl eax,cl\n\t"
-        : "=a" (result)
-        : "c" (x)
-    );
-    return result;
-
-#elif defined(_MSC_VER) && !defined(_WIN64)
-
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
-    __asm {
-        mov ecx,x
-        xor eax,eax
-        bsr ecx,ecx
-        setnz al
-        shl eax,cl
-    }
-
-#else
-
-    long i=getMSBSet(x);
-    if (i<0) {
-        return 0;
-    }
-    return 1UL<<static_cast<unsigned int>(i);
-
-#endif // __GNUC__
-}
-
-/// Returns the smallest power of 2 that is greater than or equal to \a x,
-/// except for \a x=0 and \a x>2147483648 which returns 0.
-inline unsigned int getCeilPow2(unsigned int const x)
-{
-#ifdef __GNUC__
-
-    unsigned int result;
-    __asm__(
-        "xor eax,eax\n\t"
-        "dec ecx\n\t"
-        "bsr ecx,ecx\n\t"
-        "cmovz ecx,eax\n\t"
-        "setnz al\n\t"
-        "inc eax\n\t"
-        "shl eax,cl\n\t"
-        : "=a" (result)
-        : "c" (x)
-    );
-    return result;
-
-#elif defined(_MSC_VER) && !defined(_WIN64)
-
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
-    __asm {
-        mov ecx,x
-        xor eax,eax
-        dec ecx
-        bsr ecx,ecx
-        cmovz ecx,eax
-        setnz al
-        inc eax
-        shl eax,cl
-    }
-
-#else
-
-    if (x==0) {
-        return 0;
-    }
-    long i=getMSBSet(x-1)+1;
-    return 1UL<<static_cast<unsigned int>(i);
-
-#endif // __GNUC__
-}
-
-//@}
-
-/**
- * \name Overloaded functions to calculate the absolute value
- */
-//@{
-
-/// This is needed as a dummy for template methods.
-inline unsigned int abs(unsigned int const x)
-{
-    return x;
-}
-
-/// This is needed as a dummy for template methods.
-inline unsigned long abs(unsigned long const x)
-{
-    return x;
-}
-
-/// This is needed as a dummy for template methods.
-inline unsigned long long abs(unsigned long long const x)
-{
-    return x;
-}
-
-/// Calls the appropriate run-time function.
-inline int abs(int const x)
-{
-    return ::abs(x);
-}
-
-/// Calls the appropriate run-time function.
-inline long abs(long const x)
-{
-    return ::labs(x);
-}
-
-/// Calls the appropriate run-time function.
-inline long long abs(long long const x)
-{
-#ifdef __GNUC__
-
-    return ::llabs(x);
-
-#elif defined(_MSC_VER)
-
-    return ::_abs64(x);
-
-#else
-
-    return ::abs(x);
-
-#endif
-}
-
-/// Calls the appropriate run-time function.
-inline float abs(float const x)
-{
-    return ::fabsf(x);
-}
-
-/// Calls the appropriate run-time function.
-inline double abs(double const x)
-{
-    return ::fabs(x);
-}
-
-/// Calls the appropriate run-time function.
-inline long double abs(long double const x)
-{
-    return ::fabsl(x);
+    return (x&(x-1))==0;
 }
 
 //@}
