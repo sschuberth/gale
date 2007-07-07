@@ -60,25 +60,29 @@ using namespace gale::math;
 using namespace gale::system;
 using namespace gale::wrapgl;
 
-float const CUBE_AMPLITUDE=2.4f;
+float const CATHETUS=5.0f;
+float const RADIUS=sqrtf(2*CATHETUS*CATHETUS);
 
 class TestWindow:public DefaultWindow
 {
   public:
 
-    TestWindow():DefaultWindow("test_slerp",800,600),m_pause(false),m_freeze(false) {
+    TestWindow():DefaultWindow("test_slerp",800,600),m_pause(false),m_cubic(false) {
         // Move the camera back to be able to see objects at the origin.
-        m_camera.setPosition(Vec3f(0,0,8));
+        m_camera.setPosition(Vec3f(0,0,20));
+
+        // Use spherical-linear interpolation by default.
+        m_interpolator=&Quatf::getSlerp;
 
         // Specify two random orientations.
         RandomEcuyerf rand;
         m_k0=rand.getQuaternion();
         m_k1=rand.getQuaternion();
+        m_k2=rand.getQuaternion();
+        m_k3=rand.getQuaternion();
 
         // Set some OpenGL states.
         glEnable(GL_CULL_FACE);
-        glEnable(GL_DEPTH_TEST);
-
         glPolygonMode(GL_FRONT,GL_LINE);
 
         // Try to get 25 FPS even when events need to be processed.
@@ -86,43 +90,40 @@ class TestWindow:public DefaultWindow
     }
 
     bool onIdle() {
-        double elapsed;
-
         if (m_pause) {
             m_timer.reset();
             return false;
         }
 
-        if (m_freeze) {
-            m_timer.getElapsedSeconds(elapsed);
-            if (elapsed<1.0) {
-                return false;
-            }
-            m_freeze=false;
-            m_timer.reset();
-        }
+        static double t=0.0;
 
-        static double t=0.0,sign=1.0;
-
+        double elapsed;
         m_timer.getElapsedSeconds(elapsed);
-        double step=sign*elapsed/5;
+        double step=elapsed/5.0;
         m_timer.reset();
 
-        t+=step;
-        if (t<0.0) {
-            t=0.0;
-            sign=-sign;
-            m_freeze=true;
-        }
-        if (t>1.0) {
-            t=1.0;
-            sign=-sign;
-            m_freeze=true;
+        if (m_cubic) {
+            m_k=m_k0.getScherp(m_k3,t/4.0,m_k1,m_k2);
+        } else {
+            if (t>=0.0 && t<1.0) {
+                m_k=(m_k0.*m_interpolator)(m_k1,t);
+            } else if (t>=1.0 && t<2.0) {
+                m_k=(m_k1.*m_interpolator)(m_k2,t-1.0);
+            } else if (t>=2.0 && t<3.0) {
+                m_k=(m_k2.*m_interpolator)(m_k3,t-2.0);
+            } else if (t>=3.0 && t<4.0) {
+                m_k=(m_k3.*m_interpolator)(m_k0,t-3.0);
+            }
         }
 
-        m_k=m_k0.getSlerp(m_k1,t);
-        float x=static_cast<float>(sin(convDegToRad(t*180.0-90.0))*CUBE_AMPLITUDE);
-        m_p=Vec3f(x,0,0);
+        if (t>=4.0) {
+            t-=4.0;
+        } else {
+            t+=step;
+        }
+
+        float angle=static_cast<float>(2.0*M_PI/4.0*t+M_PI/4.0);
+        m_p=Vec3f(cosf(angle)*RADIUS,sinf(angle)*RADIUS,0);
 
         return true;
     }
@@ -139,34 +140,51 @@ class TestWindow:public DefaultWindow
     }
 
     void onPaint() {
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         m_camera.apply();
 
         HMat4f m;
 
-        glColor3f(1.0f,1.0f,1.0f);
-
-        m=m_k.getMatrix();
-        m.setPositionVector(m_p);
-        glPushMatrix();
-        glMultMatrixf(m);
-        drawCube(1.0);
-        glPopMatrix();
-
         glColor3f(0.5f,0.5f,0.5f);
 
-        // First orientation (and position).
+        // First key frame.
         m=m_k0.getMatrix();
-        m.setPositionVector(Vec3f(-CUBE_AMPLITUDE,0,0));
+        m.setPositionVector(Vec3f(+CATHETUS,+CATHETUS,0));
         glPushMatrix();
         glMultMatrixf(m);
         drawCube(1.0);
         glPopMatrix();
 
-        // Second orientation (and position).
+        // Second key frame.
         m=m_k1.getMatrix();
-        m.setPositionVector(Vec3f(CUBE_AMPLITUDE,0,0));
+        m.setPositionVector(Vec3f(-CATHETUS,+CATHETUS,0));
+        glPushMatrix();
+        glMultMatrixf(m);
+        drawCube(1.0);
+        glPopMatrix();
+
+        // Third key frame.
+        m=m_k2.getMatrix();
+        m.setPositionVector(Vec3f(-CATHETUS,-CATHETUS,0));
+        glPushMatrix();
+        glMultMatrixf(m);
+        drawCube(1.0);
+        glPopMatrix();
+
+        // Fourth key frame.
+        m=m_k3.getMatrix();
+        m.setPositionVector(Vec3f(+CATHETUS,-CATHETUS,0));
+        glPushMatrix();
+        glMultMatrixf(m);
+        drawCube(1.0);
+        glPopMatrix();
+
+        glColor3f(1.0f,1.0f,1.0f);
+
+        // Interpolated orientation and position.
+        m=m_k.getMatrix();
+        m.setPositionVector(m_p);
         glPushMatrix();
         glMultMatrixf(m);
         drawCube(1.0);
@@ -174,10 +192,29 @@ class TestWindow:public DefaultWindow
     }
 
     void onKeyEvent(char key) {
-        if (key=='p') {
-            m_pause=!m_pause;
-        } else {
-            DefaultWindow::onKeyEvent(key);
+        switch (key) {
+            case 'p': {
+                m_pause=!m_pause;
+                break;
+            }
+            case 'l': {
+                m_cubic=false;
+                m_interpolator=&Quatf::getLerp;
+                break;
+            }
+            case 's': {
+                m_cubic=false;
+                m_interpolator=&Quatf::getSlerp;
+                break;
+            }
+            case 'c': {
+                m_cubic=true;
+                break;
+            }
+            default: {
+                DefaultWindow::onKeyEvent(key);
+                break;
+            }
         }
     }
 
@@ -214,10 +251,15 @@ class TestWindow:public DefaultWindow
 
   private:
 
-    Quatf m_k,m_k0,m_k1;
+    // Use a member function pointer to easily switch between the interpolation methods.
+    typedef Quatf (Quatf::*QuatfInterpolator)(Quatf const&,double) const;
+    QuatfInterpolator m_interpolator;
+
+    Quatf m_k,m_k0,m_k1,m_k2,m_k3;
     Vec3f m_p;
+
     Timer m_timer;
-    bool m_pause,m_freeze;
+    bool m_pause,m_cubic;
 };
 
 // Enable memory leak detection, see:
