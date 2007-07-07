@@ -283,9 +283,9 @@ class Quaternion
      */
     //@{
 
-    /// Linearly interpolates between \c this quaternion and another quaternion
-    /// \a q based on a scalar \a s. For performance reasons, \a s is not
-    /// clamped to [0,1].
+    /// Performs a linear interpolation between \c this quaternion and another
+    /// quaternion \a q based on a scalar \a s. For performance reasons, \a s is
+    /// not clamped to [0,1].
     Quaternion getLerp(Quaternion const& q,double s) const {
         return ~Quaternion(
             T(real+s*(q.real-real)),
@@ -293,9 +293,9 @@ class Quaternion
         );
     }
 
-    /// Spherically interpolates between \c this quaternion and another
-    /// quaternion \a q based on a scalar \a s. For performance reasons, \a s
-    /// is not clamped to [0,1].
+    /// Performs a spherical-linear interpolation between \c this quaternion and
+    /// another quaternion \a q based on a scalar \a s. For performance reasons,
+    /// \a s is not clamped to [0,1].
     Quaternion getSlerp(Quaternion const& q,double s) const {
         T dot=getAngleCosine(q);
 
@@ -307,6 +307,16 @@ class Quaternion
         double angle=::acos(dot)*s;
         Quaternion r=~(q-(*this)*dot);
         return (*this)*T(::cos(angle))+r*T(::sin(angle));
+    }
+
+    /// Performs a spherical-cubic (Hermite) interpolation between \c this
+    /// quaternion and another quaternion \a q based on a scalar \a s along the
+    /// path defined by quaternions \a a and \a b (the curve touches the
+    /// midpoint of the "line" from \a a to \a b when \a s = 0.5). For
+    /// performance reasons, \a s is not clamped to [0,1].
+    Quaternion getScherp(Quaternion const& q,double s,Quaternion const& a,Quaternion const& b) const {
+        // Interpolate within the quadliteral (see http://sjbrown.co.uk/?article=quaternions).
+        return getSlerp(q,s).getSlerp(a.getSlerp(b,s),2*s*(1-s));
     }
 
     /// Returns the conjugate of this quaternion.
