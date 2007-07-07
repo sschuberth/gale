@@ -161,7 +161,7 @@ LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
         }
 
         // Avoid GDI clearing the background under Windows Vista with Aero enabled
-        // (see http://www.opengl.org/pipeline/article/vol003_7/).
+        // (see http://opengl.org/pipeline/article/vol003_7/).
         case WM_ERASEBKGND: {
             return 1;
         }

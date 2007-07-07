@@ -231,7 +231,7 @@ inline long roundToEven(float const f)
 {
     // By default, the Pentium's fistp instruction does a "round to even", so
     // there is no need to save and restore the floating-point control word like
-    // the C runtime does (see http://www.self-similar.com/rounding.html).
+    // the C runtime does (see http://self-similar.com/rounding.html).
 
 #ifdef GALE_SSE
 
