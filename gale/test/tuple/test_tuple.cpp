@@ -80,7 +80,7 @@ void test_tuple()
 
     G_ASSERT(t4f_c<=t4f_a && t4f_c<=t4f_b)
 
-    t4f_c=t4f_a.lerpTo(t4f_b,0.5);
+    t4f_c=t4f_a.getLerp(t4f_b,0.5);
     G_ASSERT(t4f_c[0]==(t4f_a0+t4f_b0)/2)
     G_ASSERT(t4f_c[1]==(t4f_a1+t4f_b1)/2)
     G_ASSERT(t4f_c[2]==(t4f_a2+t4f_b2)/2)
