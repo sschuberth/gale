@@ -294,28 +294,31 @@ class Quaternion
     }
 
     /// Performs a spherical-linear interpolation between \c this quaternion and
-    /// another quaternion \a q based on a scalar \a s. For performance reasons,
-    /// \a s is not clamped to [0,1].
+    /// another quaternion \a q based on a scalar \a s. Despite linear
+    /// interpolation this results in a rotation at constant velocity. For
+    /// performance reasons, \a s is not clamped to [0,1].
     Quaternion getSlerp(Quaternion const& q,double s) const {
-        T dot=getAngleCosine(q);
+        T cos=getAngleCosine(q);
 
-        if (meta::OpCmpEqualEps::evaluate(dot,T(1))) {
-            // For very small angles just interpolate linearly.
+        if (meta::OpCmpEqualEps::evaluate(cos,T(1))) {
+            // If the quaternions are very close just interpolate linearly.
             return getLerp(q,s);
         }
 
-        double angle=::acos(dot)*s;
-        Quaternion r=~(q-(*this)*dot);
-        return (*this)*T(::cos(angle))+r*T(::sin(angle));
+        double angle=::acos(cos);
+        return (
+            (*this) * T(::sin(angle * (1-s)))
+          +      q  * T(::sin(angle *    s ))
+        )/T(::sin(angle));
     }
 
-    /// Performs a spherical-cubic (Hermite) interpolation between \c this
-    /// quaternion and another quaternion \a q based on a scalar \a s along the
-    /// path defined by quaternions \a a and \a b (the curve touches the
-    /// midpoint of the "line" from \a a to \a b when \a s = 0.5). For
-    /// performance reasons, \a s is not clamped to [0,1].
-    Quaternion getScherp(Quaternion const& q,double s,Quaternion const& a,Quaternion const& b) const {
-        // Interpolate within the quadliteral (see http://sjbrown.co.uk/?article=quaternions).
+    /// Performs a spherical-cubic interpolation between \c this quaternion and
+    /// another quaternion \a q based on a scalar \a s along the path defined by
+    /// quaternions \a a and \a b (the curve touches the midpoint of the "line"
+    /// from \a a to \a b when \a s = 0.5). For performance reasons, \a s is not
+    /// clamped to [0,1].
+    Quaternion getSquad(Quaternion const& q,double s,Quaternion const& a,Quaternion const& b) const {
+        // Interpolate within the quadrilateral (see http://sjbrown.co.uk/?article=quaternions).
         return getSlerp(q,s).getSlerp(a.getSlerp(b,s),2*s*(1-s));
     }
 
