@@ -10,5 +10,8 @@
 /// \namespace gale::meta
 /// Namespace for meta-template programming code.
 
-/// \namespace gale::system
-/// Namespace for code that works closely with the underlying operating system.
+/// \namespace gale::model
+/// Namespace for modelling and mesh handling related code.
+
+/// \namespace gale::wrapgl
+/// Namespace for OpenGL wrapper classes and helper functions.
