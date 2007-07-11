@@ -241,55 +241,58 @@ class HMatrix4
     }
 
     /// Returns a reference to the first column vector which is interpreted to
-    /// point right in the coordinate system orientation.
+    /// point right in the right-handed coordinate system orientation.
     Vec& getRightVector() {
         return c0;
     }
 
     /// Returns a \c constant reference to the first column vector which is
-    /// interpreted to point right in the coordinate system orientation.
+    /// interpreted to point right in the right-handed coordinate system
+    /// orientation.
     Vec const& getRightVector() const {
         return c0;
     }
 
     /// Assigns a new value to the first column vector which is interpreted to
-    /// point right in the coordinate system orientation.
+    /// point right in the right-handed coordinate system orientation.
     void setRightVector(Vec const& right) {
         c0=right;
     }
 
     /// Returns a reference to the second column vector which is interpreted to
-    /// point up in the coordinate system orientation.
+    /// point up in the right-handed coordinate system orientation.
     Vec& getUpVector() {
         return c1;
     }
 
     /// Returns a \c constant reference to the second column vector which is
-    /// interpreted to point up in the coordinate system orientation.
+    /// interpreted to point up in the right-handed coordinate system
+    /// orientation.
     Vec const& getUpVector() const {
         return c1;
     }
 
     /// Assigns a new value to the second column vector which is interpreted to
-    /// point up in the coordinate system orientation.
+    /// point up in the right-handed coordinate system orientation.
     void setUpVector(Vec const& up) {
         c1=up;
     }
 
     /// Returns a reference to the third column vector which is interpreted to
-    /// point backward in the coordinate system orientation.
+    /// point backward in the right-handed coordinate system orientation.
     Vec& getBackwardVector() {
         return c2;
     }
 
     /// Returns a \c constant reference to the third column vector which is
-    /// interpreted to point backward in the coordinate system orientation.
+    /// interpreted to point backward in the right-handed coordinate system
+    /// orientation.
     Vec const& getBackwardVector() const {
         return c2;
     }
 
     /// Assigns a new value to the third column vector which is interpreted to
-    /// point backward in the coordinate system orientation.
+    /// point backward in the right-handed coordinate system orientation.
     void setBackwardVector(Vec const& backward) {
         c2=backward;
     }
@@ -471,12 +474,12 @@ class HMatrix4
      */
     //@{
 
-    /// Orthonormalizes this matrix so the column vectors are normalized and
-    /// orthogonal to each other.
+    /// Orthonormalizes this matrix using a modified Gram-Schmidt algorithm so
+    /// the column vectors are orthogonal to each other and normalized.
     HMatrix4& orthonormalize() {
         c0.normalize();
-        c1=~(c2^c0);
-        c2=~(c0^c1);
+        c1=~(c1-(c1%c0)*c0);
+        c2=c0^c1;
         return *this;
     }
 
