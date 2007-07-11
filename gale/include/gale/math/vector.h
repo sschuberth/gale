@@ -296,11 +296,17 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         Vector v=getCrossProduct(Vector::X());
 
         // If the x-axis is (almost) collinear to this vector, take the y-axis.
-        if (v.getLengthSquared()<=std::numeric_limits<T>::epsilon()) {
+        if (v.getLengthSquared()<std::numeric_limits<T>::epsilon()) {
             v=getCrossProduct(Vector::Y());
         }
 
         return v;
+    }
+
+    /// Returns the projection of this vector onto the given vector \a v.
+    Vector getProjectionOnto(Vector v) const {
+        v.normalize();
+        return ((*this)%v)*v;
     }
 
     /// Returns whether this vector is collinear to vector \a v.
