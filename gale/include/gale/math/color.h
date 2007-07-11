@@ -167,7 +167,7 @@ struct ColorModel
     }
 };
 
-/// \cond SPECIALIZATION
+/// \cond DOXYGEN_IGNORE
 template<>
 inline float ColorModel<float>::getMinIntensity()
 {
