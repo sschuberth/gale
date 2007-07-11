@@ -149,7 +149,7 @@ struct OpCmpEqualEps
       T const& a,T const& b,
       T const& epsilon=std::numeric_limits<T>::epsilon())
     {
-        return math::abs(b-a)<=epsilon;
+        return math::abs(b-a)<epsilon;
     }
 };
 
