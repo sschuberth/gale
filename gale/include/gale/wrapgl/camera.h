@@ -164,7 +164,7 @@ class Camera
             right=-right;
         }
 
-        up=~(backward^right);
+        up=backward^right;
 
         m_modelview.setRightVector(right);
         m_modelview_changed=true;
