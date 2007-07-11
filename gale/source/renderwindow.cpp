@@ -88,7 +88,7 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
     GLint format;
     UINT count;
     result=wglChoosePixelFormatARB(m_handle.device,attrs,NULL,1,&format,&count);
-    G_ASSERT(result!=FALSE)
+    G_ASSERT(result!=FALSE && count>0)
 
     result=SetPixelFormat(m_handle.device,format,NULL);
     G_ASSERT(result!=FALSE)
@@ -125,9 +125,11 @@ void RenderWindow::processEvents()
 
 LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
+    // If there is a timeout set ...
     if (m_timeout>0) {
         double elapsed;
         m_timer.getElapsedSeconds(elapsed);
+        // ... and the timeout elapsed, call the event handler.
         if (elapsed>=m_timeout) {
             onTimeout();
             m_timer.reset();
