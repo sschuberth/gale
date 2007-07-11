@@ -59,13 +59,9 @@
 
 #ifdef __GNUC__
     #define G_INLINE inline __attribute__ ((always_inline))
-#endif
-
-#ifdef _MSC_VER
+#elif defined(_MSC_VER)
     #define G_INLINE __forceinline
-#endif
-
-#ifndef G_INLINE
+#else
     #define G_INLINE inline
 #endif
 
