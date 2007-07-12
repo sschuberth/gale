@@ -117,8 +117,8 @@ class RenderWindow:public system::RenderSurface
     /// Handles window messages and forwards them to the event handlers.
     LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
 
-    double m_timeout;
-    system::Timer m_timer;
+    double m_timeout;      ///< Timeout event value in seconds.
+    system::Timer m_timer; ///< Timer to trigger the timeout event.
 
   private:
 
