@@ -124,7 +124,7 @@ class TupleBase
     //@}
 
     /**
-     * \name Element-wise arithmetic operators with tuples
+     * \name Arithmetic tuple / tuple operators
      */
     //@{
 
@@ -188,7 +188,7 @@ class TupleBase
     //@}
 
     /**
-     * \name Element-wise arithmetic operators with scalars
+     * \name Arithmetic tuple / scalar operators
      */
     //@{
 
@@ -275,22 +275,6 @@ class TupleBase
     //@}
 
     /**
-     * \name Miscellaneous methods
-     */
-    //@{
-
-    /// Linearly interpolates between \c this tuple and another tuple \a t based
-    /// on a scalar \a s. For performance reasons, \a s is not clamped to [0,1].
-    C getLerp(C const& t,double s) const {
-        C tmp;
-        meta::LoopFwd<N,meta::OpCalcLerp>::
-          iterate(tmp.getData(),getData(),t.getData(),s);
-        return tmp;
-    }
-
-    //@}
-
-    /**
      * \name Element-wise comparison operators
      */
     //@{
@@ -335,6 +319,22 @@ class TupleBase
     /// type \a T.
     friend bool operator!=(C const& t,C const& u) {
         return !(t==u);
+    }
+
+    //@}
+
+    /**
+     * \name Miscellaneous methods
+     */
+    //@{
+
+    /// Linearly interpolates between the tuples \a t and \a u based on a scalar
+    /// \a s. For performance reasons, \a s is not clamped to [0,1].
+    friend C lerp(C const& t,C const& u,double s) {
+        C tmp;
+        meta::LoopFwd<N,meta::OpCalcLerp>::
+          iterate(tmp.getData(),t.getData(),u.getData(),s);
+        return tmp;
     }
 
     //@}
