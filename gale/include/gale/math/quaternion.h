@@ -229,6 +229,26 @@ class Quaternion
     //@}
 
     /**
+     * \name Element-wise comparison operators
+     */
+    //@{
+
+    /// Returns whether all elements in \a q equal their counterpart in \a r
+    /// with regard to a tolerance depending on the precision of data type \a T.
+    friend bool operator==(Quaternion const& q,Quaternion const& r) {
+        return meta::OpCmpEqualEps::evaluate(q.real,r.real) && q.imag==r.imag;
+    }
+
+    /// Returns whether the elements in \a q are not equal to their counterparts
+    /// in \a r with regard to a tolerance depending on the precision of data
+    /// type \a T.
+    friend bool operator!=(Quaternion const& q,Quaternion const& r) {
+        return !(q==r);
+    }
+
+    //@}
+
+    /**
      * \name Magnitude related methods
      */
     //@{
@@ -279,47 +299,103 @@ class Quaternion
     //@}
 
     /**
-     * \name Miscellaneous methods
+     * \name Convenience operators for named methods
      */
     //@{
 
-    /// Performs a linear interpolation between \c this quaternion and another
-    /// quaternion \a q based on a scalar \a s. For performance reasons, \a s is
-    /// not clamped to [0,1].
-    Quaternion getLerp(Quaternion const& q,double s) const {
+    /// Returns a normalized copy of quaternion \a q.
+    friend Quaternion operator~(Quaternion const& q) {
+        return Quaternion(q).normalize();
+    }
+
+    /// Calculates the dot product between the quaternions \a q and \a r.
+    friend T operator%(Quaternion const& q,Quaternion const& r) {
+        return q.getDotProduct(r);
+    }
+
+    /// Returns an inverted copy of quaternion \a q.
+    friend Quaternion operator!(Quaternion const& q) {
+        return q.getConjugate()/q.getLengthSquared();
+    }
+
+    //@}
+
+    /**
+     * \name Interpolation methods
+     */
+    //@{
+
+    /// Performs a normalized linear interpolation between the quaternions \a q
+    /// and \a r based on a scalar \a s. The interpolation is commutative,
+    /// the rotation will not have constant velocity, but will be
+    /// torque-minimal. For performance reasons, \a s is not clamped to [0,1].
+    friend Quaternion nlerp(Quaternion const& q,Quaternion const& r,double s) {
         return ~Quaternion(
-            T(real+s*(q.real-real)),
-            imag.getLerp(q.imag,s)
+            T(q.real+s*(r.real-q.real)),
+            lerp(q.imag,r.imag,s)
         );
     }
 
-    /// Performs a spherical-linear interpolation between \c this quaternion and
-    /// another quaternion \a q based on a scalar \a s. Despite linear
-    /// interpolation this results in a rotation at constant velocity. For
-    /// performance reasons, \a s is not clamped to [0,1].
-    Quaternion getSlerp(Quaternion const& q,double s) const {
-        T cos=getAngleCosine(q);
+    /// Performs a spherical-linear interpolation between the quaternions \a q
+    /// and \a r based on a scalar \a s. The interpolation is not commutative,
+    /// the rotation will have constant velocity, and will be torque-minimal.
+    /// For performance reasons, \a s is not clamped to [0,1].
+    friend Quaternion slerp(Quaternion const& q,Quaternion const& r,double s) {
+        T cos=q.getAngleCosine(r);
 
         if (meta::OpCmpEqualEps::evaluate(cos,T(1))) {
             // If the quaternions are very close just interpolate linearly.
-            return getLerp(q,s);
+            return nlerp(q,r,s);
         }
 
         double angle=::acos(cos);
         return (
-            (*this) * T(::sin(angle * (1-s)))
-          +      q  * T(::sin(angle *    s ))
+            q * T(::sin(angle * (1-s)))
+          + r * T(::sin(angle *    s ))
         )/T(::sin(angle));
     }
 
-    /// Performs a spherical-cubic interpolation between \c this quaternion and
-    /// another quaternion \a q based on a scalar \a s along the path defined by
-    /// quaternions \a a and \a b (the curve touches the midpoint of the "line"
-    /// from \a a to \a b when \a s = 0.5). For performance reasons, \a s is not
-    /// clamped to [0,1].
-    Quaternion getSquad(Quaternion const& q,double s,Quaternion const& a,Quaternion const& b) const {
+    /// Performs a spherical-cubic interpolation between the quaternions \a q
+    /// and \a r based on a scalar \a s along the path defined by quaternions
+    /// \a a and \a b (the curve touches the midpoint of the "line" from \a a to
+    /// \a b when \a s = 0.5). For performance reasons, \a s is not clamped to
+    /// [0,1].
+    friend Quaternion squad(Quaternion const& q,Quaternion const& r,double s,Quaternion const& a,Quaternion const& b) {
         // Interpolate within the quadrilateral (see http://sjbrown.co.uk/?article=quaternions).
-        return getSlerp(q,s).getSlerp(a.getSlerp(b,s),2*s*(1-s));
+        return slerp(slerp(q,r,s),slerp(a,b,s),2*s*(1-s));
+    }
+
+    //@}
+
+    /**
+     * \name Miscellaneous methods
+     */
+    //@{
+
+    /// Calculates the complex exponential for this quaternion.
+    Quaternion exp() const {
+        double m=imag.getLength();
+        if (m>std::numeric_limits<T>::epsilon()) {
+            double s=::sin(m)/m;
+            return Quaternion(T(::cos(m)),imag*T(s));
+        }
+        return Quaternion(1,imag);
+    }
+
+    /// Calculates the complex logarithm for this quaternion.
+    Quaternion log() const {
+        double m=imag.getLength();
+        if (m>std::numeric_limits<T>::epsilon()) {
+            double s=::acos(real)/m;
+            return Quaternion(0,imag*T(s));
+        }
+        return Quaternion(0,imag);
+    }
+
+    /// Inverts this quaternion; the product of a quaternion and its inverse
+    /// equals the identity quaternion.
+    Quaternion& invert() {
+        return (*this)=!(*this);
     }
 
     /// Returns the conjugate of this quaternion.
@@ -327,11 +403,11 @@ class Quaternion
         return Quaternion(real,-imag);
     }
 
-    /// Inverts this quaternion; the product of a quaternion and its inverse
-    /// equals the identity quaternion.
-    Quaternion& invert() {
-        (*this)=!(*this);
-        return *this;
+    /// Returns the tangent for this quaternion given the predecessor \a a and
+    /// the successor \a b.
+    Quaternion getTangent(Quaternion const& a,Quaternion const& b) const {
+        Quaternion inv=!(*this);
+        return (T(-0.25)*((inv*a).log()+(inv*b).log())).exp()*(*this);
     }
 
     // Returns a homogeneous matrix that matches the rotation of this quaternion.
@@ -360,28 +436,6 @@ class Quaternion
             Vec(T(  s*(xz+wy)), T(  s*(yz-wx)), T(1-s*(xx+yy))),
             Vec::ZERO()
         );
-    }
-
-    //@}
-
-    /**
-     * \name Convenience operators for named methods
-     */
-    //@{
-
-    /// Returns a normalized copy of quaternion \a q.
-    friend Quaternion operator~(Quaternion const& q) {
-        return Quaternion(q).normalize();
-    }
-
-    /// Calculates the dot product between the quaternions \a q and \a r.
-    friend T operator%(Quaternion const& q,Quaternion const& r) {
-        return q.getDotProduct(r);
-    }
-
-    /// Returns an inverted copy of quaternion \a q.
-    friend Quaternion operator!(Quaternion const& q) {
-        return q.getConjugate()/q.getLengthSquared();
     }
 
     //@}
