@@ -49,6 +49,17 @@
 #endif
 
 /**
+ * \def G_ASSERT_OPENGL
+ * Run-time assertion for the OpenGL error flag.
+ */
+
+#ifdef G_ASSERT_OPENGL
+    #undef G_ASSERT_OPENGL
+#endif
+
+#define G_ASSERT_OPENGL G_ASSERT(glGetError()==GL_NO_ERROR)
+
+/**
  * \def G_INLINE
  * Compiler-specific keyword definition to force a function to be inline.
  */

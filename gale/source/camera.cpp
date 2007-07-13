@@ -46,36 +46,46 @@ void Camera::apply(bool force)
         if (m_screen.x>0 || (m_screen.x<0 && m_screen.width<rect.right-m_screen.x)
          || m_screen.y>0 || (m_screen.y<0 && m_screen.height<rect.bottom-m_screen.y)) {
             glScissor(m_screen.x,m_screen.y,m_screen.width,m_screen.height);
+            G_ASSERT_OPENGL
+
             glEnable(GL_SCISSOR_TEST);
         } else {
             glDisable(GL_SCISSOR_TEST);
         }
+        G_ASSERT_OPENGL
 
         // Set the viewport OpenGL should render to.
         glViewport(m_screen.x,m_screen.y,m_screen.width,m_screen.height);
+        G_ASSERT_OPENGL
         m_screen_changed=false;
     }
 
     glPushAttrib(GL_TRANSFORM_BIT);
+    G_ASSERT_OPENGL
 
     if (camera_changed || m_modelview_changed) {
         glMatrixMode(GL_MODELVIEW);
+        G_ASSERT_OPENGL
 
         // As the camera is only an imaginary concept and has no geometry,
         // instead of transforming the camera we need to inversely transform all
         // geometry in the scene.
         glLoadMatrixf(!m_modelview);
+        G_ASSERT_OPENGL
 
         m_modelview_changed=false;
     }
 
     if (camera_changed || m_projection_changed) {
         glMatrixMode(GL_PROJECTION);
+        G_ASSERT_OPENGL
         glLoadMatrixd(m_projection);
+        G_ASSERT_OPENGL
         m_projection_changed=false;
     }
 
     glPopAttrib();
+    G_ASSERT_OPENGL
 
     s_current=this;
 }

@@ -147,6 +147,7 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
         case WM_PAINT: {
             onPaint();
             glFlush();
+            G_ASSERT_OPENGL
 
             // Due to WGL_DOUBLE_BUFFER_ARB we always should have a double-buffer.
             SwapBuffers(getContextHandle().device);

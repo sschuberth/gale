@@ -70,6 +70,7 @@ class Camera
       m_surface(surface),m_screen_changed(false) {
         // Initialize the camera screen space to the current OpenGL viewport.
         glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&m_screen));
+        G_ASSERT_OPENGL
 
         // Set a perspective camera with no transformation by default.
         setModelview(math::HMat4f::IDENTITY());
