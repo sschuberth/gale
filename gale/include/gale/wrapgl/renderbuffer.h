@@ -23,12 +23,12 @@
  *
  */
 
-#ifndef RENDERBUFFER_H
-#define RENDERBUFFER_H
+#ifndef FRAMEBUFFER_H
+#define FRAMEBUFFER_H
 
 /**
  * \file
- * Render buffer implementation
+ * Frame buffer implementation
  */
 
 #include "texture.h"
@@ -187,4 +187,4 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
 
 } // namespace gale
 
-#endif // RENDERBUFFER_H
+#endif // FRAMEBUFFER_H

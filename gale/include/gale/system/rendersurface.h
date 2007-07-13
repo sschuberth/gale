@@ -39,7 +39,7 @@ namespace system {
 
 /**
  * This class serves as a base for everything that requires a render surface,
- * e.g. initializing OpenGL extensions, on- and off-screen render buffers etc.
+ * e.g. on-screen windows or off-screen buffers to render to using OpenGL.
  */
 class RenderSurface
 {
