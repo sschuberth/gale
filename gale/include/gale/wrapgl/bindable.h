@@ -76,8 +76,8 @@ class Bindable
         return m_id;
     }
 
-    /// Sets the current binding to the given \a id or to the current object if
-    /// the ID is negative.
+    /// Sets the current binding to the object described by \a id or to this
+    /// object if the ID is negative.
     virtual void setCurrentBinding(GLint id=-1) const=0;
 
     /// Binds this object to the OpenGL state, making it the current one.

@@ -43,9 +43,9 @@ namespace gale {
 namespace wrapgl {
 
 /**
- * This class creates a window to render to using OpenGL. It makes use of the
- * WGL_ARB_pixel_format and WGL_ARB_pixel_format_float extensions to specify the
- * desired pixel format.
+ * This class creates an on-screen window with a system-provided frame buffer to
+ * render to using OpenGL. It makes use of the WGL_ARB_pixel_format and
+ * WGL_ARB_pixel_format_float extensions to specify the desired pixel format.
  */
 class RenderWindow:public system::RenderSurface
 {
