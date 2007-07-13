@@ -31,8 +31,8 @@
  * Default window and camera navigation implementation
  */
 
-#include "gale/wrapgl/renderwindow.h"
-#include "gale/wrapgl/camera.h"
+#include "../wrapgl/renderwindow.h"
+#include "../wrapgl/camera.h"
 
 #ifndef NDEBUG
     #include <iostream>
