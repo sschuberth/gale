@@ -583,11 +583,11 @@ class CPUInfo:public global::Singleton<CPUInfo>
     int m_std_cache_params;   ///< CPUID standard cache parameters.
     int m_ext_address_sizes;  ///< CPUID extended address sizes.
 
-    int m_std_feat_flags_edx; ///< CPUID standard feature flags.
-    int m_std_feat_flags_ecx; ///< \copydoc m_std_feat_flags_edx
+    int m_std_feat_flags_edx; ///< CPUID standard feature flags, part 1.
+    int m_std_feat_flags_ecx; ///< CPUID standard feature flags, part 2.
 
-    int m_ext_feat_flags_edx; ///< CPUID extended feature flags.
-    int m_ext_feat_flags_ecx; ///< \copydoc m_ext_feat_flags_edx
+    int m_ext_feat_flags_edx; ///< CPUID extended feature flags, part 1.
+    int m_ext_feat_flags_ecx; ///< CPUID extended feature flags, part 2.
 };
 
 /// For convenience, offer a predefined instance of the CPUInfo class.
