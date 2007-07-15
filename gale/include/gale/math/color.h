@@ -206,13 +206,13 @@ inline double ColorModel<double>::getMaxIntensity()
 template<unsigned int N,typename T>
 class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 {
+    //@{
     /// This type definition simplifies base class access to identifiers that
     /// are not visible until instantiation time because they do not dependent
     /// on template arguments.
     typedef TupleBase<N,T,Color<N,T> > Base;
-
-    /// \copydoc Base
     typedef ColorModel<T> Model;
+    //@}
 
   public:
 
@@ -465,9 +465,9 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// always kept up to date.
     bool m_hsv_outdated;
 
-    T m_h; ///< Variable for the HSV channel values.
-    T m_s; ///< \copydoc m_h
-    T m_v; ///< \copydoc m_h
+    T m_h; ///< Variable for the "hue" channel value.
+    T m_s; ///< Variable for the "saturation" channel value.
+    T m_v; ///< Variable for the "value" channel value.
 };
 
 /**
