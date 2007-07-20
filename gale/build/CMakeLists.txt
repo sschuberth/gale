@@ -49,6 +49,10 @@ FILE(GLOB_RECURSE sources "${glex_root}/*.c")
 LIST(APPEND files ${sources})
 SOURCE_GROUP(${group} FILES ${sources})
 
+# Avoid to include the CMakeLists.txt files themselves to the project to get rid
+# of the custom build step in Visual Studio that regenerates the project.
+SET(CMAKE_SUPPRESS_REGENERATION "1")
+
 # This writes absolute paths to the generated files even if relative paths are
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
 ADD_LIBRARY(${project_name} ${files})
