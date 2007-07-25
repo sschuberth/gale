@@ -71,7 +71,8 @@ class Quaternion
      */
     //@{
 
-    /// Returns a quaternion which has all components set to 0.
+    /// Returns a quaternion which has all components set to 0 (which is the
+    /// identity quaternion regarding addition).
     static Quaternion const& ZERO() {
         static Quaternion const q(0,Vec::ZERO());
         return q;
@@ -98,12 +99,41 @@ class Quaternion
     Quaternion(T real,Vec const& imag):
       real(real),imag(imag) {}
 
-    /// Creates a quaternion representing the orientation given by a normalized
-    /// \a axis and an \a angle.
+    /// Creates a normalized quaternion representing the orientation given by a
+    /// normalized \a axis vector and an \a angle in radians.
     Quaternion(Vec const& axis,double angle) {
         double half=angle*0.5;
         real=static_cast<T>(::cos(half));
         imag=static_cast<T>(::sin(half))*axis;
+    }
+
+    //@}
+
+    /**
+     * \name Element access methods
+     */
+    //@{
+
+    /// Returns a pointer to the internal data representation.
+    T* getData() {
+        return reinterpret_cast<T*>(this);
+    }
+
+    /// Returns a \c constant pointer to the internal data representation.
+    T const* getData() const {
+        return reinterpret_cast<T*>(this);
+    }
+
+    /// Casts \c this quaternion to a pointer of type \a T. As an intended side
+    /// effect, this also provides indexed data access.
+    operator T*() {
+        return getData();
+    }
+
+    /// Casts \c this quaternion to a pointer of type \a T \c const. As an
+    /// intended side effect, this also provides indexed data access.
+    operator T const*() const {
+        return getData();
     }
 
     //@}
@@ -201,7 +231,7 @@ class Quaternion
 
     /// Divides \c this quaternion by a scalar \a s.
     Quaternion const& operator/=(T s) {
-        G_ASSERT(math::abs(s)>std::numeric_limits<T>::epsilon())
+        G_ASSERT(abs(s)>std::numeric_limits<T>::epsilon())
         return (*this)*=1/s;
     }
 
@@ -322,6 +352,7 @@ class Quaternion
 
     /**
      * \name Interpolation methods
+     * (see http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/)
      */
     //@{
 
@@ -356,12 +387,11 @@ class Quaternion
     }
 
     /// Performs a spherical-cubic interpolation between the quaternions \a q
-    /// and \a r based on a scalar \a s along the path defined by quaternions
-    /// \a a and \a b (the curve touches the midpoint of the "line" from \a a to
-    /// \a b when \a s = 0.5). For performance reasons, \a s is not clamped to
-    /// [0,1].
+    /// and \a r based on a scalar \a s within the quadrilateral defined with
+    /// quaternions \a a and \a b (the curve touches the midpoint of the "line"
+    /// from \a a to \a b when \a s = 0.5). For performance reasons, \a s is not
+    /// clamped to [0,1].
     friend Quaternion squad(Quaternion const& q,Quaternion const& r,double s,Quaternion const& a,Quaternion const& b) {
-        // Interpolate within the quadrilateral (see http://sjbrown.co.uk/?article=quaternions).
         return slerp(slerp(q,r,s),slerp(a,b,s),2*s*(1-s));
     }
 
@@ -372,42 +402,34 @@ class Quaternion
      */
     //@{
 
-    /// Calculates the complex exponential for this quaternion.
-    Quaternion exp() const {
-        double m=imag.getLength();
-        if (m>std::numeric_limits<T>::epsilon()) {
-            double s=::sin(m)/m;
-            return Quaternion(T(::cos(m)),imag*T(s));
+    /// Calculates the complex exponential of a quaternion \a q.
+    friend Quaternion exp(Quaternion const& q) {
+        double half=q.imag.getLength();
+        double s=::sin(half);
+        if (abs(s)>std::numeric_limits<T>::epsilon()) {
+            return Quaternion(T(::cos(half)),q.imag*T(s/half));
         }
-        return Quaternion(1,imag);
+        return Quaternion(T(::cos(half)),q.imag);
     }
 
-    /// Calculates the complex logarithm for this quaternion.
-    Quaternion log() const {
-        double m=imag.getLength();
-        if (m>std::numeric_limits<T>::epsilon()) {
-            double s=::acos(real)/m;
-            return Quaternion(0,imag*T(s));
+    /// Calculates the complex logarithm of a quaternion \a q.
+    friend Quaternion log(Quaternion const& q) {
+        if (abs(q.real)<1) {
+            double half=::acos(q.real);
+            double s=::sin(half);
+            if (abs(s)>std::numeric_limits<T>::epsilon()) {
+                return Quaternion(0,q.imag*T(half/s));
+            }
         }
-        return Quaternion(0,imag);
-    }
-
-    /// Inverts this quaternion; the product of a quaternion and its inverse
-    /// equals the identity quaternion.
-    Quaternion& invert() {
-        return (*this)=!(*this);
-    }
-
-    /// Returns the conjugate of this quaternion.
-    Quaternion getConjugate() const {
-        return Quaternion(real,-imag);
+        return Quaternion(0,q.imag);
     }
 
     /// Returns the tangent for this quaternion given the predecessor \a a and
-    /// the successor \a b.
+    /// the successor \a b, which all need to be normalized.
     Quaternion getTangent(Quaternion const& a,Quaternion const& b) const {
-        Quaternion inv=!(*this);
-        return (T(-0.25)*((inv*a).log()+(inv*b).log())).exp()*(*this);
+        // For normalized quaternions, the conjugate equals the inverse.
+        Quaternion inv=getConjugate();
+        return (*this)*exp(T(-0.25)*(log(inv*a)+log(inv*b)));
     }
 
     // Returns a homogeneous matrix that matches the rotation of this quaternion.
@@ -436,6 +458,17 @@ class Quaternion
             Vec(T(  s*(xz+wy)), T(  s*(yz-wx)), T(1-s*(xx+yy))),
             Vec::ZERO()
         );
+    }
+
+    /// Returns the conjugate of this quaternion.
+    Quaternion getConjugate() const {
+        return Quaternion(real,-imag);
+    }
+
+    /// Inverts this quaternion; the product of a quaternion and its inverse
+    /// equals the identity quaternion.
+    Quaternion& invert() {
+        return (*this)=!(*this);
     }
 
     //@}
