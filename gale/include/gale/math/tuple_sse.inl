@@ -128,7 +128,7 @@ class TupleBase<4,float,C>
 
     /// Divides \c this tuple by a scalar \a s.
     C const& operator/=(float s) {
-        G_ASSERT(math::abs(s)>std::numeric_limits<float>::epsilon())
+        G_ASSERT(abs(s)>std::numeric_limits<float>::epsilon())
         return (*this)*=1/s;
     }
 
