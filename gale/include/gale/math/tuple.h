@@ -128,25 +128,25 @@ class TupleBase
      */
     //@{
 
-    /// Increments \c this tuple by another tuple \a t.
+    /// Element-wise increments \c this tuple by another tuple \a t.
     C const& operator+=(C const& t) {
         meta::LoopFwd<N,meta::OpArithInc>::iterate(getData(),t.getData());
         return *static_cast<C*>(this);
     }
 
-    /// Decrements \c this tuple by another tuple \a t.
+    /// Element-wise decrements \c this tuple by another tuple \a t.
     C const& operator-=(C const& t) {
         meta::LoopFwd<N,meta::OpArithDec>::iterate(getData(),t.getData());
         return *static_cast<C*>(this);
     }
 
-    /// Multiplies \c this tuple by another tuple \a t.
+    /// Element-wise multiplies \c this tuple by another tuple \a t.
     C const& operator*=(C const& t) {
         meta::LoopFwd<N,meta::OpArithMul>::iterate(getData(),t.getData());
         return *static_cast<C*>(this);
     }
 
-    /// Divides \c this tuple by another tuple \a t.
+    /// Element-wise divides \c this tuple by another tuple \a t.
     C const& operator/=(C const& t) {
         // The value of t is checked downstream in OpArithReci.
         return (*this)*=1/t;
@@ -157,29 +157,29 @@ class TupleBase
         return t;
     }
 
-    /// Returns the negation of tuple \a t.
+    /// Returns the element-wise negation of tuple \a t.
     friend C operator-(C const& t) {
         C tmp;
         meta::LoopFwd<N,meta::OpAssignNeg>::iterate(tmp.getData(),t.getData());
         return tmp;
     }
 
-    /// Returns the sum of tuples \a t and \a u.
+    /// Returns the element-wise sum of tuples \a t and \a u.
     friend C operator+(C const& t,C const& u) {
         return C(t)+=u;
     }
 
-    /// Returns the difference of tuples \a t and \a u.
+    /// Returns the element-wise difference of tuples \a t and \a u.
     friend C operator-(C const& t,C const& u) {
         return C(t)-=u;
     }
 
-    /// Returns the product of tuples \a t and \a u.
+    /// Returns the element-wise product of tuples \a t and \a u.
     friend C operator*(C const& t,C const& u) {
         return C(t)*=u;
     }
 
-    /// Returns the quotient of tuples \a t and \a u.
+    /// Returns the element-wise quotient of tuples \a t and \a u.
     friend C operator/(C const& t,C const& u) {
         // The value of u is checked downstream in OpArithReci.
         return C(t)/=u;
@@ -192,35 +192,35 @@ class TupleBase
      */
     //@{
 
-    /// Multiplies \c this tuple by a scalar \a s.
+    /// Multiplies each element of \c this tuple by a scalar \a s.
     C const& operator*=(T s) {
         meta::LoopFwd<N,meta::OpArithMul>::iterate(getData(),s);
         return *static_cast<C*>(this);
     }
 
-    /// Divides \c this tuple by a scalar \a s.
+    /// Divides each element of \c this tuple by a scalar \a s.
     C const& operator/=(T s) {
         G_ASSERT(abs(s)>std::numeric_limits<T>::epsilon())
         return (*this)*=1/s;
     }
 
-    /// Performs scalar multiplication from the right of each element.
+    /// Multiplies each element of tuple \a t by a scalar \a s from the right.
     friend C operator*(C const& t,T s) {
         return C(t)*=s;
     }
 
-    /// Performs scalar multiplication from the left of each element.
+    /// Multiplies each element of tuple \a t by a scalar \a s from the left.
     friend C operator*(T s,C const& t) {
         return t*s;
     }
 
-    /// Performs scalar division from the right of each element.
+    /// Divides each element of tuple \a t by a scalar \a s.
     friend C operator/(C const& t,T s) {
         // The value of s is checked downstream in operator/=(T s).
         return C(t)/=s;
     }
 
-    /// Performs scalar division from the left of each element.
+    /// Divides a scalar \a s by each element of tuple \a t.
     friend C operator/(T s,C const& t) {
         C tmp;
         meta::LoopFwd<N,meta::OpArithReci>::iterate(tmp.getData(),t.getData());

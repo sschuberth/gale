@@ -322,7 +322,7 @@ class HMatrix4
      */
     //@{
 
-    /// Increments \c this matrix by another matrix \a m.
+    /// Element-wise increments \c this matrix by another matrix \a m.
     HMatrix4 const& operator+=(HMatrix4 const& m) {
         c0+=m.c0;
         c1+=m.c1;
@@ -331,7 +331,7 @@ class HMatrix4
         return *this;
     }
 
-    /// Decrements \c this matrix by another matrix \a m.
+    /// Element-wise decrements \c this matrix by another matrix \a m.
     HMatrix4 const& operator-=(HMatrix4 const& m) {
         c0-=m.c0;
         c1-=m.c1;
@@ -340,12 +340,12 @@ class HMatrix4
         return *this;
     }
 
-    /// Multiplies \c this matrix with matrix \a m.
+    /// Multiplies \c this matrix by matrix \a m from the right.
     HMatrix4 const& operator*=(HMatrix4 const& m) {
         return *this=(*this)*m;
     }
 
-    /// Multiplies \c this matrix with the inverse of matrix \a m.
+    /// Multiplies \c this matrix by the inverse of matrix \a m from the right.
     HMatrix4 const& operator/=(HMatrix4 const& m) {
         return *this=(*this)/m;
     }
@@ -355,38 +355,38 @@ class HMatrix4
         return m;
     }
 
-    /// Returns the negation of matrix \a m.
+    /// Returns the element-wise negation of matrix \a m.
     friend HMatrix4 operator-(HMatrix4 const& m) {
         return HMatrix4(-m.c0,-m.c1,-m.c2,-m.c3);
     }
 
-    /// Returns the sum of matrices \a m and \a n.
+    /// Returns the element-wise sum of matrices \a m and \a n.
     friend HMatrix4 operator+(HMatrix4 const& m,HMatrix4 const& n) {
         return HMatrix4(m)+=n;
     }
 
-    /// Returns the difference of matrices \a m and \a n.
+    /// Returns the element-wise difference of matrices \a m and \a n.
     friend HMatrix4 operator-(HMatrix4 const& m,HMatrix4 const& n) {
         return HMatrix4(m)-=n;
     }
 
-    /// Returns the product of matrices \a m and \a n.
+    /// Returns matrix \a m multiplied by matrix \a n from the right.
     friend HMatrix4 operator*(HMatrix4 const& m,HMatrix4 const& n) {
         Vec c0,c1,c2,c3;
 
         // 36 scalar multiplications, 27 scalar additions (includes translation).
         for (int row=2;row>=0;--row) {
-            int row4=row+4,row8=row+8;
-            c0[row] = m[row]*n[0]  + m[row4]*n[1]  + m[row8]*n[2];
-            c1[row] = m[row]*n[4]  + m[row4]*n[5]  + m[row8]*n[6];
-            c2[row] = m[row]*n[8]  + m[row4]*n[9]  + m[row8]*n[10];
-            c3[row] = m[row]*n[12] + m[row4]*n[13] + m[row8]*n[14] + m[row+12];
+            int col1=row+4,col2=row+8;
+            c0[row] = m[row]*n[0]  + m[col1]*n[1]  + m[col2]*n[2];
+            c1[row] = m[row]*n[4]  + m[col1]*n[5]  + m[col2]*n[6];
+            c2[row] = m[row]*n[8]  + m[col1]*n[9]  + m[col2]*n[10];
+            c3[row] = m[row]*n[12] + m[col1]*n[13] + m[col2]*n[14] + m[row+12];
         }
 
         return HMatrix4(c0,c1,c2,c3);
     }
 
-    /// Returns the product of matrix \a m and the inverse of matrix \a n.
+    /// Returns matrix \a m multiplied by the inverse of matrix \a n from the right.
     friend HMatrix4 operator/(HMatrix4 const& m,HMatrix4 const& n) {
         return m*(!n);
     }
@@ -414,7 +414,7 @@ class HMatrix4
     Vec multFromRightTo(Vec const& v) const {
         // 15 scalar multiplications, 9 scalar additions (includes translation).
         T v4=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + m_c3w;
-        T s=v4 ? 1.0f/v4 : 1.0f;
+        T s=v4 ? T(1)/v4 : T(1);
         return Vec(
             s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2]),
             s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2]),
@@ -429,19 +429,42 @@ class HMatrix4
      */
     //@{
 
-    /// Multiplies all elements of matrix \a m by the scalar \a s.
+    /// Multiplies each element of \c this matrix by a scalar \a s.
+    HMatrix4 const& operator*=(T s) {
+        c0*=s;
+        c1*=s;
+        c2*=s;
+        c3*=s
+        return *this;
+    }
+
+    /// Divides each element of \c this matrix by a scalar \a s.
+    HMatrix4 const& operator/=(T s) {
+        c0/=s;
+        c1/=s;
+        c2/=s;
+        c3/=s
+        return *this;
+    }
+
+    /// Multiplies each element of matrix \a m by a scalar \a s from the right.
     friend HMatrix4 operator*(HMatrix4 const& m,T s) {
         return HMatrix4(m.c0*s,m.c1*s,m.c2*s,m.c3*s);
     }
 
-    /// Multiplies all elements of matrix \a m by the scalar \a s.
+    /// Multiplies each element of matrix \a m by a scalar \a s from the left.
     friend HMatrix4 operator*(T s,HMatrix4 const& m) {
         return m*s;
     }
 
-    /// Divides all elements of matrix \a m by the scalar \a s.
+    /// Divides each element of matrix \a m by a scalar \a s.
     friend HMatrix4 operator/(HMatrix4 const& m,T s) {
         return m*(1/s);
+    }
+
+    /// Divides a scalar \a s by each element of matrix \a m.
+    friend HMatrix4 operator/(T s,HMatrix4 const& m) {
+        return HMatrix4(s/c0,s/c1,s/c2,s/c3);
     }
 
     //@}
