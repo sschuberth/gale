@@ -322,7 +322,7 @@ class HMatrix4
      */
     //@{
 
-    /// Element-wise increments \c this matrix by another matrix \a m.
+    /// Element-wise increments \c this matrix by matrix \a m.
     HMatrix4 const& operator+=(HMatrix4 const& m) {
         c0+=m.c0;
         c1+=m.c1;
@@ -331,7 +331,7 @@ class HMatrix4
         return *this;
     }
 
-    /// Element-wise decrements \c this matrix by another matrix \a m.
+    /// Element-wise decrements \c this matrix by matrix \a m.
     HMatrix4 const& operator-=(HMatrix4 const& m) {
         c0-=m.c0;
         c1-=m.c1;
@@ -376,11 +376,11 @@ class HMatrix4
 
         // 36 scalar multiplications, 27 scalar additions (includes translation).
         for (int row=2;row>=0;--row) {
-            int col1=row+4,col2=row+8;
+            int col1=row+4,col2=row+8,col3=row+12;
             c0[row] = m[row]*n[0]  + m[col1]*n[1]  + m[col2]*n[2];
             c1[row] = m[row]*n[4]  + m[col1]*n[5]  + m[col2]*n[6];
             c2[row] = m[row]*n[8]  + m[col1]*n[9]  + m[col2]*n[10];
-            c3[row] = m[row]*n[12] + m[col1]*n[13] + m[col2]*n[14] + m[row+12];
+            c3[row] = m[row]*n[12] + m[col1]*n[13] + m[col2]*n[14] + m[col3];
         }
 
         return HMatrix4(c0,c1,c2,c3);
@@ -434,7 +434,7 @@ class HMatrix4
         c0*=s;
         c1*=s;
         c2*=s;
-        c3*=s
+        c3*=s;
         return *this;
     }
 
@@ -443,7 +443,7 @@ class HMatrix4
         c0/=s;
         c1/=s;
         c2/=s;
-        c3/=s
+        c3/=s;
         return *this;
     }
 

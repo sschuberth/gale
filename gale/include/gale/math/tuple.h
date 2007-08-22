@@ -128,25 +128,25 @@ class TupleBase
      */
     //@{
 
-    /// Element-wise increments \c this tuple by another tuple \a t.
+    /// Element-wise increments \c this tuple by tuple \a t.
     C const& operator+=(C const& t) {
         meta::LoopFwd<N,meta::OpArithInc>::iterate(getData(),t.getData());
         return *static_cast<C*>(this);
     }
 
-    /// Element-wise decrements \c this tuple by another tuple \a t.
+    /// Element-wise decrements \c this tuple by tuple \a t.
     C const& operator-=(C const& t) {
         meta::LoopFwd<N,meta::OpArithDec>::iterate(getData(),t.getData());
         return *static_cast<C*>(this);
     }
 
-    /// Element-wise multiplies \c this tuple by another tuple \a t.
+    /// Element-wise multiplies \c this tuple by tuple \a t.
     C const& operator*=(C const& t) {
         meta::LoopFwd<N,meta::OpArithMul>::iterate(getData(),t.getData());
         return *static_cast<C*>(this);
     }
 
-    /// Element-wise divides \c this tuple by another tuple \a t.
+    /// Element-wise divides \c this tuple by tuple \a t.
     C const& operator/=(C const& t) {
         // The value of t is checked downstream in OpArithReci.
         return (*this)*=1/t;
@@ -254,8 +254,7 @@ class TupleBase
         return meta::LoopFwd<N,meta::OpCalcMax>::iterateAbsValues(getData());
     }
 
-    /// Calculates the element-wise minimum of \c this tuple and another tuple
-    /// \a t.
+    /// Calculates the element-wise minimum of \c this tuple and tuple \a t.
     C getMinElements(C const& t) const {
         C tmp;
         meta::LoopFwd<N,meta::OpCalcMin>::
@@ -263,8 +262,7 @@ class TupleBase
         return tmp;
     }
 
-    /// Calculates the element-wise maximum of \c this tuple and another tuple
-    /// \a t.
+    /// Calculates the element-wise maximum of \c this tuple and tuple \a t.
     C getMaxElements(C const& t) const {
         C tmp;
         meta::LoopFwd<N,meta::OpCalcMax>::

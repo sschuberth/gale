@@ -84,12 +84,15 @@ class Matrix4
           double clip_near=-1.0,
           double clip_far=1.0)
         {
+            // Right plus / minus left clipping values.
             double rpl=clip_right+clip_left;
             double rml=clip_right-clip_left;
 
+            // Top plus / minus bottom clipping values.
             double tpb=clip_top+clip_bottom;
             double tmb=clip_top-clip_bottom;
 
+            // Far plus / minus near clipping values.
             double fpn=clip_far+clip_near;
             double fmn=clip_far-clip_near;
 
@@ -170,12 +173,12 @@ class Matrix4
 
     /// Returns a pointer to the matrix data in memory.
     T* getData() {
-        return c0;
+        return c0.getData();
     }
 
     /// Returns a \c constant pointer to the matrix data in memory
     T const* getData() const {
-        return c0;
+        return c0.getData();
     }
 
     /// Casts \c this matrix to a pointer of type \a T. As an intended side
@@ -211,7 +214,7 @@ class Matrix4
      */
     //@{
 
-    /// Increments \c this matrix by another matrix \a m.
+    /// Element-wise increments \c this matrix by matrix \a m.
     Matrix4 const& operator+=(Matrix4 const& m) {
         c0+=m.c0;
         c1+=m.c1;
@@ -220,7 +223,7 @@ class Matrix4
         return *this;
     }
 
-    /// Decrements \c this matrix by another matrix \a m.
+    /// Element-wise decrements \c this matrix by matrix \a m.
     Matrix4 const& operator-=(Matrix4 const& m) {
         c0-=m.c0;
         c1-=m.c1;
@@ -229,7 +232,7 @@ class Matrix4
         return *this;
     }
 
-    /// Multiplies \c this matrix by another matrix \a m.
+    /// Multiplies \c this matrix by matrix \a m from the right.
     Matrix4 const& operator*=(Matrix4 const& m) {
         return *this=(*this)*m;
     }
@@ -239,32 +242,32 @@ class Matrix4
         return m;
     }
 
-    /// Returns the negation of matrix \a m.
+    /// Returns the element-wise negation of matrix \a m.
     friend Matrix4 operator-(Matrix4 const& m) {
         return Matrix4(-m.c0,-m.c1,-m.c2,-m.c3);
     }
 
-    /// Returns the sum of matrices \a m and \a n.
+    /// Returns the element-wise sum of matrices \a m and \a n.
     friend Matrix4 operator+(Matrix4 const& m,Matrix4 const& n) {
         return Matrix4(m)+=n;
     }
 
-    /// Returns the difference of matrices \a m and \a n.
+    /// Returns the element-wise difference of matrices \a m and \a n.
     friend Matrix4 operator-(Matrix4 const& m,Matrix4 const& n) {
         return Matrix4(m)-=n;
     }
 
-    /// Returns the product of matrices \a m and \a n.
+    /// Returns matrix \a m multiplied by matrix \a n from the right.
     friend Matrix4 operator*(Matrix4 const& m,Matrix4 const& n) {
         Vec c0,c1,c2,c3;
 
         // 64 scalar multiplications, 48 scalar additions.
         for (int row=3;row>=0;--row) {
-            int row4=row+4,row8=row+8,row12=row+12;
-            c0[row] = m[row]*n[0]  + m[row4]*n[1]  + m[row8]*n[2]  + m[row12]*n[3];
-            c1[row] = m[row]*n[4]  + m[row4]*n[5]  + m[row8]*n[6]  + m[row12]*n[7];
-            c2[row] = m[row]*n[8]  + m[row4]*n[9]  + m[row8]*n[10] + m[row12]*n[11];
-            c3[row] = m[row]*n[12] + m[row4]*n[13] + m[row8]*n[14] + m[row12]*n[15];
+            int col1=row+4,col2=row+8,col3=row+12;
+            c0[row] = m[row]*n[0]  + m[col1]*n[1]  + m[col2]*n[2]  + m[col3]*n[3];
+            c1[row] = m[row]*n[4]  + m[col1]*n[5]  + m[col2]*n[6]  + m[col3]*n[7];
+            c2[row] = m[row]*n[8]  + m[col1]*n[9]  + m[col2]*n[10] + m[col3]*n[11];
+            c3[row] = m[row]*n[12] + m[col1]*n[13] + m[col2]*n[14] + m[col3]*n[15];
         }
 
         return Matrix4(c0,c1,c2,c3);
@@ -306,7 +309,7 @@ class Matrix4
     Vector<3,T> multFromLeftTo(Vector<3,T> const& v) const {
         // 15 scalar multiplications, 12 scalar additions.
         T v4=c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3];
-        T s=v4 ? 1.0f/v4 : 1.0f;
+        T s=v4 ? T(1)/v4 : T(1);
         return Vec(
             s*(c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]),
             s*(c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]),
@@ -319,7 +322,7 @@ class Matrix4
     Vector<3,T> multFromRightTo(Vector<3,T> const& v) const {
         // 15 scalar multiplications, 12 scalar additions.
         T v4=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + c3[3];
-        T s=v4 ? 1.0f/v4 : 1.0f;
+        T s=v4 ? T(1)/v4 : T(1);
         return Vec(
             s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + c0[3]),
             s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + c1[3]),
@@ -334,19 +337,42 @@ class Matrix4
      */
     //@{
 
-    /// Multiplies all elements of matrix \a m by the scalar \a s.
+    /// Multiplies each element of \c this matrix by a scalar \a s.
+    Matrix4 const& operator*=(T s) {
+        c0*=s;
+        c1*=s;
+        c2*=s;
+        c3*=s;
+        return *this;
+    }
+
+    /// Divides each element of \c this matrix by a scalar \a s.
+    Matrix4 const& operator/=(T s) {
+        c0/=s;
+        c1/=s;
+        c2/=s;
+        c3/=s;
+        return *this;
+    }
+
+    /// Multiplies each element of matrix \a m by a scalar \a s from the right.
     friend Matrix4 operator*(Matrix4 const& m,T s) {
         return Matrix4(m.c0*s,m.c1*s,m.c2*s,m.c3*s);
     }
 
-    /// Multiplies all elements of matrix \a m by the scalar \a s.
+    /// Multiplies each element of matrix \a m by a scalar \a s from the left.
     friend Matrix4 operator*(T s,Matrix4 const& m) {
         return m*s;
     }
 
-    /// Divides all elements of matrix \a m by the scalar \a s.
+    /// Divides each element of matrix \a m by a scalar \a s.
     friend Matrix4 operator/(Matrix4 const& m,T s) {
         return m*(1/s);
+    }
+
+    /// Divides a scalar \a s by each element of matrix \a m.
+    friend Matrix4 operator/(T s,Matrix4 const& m) {
+        return Matrix4(s/c0,s/c1,s/c2,s/c3);
     }
 
     //@}
@@ -359,10 +385,10 @@ class Matrix4
     /// Returns whether all elements in \a m equal their counterpart in \a n
     /// with regard to a tolerance depending on the precision of data type \a T.
     friend bool operator==(Matrix4 const& m,Matrix4 const& n) {
-        return m.c0 == n.c0
-            && m.c1 == n.c1
-            && m.c2 == n.c2
-            && m.c3 == n.c3;
+        return m.c0==n.c0
+            && m.c1==n.c1
+            && m.c2==n.c2
+            && m.c3==n.c3;
     }
 
     /// Returns whether the elements in \a m are not equal to their counterparts
