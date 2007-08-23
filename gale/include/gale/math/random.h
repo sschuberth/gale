@@ -141,6 +141,13 @@ class RandomBase
         return getRandomExcl01()*range;
     }
 
+    //@}
+
+    /**
+     * \name Utility methods to generate certain data types
+     */
+    //@{
+
     /// Returns a random normalized vector.
     Vector<3,T> getVector() {
         Vector<3,T> v;
