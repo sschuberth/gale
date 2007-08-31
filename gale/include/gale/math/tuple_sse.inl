@@ -29,12 +29,12 @@ class TupleBase<4,float,C>
 
     /// Returns a pointer to the internal data array.
     float* getData() {
-        return m_data;
+        return m_simd.m128_f32;
     }
 
     /// Returns a \c constant pointer to the internal data array.
     float const* getData() const {
-        return m_data;
+        return m_simd.m128_f32;
     }
 
     /// Casts \c this tuple to a pointer of type \a float. As an intended side
@@ -273,17 +273,23 @@ class TupleBase<4,float,C>
 
     /// Reads tuple values from an input stream.
     friend std::istream& operator>>(std::istream& s,C& t) {
-        return s >> t[0] >> t[1] >> t[2] >> t[3];
+        return s
+            >> t.m_simd.m128_f32[0]
+            >> t.m_simd.m128_f32[1]
+            >> t.m_simd.m128_f32[2]
+            >> t.m_simd.m128_f32[3]
+        ;
     }
 
     /// Writes tuple values to an output stream.
     friend std::ostream& operator<<(std::ostream& s,C const& t) {
         return s
-            << '(' << t[0]
-            << ',' << t[1]
-            << ',' << t[2]
-            << ',' << t[3]
-            << ')';
+            << '(' << t.m_simd.m128_f32[0]
+            << ',' << t.m_simd.m128_f32[1]
+            << ',' << t.m_simd.m128_f32[2]
+            << ',' << t.m_simd.m128_f32[3]
+            << ')'
+        ;
     }
 
     //@}
@@ -292,8 +298,5 @@ class TupleBase<4,float,C>
 
   protected:
 
-    union {
-        float m_data[4]; ///< Tightly packed array of 4 elements of type float.
-        __m128 m_simd;   ///< SIMD data type for a 128-bit register.
-    };
+    __m128 m_simd;   ///< SIMD data type for a 128-bit register.
 };
