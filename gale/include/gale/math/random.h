@@ -110,7 +110,7 @@ class RandomBase
 
     /// Returns a floating-point random number in range [0,1].
     T getRandom01() {
-        static T const s=static_cast<T>(1)/4294967295;
+        static T const s=T(1)/4294967295;
         return getRandom()*s;
     }
 
@@ -121,7 +121,7 @@ class RandomBase
 
     /// Returns a floating-point random number in range [0,1[.
     T getRandom0Excl1() {
-        static T const s=static_cast<T>(1)/4294967296;
+        static T const s=T(1)/4294967296;
         return getRandom()*s;
     }
 
@@ -132,8 +132,8 @@ class RandomBase
 
     /// Returns a floating-point random number in range ]0,1].
     T getRandomExcl01() {
-        static T const s=static_cast<T>(1)/4294967296;
-        return static_cast<T>(getRandom()+0.5)*s;
+        static T const s=T(1)/4294967296;
+        return T(getRandom()+0.5)*s;
     }
 
     /// Returns a floating-point random number in range ]0,range].
@@ -161,7 +161,7 @@ class RandomBase
 
     /// Returns a random normalized quaternion.
     Quaternion<T> getQuaternion() {
-        return Quaternion<T>(getVector(),getRandom0ExclN(static_cast<T>(2*M_PI)));
+        return Quaternion<T>(getVector(),getRandom0ExclN(T(2*M_PI)));
     }
 
     //@}

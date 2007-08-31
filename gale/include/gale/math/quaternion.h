@@ -103,8 +103,8 @@ class Quaternion
     /// normalized \a axis vector and an \a angle in radians.
     Quaternion(Vec const& axis,double angle) {
         double half=angle*0.5;
-        real=static_cast<T>(::cos(half));
-        imag=static_cast<T>(::sin(half))*axis;
+        real=T(::cos(half));
+        imag=T(::sin(half))*axis;
     }
 
     //@}
