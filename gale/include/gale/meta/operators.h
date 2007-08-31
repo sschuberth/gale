@@ -149,7 +149,8 @@ struct OpCmpEqualEps
       T const& a,T const& b,
       T const& epsilon=std::numeric_limits<T>::epsilon())
     {
-        return math::abs(b-a)<epsilon;
+        // Note that epsilon may be 0 for integral types!
+        return math::abs(b-a)<=epsilon;
     }
 };
 
