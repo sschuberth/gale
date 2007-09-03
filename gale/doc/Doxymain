@@ -1,9 +1,7 @@
 /**
 \mainpage
 <h2>Introduction</h2>
-As stated on the <a href="http://developer.berlios.de/projects/gale/">project page</a>, the "Graphics Abstraction Layer & Engine" (GALE) is an object oriented wrapper around OpenGL and its extensions. It is designed to be modern, lightweight and self-consistent. Typical targets are graphical demos and GPGPU applications.
-
-You can probably think of it as something similar but far less extensive than the great <a href="http://www.geometrictools.com/">Wild Magic</a> or <a href="http://g3d-cpp.sourceforge.net/">G3D</a> libraries, however with a focus on very compact programs.
+As stated on the <a href="http://developer.berlios.de/projects/gale/">project page</a>, the "Graphics Abstraction Layer & Engine" (GALE) is an object oriented wrapper around OpenGL and its extensions. It is designed to be modern, lightweight and self-consistent. Typical targets are graphical demos and GPGPU applications. You can probably think of it as something similar but far less extensive than the great <a href="http://www.geometrictools.com/">Wild Magic</a> or <a href="http://g3d-cpp.sourceforge.net/">G3D</a> libraries, however with a focus on very compact programs.
 
 There also is a sub-project to GALE called <a href="http://gale.berlios.de/glex/">GLEX</a>, an "OpenGL Extension Specification Parser", which is used to turn a single OpenGL extension specification text file or URL into a set of compact C source files that can be easily included into existing projects to initialize the desired extension.
 
