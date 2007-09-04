@@ -235,7 +235,7 @@ inline long roundToEven(float const f)
 
 #ifdef GALE_SSE
 
-    return _mm_cvtss_si32(_mm_set_ss(f));
+    return _mm_cvtss_si32(_mm_load_ss(&f));
 
 #elif defined(__GNUC__)
 
@@ -293,7 +293,7 @@ inline long roundToZero(float const f)
 
 #elif defined(GALE_SSE)
 
-    return _mm_cvttss_si32(_mm_set_ss(f));
+    return _mm_cvttss_si32(_mm_load_ss(&f));
 
 #else
 
