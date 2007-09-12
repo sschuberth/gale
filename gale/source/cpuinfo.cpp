@@ -40,8 +40,9 @@ CPUInfo::CPUInfo():
     m_vendor[0]=m_vendor[3*4]='\0';
 
     // Until now, the ECX register contains the "this" pointer.
-    if (!hasCPUID())
+    if (!hasCPUID()) {
         return;
+    }
 
     if (getMaxCPUIDStdFunc()>=1) {
         // CPUID function output:
