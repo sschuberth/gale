@@ -39,7 +39,7 @@ void Camera::apply(bool force)
         // Get the window's client area size.
         RECT rect;
         BOOL result=GetClientRect(m_surface.getWindowHandle(),&rect);
-        G_ASSERT(result!=FALSE)
+        assert(result!=FALSE);
 
         // If the desired screen space is smaller than the window, we need to
         // enable scissoring to avoid glClear to affect the whole window plane.

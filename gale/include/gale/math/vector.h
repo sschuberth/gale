@@ -145,73 +145,73 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns a reference to the x-component.
     T& getX() {
-        G_ASSERT(N>=1)
+        assert(N>=1);
         return Base::getData()[0];
     }
 
     /// Returns a \c constant reference to the x-component.
     T const& getX() const {
-        G_ASSERT(N>=1)
+        assert(N>=1);
         return Base::getData()[0];
     }
 
     /// Assigns a new value to the x-component.
     void setX(T const& x) {
-        G_ASSERT(N>=1)
+        assert(N>=1);
         Base::getData()[0]=x;
     }
 
     /// Returns a reference to the y-component.
     T& getY() {
-        G_ASSERT(N>=2)
+        assert(N>=2);
         return Base::getData()[1];
     }
 
     /// Returns a \c constant reference to the y-component.
     T const& getY() const {
-        G_ASSERT(N>=2)
+        assert(N>=2);
         return Base::getData()[1];
     }
 
     /// Assigns a new value to the y-component.
     void setY(T const& y) {
-        G_ASSERT(N>=2)
+        assert(N>=2);
         Base::getData()[1]=y;
     }
 
     /// Returns a reference to the z-component.
     T& getZ() {
-        G_ASSERT(N>=3)
+        assert(N>=3);
         return Base::getData()[2];
     }
 
     /// Returns a \c constant reference to the z-component.
     T const& getZ() const {
-        G_ASSERT(N>=3)
+        assert(N>=3);
         return Base::getData()[2];
     }
 
     /// Assigns a new value to the z-component.
     void setZ(T const& z) {
-        G_ASSERT(N>=3)
+        assert(N>=3);
         Base::getData()[2]=z;
     }
 
     /// Returns a reference to the w-component.
     T& getW() {
-        G_ASSERT(N>=4)
+        assert(N>=4);
         return Base::getData()[3];
     }
 
     /// Returns a \c constant reference to the w-component.
     T const& getW() const {
-        G_ASSERT(N>=4)
+        assert(N>=4);
         return Base::getData()[3];
     }
 
     /// Assigns a new value to the w-component.
     void setW(T const& w) {
-        G_ASSERT(N>=4)
+        assert(N>=4);
         Base::getData()[3]=w;
     }
 
@@ -256,7 +256,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Calculates the cross product between this vector and vector \a v.
     Vector getCrossProduct(Vector const& v) const {
-        G_ASSERT(N==3)
+        assert(N==3);
         return Vector(
             Base::getData()[1]*v.getData()[2] - Base::getData()[2]*v.getData()[1],
             Base::getData()[2]*v.getData()[0] - Base::getData()[0]*v.getData()[2],

@@ -71,7 +71,7 @@ RenderSurface::RenderSurface()
         cls.lpszClassName="G";
 
         s_atom=RegisterClass(&cls);
-        G_ASSERT(s_atom!=0)
+        assert(s_atom!=0);
 
         // Create a dummy window and get its device context.
         s_window=CreateWindow(
@@ -87,10 +87,10 @@ RenderSurface::RenderSurface()
         /* hInstance    */ NULL,
         /* lpParam      */ NULL
         );
-        G_ASSERT(s_window!=NULL)
+        assert(s_window!=NULL);
 
         s_handle.device=GetWindowDC(s_window);
-        G_ASSERT(s_handle.device!=NULL)
+        assert(s_handle.device!=NULL);
 
         // Set the device context to a pixel format that uses OpenGL acceleration.
         PIXELFORMATDESCRIPTOR pfd;
@@ -104,14 +104,14 @@ RenderSurface::RenderSurface()
         ;
 
         int format=ChoosePixelFormat(s_handle.device,&pfd);
-        G_ASSERT(format!=0)
+        assert(format!=0);
 
         BOOL result=SetPixelFormat(s_handle.device,format,&pfd);
-        G_ASSERT(result!=FALSE)
+        assert(result!=FALSE);
 
         // Create and activate a rendering context.
         s_handle.render=wglCreateContext(s_handle.device);
-        G_ASSERT(s_handle.render!=NULL)
+        assert(s_handle.render!=NULL);
 
 #else
 
@@ -127,13 +127,13 @@ RenderSurface::~RenderSurface()
 {
     --s_instances;
     if (s_instances<=0) {
-        G_ASSERT(s_instances==0)
+        assert(s_instances==0);
 
         // Clean up again.
         destroy();
 
         BOOL result=UnregisterClass(MAKEINTATOM(s_atom),NULL);
-        G_ASSERT(result!=FALSE)
+        assert(result!=FALSE);
     }
 }
 
@@ -142,13 +142,13 @@ void RenderSurface::destroy()
     ContextHandle handle=getContextHandle();
 
     BOOL result=wglDeleteContext(handle.render);
-    G_ASSERT(result!=FALSE)
+    assert(result!=FALSE);
 
     result=ReleaseDC(getWindowHandle(),handle.device);
-    G_ASSERT(result!=FALSE)
+    assert(result!=FALSE);
 
     result=DestroyWindow(getWindowHandle());
-    G_ASSERT(result!=FALSE)
+    assert(result!=FALSE);
 }
 
 LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)

@@ -78,7 +78,7 @@ class AttributeList
         }
 
         // Append the new attribute.
-        G_ASSERT(m_size<N-2)
+        assert(m_size<N-2);
         m_attributes[m_size++]=type;
         m_attributes[m_size++]=value;
         m_attributes[m_size]=0;

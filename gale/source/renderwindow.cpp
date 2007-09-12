@@ -37,25 +37,25 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
     // Activate the minimal render surface to get a context for OpenGL extension
     // initialization.
     BOOL result=RenderSurface::setCurrentContext();
-    G_ASSERT(result!=FALSE)
+    assert(result!=FALSE);
 
     if (GLEX_WGL_ARB_pixel_format!=GL_TRUE) {
         // Initialize an OpenGL extension for more sophisticated selection of a
         // pixel format (see http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt).
         GLEX_WGL_ARB_pixel_format_init();
-        G_ASSERT(GLEX_WGL_ARB_pixel_format!=GL_FALSE)
+        assert(GLEX_WGL_ARB_pixel_format!=GL_FALSE);
     }
 
     if (GLEX_ARB_color_buffer_float!=GL_TRUE) {
         // Initialize an OpenGL extension for support of floating-point RGBA
         // pixel formats (see http://opengl.org/registry/specs/ARB/color_buffer_float.txt).
         GLEX_ARB_color_buffer_float_init();
-        G_ASSERT(GLEX_ARB_color_buffer_float!=GL_FALSE)
+        assert(GLEX_ARB_color_buffer_float!=GL_FALSE);
     }
 
     RECT rect={0,0,client_width,client_height};
     result=AdjustWindowRect(&rect,WS_OVERLAPPEDWINDOW,FALSE);
-    G_ASSERT(result!=FALSE)
+    assert(result!=FALSE);
 
     // Create a render window and get its device context.
     m_window=CreateWindow(
@@ -71,10 +71,10 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
     /* hInstance    */ NULL,
     /* lpParam      */ this
     );
-    G_ASSERT(m_window!=NULL)
+    assert(m_window!=NULL);
 
     m_handle.device=GetWindowDC(m_window);
-    G_ASSERT(m_handle.device!=NULL)
+    assert(m_handle.device!=NULL);
 
     // Make sure some required attributes are specified.
     AttributeListi attrs=attribs;
@@ -88,17 +88,17 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
     GLint format;
     UINT count;
     result=wglChoosePixelFormatARB(m_handle.device,attrs,NULL,1,&format,&count);
-    G_ASSERT(result!=FALSE && count>0)
+    assert(result!=FALSE && count>0);
 
     result=SetPixelFormat(m_handle.device,format,NULL);
-    G_ASSERT(result!=FALSE)
+    assert(result!=FALSE);
 
     // Create and activate a rendering context.
     m_handle.render=wglCreateContext(m_handle.device);
-    G_ASSERT(m_handle.render!=NULL)
+    assert(m_handle.render!=NULL);
 
     result=setCurrentContext();
-    G_ASSERT(result!=FALSE)
+    assert(result!=FALSE);
 }
 
 void RenderWindow::processEvents()

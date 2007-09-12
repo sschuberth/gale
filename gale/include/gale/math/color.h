@@ -321,58 +321,58 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns a reference to the red channel.
     T& getR() {
-        G_ASSERT(N>=1)
+        assert(N>=1);
         return Base::getData()[0];
     }
 
     /// Assigns a new value to the red channel.
     void setR(T const& r) {
-        G_ASSERT(N>=1)
+        assert(N>=1);
         Base::getData()[0]=r;
         m_hsv_outdated=true;
     }
 
     /// Returns a reference to the green channel.
     T& getG() {
-        G_ASSERT(N>=2)
+        assert(N>=2);
         return Base::getData()[1];
     }
 
     /// Assigns a new value to the green channel.
     void setG(T const& g) {
-        G_ASSERT(N>=2)
+        assert(N>=2);
         Base::getData()[1]=g;
         m_hsv_outdated=true;
     }
 
     /// Returns a reference to the blue channel.
     T& getB() {
-        G_ASSERT(N>=3)
+        assert(N>=3);
         return Base::getData()[2];
     }
 
     /// Assigns a new value to the blue channel.
     void setB(T const& b) {
-        G_ASSERT(N>=3)
+        assert(N>=3);
         Base::getData()[2]=b;
         m_hsv_outdated=true;
     }
 
     /// Returns a reference to the alpha channel.
     T& getA() {
-        G_ASSERT(N>=4)
+        assert(N>=4);
         return Base::getData()[3];
     }
 
     /// Returns a \c constant reference to the alpha channel.
     T const& getA() const {
-        G_ASSERT(N>=4)
+        assert(N>=4);
         return Base::getData()[3];
     }
 
     /// Assigns a new value to the alpha channel.
     void setA(T const& a) {
-        G_ASSERT(N>=4)
+        assert(N>=4);
         Base::getData()[3]=a;
     }
 
@@ -385,14 +385,14 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns a reference to the hue channel.
     T& getH() {
-        G_ASSERT(N>=1)
+        assert(N>=1);
         updateHSV();
         return m_h;
     }
 
     /// Assigns a new value to the hue channel.
     void setH(T const& h) {
-        G_ASSERT(N>=1)
+        assert(N>=1);
         updateHSV();
         m_h=h;
         HSV2RGB(m_h,m_s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
@@ -400,14 +400,14 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns a reference to the saturation channel.
     T& getS() {
-        G_ASSERT(N>=2)
+        assert(N>=2);
         updateHSV();
         return m_s;
     }
 
     /// Assigns a new value to the saturation channel.
     void setS(T const& s) {
-        G_ASSERT(N>=2)
+        assert(N>=2);
         updateHSV();
         m_s=s;
         HSV2RGB(m_h,m_s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
@@ -415,14 +415,14 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns a reference to the value channel.
     T& getV() {
-        G_ASSERT(N>=3)
+        assert(N>=3);
         updateHSV();
         return m_v;
     }
 
     /// Assigns a new value to the value channel.
     void setV(T const& v) {
-        G_ASSERT(N>=3)
+        assert(N>=3);
         updateHSV();
         m_v=v;
         HSV2RGB(m_h,m_s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);

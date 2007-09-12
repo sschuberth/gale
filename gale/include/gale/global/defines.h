@@ -31,22 +31,7 @@
  * Global macro and type definitions
  */
 
-/**
- * \def G_ASSERT(x)
- * Run-time assertion which resolves to a no-op when not debugging. The macro is
- * basically defined as in the C-standard.
- */
-
-#ifdef G_ASSERT
-    #undef G_ASSERT
-#endif
-
-#ifdef NDEBUG
-    #define G_ASSERT(x) ((void)0);
-#else
-    #include <assert.h>
-    #define G_ASSERT(x) assert(x);
-#endif
+#include <assert.h>
 
 /**
  * \def G_ASSERT_OPENGL
@@ -57,7 +42,7 @@
     #undef G_ASSERT_OPENGL
 #endif
 
-#define G_ASSERT_OPENGL G_ASSERT(glGetError()==GL_NO_ERROR)
+#define G_ASSERT_OPENGL assert(glGetError()==GL_NO_ERROR);
 
 /**
  * \def G_INLINE

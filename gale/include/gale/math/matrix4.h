@@ -196,14 +196,14 @@ class Matrix4
     /// Returns a reference to the data element located at \a row and \a column.
     /// Despite usual in maths, the index starts at 0 (not 1).
     T& operator()(unsigned int row,unsigned int column) {
-        G_ASSERT(row<4 && column<4)
+        assert(row<4 && column<4);
         return (*this)[(column<<2)+row];
     }
 
     /// Returns a constant reference to the data element located at \a row and
     /// \a column. Despite usual in maths, the index starts at 0 (not 1).
     T const& operator()(unsigned int row,unsigned int column) const {
-        G_ASSERT(row<4 && column<4)
+        assert(row<4 && column<4);
         return (*this)[(column<<2)+row];
     }
 

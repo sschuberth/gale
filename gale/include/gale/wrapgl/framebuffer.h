@@ -67,7 +67,7 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
                 // system-provided frame buffer with a custom set of image buffers
                 // (see http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt).
                 GLEX_EXT_framebuffer_object_init();
-                G_ASSERT(GLEX_EXT_framebuffer_object!=GL_FALSE)
+                assert(GLEX_EXT_framebuffer_object!=GL_FALSE);
             }
 
             glGenRenderbuffersEXT(1,&m_id);
@@ -115,7 +115,7 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
             // system-provided frame buffer with a custom set of image buffers
             // (see http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt).
             GLEX_EXT_framebuffer_object_init();
-            G_ASSERT(GLEX_EXT_framebuffer_object!=GL_FALSE)
+            assert(GLEX_EXT_framebuffer_object!=GL_FALSE);
         }
 
         glGenFramebuffersEXT(1,&m_id);

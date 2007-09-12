@@ -94,7 +94,7 @@ struct OpArithReci
     /// Calculates the reciprocal of \a b and stores the result into \a a.
     template<typename T>
     static G_INLINE void evaluate(T& a,T const& b) {
-        G_ASSERT(math::abs(b)>std::numeric_limits<T>::epsilon())
+        assert(math::abs(b)>std::numeric_limits<T>::epsilon());
         a=1/b;
     }
 };
@@ -182,7 +182,7 @@ struct OpCalcLerp
     /// Returns the linear interpolation between \a a and \a b based on \a c.
     template<typename T,typename U>
     static G_INLINE T evaluate(T const& a,T const& b,U const& c) {
-        G_ASSERT(0<=c && c<=1)
+        assert(0<=c && c<=1);
         return T(a+(b-a)*c);
     }
 };
