@@ -109,21 +109,21 @@ inline float convRadToDeg(short const angle)
 //@{
 
 /// Returns the number of leading (most significant) zero bits in \a x.
-inline unsigned int countLeadingZeroBits(unsigned int const x)
+inline unsigned int countLeadingZeroBits(unsigned int x)
 {
     if (x==0) {
-        return 1<<(sizeof(x)+1);
+        return sizeof(x)*8;
     }
 
 #ifdef __GNUC__
 
     unsigned int result;
     __asm__(
-        "bsr %%ecx,%%eax\n\t"
-        "xorl $31,%%eax\n\t"
-        : "=a" (result)
-        : "c" (x)
-        : "cc"
+        "bsrl %[x],%[result]\n\t"
+        "xorl $31,%[result]\n\t"
+        : [result] "=r" (result)  /* Output  */
+        : [x] "r" (x)             /* Input   */
+        : "cc"                    /* Clobber */
     );
     return result;
 
@@ -131,14 +131,13 @@ inline unsigned int countLeadingZeroBits(unsigned int const x)
 
     // MSVC 8.0 does not support inline assembly on the x64 platform.
     __asm {
-        mov ebx,x
-        bsr eax,ebx
+        bsr eax,x
         xor eax,31
     }
 
 #else
 
-    unsigned int const MSB=(1UL<<(sizeof(x)+1))-1;
+    unsigned int const MSB=sizeof(x)*8-1;
     unsigned int const mask=1UL<<MSB;
 
     // At this point, we know there is at least one bit set.
@@ -227,31 +226,27 @@ inline T min(T const a,T const b,T const c,T const d)
 /// Rounds \a f to the nearest integer (to the even one in case of ambiguity).
 /// This is the default rounding mode on x86 platforms, so the floating-point
 /// control word is not modified.
-inline long roundToEven(float const f)
+inline int roundToEven(float const f)
 {
-    // By default, the Pentium's fistp instruction does a "round to even", so
-    // there is no need to save and restore the floating-point control word like
-    // the C runtime does (see http://self-similar.com/rounding.html).
-
 #ifdef GALE_SSE
 
     return _mm_cvtss_si32(_mm_load_ss(&f));
 
 #elif defined(__GNUC__)
 
-    long i;
+    int i;
     __asm__(
-        "fistpl %0\n\t"
-        : "=m" (i)
-        : "t" (f)
-        : "st"
+        "fistpl %[f]\n\t"
+        : "=m" (i)     /* Output  */
+        : [f] "t" (f)  /* Input   */
+        :              /* Clobber */
     );
     return i;
 
 #elif defined(_MSC_VER) && !defined(_WIN64)
 
     // MSVC 8.0 does not support inline assembly on the x64 platform.
-    long i;
+    int i;
     __asm {
         fld f
         fistp i
@@ -260,7 +255,7 @@ inline long roundToEven(float const f)
 
 #else
 
-    return static_cast<long>(f+0.5f);
+    return static_cast<int>(f+0.5f);
 
 #endif // __GNUC__
 }
@@ -268,23 +263,23 @@ inline long roundToEven(float const f)
 /// Rounds \a f to the nearest integer towards zero (truncating the number).
 /// This is the default ANSI C rounding mode; use this method instead of a cast
 /// to an integer as it is faster.
-inline long roundToZero(float const f)
+inline int roundToZero(float const f)
 {
 #if defined(GALE_SSE3) && defined(__GNUC__)
 
-    long i;
+    int i;
     __asm__(
-        "fisttpl %0\n\t"
-        : "=m" (i)
-        : "t" (f)
-        : "st"
+        "fisttpl %[f]\n\t"
+        : "=m" (i)     /* Output  */
+        : [f] "t" (f)  /* Input   */
+        :              /* Clobber */
     );
     return i;
 
 #elif defined(GALE_SSE3) && defined(_MSC_VER) && !defined(_WIN64)
 
     // MSVC 8.0 does not support inline assembly on the x64 platform.
-    long i;
+    int i;
     __asm {
         fld f
         fisttp i
@@ -297,7 +292,7 @@ inline long roundToZero(float const f)
 
 #else
 
-    return static_cast<long>(f);
+    return static_cast<int>(f);
 
 #endif
 }
@@ -421,7 +416,7 @@ inline unsigned int getCeilPow2(unsigned int const x)
     if (x==0) {
         return 0;
     }
-    long i=getMSBSet(x-1)+1;
+    int i=getMSBSet(x-1)+1;
     return 1UL<<static_cast<unsigned int>(i);
 
 #endif // __GNUC__
@@ -457,7 +452,7 @@ inline unsigned int getFloorPow2(unsigned int const x)
 
 #else
 
-    long i=getMSBSet(x);
+    int i=getMSBSet(x);
     if (i<0) {
         return 0;
     }
@@ -468,7 +463,7 @@ inline unsigned int getFloorPow2(unsigned int const x)
 
 /// Returns the position of the least significant bit set in \a x (the least
 /// significant bit has index 0).
-inline long getLSBSet(unsigned int const x)
+inline int getLSBSet(unsigned int const x)
 {
     if (x==0) {
         return -1;
@@ -476,11 +471,11 @@ inline long getLSBSet(unsigned int const x)
 
 #ifdef __GNUC__
 
-    long result;
+    int result;
     __asm__(
-        "bsf %%ecx,%%eax\n\t"
-        : "=a" (result)
-        : "c" (x)
+        "bsfl %[x],%[result]\n\t"
+        : [result] "=r" (result)
+        : [x] "r" (x)
         : "cc"
     );
     return result;
@@ -495,7 +490,7 @@ inline long getLSBSet(unsigned int const x)
 
 #else
 
-    long index=0;
+    int index=0;
     while ((x&1)==0) {
         ++index;
         x>>=1;
@@ -507,7 +502,7 @@ inline long getLSBSet(unsigned int const x)
 
 /// Returns the position of the most significant bit set in \a x (the least
 /// significant bit has index 0).
-inline long getMSBSet(unsigned int const x)
+inline int getMSBSet(unsigned int const x)
 {
     if (x==0) {
         return -1;
@@ -515,11 +510,11 @@ inline long getMSBSet(unsigned int const x)
 
 #ifdef __GNUC__
 
-    long result;
+    int result;
     __asm__(
-        "bsr %%ecx,%%eax\n\t"
-        : "=a" (result)
-        : "c" (x)
+        "bsrl %[x],%[result]\n\t"
+        : [result] "=r" (result)
+        : [x] "r" (x)
         : "cc"
     );
     return result;
@@ -538,7 +533,7 @@ inline long getMSBSet(unsigned int const x)
     unsigned int const mask=1UL<<MSB;
 
     // At this point, we know there is at least one bit set.
-    long index=MSB;
+    int index=MSB;
     while ((x&mask)==0) {
         --index;
         x<<=1;
