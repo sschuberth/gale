@@ -97,7 +97,7 @@ class Bindable
     /// Helper constructor for special objects with a fixed \a id.
     Bindable(GLuint id=0):m_id(id) {
         // This is a trick to ensure derived classes implement this static method.
-        assert(C::isValid(id));
+        G_ASSERT_CALL(C::isValid(id));
     }
 
     GLuint m_id; ///< The ID of this OpenGL object.

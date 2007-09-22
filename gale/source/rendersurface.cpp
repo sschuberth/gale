@@ -106,8 +106,7 @@ RenderSurface::RenderSurface()
         int format=ChoosePixelFormat(s_handle.device,&pfd);
         assert(format!=0);
 
-        BOOL result=SetPixelFormat(s_handle.device,format,&pfd);
-        assert(result!=FALSE);
+        G_ASSERT_CALL(SetPixelFormat(s_handle.device,format,&pfd));
 
         // Create and activate a rendering context.
         s_handle.render=wglCreateContext(s_handle.device);
@@ -132,8 +131,7 @@ RenderSurface::~RenderSurface()
         // Clean up again.
         destroy();
 
-        BOOL result=UnregisterClass(MAKEINTATOM(s_atom),NULL);
-        assert(result!=FALSE);
+        G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL));
     }
 }
 
@@ -141,14 +139,9 @@ void RenderSurface::destroy()
 {
     ContextHandle handle=getContextHandle();
 
-    BOOL result=wglDeleteContext(handle.render);
-    assert(result!=FALSE);
-
-    result=ReleaseDC(getWindowHandle(),handle.device);
-    assert(result!=FALSE);
-
-    result=DestroyWindow(getWindowHandle());
-    assert(result!=FALSE);
+    G_ASSERT_CALL(wglDeleteContext(handle.render));
+    G_ASSERT_CALL(ReleaseDC(getWindowHandle(),handle.device));
+    G_ASSERT_CALL(DestroyWindow(getWindowHandle()));
 }
 
 LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)

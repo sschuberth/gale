@@ -34,6 +34,21 @@
 #include <assert.h>
 
 /**
+ * \def G_ASSERT_CALL
+ * Run-time assertion for function calls.
+ */
+
+#ifdef G_ASSERT_CALL
+    #undef G_ASSERT_CALL
+#endif
+
+#ifndef NDEBUG
+    #define G_ASSERT_CALL(x) assert(x);
+#else
+    #define G_ASSERT_CALL(x) x;
+#endif
+
+/**
  * \def G_ASSERT_OPENGL
  * Run-time assertion for the OpenGL error flag.
  */
