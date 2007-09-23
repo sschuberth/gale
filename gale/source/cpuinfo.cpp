@@ -25,6 +25,10 @@
 
 #include "gale/system/cpuinfo.h"
 
+#ifdef _WIN64
+    #include <intrin.h>
+#endif
+
 namespace gale {
 
 namespace system {
@@ -39,18 +43,20 @@ CPUInfo::CPUInfo():
     // Null-terminate the vendor string.
     m_vendor[0]=m_vendor[3*4]='\0';
 
-    // Until now, the ECX register contains the "this" pointer.
     if (!hasCPUID()) {
         return;
     }
 
+#ifdef _WIN64
+    int info[4];
+#endif
+
     if (getMaxCPUIDStdFunc()>=1) {
-        // CPUID function output:
+        // CPUID function 0x00000001 output:
         // EAX = Processor signature
         // EBX = APIC ID, processor count, CLFLUSH size, brand ID
         // ECX = Standard feature flags (part 2)
         // EDX = Standard feature flags (part 1)
-
 #ifdef __GNUC__
 
         __asm__(
@@ -60,10 +66,23 @@ CPUInfo::CPUInfo():
             "cpuid\n\t"
             "movl %%ebx,%%eax\n\t"
             "popl %%ebx\n\t"
-            : "=a" (m_std_misc_info), "=d" (m_std_feat_flags_edx), "=c" (m_std_feat_flags_ecx)
+            : "=a" (m_std_misc_info),       /* Output  */
+              "=d" (m_std_feat_flags_edx),
+              "=c" (m_std_feat_flags_ecx)
+            :                               /* Input   */
+            :                               /* Clobber */
         );
 
-#else
+#else // __GNUC__
+
+#ifdef _WIN64
+
+        __cpuid(info,0x00000001);
+        m_std_misc_info=info[1];
+        m_std_feat_flags_edx=info[3];
+        m_std_feat_flags_ecx=info[2];
+
+#else // _WIN64
 
         __asm {
             xor eax,eax
@@ -75,12 +94,13 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_std_feat_flags_ecx,ecx
         }
 
+#endif // _WIN64
+
 #endif // __GNUC__
     }
 
     if (getMaxCPUIDStdFunc()>=4) {
         // Required to get the number of cores on Intel processors.
-
 #ifdef __GNUC__
 
         __asm__(
@@ -89,31 +109,39 @@ CPUInfo::CPUInfo():
             "pushl %%ebx\n\t"
             "cpuid\n\t"
             "popl %%ebx\n\t"
-            : "=a" (m_std_cache_params)
-            :
-            : "%ecx", "%edx"
+            : "=a" (m_std_cache_params)  /* Output  */
+            :                            /* Input   */
+            : "%ecx", "%edx"             /* Clobber */
         );
 
-#else
+#else // __GNUC__
+
+#ifdef _WIN64
+
+        __cpuid(info,0x00000004);
+        m_std_cache_params=info[0];
+
+#else // _WIN64
 
         __asm {
             mov eax,00000004h
             xor ecx,ecx
             cpuid
-            mov ebx,this
-            mov [ebx]CPUInfo.m_std_cache_params,eax
+            mov ecx,this
+            mov [ecx]CPUInfo.m_std_cache_params,eax
         }
+
+#endif // _WIN64
 
 #endif // __GNUC__
     }
 
     if (getMaxCPUIDExtFunc()>=1) {
-        // CPUID function output:
+        // CPUID function 0x80000001 output:
         // EAX = Reserved (Intel) / processor signature (AMD)
         // EBX = Reserved (Intel) / APIC ID etc. (AMD)
         // ECX = Extended feature flags (part 2)
         // EDX = Extended feature flags (part 1)
-
 #ifdef __GNUC__
 
         __asm__(
@@ -121,12 +149,21 @@ CPUInfo::CPUInfo():
             "pushl %%ebx\n\t"
             "cpuid\n\t"
             "popl %%ebx\n\t"
-            : "=d" (m_ext_feat_flags_edx), "=c" (m_ext_feat_flags_ecx)
-            :
-            : "%eax"
+            : "=d" (m_ext_feat_flags_edx),  /* Output  */
+              "=c" (m_ext_feat_flags_ecx)
+            :                               /* Input   */
+            : "%eax"                        /* Clobber */
         );
 
-#else
+#else // __GNUC__
+
+#ifdef _WIN64
+
+        __cpuid(info,0x80000001);
+        m_ext_feat_flags_edx=info[3];
+        m_ext_feat_flags_ecx=info[2];
+
+#else // _WIN64
 
         __asm {
             mov eax,80000001h
@@ -136,12 +173,13 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_ext_feat_flags_ecx,ecx
         }
 
+#endif // _WIN64
+
 #endif // __GNUC__
     }
 
     if (getMaxCPUIDExtFunc()>=8) {
         // Required to get the number of cores on AMD processors.
-
 #ifdef __GNUC__
 
         __asm__(
@@ -149,12 +187,19 @@ CPUInfo::CPUInfo():
             "pushl %%ebx\n\t"
             "cpuid\n\t"
             "popl %%ebx\n\t"
-            : "=c" (m_ext_address_sizes)
-            :
-            : "%eax", "%edx"
+            : "=c" (m_ext_address_sizes)  /* Output  */
+            :                             /* Input   */
+            : "%eax", "%edx"              /* Clobber */
         );
 
-#else
+#else // __GNUC__
+
+#ifdef _WIN64
+
+        __cpuid(info,0x80000008);
+        m_ext_address_sizes=info[2];
+
+#else // _WIN64
 
         __asm {
             mov eax,80000008h
@@ -162,6 +207,8 @@ CPUInfo::CPUInfo():
             mov eax,this
             mov [eax]CPUInfo.m_ext_address_sizes,ecx
         }
+
+#endif // _WIN64
 
 #endif // __GNUC__
     }
@@ -172,6 +219,9 @@ CPUInfo::CPUInfo():
 // Brennan's Guide to Inline Assembly
 // http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html
 
+// Machine Constraints - Using the GNU Compiler Collection (GCC)
+// http://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html#Machine-Constraints
+
 // Always preserve the EBX register to be compatible with the -fPIC option.
 // Note that specifying EBX in the clobber list does *not* work!
 
@@ -179,23 +229,20 @@ bool CPUInfo::hasCPUID() const
 {
     unsigned int eax;
     __asm__(
-        "// Read and invert the ID bit (21).\n\t"
         "pushfl\n\t"
         "popl %%eax\n\t"
         "xorl $0x00200000,%%eax\n\t"
         "movl %%eax,%%ecx\n\t"
-        "// Write and read back modified flags.\n\t"
         "pushl %%eax\n\t"
         "popfl\n\t"
         "pushfl\n\t"
         "popl %%eax\n\t"
-        "// Check if inverting the ID bit was successful.\n\t"
         "cmpl %%ecx,%%eax\n\t"
         "sete %%cl\n\t"
         "movzx %%cl,%%eax\n\t"
-        : "=a" (eax)
-        :
-        : "%ecx"
+        : "=a" (eax)  /* Output  */
+        :             /* Input   */
+        : "%ecx"      /* Clobber */
     );
     return eax;
 }
@@ -212,7 +259,12 @@ unsigned int CPUInfo::getMaxCPUIDStdFunc()
         "cpuid\n\t"
         "movl %%ebx,%1\n\t"
         "popl %%ebx\n\t"
-        : "=a" (eax), "=r" (*vendor0), "=d" (*vendor4), "=c" (*vendor8)
+        : "=a" (eax),
+          "=r" (*vendor0),
+          "=d" (*vendor4),
+          "=c" (*vendor8)  /* Output  */
+        :                  /* Input   */
+        :                  /* Clobber */
     );
     return eax;
 }
@@ -222,20 +274,47 @@ unsigned int CPUInfo::getMaxCPUIDExtFunc() const
     unsigned int eax;
     __asm__(
         "movl $0x80000000,%%eax\n\t"
-        "pushl %%eax\n\t"
         "pushl %%ebx\n\t"
+        "pushl %%eax\n\t"
         "cpuid\n\t"
-        "popl %%ebx\n\t"
         "popl %%ecx\n\t"
+        "popl %%ebx\n\t"
         "subl %%ecx,%%eax\n\t"
-        : "=a" (eax)
-        :
-        : "%ecx", "%edx"
+        : "=a" (eax)      /* Output  */
+        :                 /* Input   */
+        : "%ecx", "%edx"  /* Clobber */
     );
     return eax;
 }
 
 #else // __GNUC__
+
+#ifdef _WIN64
+
+bool CPUInfo::hasCPUID() const
+{
+    // All 64-bit CPUs have the CPUID instruction.
+    return true;
+}
+
+unsigned int CPUInfo::getMaxCPUIDStdFunc()
+{
+    int info[4];
+    __cpuid(info,0);
+    *reinterpret_cast<int*>(&m_vendor[0])=info[1];
+    *reinterpret_cast<int*>(&m_vendor[4])=info[3];
+    *reinterpret_cast<int*>(&m_vendor[8])=info[2];
+    return static_cast<unsigned int>(info[0]);
+}
+
+unsigned int CPUInfo::getMaxCPUIDExtFunc() const
+{
+    int info[4];
+    __cpuid(info,0x80000000);
+    return static_cast<unsigned int>(info[0]);
+}
+
+#else // _WIN64
 
 // When using __asm to write assembly language in C/C++ functions, you don't
 // need to preserve the EAX, EBX, ECX, EDX, ESI, or EDI registers. However, by
@@ -252,16 +331,20 @@ __declspec(naked) bool CPUInfo::hasCPUID() const
         pushfd
         pop eax
         xor eax,00200000h
+
         mov ecx,eax
+
         // Write and read back modified flags.
         push eax
         popfd
         pushfd
         pop eax
+
         // Check if inverting the ID bit was successful.
         cmp eax,ecx
         sete cl
         movzx eax,cl
+
         ret
     }
 }
@@ -269,32 +352,28 @@ __declspec(naked) bool CPUInfo::hasCPUID() const
 __declspec(naked) unsigned int CPUInfo::getMaxCPUIDStdFunc()
 {
     __asm {
-        // No prologue / epilogue is generated, so save EBX and EDI manually.
-        push ebx
-        push edi
-        // Preserve the "this" pointer.
-        push ecx
+        // Get the maximum standard function number.
         xor eax,eax
+
+        // Save registers that are assumed to be unmodified.
+        push edi
+        push ebx
+
+        // Preserve the "this" pointer in ECX.
+        push ecx
         cpuid
         pop edi
 
-#ifdef __INTEL_COMPILER
-
-        mov [edi+CPUInfo.m_vendor],ebx
-        mov [edi+CPUInfo.m_vendor+4],edx
-        mov [edi+CPUInfo.m_vendor+8],ecx
-
-#else
-
+        // Write the vendor string.
         lea edi,[edi]CPU.m_vendor
         mov [edi],ebx
         mov [edi+4],edx
         mov [edi+8],ecx
 
-#endif // __INTEL_COMPILER
-
-        pop edi
+        // Restore registers that are assumed to be unmodified.
         pop ebx
+        pop edi
+
         ret
     }
 }
@@ -302,17 +381,28 @@ __declspec(naked) unsigned int CPUInfo::getMaxCPUIDStdFunc()
 __declspec(naked) unsigned int CPUInfo::getMaxCPUIDExtFunc() const
 {
     __asm {
-        // No prologue / epilogue is generated, so save EBX manually.
-        push ebx
+        // Get the maximum extended function number.
         mov eax,80000000h
+
+        // Save registers that are assumed to be unmodified.
+        push ebx
+
+        // Preserve the CPUID function in EAX.
         push eax
         cpuid
+        pop ecx
+
+        // Restore registers that are assumed to be unmodified.
         pop ebx
-        sub eax,ebx
-        pop ebx
+
+        // Start function numbering at 0.
+        sub eax,ecx
+
         ret
     }
 }
+
+#endif // _WIN64
 
 #endif // __GNUC__
 

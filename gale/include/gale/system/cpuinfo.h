@@ -90,7 +90,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Returns if this is an Intel CPU.
     bool isIntel() const {
-        int const* vendor=reinterpret_cast<int const*>(&m_vendor);
+        int const* vendor=reinterpret_cast<int const*>(getVendorString());
         if (*vendor!=MAKE_DWORD('G','e','n','u')) {
             return false;
         }
@@ -110,7 +110,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Returns if this is an AMD CPU.
     bool isAMD() const {
-        int const* vendor=reinterpret_cast<int const*>(&m_vendor);
+        int const* vendor=reinterpret_cast<int const*>(getVendorString());
         if (*vendor!=MAKE_DWORD('A','u','t','h')) {
             return false;
         }
@@ -130,7 +130,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Returns if this is a Cyrix / VIA CPU.
     bool isCyrix() const {
-        int const* vendor=reinterpret_cast<int const*>(&m_vendor);
+        int const* vendor=reinterpret_cast<int const*>(getVendorString());
         if (*vendor!=MAKE_DWORD('C','y','r','i')) {
             return false;
         }
@@ -150,7 +150,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Returns if this is a Centaur / VIA CPU.
     bool isCentaur() const {
-        int const* vendor=reinterpret_cast<int const*>(&m_vendor);
+        int const* vendor=reinterpret_cast<int const*>(getVendorString());
         if (*vendor!=MAKE_DWORD('C','e','n','t')) {
             return false;
         }
