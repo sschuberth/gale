@@ -258,22 +258,33 @@ function writePrototypeHeader($extension,$procs,$tokens) {
     fwrite($handle,"#ifndef $guard\n");
     fwrite($handle,"#define $guard\n\n");
 
+    $ignore=strtoupper($extension).'_IGNORE';
+
     fwrite($handle,"#ifdef _WIN32\n");
     fwrite($handle,"    #ifndef WIN32_LEAN_AND_MEAN\n");
     fwrite($handle,"        #define WIN32_LEAN_AND_MEAN\n");
     fwrite($handle,"        #include <windows.h>\n");
     fwrite($handle,"        #undef WIN32_LEAN_AND_MEAN\n");
+    if (strpos($guard,"_GLX_")!==FALSE) {
+        fwrite($handle,"\n        // Ignore GLX extensions under Windows.\n");
+        fwrite($handle,"        #define $ignore\n");
+    }
     fwrite($handle,"    #else\n");
     fwrite($handle,"        #include <windows.h>\n");
     fwrite($handle,"    #endif\n");
     fwrite($handle,"#else\n");
     fwrite($handle,"    #ifdef __linux\n");
     fwrite($handle,"        // TODO: Linux support.\n");
+    if (strpos($guard,"_WGL_")!==FALSE) {
+        fwrite($handle,"\n        // Ignore WGL extensions under Linux.\n");
+        fwrite($handle,"        #define $ignore\n");
+    }
     fwrite($handle,"    #endif\n");
     fwrite($handle,"#endif\n\n");
 
-    fwrite($handle,"#include <GL/gl.h>\n\n");
+    fwrite($handle,"#ifndef $ignore\n\n");
 
+    fwrite($handle,"#include <GL/gl.h>\n");
     fwrite($handle,"#include \"GLEX_globals.h\"\n\n");
 
     extractTokensToString($tokens,$defines);
@@ -305,6 +316,8 @@ function writePrototypeHeader($extension,$procs,$tokens) {
     fwrite($handle,"} // extern \"C\"\n");
     fwrite($handle,"#endif\n\n");
 
+    fwrite($handle,"#endif // $ignore\n\n");
+
     // Write the inclusion guard footer.
     fwrite($handle,"#endif // $guard\n");
 
@@ -324,6 +337,9 @@ function writeInitializationCode($extension) {
 
     fwrite($handle,'#include "'.$extension.'.h"'."\n\n");
 
+    $ignore=strtoupper($extension).'_IGNORE';
+    fwrite($handle,"#ifndef $ignore\n\n");
+
     // Write the code that generates the function pointer variables.
     fwrite($handle,"// Initialize all function pointers to 0.\n");
     fwrite($handle,'#define '.GLEX_PREFIX.'PROC(t,n,a) t (APIENTRY *'.GLEX_PREFIX."##n) a=0\n");
@@ -342,7 +358,9 @@ function writeInitializationCode($extension) {
     fwrite($handle,'#undef '.GLEX_PREFIX."PROC\n\n");
 
     fwrite($handle,"    return $extension;\n");
-    fwrite($handle,"}\n");
+    fwrite($handle,"}\n\n");
+
+    fwrite($handle,"#endif // $ignore\n");
 
     fclose($handle);
 
