@@ -33,11 +33,11 @@
 
 #include "texture.h"
 
-#include "GLEX_EXT_framebuffer_object.h"
-
 namespace gale {
 
 namespace wrapgl {
+
+#include "GLEX_EXT_framebuffer_object.h"
 
 /**
  * This class provides an application-created frame buffer that can be bound to

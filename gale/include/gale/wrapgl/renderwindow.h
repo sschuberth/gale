@@ -35,9 +35,6 @@
 #include "../system/rendersurface.h"
 #include "../system/timer.h"
 
-#include "GLEX_WGL_ARB_pixel_format.h"
-#include "GLEX_ARB_color_buffer_float.h"
-
 namespace gale {
 
 namespace wrapgl {
@@ -50,6 +47,9 @@ namespace wrapgl {
 
 // TODO: Add Linux implementation.
 #ifdef _WIN32
+
+#include "GLEX_WGL_ARB_pixel_format.h"
+#include "GLEX_ARB_color_buffer_float.h"
 
 class RenderWindow:public system::RenderSurface
 {

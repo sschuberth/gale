@@ -145,7 +145,7 @@ class AttributeList
 #pragma pack(pop)
 
 /**
- * \name Type definitions as required by the WGL_ARB_pixel_format extension
+ * \name Type definitions as required to describe pixel format attributes
  */
 //@{
 
