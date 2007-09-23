@@ -464,7 +464,7 @@ class HMatrix4
 
     /// Divides a scalar \a s by each element of matrix \a m.
     friend HMatrix4 operator/(T s,HMatrix4 const& m) {
-        return HMatrix4(s/c0,s/c1,s/c2,s/c3);
+        return HMatrix4(s/m.c0,s/m.c1,s/m.c2,s/m.c3);
     }
 
     //@}

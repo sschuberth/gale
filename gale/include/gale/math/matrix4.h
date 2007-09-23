@@ -372,7 +372,7 @@ class Matrix4
 
     /// Divides a scalar \a s by each element of matrix \a m.
     friend Matrix4 operator/(T s,Matrix4 const& m) {
-        return Matrix4(s/c0,s/c1,s/c2,s/c3);
+        return Matrix4(s/m.c0,s/m.c1,s/m.c2,s/m.c3);
     }
 
     //@}
