@@ -50,6 +50,10 @@ namespace wrapgl {
  * using the mouse to be able to easily implement applications that require
  * simple scene interaction.
  */
+
+// TODO: Add Linux implementation.
+#ifdef _WIN32
+
 class DefaultWindow:public RenderWindow
 {
   public:
@@ -207,6 +211,8 @@ class DefaultWindow:public RenderWindow
 
     wrapgl::Camera m_camera; ///< The window's default camera.
 };
+
+#endif // _WIN32
 
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(default:4355)

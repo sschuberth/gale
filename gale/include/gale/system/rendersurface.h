@@ -41,6 +41,10 @@ namespace system {
  * This class serves as a base for everything that requires a render surface,
  * e.g. on-screen windows or off-screen buffers to render to using OpenGL.
  */
+
+// TODO: Add Linux implementation.
+#ifdef _WIN32
+
 class RenderSurface
 {
   public:
@@ -122,6 +126,8 @@ class RenderSurface
     static WindowHandle s_window;  ///< Handle to the hidden window.
     static ContextHandle s_handle; ///< Handle to the render context.
 };
+
+#endif // _WIN32
 
 } // namespace system
 

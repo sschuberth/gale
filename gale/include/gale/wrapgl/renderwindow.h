@@ -47,6 +47,10 @@ namespace wrapgl {
  * render to using OpenGL. It makes use of the WGL_ARB_pixel_format and
  * WGL_ARB_pixel_format_float extensions to specify the desired pixel format.
  */
+
+// TODO: Add Linux implementation.
+#ifdef _WIN32
+
 class RenderWindow:public system::RenderSurface
 {
   public:
@@ -125,6 +129,8 @@ class RenderWindow:public system::RenderSurface
     WindowHandle m_window;  ///< Handle to the render window.
     ContextHandle m_handle; ///< Handle to the render context.
 };
+
+#endif // _WIN32
 
 } // namespace wrapgl
 

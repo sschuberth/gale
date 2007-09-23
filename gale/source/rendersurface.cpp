@@ -31,6 +31,9 @@ namespace gale {
 
 namespace system {
 
+// TODO: Add Linux implementation.
+#ifdef _WIN32
+
 ATOM RenderSurface::s_atom=0;
 int RenderSurface::s_instances=0;
 
@@ -162,6 +165,8 @@ LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 
     return DefWindowProc(getWindowHandle(),uMsg,wParam,lParam);
 }
+
+#endif // _WIN32
 
 } // namespace system
 
