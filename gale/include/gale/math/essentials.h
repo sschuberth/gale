@@ -36,11 +36,8 @@
 #endif
 #include <math.h>
 
+#include <intrin.h>
 #include <stdlib.h>
-
-#ifdef GALE_SSE
-    #include <xmmintrin.h>
-#endif
 
 #include <limits>
 
@@ -109,15 +106,15 @@ inline float convRadToDeg(short const angle)
 //@{
 
 /// Returns the number of leading (most significant) zero bits in \a x.
-inline unsigned int countLeadingZeroBits(unsigned int x)
+inline unsigned long countLeadingZeroBits(unsigned long x)
 {
+#ifdef __GNUC__
+
     if (x==0) {
         return sizeof(x)*8;
     }
 
-#ifdef __GNUC__
-
-    unsigned int result;
+    unsigned long result;
     __asm__(
         "bsrl %[x],%[result]\n\t"
         "xorl $31,%[result]\n\t"
@@ -127,7 +124,21 @@ inline unsigned int countLeadingZeroBits(unsigned int x)
     );
     return result;
 
-#elif defined(_MSC_VER) && !defined(_WIN64)
+#elif defined(_MSC_VER)
+
+#ifdef _WIN64
+
+    unsigned long index;
+    if (!_BitScanReverse(&index,x)) {
+        return sizeof(x)*8;
+    }
+    return index^31;
+
+#else // _WIN64
+
+    if (x==0) {
+        return sizeof(x)*8;
+    }
 
     // MSVC 8.0 does not support inline assembly on the x64 platform.
     __asm {
@@ -135,24 +146,26 @@ inline unsigned int countLeadingZeroBits(unsigned int x)
         xor eax,31
     }
 
-#else
+#endif // _WIN64
 
-    unsigned int const MSB=sizeof(x)*8-1;
-    unsigned int const mask=1UL<<MSB;
+#else // __GNUC__
+
+    unsigned long const MSB=sizeof(x)*8-1;
+    unsigned long const mask=1UL<<MSB;
 
     // At this point, we know there is at least one bit set.
-    unsigned int count=0;
+    unsigned long count=0;
     while ((x&mask)==0) {
         ++count;
         x<<=1;
     }
     return count;
 
-#endif
+#endif // __GNUC__
 }
 
 /// Returns the number of set bits in \a x.
-inline unsigned int countSetBits(unsigned int x) {
+inline unsigned long countSetBits(unsigned long x) {
     x =    ((x & 0xaaaaaaaa) >>  1) + (x & 0x55555555);
     x =    ((x & 0xcccccccc) >>  2) + (x & 0x33333333);
     x =    ((x & 0xf0f0f0f0) >>  4) + (x & 0x0f0f0f0f);
@@ -236,10 +249,10 @@ inline int roundToEven(float const f)
 
     int i;
     __asm__(
-        "fistpl %[f]\n\t"
-        : "=m" (i)     /* Output  */
-        : [f] "t" (f)  /* Input   */
-        :              /* Clobber */
+        "fistpl %[i]\n\t"
+        : [i] "=m" (i)  /* Output  */
+        : "t" (f)       /* Input   */
+        :               /* Clobber */
     );
     return i;
 
@@ -253,11 +266,11 @@ inline int roundToEven(float const f)
     }
     return i;
 
-#else
+#else // GALE_SSE
 
     return static_cast<int>(f+0.5f);
 
-#endif // __GNUC__
+#endif // GALE_SSE
 }
 
 /// Rounds \a f to the nearest integer towards zero (truncating the number).
@@ -269,10 +282,10 @@ inline int roundToZero(float const f)
 
     int i;
     __asm__(
-        "fisttpl %[f]\n\t"
-        : "=m" (i)     /* Output  */
-        : [f] "t" (f)  /* Input   */
-        :              /* Clobber */
+        "fisttpl %[i]\n\t"
+        : [i] "=m" (i)  /* Output  */
+        : "t" (f)       /* Input   */
+        :               /* Clobber */
     );
     return i;
 
@@ -290,11 +303,11 @@ inline int roundToZero(float const f)
 
     return _mm_cvttss_si32(_mm_load_ss(&f));
 
-#else
+#else // GALE_SSE3
 
     return static_cast<int>(f);
 
-#endif
+#endif // GALE_SSE3
 }
 
 //@}
@@ -377,6 +390,96 @@ inline long double abs(long double const x)
  */
 //@{
 
+/// Returns whether \a x is an exact power of two.
+inline bool isPowerOf2(unsigned int const x)
+{
+    if (x==0) {
+        return false;
+    }
+    return (x&(x-1))==0;
+}
+
+/// Returns the position of the least significant bit set in \a x (the least
+/// significant bit has index 0).
+inline int getLSBSet(unsigned int x)
+{
+    if (x==0) {
+        return -1;
+    }
+
+#ifdef __GNUC__
+
+    int result;
+    __asm__(
+        "bsfl %[x],%[result]\n\t"
+        : [result] "=r" (result)  /* Output  */
+        : [x] "r" (x)             /* Input   */
+        : "cc"                    /* Clobber */
+    );
+    return result;
+
+#elif defined(_MSC_VER) && !defined(_WIN64)
+
+    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    __asm {
+        bsf eax,x
+    }
+
+#else // __GNUC__
+
+    // At this point, we know there is at least one bit set.
+    int index=0;
+    while ((x&1)==0) {
+        ++index;
+        x>>=1;
+    }
+    return index;
+
+#endif // __GNUC__
+}
+
+/// Returns the position of the most significant bit set in \a x (the least
+/// significant bit has index 0).
+inline int getMSBSet(unsigned int x)
+{
+    if (x==0) {
+        return -1;
+    }
+
+#ifdef __GNUC__
+
+    int result;
+    __asm__(
+        "bsrl %[x],%[result]\n\t"
+        : [result] "=r" (result)  /* Output  */
+        : [x] "r" (x)             /* Input   */
+        : "cc"                    /* Clobber */
+    );
+    return result;
+
+#elif defined(_MSC_VER) && !defined(_WIN64)
+
+    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    __asm {
+        bsr eax,x
+    }
+
+#else // __GNUC__
+
+    unsigned int const MSB=sizeof(x)*8-1;
+    unsigned int const mask=1UL<<MSB;
+
+    // At this point, we know there is at least one bit set.
+    int index=MSB;
+    while ((x&mask)==0) {
+        --index;
+        x<<=1;
+    }
+    return index;
+
+#endif // __GNUC__
+}
+
 /// Returns the smallest power of 2 that is greater than or equal to \a x,
 /// except for \a x=0 and \a x>2147483648 which returns 0.
 inline unsigned int getCeilPow2(unsigned int const x)
@@ -385,15 +488,16 @@ inline unsigned int getCeilPow2(unsigned int const x)
 
     unsigned int result;
     __asm__(
-        "xor eax,eax\n\t"
-        "dec ecx\n\t"
-        "bsr ecx,ecx\n\t"
-        "cmovz ecx,eax\n\t"
-        "setnz al\n\t"
-        "inc eax\n\t"
-        "shl eax,cl\n\t"
-        : "=a" (result)
-        : "c" (x)
+        "decl %%edx\n\t"
+        "xorl %%eax,%%eax\n\t"
+        "bsrl %%edx,%%ecx\n\t"
+        "cmovzl %%eax,%%ecx\n\t"
+        "setnz %%al\n\t"
+        "incl %%eax\n\t"
+        "shll %%cl,%%eax\n\t"
+        : "=a" (result)  /* Output  */
+        : "d" (x)        /* Input   */
+        : "%ecx", "cc"   /* Clobber */
     );
     return result;
 
@@ -401,17 +505,17 @@ inline unsigned int getCeilPow2(unsigned int const x)
 
     // MSVC 8.0 does not support inline assembly on the x64 platform.
     __asm {
-        mov ecx,x
+        mov edx,x
+        dec edx
         xor eax,eax
-        dec ecx
-        bsr ecx,ecx
+        bsr ecx,edx
         cmovz ecx,eax
         setnz al
         inc eax
         shl eax,cl
     }
 
-#else
+#else // __GNUC__
 
     if (x==0) {
         return 0;
@@ -430,12 +534,13 @@ inline unsigned int getFloorPow2(unsigned int const x)
 
     unsigned int result;
     __asm__(
-        "xor eax,eax\n\t"
-        "bsr ecx,ecx\n\t"
-        "setnz al\n\t"
-        "shl eax,cl\n\t"
-        : "=a" (result)
-        : "c" (x)
+        "xorl %%eax,%%eax\n\t"
+        "bsrl %%edx,%%ecx\n\t"
+        "setnz %%al\n\t"
+        "shll %%cl,%%eax\n\t"
+        : "=a" (result)  /* Output  */
+        : "d" (x)        /* Input   */
+        : "%ecx", "cc"   /* Clobber */
     );
     return result;
 
@@ -443,14 +548,14 @@ inline unsigned int getFloorPow2(unsigned int const x)
 
     // MSVC 8.0 does not support inline assembly on the x64 platform.
     __asm {
-        mov ecx,x
+        mov edx,x
         xor eax,eax
-        bsr ecx,ecx
+        bsr ecx,edx
         setnz al
         shl eax,cl
     }
 
-#else
+#else // __GNUC__
 
     int i=getMSBSet(x);
     if (i<0) {
@@ -459,97 +564,6 @@ inline unsigned int getFloorPow2(unsigned int const x)
     return 1UL<<static_cast<unsigned int>(i);
 
 #endif // __GNUC__
-}
-
-/// Returns the position of the least significant bit set in \a x (the least
-/// significant bit has index 0).
-inline int getLSBSet(unsigned int const x)
-{
-    if (x==0) {
-        return -1;
-    }
-
-#ifdef __GNUC__
-
-    int result;
-    __asm__(
-        "bsfl %[x],%[result]\n\t"
-        : [result] "=r" (result)
-        : [x] "r" (x)
-        : "cc"
-    );
-    return result;
-
-#elif defined(_MSC_VER) && !defined(_WIN64)
-
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
-    __asm {
-        mov ebx,x
-        bsf eax,ebx
-    }
-
-#else
-
-    int index=0;
-    while ((x&1)==0) {
-        ++index;
-        x>>=1;
-    }
-    return index;
-
-#endif // __GNUC__
-}
-
-/// Returns the position of the most significant bit set in \a x (the least
-/// significant bit has index 0).
-inline int getMSBSet(unsigned int const x)
-{
-    if (x==0) {
-        return -1;
-    }
-
-#ifdef __GNUC__
-
-    int result;
-    __asm__(
-        "bsrl %[x],%[result]\n\t"
-        : [result] "=r" (result)
-        : [x] "r" (x)
-        : "cc"
-    );
-    return result;
-
-#elif defined(_MSC_VER) && !defined(_WIN64)
-
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
-    __asm {
-        mov ebx,x
-        bsr eax,ebx
-    }
-
-#else
-
-    unsigned int const MSB=(1UL<<(sizeof(x)+1))-1;
-    unsigned int const mask=1UL<<MSB;
-
-    // At this point, we know there is at least one bit set.
-    int index=MSB;
-    while ((x&mask)==0) {
-        --index;
-        x<<=1;
-    }
-    return index;
-
-#endif // __GNUC__
-}
-
-/// Returns whether \a x is an exact power of two.
-inline bool isPowerOf2(unsigned int const x)
-{
-    if (x==0) {
-        return false;
-    }
-    return (x&(x-1))==0;
 }
 
 //@}

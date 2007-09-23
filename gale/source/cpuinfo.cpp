@@ -70,7 +70,7 @@ CPUInfo::CPUInfo():
               "=d" (m_std_feat_flags_edx),
               "=c" (m_std_feat_flags_ecx)
             :                               /* Input   */
-            :                               /* Clobber */
+            : "cc"                          /* Clobber */
         );
 
 #else // __GNUC__
@@ -111,7 +111,7 @@ CPUInfo::CPUInfo():
             "popl %%ebx\n\t"
             : "=a" (m_std_cache_params)  /* Output  */
             :                            /* Input   */
-            : "%ecx", "%edx"             /* Clobber */
+            : "%ecx", "%edx", "cc"       /* Clobber */
         );
 
 #else // __GNUC__
@@ -239,10 +239,10 @@ bool CPUInfo::hasCPUID() const
         "popl %%eax\n\t"
         "cmpl %%ecx,%%eax\n\t"
         "sete %%cl\n\t"
-        "movzx %%cl,%%eax\n\t"
-        : "=a" (eax)  /* Output  */
-        :             /* Input   */
-        : "%ecx"      /* Clobber */
+        "movzxl %%cl,%%eax\n\t"
+        : "=a" (eax)    /* Output  */
+        :               /* Input   */
+        : "%ecx", "cc"  /* Clobber */
     );
     return eax;
 }
@@ -264,7 +264,7 @@ unsigned int CPUInfo::getMaxCPUIDStdFunc()
           "=d" (*vendor4),
           "=c" (*vendor8)  /* Output  */
         :                  /* Input   */
-        :                  /* Clobber */
+        : "cc"             /* Clobber */
     );
     return eax;
 }
@@ -280,9 +280,9 @@ unsigned int CPUInfo::getMaxCPUIDExtFunc() const
         "popl %%ecx\n\t"
         "popl %%ebx\n\t"
         "subl %%ecx,%%eax\n\t"
-        : "=a" (eax)      /* Output  */
-        :                 /* Input   */
-        : "%ecx", "%edx"  /* Clobber */
+        : "=a" (eax)            /* Output  */
+        :                       /* Input   */
+        : "%ecx", "%edx", "cc"  /* Clobber */
     );
     return eax;
 }
