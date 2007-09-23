@@ -50,6 +50,10 @@ namespace wrapgl {
  * the negative z-axis, the positive y-axis marks the "up" direction and the
  * positive x-axis marks the "right" direction.
  */
+
+// TODO: Add Linux implementation.
+#ifdef _WIN32
+
 class Camera
 {
   public:
@@ -258,6 +262,8 @@ class Camera
     math::Mat4d m_projection;  ///< Projection matrix of the camera.
     bool m_projection_changed; ///< Marks whether the projection needs to be applied.
 };
+
+#endif // _WIN32
 
 #pragma pack(pop)
 
