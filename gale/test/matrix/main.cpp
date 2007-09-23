@@ -34,7 +34,7 @@ int main()
 
     n.invert();
 
-    G_ASSERT(m==n)
+    assert(m==n);
 
     m(0,3)=r.getRandom01();
     m(1,3)=r.getRandom01();
@@ -48,18 +48,18 @@ int main()
 
     cout << m << endl;
 
-    G_ASSERT(m==HMat4f::IDENTITY())
-    G_ASSERT(n*HMat4f::IDENTITY()==n)
+    assert(m==HMat4f::IDENTITY());
+    assert(n*HMat4f::IDENTITY()==n);
 
     HMat4f b=a+a;
-    G_ASSERT(a==b/2)
-    G_ASSERT(b-a==a)
+    assert(a==b/2);
+    assert(b-a==a);
 
     HMat4f projection=HMat4f::Factory::Projection(Vec3f::X());
-    G_ASSERT(projection*Vec3f::X()==Vec3f::ZERO())
-    G_ASSERT(projection*Vec3f::Y()==Vec3f::Y())
-    G_ASSERT(projection*Vec3f::Z()==Vec3f::Z())
-    G_ASSERT(projection*Vec3f(1,1,1)==Vec3f(0,1,1))
+    assert(projection*Vec3f::X()==Vec3f::ZERO());
+    assert(projection*Vec3f::Y()==Vec3f::Y());
+    assert(projection*Vec3f::Z()==Vec3f::Z());
+    assert(projection*Vec3f(1,1,1)==Vec3f(0,1,1));
 
 #ifdef _WIN32
     system("pause");
