@@ -110,7 +110,7 @@ class RandomBase
 
     /// Returns a floating-point random number in range [0,1].
     T getRandom01() {
-        static T const s=T(1)/4294967295;
+        static T const s=1/T(UINT_MAX);
         return getRandom()*s;
     }
 
@@ -121,7 +121,7 @@ class RandomBase
 
     /// Returns a floating-point random number in range [0,1[.
     T getRandom0Excl1() {
-        static T const s=T(1)/4294967296;
+        static T const s=1/T(UINT_MAX+1);
         return getRandom()*s;
     }
 
@@ -132,7 +132,7 @@ class RandomBase
 
     /// Returns a floating-point random number in range ]0,1].
     T getRandomExcl01() {
-        static T const s=T(1)/4294967296;
+        static T const s=1/T(UINT_MAX+1);
         return T(getRandom()+0.5)*s;
     }
 
