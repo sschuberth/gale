@@ -24,8 +24,14 @@ Source Formatting
 
 - For all top-level control blocks except namespaces write the opening curly
   brace "{" in the first column of the next line. Otherwise, write it in the
-  same line as the keyword that opens the block, with exactly one space between
-  the keyword and the opening curly brace.
+  same line as the statement that opens the block, with exactly one space between
+  the statement and the opening curly brace.
+
+- Use blocks enclosed by curly braces with proper indenting even for single line
+  statements, e.g. single line "if" statements.
+
+- Put the "else" statement into its own line so its first letter lines up with
+  the closing curly brace of the block above.
 
 - Use four spaces for indenting, no tabs. Even when used carefully, tabs cause
   too much formatting errors between editors with different tab settings.
@@ -44,18 +50,6 @@ Source Formatting
   official documentation. This means to use proper spelling, grammar and
   punctuation. Besides being good style, this helps to write clear comments for
   others to understand.
-
-Data Types
-----------
-
-- Do not introduce type definitions for primitive data types, the given types
-  are well-defined on both Windows and Linux, for 32-bit and 64-bit. There
-  already enough type definitions for the same data types across third-party
-  libraries.
-
-- Use the most common and shortest names, be explicit about unsigned data types.
-  I.e. instead of "signed long" write "int", instead of "unsigned" write
-  "unsigned int". Being canonical and explicit about this eases reading the code.
 
 General Coding
 --------------
