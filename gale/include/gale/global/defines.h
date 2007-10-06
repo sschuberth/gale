@@ -35,7 +35,7 @@
 
 /**
  * \def G_ASSERT_CALL
- * Run-time assertion for function calls.
+ * Run-time assertion for function call results.
  */
 
 #ifdef G_ASSERT_CALL
