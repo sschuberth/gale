@@ -3,7 +3,7 @@
  *                      |  _  ||  _  ||  ||  -__|
  *                      |___  ||___._||__||_____|
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
- * see the project page at http://developer.berlios.de/projects/gale/
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
  * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
@@ -74,6 +74,76 @@
     #define G_INLINE __forceinline
 #else
     #define G_INLINE inline
+#endif
+
+/**
+ * \def G_ARCH_X86_64
+ * AMD64 / Intel 64 architecture define, see
+ * <http://predef.sourceforge.net/prearch.html>.
+ */
+
+#if defined(__amd64__) || defined(__x86_64__) || defined(_M_X64)
+    #ifdef G_ARCH_DEFINED
+        #error The architecture has already been defined.
+    #else
+        #define G_ARCH_DEFINED
+    #endif
+    #define G_ARCH_X86_64
+#endif
+
+/**
+ * \def G_ARCH_X86
+ * Intel x86 architecture define, see
+ * <http://predef.sourceforge.net/prearch.html>.
+ */
+
+#if defined(__i386__) || defined(__x86__) || defined(_M_IX86)
+    #ifdef G_ARCH_DEFINED
+        #error The architecture has already been defined.
+    #else
+        #define G_ARCH_DEFINED
+    #endif
+    #define G_ARCH_X86
+#endif
+
+#ifndef G_ARCH_DEFINED
+    #error No architecture has been defined.
+#endif
+
+/**
+ * \def G_OS_LINUX
+ * Linux operating system define, see
+ * <http://predef.sourceforge.net/preos.html>.
+ */
+
+#if defined(__linux) || defined(__linux__)
+    #ifdef G_OS_DEFINED
+        #error The operating system has already been defined.
+    #else
+        #define G_OS_DEFINED
+    #endif
+    #define G_OS_LINUX
+#endif
+
+/**
+ * \def G_OS_WINDOWS
+ * Windows operating system define, see
+ * <http://predef.sourceforge.net/preos.html>.
+ */
+
+// These defines are also set under Windows 64-bit. They do *not* indicate the
+// bitness of the OS the compiler is running on, but the bitness of the target OS.
+#if defined(_WIN32) || defined(__WIN32__)
+    #ifdef G_OS_DEFINED
+        #error The operating system has already been defined.
+    #else
+        #define G_OS_DEFINED
+    #endif
+    #define G_OS_WINDOWS
+#endif
+
+#ifndef G_OS_DEFINED
+    #error No operating system has been defined.
 #endif
 
 #endif // DEFINES_H
