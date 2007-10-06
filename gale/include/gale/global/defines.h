@@ -185,7 +185,7 @@
 
 /**
  * \def G_COMP_MSVC
- * Microsoft Visual C/C++ compiler define, see
+ * Microsoft Visual C++ compiler define, see
  * <http://predef.sourceforge.net/precomp.html>.
  */
 
