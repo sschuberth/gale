@@ -3,7 +3,7 @@
  *                      |  _  ||  _  ||  ||  -__|
  *                      |___  ||___._||__||_____|
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
- * see the project page at http://developer.berlios.de/projects/gale/
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
  * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
@@ -64,8 +64,8 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
         RenderBuffer() {
             if (GLEX_EXT_framebuffer_object!=GL_TRUE) {
                 // Initialize an OpenGL extension to be able to replace the
-                // system-provided frame buffer with a custom set of image buffers
-                // (see http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt).
+                // system-provided frame buffer with a custom set of image buffers,
+                // see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
                 G_ASSERT_CALL(GLEX_EXT_framebuffer_object_init());
             }
 
@@ -111,8 +111,8 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
     FrameBuffer() {
         if (GLEX_EXT_framebuffer_object!=GL_TRUE) {
             // Initialize an OpenGL extension to be able to replace the
-            // system-provided frame buffer with a custom set of image buffers
-            // (see http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt).
+            // system-provided frame buffer with a custom set of image buffers,
+            // see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
             G_ASSERT_CALL(GLEX_EXT_framebuffer_object_init());
         }
 

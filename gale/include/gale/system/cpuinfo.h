@@ -3,7 +3,7 @@
  *                      |  _  ||  _  ||  ||  -__|
  *                      |___  ||___._||__||_____|
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
- * see the project page at http://developer.berlios.de/projects/gale/
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
  * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
@@ -39,13 +39,13 @@ namespace system {
 
 /**
  * Using the x86 CPUID instruction, this class reports detailed processor
- * capabilities. For details refer to:
+ * capabilities. For details see these (or more recent) links:
  *
  * - Intel Processor Identification and the CPUID Instruction
- *   http://www.intel.com/design/xeon/applnots/241618.htm
+ *   <http://www.intel.com/design/xeon/applnots/241618.htm>
  *
  * - AMD CPUID Specification
- *   http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/25481.pdf
+ *   <http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/25481.pdf>
  */
 class CPUInfo:public global::Singleton<CPUInfo>
 {
@@ -55,7 +55,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Checks if this is a little-endian (as opposed to big-endian) machine.
     bool isLittleEndian() const {
-        // See http://sjbaker.org/steve/software/cute_code.html.
+        // See <http://sjbaker.org/steve/software/cute_code.html>.
         static int const i=1;
         return *reinterpret_cast<char const*>(&i)!=0;
     }

@@ -3,7 +3,7 @@
  *                      |  _  ||  _  ||  ||  -__|
  *                      |___  ||___._||__||_____|
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
- * see the project page at http://developer.berlios.de/projects/gale/
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
  * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
@@ -43,13 +43,13 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
 
     if (GLEX_WGL_ARB_pixel_format!=GL_TRUE) {
         // Initialize an OpenGL extension for more sophisticated selection of a
-        // pixel format (see http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt).
+        // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
         G_ASSERT_CALL(GLEX_WGL_ARB_pixel_format_init());
     }
 
     if (GLEX_ARB_color_buffer_float!=GL_TRUE) {
         // Initialize an OpenGL extension for support of floating-point RGBA
-        // pixel formats (see http://opengl.org/registry/specs/ARB/color_buffer_float.txt).
+        // pixel formats, see <http://opengl.org/registry/specs/ARB/color_buffer_float.txt>.
         G_ASSERT_CALL(GLEX_ARB_color_buffer_float_init());
     }
 

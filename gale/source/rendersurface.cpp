@@ -3,7 +3,7 @@
  *                      |  _  ||  _  ||  ||  -__|
  *                      |___  ||___._||__||_____|
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
- * see the project page at http://developer.berlios.de/projects/gale/
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
  * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
@@ -156,8 +156,8 @@ LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
             return 0;
         }
 
-        // Avoid GDI clearing the background under Windows Vista with Aero enabled
-        // (see http://opengl.org/pipeline/article/vol003_7/).
+        // Avoid GDI clearing the background under Windows Vista with Aero
+        // enabled, see <http://opengl.org/pipeline/article/vol003_7/>.
         case WM_ERASEBKGND: {
             return 1;
         }

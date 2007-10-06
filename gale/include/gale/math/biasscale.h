@@ -3,7 +3,7 @@
  *                      |  _  ||  _  ||  ||  -__|
  *                      |___  ||___._||__||_____|
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
- * see the project page at http://developer.berlios.de/projects/gale/
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
  * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
@@ -52,8 +52,8 @@ struct BiasScale
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
-     * static methods instead of static variables are used here (see
-     * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14).
+     * static methods instead of static variables are used here, see
+     * <http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14>.
      */
     //@{
 
@@ -130,8 +130,8 @@ struct ScaleBias
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
-     * static methods instead of static variables are used here (see
-     * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14).
+     * static methods instead of static variables are used here, see
+     * <http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14>.
      */
     //@{
 

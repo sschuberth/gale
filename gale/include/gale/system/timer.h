@@ -3,7 +3,7 @@
  *                      |  _  ||  _  ||  ||  -__|
  *                      |___  ||___._||__||_____|
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
- * see the project page at http://developer.berlios.de/projects/gale/
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
  * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
@@ -61,8 +61,7 @@ class Timer
 #ifdef _WIN32
         if (s_instances==0) {
             // Work around a bug in Windows on machines with multiple CPUs that
-            // do not have a hotfix (http://support.microsoft.com/?id=896256)
-            // applied.
+            // do not have a hotfix applied, see <http://support.microsoft.com/?id=896256>.
             s_mask=SetThreadAffinityMask(GetCurrentThread(),1);
         }
         ++s_instances;

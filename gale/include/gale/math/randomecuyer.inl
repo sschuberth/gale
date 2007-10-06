@@ -1,8 +1,8 @@
 /**
  * Random number generator class based on the maximally equidistributed combined
  * Tausworthe generator by L'Ecuyer. The period of the generator is 2^88 (about
- * 10^26) and it uses only three 32-bit integers to store its state (see
- * http://root.cern.ch/root/html/TRandom2.html).
+ * 10^26) and it uses only three 32-bit integers to store its state, see
+ * <http://root.cern.ch/root/html/TRandom2.html>.
  */
 struct RandomEcuyerImpl
 {

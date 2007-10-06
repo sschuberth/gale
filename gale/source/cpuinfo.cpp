@@ -3,7 +3,7 @@
  *                      |  _  ||  _  ||  ||  -__|
  *                      |___  ||___._||__||_____|
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
- * see the project page at http://developer.berlios.de/projects/gale/
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
  * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
@@ -216,11 +216,11 @@ CPUInfo::CPUInfo():
 
 #ifdef __GNUC__
 
-// Brennan's Guide to Inline Assembly
-// http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html
+// See Brennan's Guide to Inline Assembly,
+// <http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html>
 
-// Machine Constraints - Using the GNU Compiler Collection (GCC)
-// http://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html#Machine-Constraints
+// See Machine Constraints - Using the GNU Compiler Collection (GCC),
+// <http://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html#Machine-Constraints>
 
 // Always preserve the EBX register to be compatible with the -fPIC option.
 // Note that specifying EBX in the clobber list does *not* work!
