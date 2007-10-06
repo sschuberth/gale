@@ -76,6 +76,10 @@
     #define G_INLINE inline
 #endif
 
+/*
+ * Architecture defines
+ */
+
 /**
  * \def G_ARCH_X86_64
  * AMD64 / Intel 64 architecture define, see
@@ -108,7 +112,13 @@
 
 #ifndef G_ARCH_DEFINED
     #error No architecture has been defined.
+#else
+    #undef G_ARCH_DEFINED
 #endif
+
+/*
+ * Operating system defines
+ */
 
 /**
  * \def G_OS_LINUX
@@ -144,6 +154,56 @@
 
 #ifndef G_OS_DEFINED
     #error No operating system has been defined.
+#else
+    #undef G_OS_DEFINED
 #endif
+
+/*
+ * Compiler defines
+ */
+
+#ifdef G_COMP_VERSION
+    #undef G_COMP_VERSION
+#endif
+
+#define G_COMP_VERSION(major,minor,patch) ((major)*10000000 + (minor)*100000 + (patch))
+
+/**
+ * \def G_COMP_GNUC
+ * GNU C/C++ compiler define, see
+ * <http://predef.sourceforge.net/precomp.html>.
+ */
+
+#ifdef __GNUC__
+    #ifdef G_COMP_DEFINED
+        #error The compiler has already been defined.
+    #else
+        #define G_COMP_DEFINED
+    #endif
+    #define G_COMP_GNUC G_COMP_VERSION(__GNUC__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__)
+#endif
+
+/**
+ * \def G_COMP_MSVC
+ * Microsoft Visual C/C++ compiler define, see
+ * <http://predef.sourceforge.net/precomp.html>.
+ */
+
+#ifdef _MSC_VER
+    #ifdef G_COMP_DEFINED
+        #error The compiler has already been defined.
+    #else
+        #define G_COMP_DEFINED
+    #endif
+    #define G_COMP_MSVC G_COMP_VERSION(_MSC_VER/100-6,_MSC_VER%100,_MSC_FULL_VER-_MSC_VER*10000)
+#endif
+
+#ifndef G_COMP_DEFINED
+    #error No compiler has been defined.
+#else
+    #undef G_COMP_DEFINED
+#endif
+
+#undef G_COMP_VERSION
 
 #endif // DEFINES_H
