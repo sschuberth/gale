@@ -148,18 +148,20 @@ class RandomBase
      */
     //@{
 
-    /// Returns a random normalized vector.
+    /// Returns a random vector.
     Vector<3,T> getVector() {
         Vector<3,T> v;
+
         do {
             v.setX(getRandom0N(2)-1);
             v.setY(getRandom0N(2)-1);
             v.setZ(getRandom0N(2)-1);
         } while (v.getLengthSquared()>1);
-        return v.normalize();
+
+        return v;
     }
 
-    /// Returns a random normalized quaternion.
+    /// Returns a random quaternion.
     Quaternion<T> getQuaternion() {
         return Quaternion<T>(getVector(),getRandom0ExclN(T(2*M_PI)));
     }
