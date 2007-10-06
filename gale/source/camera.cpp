@@ -51,7 +51,8 @@ void Camera::apply(bool force)
             G_ASSERT_OPENGL
 
             glEnable(GL_SCISSOR_TEST);
-        } else {
+        }
+        else {
             glDisable(GL_SCISSOR_TEST);
         }
         G_ASSERT_OPENGL

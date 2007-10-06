@@ -181,7 +181,8 @@ class CPUInfo:public global::Singleton<CPUInfo>
     unsigned int getCoresPerProcessor() const {
         if (isIntel()) {
             return ((m_std_cache_params&0xfc000000)>>26)+1;
-        } else if (isAMD()) {
+        }
+        else if (isAMD()) {
             if (hasHTT() && hasCmpLegacy()) {
                 // This method to determine the number of cores is deprecated
                 // but we use it if it is supported.

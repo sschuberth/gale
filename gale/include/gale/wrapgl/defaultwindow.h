@@ -179,7 +179,8 @@ class DefaultWindow:public RenderWindow
                         ReleaseCapture();
                         capture=false;
                     }
-                } else {
+                }
+                else {
                     if (!capture) {
                         SetCapture(getWindowHandle());
                         capture=true;

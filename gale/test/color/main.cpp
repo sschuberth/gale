@@ -24,7 +24,8 @@ class TestWindow:public DefaultWindow
         if ((m_value<=0)||(m_value>=255)) {
             if (step<0) {
                 m_value=0;
-            } else {
+            }
+            else {
                 m_value=255;
             }
             step=-step;
@@ -77,7 +78,8 @@ class TestWindow:public DefaultWindow
                 y0=y1;
             }
             glEnd();
-        } else {
+        }
+        else {
             m_camera.setScreenSpaceOrigin(dims.width/4,dims.height/4);
             m_camera.setScreenSpaceDimensions(dims.width/2,dims.height/2);
             m_camera.apply();

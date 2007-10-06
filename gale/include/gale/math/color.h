@@ -84,16 +84,19 @@ struct ColorModel
             if (R==V) {
                 // Red channel is the maximum, determine the minimum.
                 H=(G==m)?(5+bd):(1-gd);
-            } else if (G==V) {
+            }
+            else if (G==V) {
                 // Green channel is the maximum, determine the minimum.
                 H=(B==m)?(1+rd):(3-bd);
-            } else {
+            }
+            else {
                 // Blue channel is the maximum, determine the minimum.
                 H=(R==m)?(3+gd):(5-rd);
             }
 
             H=(H<6)?(H*60):0;
-        } else {
+        }
+        else {
             // Achromatic case, actually hue is undefined!
             H=0;
         }
@@ -154,7 +157,8 @@ struct ColorModel
                     break;
                 }
             }
-        } else {
+        }
+        else {
             // Achromatic case, actually hue is undefined!
             R=G=B=V;
         }

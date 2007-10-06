@@ -70,13 +70,15 @@ int main(int argc,char *argv[]) {
 
         if (r<UINT_MAX/2) {
             ++half0;
-        } else {
+        }
+        else {
             ++half1;
         }
 
         if (r&1) {
             ++odd;
-        } else {
+        }
+        else {
             ++even;
         }
     }
@@ -102,13 +104,15 @@ int main(int argc,char *argv[]) {
 
         if (r<RAND_MAX/2) {
             ++half0;
-        } else {
+        }
+        else {
             ++half1;
         }
 
         if (r&1) {
             ++odd;
-        } else {
+        }
+        else {
             ++even;
         }
     }

@@ -107,7 +107,8 @@ void RenderWindow::processEvents()
         // messages to process.
         if (onIdle()) {
             repaint();
-        } else {
+        }
+        else {
             // Relinquish the rest of the time slice.
             Sleep(0);
         }
