@@ -32,7 +32,7 @@ namespace gale {
 namespace system {
 
 unsigned int Timer::s_instances=0;
-DWORD Timer::s_mask=0;
+DWORD_PTR Timer::s_mask=0;
 
 } // namespace system
 
