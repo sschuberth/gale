@@ -26,6 +26,8 @@
 #ifndef ESSENTIALS_H
 #define ESSENTIALS_H
 
+#include "../global/defines.h"
+
 /**
  * \file
  * Optimized essential mathematical functions
@@ -108,7 +110,7 @@ inline float convRadToDeg(short const angle)
 /// Returns the number of leading (most significant) zero bits in \a x.
 inline unsigned long countLeadingZeroBits(unsigned long x)
 {
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
     if (x==0) {
         return sizeof(x)*8;
@@ -124,9 +126,9 @@ inline unsigned long countLeadingZeroBits(unsigned long x)
     );
     return result;
 
-#elif defined(_MSC_VER)
+#elif defined(G_COMP_MSVC)
 
-#ifdef _WIN64
+#ifdef G_ARCH_X86_64
 
     unsigned long index;
     if (!_BitScanReverse(&index,x)) {
@@ -134,21 +136,21 @@ inline unsigned long countLeadingZeroBits(unsigned long x)
     }
     return index^31;
 
-#else // _WIN64
+#else // G_ARCH_X86_64
 
     if (x==0) {
         return sizeof(x)*8;
     }
 
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     __asm {
         bsr eax,x
         xor eax,31
     }
 
-#endif // _WIN64
+#endif // G_ARCH_X86_64
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
     unsigned long const MSB=sizeof(x)*8-1;
     unsigned long const mask=1UL<<MSB;
@@ -161,7 +163,7 @@ inline unsigned long countLeadingZeroBits(unsigned long x)
     }
     return count;
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
 }
 
 /// Returns the number of set bits in \a x.
@@ -245,7 +247,7 @@ inline int roundToEven(float const f)
 
     return _mm_cvtss_si32(_mm_load_ss(&f));
 
-#elif defined(__GNUC__)
+#elif defined(G_COMP_GNUC)
 
     int i;
     __asm__(
@@ -256,9 +258,9 @@ inline int roundToEven(float const f)
     );
     return i;
 
-#elif defined(_MSC_VER) && !defined(_WIN64)
+#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
 
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     int i;
     __asm {
         fld f
@@ -278,7 +280,9 @@ inline int roundToEven(float const f)
 /// to an integer as it is faster.
 inline int roundToZero(float const f)
 {
-#if defined(GALE_SSE3) && defined(__GNUC__)
+#ifdef GALE_SSE3
+
+#ifdef G_COMP_GNUC
 
     int i;
     __asm__(
@@ -289,9 +293,9 @@ inline int roundToZero(float const f)
     );
     return i;
 
-#elif defined(GALE_SSE3) && defined(_MSC_VER) && !defined(_WIN64)
+#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
 
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     int i;
     __asm {
         fld f
@@ -299,9 +303,11 @@ inline int roundToZero(float const f)
     }
     return i;
 
-#elif defined(GALE_SSE)
+#else // G_COMP_GNUC
 
     return _mm_cvttss_si32(_mm_load_ss(&f));
+
+#endif // G_COMP_GNUC
 
 #else // GALE_SSE3
 
@@ -350,19 +356,19 @@ inline long abs(long const x)
 /// Calls the appropriate run-time function.
 inline long long abs(long long const x)
 {
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
     return ::llabs(x);
 
-#elif defined(_MSC_VER)
+#elif defined(G_COMP_MSVC)
 
     return ::_abs64(x);
 
-#else
+#else // G_COMP_GNUC
 
     return ::abs(x);
 
-#endif
+#endif // G_COMP_GNUC
 }
 
 /// Calls the appropriate run-time function.
@@ -407,7 +413,7 @@ inline int getLSBSet(unsigned int x)
         return -1;
     }
 
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
     int result;
     __asm__(
@@ -418,14 +424,14 @@ inline int getLSBSet(unsigned int x)
     );
     return result;
 
-#elif defined(_MSC_VER) && !defined(_WIN64)
+#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
 
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     __asm {
         bsf eax,x
     }
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
     // At this point, we know there is at least one bit set.
     int index=0;
@@ -435,7 +441,7 @@ inline int getLSBSet(unsigned int x)
     }
     return index;
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
 }
 
 /// Returns the position of the most significant bit set in \a x (the least
@@ -446,7 +452,7 @@ inline int getMSBSet(unsigned int x)
         return -1;
     }
 
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
     int result;
     __asm__(
@@ -457,14 +463,14 @@ inline int getMSBSet(unsigned int x)
     );
     return result;
 
-#elif defined(_MSC_VER) && !defined(_WIN64)
+#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
 
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     __asm {
         bsr eax,x
     }
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
     unsigned int const MSB=sizeof(x)*8-1;
     unsigned int const mask=1UL<<MSB;
@@ -477,14 +483,14 @@ inline int getMSBSet(unsigned int x)
     }
     return index;
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
 }
 
 /// Returns the smallest power of 2 that is greater than or equal to \a x,
 /// except for \a x=0 and \a x>2147483648 which returns 0.
 inline unsigned int getCeilPow2(unsigned int const x)
 {
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
     unsigned int result;
     __asm__(
@@ -501,9 +507,9 @@ inline unsigned int getCeilPow2(unsigned int const x)
     );
     return result;
 
-#elif defined(_MSC_VER) && !defined(_WIN64)
+#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
 
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     __asm {
         mov edx,x
         dec edx
@@ -515,7 +521,7 @@ inline unsigned int getCeilPow2(unsigned int const x)
         shl eax,cl
     }
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
     if (x==0) {
         return 0;
@@ -523,14 +529,14 @@ inline unsigned int getCeilPow2(unsigned int const x)
     int i=getMSBSet(x-1)+1;
     return 1UL<<static_cast<unsigned int>(i);
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
 }
 
 /// Returns the largest power of 2 that is smaller than or equal to \a x, except
 /// for \a x=0 which returns 0.
 inline unsigned int getFloorPow2(unsigned int const x)
 {
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
     unsigned int result;
     __asm__(
@@ -544,9 +550,9 @@ inline unsigned int getFloorPow2(unsigned int const x)
     );
     return result;
 
-#elif defined(_MSC_VER) && !defined(_WIN64)
+#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
 
-    // MSVC 8.0 does not support inline assembly on the x64 platform.
+    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     __asm {
         mov edx,x
         xor eax,eax
@@ -555,7 +561,7 @@ inline unsigned int getFloorPow2(unsigned int const x)
         shl eax,cl
     }
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
     int i=getMSBSet(x);
     if (i<0) {
@@ -563,7 +569,7 @@ inline unsigned int getFloorPow2(unsigned int const x)
     }
     return 1UL<<static_cast<unsigned int>(i);
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
 }
 
 //@}

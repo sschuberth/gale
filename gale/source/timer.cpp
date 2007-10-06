@@ -23,9 +23,9 @@
  *
  */
 
-#ifdef _WIN32
-
 #include "gale/system/timer.h"
+
+#ifdef G_OS_WINDOWS
 
 namespace gale {
 
@@ -38,4 +38,4 @@ DWORD_PTR Timer::s_mask=0;
 
 } // namespace gale
 
-#endif // _WIN32
+#endif // G_OS_WINDOWS

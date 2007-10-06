@@ -52,7 +52,7 @@ namespace wrapgl {
  */
 
 // TODO: Add Linux implementation.
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
 
 class DefaultWindow:public RenderWindow
 {
@@ -213,7 +213,7 @@ class DefaultWindow:public RenderWindow
     wrapgl::Camera m_camera; ///< The window's default camera.
 };
 
-#endif // _WIN32
+#endif // G_OS_WINDOWS
 
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(default:4355)

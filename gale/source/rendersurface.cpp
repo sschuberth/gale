@@ -32,7 +32,7 @@ namespace gale {
 namespace system {
 
 // TODO: Add Linux implementation.
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
 
 ATOM RenderSurface::s_atom=0;
 int RenderSurface::s_instances=0;
@@ -62,9 +62,6 @@ RenderSurface::RenderSurface()
 {
     // We only need to create one rendering context once for all instances.
     if (s_instances==0) {
-
-#ifdef _WIN32
-
         // Register a minimal class whose windows allocate a unique device context.
         WNDCLASS cls;
         memset(&cls,0,sizeof(cls));
@@ -114,13 +111,6 @@ RenderSurface::RenderSurface()
         // Create and activate a rendering context.
         s_handle.render=wglCreateContext(s_handle.device);
         assert(s_handle.render!=NULL);
-
-#else
-
-        // TODO: Linux code.
-
-#endif // _WIN32
-
     }
     ++s_instances;
 }
@@ -166,7 +156,7 @@ LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
     return DefWindowProc(getWindowHandle(),uMsg,wParam,lParam);
 }
 
-#endif // _WIN32
+#endif // G_OS_WINDOWS
 
 } // namespace system
 

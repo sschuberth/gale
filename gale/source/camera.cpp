@@ -30,7 +30,7 @@ namespace gale {
 namespace wrapgl {
 
 // TODO: Add Linux implementation.
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
 
 Camera* Camera::s_current=NULL;
 
@@ -93,7 +93,7 @@ void Camera::apply(bool force)
     s_current=this;
 }
 
-#endif // _WIN32
+#endif // G_OS_WINDOWS
 
 } // namespace wrapgl
 

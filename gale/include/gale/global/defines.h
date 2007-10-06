@@ -31,51 +31,6 @@
  * Global macro and type definitions
  */
 
-#include <assert.h>
-
-/**
- * \def G_ASSERT_CALL
- * Run-time assertion for function call results.
- */
-
-#ifdef G_ASSERT_CALL
-    #undef G_ASSERT_CALL
-#endif
-
-#ifndef NDEBUG
-    #define G_ASSERT_CALL(x) assert(x);
-#else
-    #define G_ASSERT_CALL(x) x;
-#endif
-
-/**
- * \def G_ASSERT_OPENGL
- * Run-time assertion for the OpenGL error flag.
- */
-
-#ifdef G_ASSERT_OPENGL
-    #undef G_ASSERT_OPENGL
-#endif
-
-#define G_ASSERT_OPENGL assert(glGetError()==GL_NO_ERROR);
-
-/**
- * \def G_INLINE
- * Compiler-specific keyword definition to force a function to be inline.
- */
-
-#ifdef G_INLINE
-    #undef G_INLINE
-#endif
-
-#ifdef __GNUC__
-    #define G_INLINE inline __attribute__ ((always_inline))
-#elif defined(_MSC_VER)
-    #define G_INLINE __forceinline
-#else
-    #define G_INLINE inline
-#endif
-
 /*
  * Architecture defines
  */
@@ -205,5 +160,54 @@
 #endif
 
 #undef G_COMP_VERSION
+
+/*
+ * Miscellaneous defines
+ */
+
+#include <assert.h>
+
+/**
+ * \def G_ASSERT_CALL
+ * Run-time assertion for function call results.
+ */
+
+#ifdef G_ASSERT_CALL
+    #undef G_ASSERT_CALL
+#endif
+
+#ifndef NDEBUG
+    #define G_ASSERT_CALL(x) assert(x);
+#else
+    #define G_ASSERT_CALL(x) x;
+#endif
+
+/**
+ * \def G_ASSERT_OPENGL
+ * Run-time assertion for the OpenGL error flag.
+ */
+
+#ifdef G_ASSERT_OPENGL
+    #undef G_ASSERT_OPENGL
+#endif
+
+#define G_ASSERT_OPENGL assert(glGetError()==GL_NO_ERROR);
+
+/**
+ * \def G_INLINE
+ * Compiler-specific keyword definition to force a function to be inline.
+ */
+
+#ifdef G_INLINE
+    #undef G_INLINE
+#endif
+
+#ifdef G_COMP_GNUC
+    #define G_INLINE inline __attribute__ ((always_inline))
+#elif defined(G_COMP_MSVC)
+    #define G_INLINE __forceinline
+#else
+    #define G_INLINE inline
+#endif
 
 #endif // DEFINES_H

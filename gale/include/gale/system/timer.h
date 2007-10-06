@@ -47,7 +47,7 @@ class Timer
     /// Suspends the execution of the current thread for the given amount of
     /// milliseconds.
     static void sleep(unsigned int milliseconds) {
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
         Sleep(milliseconds);
 #else
         usleep(milliseconds*1000);
@@ -58,7 +58,7 @@ class Timer
     /// reset() manually. On Windows, this also locks the current thread to the
     /// first CPU for compatibility.
     Timer() {
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
         if (s_instances==0) {
             // Work around a bug in Windows on machines with multiple CPUs that
             // do not have a hotfix applied, see <http://support.microsoft.com/?id=896256>.
@@ -69,7 +69,7 @@ class Timer
         reset();
     }
 
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
     /// On Windows, the last destructor of any Timer instance unlocks the
     /// current from running on the first CPU only.
     ~Timer() {
@@ -90,7 +90,7 @@ class Timer
 
     /// Sets a new start time for the timer.
     bool start() {
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
         return QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_start))!=FALSE;
 #else
         m_start=times(NULL);
@@ -101,7 +101,7 @@ class Timer
     /// Returns the elapsed time in seconds since reset() was called and stops
     /// the timing. It may be resumed by calling start() again.
     bool stop(double& seconds) {
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
         bool result=(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_stop))!=FALSE);
 
         // On modern CPUs with power-saving capabilities the frequency may vary,
@@ -145,7 +145,7 @@ class Timer
     /// \var m_stop
     /// Stores the last time when stop() was called.
 
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
     /// This is a reference counter for the instances of this class.
     static unsigned int s_instances;
     /// Needed restore the affinity mask after the last instance's destruction.

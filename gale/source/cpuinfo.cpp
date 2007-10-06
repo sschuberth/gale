@@ -23,9 +23,10 @@
  *
  */
 
+#include "gale/global/defines.h"
 #include "gale/system/cpuinfo.h"
 
-#ifdef _WIN64
+#ifdef G_ARCH_X86_64
     #include <intrin.h>
 #endif
 
@@ -47,7 +48,7 @@ CPUInfo::CPUInfo():
         return;
     }
 
-#ifdef _WIN64
+#ifdef G_ARCH_X86_64
     int info[4];
 #endif
 
@@ -57,7 +58,7 @@ CPUInfo::CPUInfo():
         // EBX = APIC ID, processor count, CLFLUSH size, brand ID
         // ECX = Standard feature flags (part 2)
         // EDX = Standard feature flags (part 1)
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
         __asm__(
             "xorl %%eax,%%eax\n\t"
@@ -73,16 +74,16 @@ CPUInfo::CPUInfo():
             : "cc"                          /* Clobber */
         );
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
-#ifdef _WIN64
+#ifdef G_ARCH_X86_64
 
         __cpuid(info,0x00000001);
         m_std_misc_info=info[1];
         m_std_feat_flags_edx=info[3];
         m_std_feat_flags_ecx=info[2];
 
-#else // _WIN64
+#else // G_ARCH_X86_64
 
         __asm {
             xor eax,eax
@@ -94,14 +95,14 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_std_feat_flags_ecx,ecx
         }
 
-#endif // _WIN64
+#endif // G_ARCH_X86_64
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
     }
 
     if (getMaxCPUIDStdFunc()>=4) {
         // Required to get the number of cores on Intel processors.
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
         __asm__(
             "movl $0x00000004,%%eax\n\t"
@@ -114,14 +115,14 @@ CPUInfo::CPUInfo():
             : "%ecx", "%edx", "cc"       /* Clobber */
         );
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
-#ifdef _WIN64
+#ifdef G_ARCH_X86_64
 
         __cpuid(info,0x00000004);
         m_std_cache_params=info[0];
 
-#else // _WIN64
+#else // G_ARCH_X86_64
 
         __asm {
             mov eax,00000004h
@@ -131,9 +132,9 @@ CPUInfo::CPUInfo():
             mov [ecx]CPUInfo.m_std_cache_params,eax
         }
 
-#endif // _WIN64
+#endif // G_ARCH_X86_64
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
     }
 
     if (getMaxCPUIDExtFunc()>=1) {
@@ -142,7 +143,7 @@ CPUInfo::CPUInfo():
         // EBX = Reserved (Intel) / APIC ID etc. (AMD)
         // ECX = Extended feature flags (part 2)
         // EDX = Extended feature flags (part 1)
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
         __asm__(
             "movl $0x80000001,%%eax\n\t"
@@ -155,15 +156,15 @@ CPUInfo::CPUInfo():
             : "%eax"                        /* Clobber */
         );
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
-#ifdef _WIN64
+#ifdef G_ARCH_X86_64
 
         __cpuid(info,0x80000001);
         m_ext_feat_flags_edx=info[3];
         m_ext_feat_flags_ecx=info[2];
 
-#else // _WIN64
+#else // G_ARCH_X86_64
 
         __asm {
             mov eax,80000001h
@@ -173,14 +174,14 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_ext_feat_flags_ecx,ecx
         }
 
-#endif // _WIN64
+#endif // G_ARCH_X86_64
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
     }
 
     if (getMaxCPUIDExtFunc()>=8) {
         // Required to get the number of cores on AMD processors.
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
         __asm__(
             "movl $0x80000008,%%eax\n\t"
@@ -192,14 +193,14 @@ CPUInfo::CPUInfo():
             : "%eax", "%edx"              /* Clobber */
         );
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
-#ifdef _WIN64
+#ifdef G_ARCH_X86_64
 
         __cpuid(info,0x80000008);
         m_ext_address_sizes=info[2];
 
-#else // _WIN64
+#else // G_ARCH_X86_64
 
         __asm {
             mov eax,80000008h
@@ -208,13 +209,13 @@ CPUInfo::CPUInfo():
             mov [eax]CPUInfo.m_ext_address_sizes,ecx
         }
 
-#endif // _WIN64
+#endif // G_ARCH_X86_64
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
     }
 }
 
-#ifdef __GNUC__
+#ifdef G_COMP_GNUC
 
 // See Brennan's Guide to Inline Assembly,
 // <http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html>
@@ -287,9 +288,9 @@ unsigned int CPUInfo::getMaxCPUIDExtFunc() const
     return eax;
 }
 
-#else // __GNUC__
+#else // G_COMP_GNUC
 
-#ifdef _WIN64
+#ifdef G_ARCH_X86_64
 
 bool CPUInfo::hasCPUID() const
 {
@@ -314,7 +315,7 @@ unsigned int CPUInfo::getMaxCPUIDExtFunc() const
     return static_cast<unsigned int>(info[0]);
 }
 
-#else // _WIN64
+#else // G_ARCH_X86_64
 
 // When using __asm to write assembly language in C/C++ functions, you don't
 // need to preserve the EAX, EBX, ECX, EDX, ESI, or EDI registers. However, by
@@ -402,9 +403,9 @@ __declspec(naked) unsigned int CPUInfo::getMaxCPUIDExtFunc() const
     }
 }
 
-#endif // _WIN64
+#endif // G_ARCH_X86_64
 
-#endif // __GNUC__
+#endif // G_COMP_GNUC
 
 } // namespace system
 

@@ -32,7 +32,7 @@ namespace gale {
 namespace wrapgl {
 
 // TODO: Add Linux implementation.
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
 
 RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi const& attribs,LPCTSTR title):
   m_timeout(0)
@@ -172,7 +172,7 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
     return 0;
 }
 
-#endif // _WIN32
+#endif // G_OS_WINDOWS
 
 } // namespace wrapgl
 

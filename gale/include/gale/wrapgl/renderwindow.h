@@ -46,7 +46,7 @@ namespace wrapgl {
  */
 
 // TODO: Add Linux implementation.
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
 
 #include "GLEX_WGL_ARB_pixel_format.h"
 #include "GLEX_ARB_color_buffer_float.h"
@@ -130,7 +130,7 @@ class RenderWindow:public system::RenderSurface
     ContextHandle m_handle; ///< Handle to the render context.
 };
 
-#endif // _WIN32
+#endif // G_OS_WINDOWS
 
 } // namespace wrapgl
 
