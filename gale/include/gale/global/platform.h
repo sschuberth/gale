@@ -26,12 +26,19 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+#include "defines.h"
+
 /**
  * \file
  * Basic platform specific includes
  */
 
-#ifdef _WIN32
+#ifdef G_OS_LINUX
+    #include <sys/times.h>
+    #include <unistd.h>
+#endif // G_OS_LINUX
+
+#ifdef G_OS_WINDOWS
     /**
      * \def NOMINMAX
      * Suppress the min and max macro definitions in Windef.h to avoid conflicts
@@ -85,10 +92,7 @@
     #ifndef PFD_SUPPORT_COMPOSITION
         #define PFD_SUPPORT_COMPOSITION 0x00008000
     #endif
-#else
-    #include <sys/times.h>
-    #include <unistd.h>
-#endif
+#endif // G_OS_WINDOWS
 
 #include <GL/gl.h>
 
