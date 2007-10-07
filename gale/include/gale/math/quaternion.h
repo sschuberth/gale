@@ -63,6 +63,9 @@ class Quaternion
     /// Definition of the type of matrix used to represent the rotation.
     typedef HMatrix4<T> HMat;
 
+    /// Function pointer definition for interpolating quaternions.
+    typedef Quaternion (*Interpolator)(Quaternion const&,Quaternion const&,double);
+
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
@@ -417,13 +420,18 @@ class Quaternion
         return Quaternion(0,Vec::ZERO());
     }
 
-    /// Performs a spherical-cubic interpolation between the quaternions \a q
-    /// and \a r based on a scalar \a s within the quadrilateral defined
+    /// Performs a cubic Bézier interpolation between the quaternions \a q and
+    /// \a r based on a scalar \a s within the quadrilateral defined
     /// together with the "tangent" quaternions \a a and \a b (the curve touches
-    /// the midpoint of the "line" from \a a to \a b when \a s = 0.5). For
-    /// performance reasons, \a s is not clamped to [0,1].
-    friend Quaternion squad(Quaternion const& q,Quaternion const& r,double s,Quaternion const& a,Quaternion const& b) {
-        return slerp(slerp(q,r,s),slerp(a,b,s),2*s*(1-s));
+    /// the midpoint of the "line" from \a a to \a b when \a s = 0.5).
+    /// Optionally, an \a interpolator may be specified. For performance
+    /// reasons, \a s is not clamped to [0,1].
+    friend Quaternion squad(
+      Quaternion const& q,Quaternion const& r,double s,
+      Quaternion const& a,Quaternion const& b,
+      Interpolator interpolator=Quaternion::slerp)
+    {
+        return interpolator(interpolator(q,r,s),interpolator(a,b,s),2*s*(1-s));
     }
 
     //@}
