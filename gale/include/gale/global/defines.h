@@ -35,26 +35,20 @@
  * Architecture defines
  */
 
-/**
- * \def G_ARCH_X86_64
- * AMD64 / Intel 64 architecture define, see
- * <http://predef.sourceforge.net/prearch.html>.
- */
-
 #if defined(__amd64__) || defined(__x86_64__) || defined(_M_X64)
     #ifdef G_ARCH_DEFINED
         #error The architecture has already been defined.
     #else
         #define G_ARCH_DEFINED
     #endif
+
+    /**
+     * \def G_ARCH_X86_64
+     * AMD64 / Intel 64 architecture define, see
+     * <http://predef.sourceforge.net/prearch.html>.
+     */
     #define G_ARCH_X86_64
 #endif
-
-/**
- * \def G_ARCH_X86
- * Intel x86 architecture define, see
- * <http://predef.sourceforge.net/prearch.html>.
- */
 
 #if defined(__i386__) || defined(__x86__) || defined(_M_IX86)
     #ifdef G_ARCH_DEFINED
@@ -62,6 +56,12 @@
     #else
         #define G_ARCH_DEFINED
     #endif
+
+    /**
+     * \def G_ARCH_X86
+     * Intel x86 architecture define, see
+     * <http://predef.sourceforge.net/prearch.html>.
+     */
     #define G_ARCH_X86
 #endif
 
@@ -75,26 +75,20 @@
  * Operating system defines
  */
 
-/**
- * \def G_OS_LINUX
- * Linux operating system define, see
- * <http://predef.sourceforge.net/preos.html>.
- */
-
 #if defined(__linux) || defined(__linux__)
     #ifdef G_OS_DEFINED
         #error The operating system has already been defined.
     #else
         #define G_OS_DEFINED
     #endif
+
+    /**
+     * \def G_OS_LINUX
+     * Linux operating system define, see
+     * <http://predef.sourceforge.net/preos.html>.
+     */
     #define G_OS_LINUX
 #endif
-
-/**
- * \def G_OS_WINDOWS
- * Windows operating system define, see
- * <http://predef.sourceforge.net/preos.html>.
- */
 
 // These defines are also set under Windows 64-bit. They do *not* indicate the
 // bitness of the OS the compiler is running on, but the bitness of the target OS.
@@ -104,6 +98,12 @@
     #else
         #define G_OS_DEFINED
     #endif
+
+    /**
+     * \def G_OS_WINDOWS
+     * Windows operating system define, see
+     * <http://predef.sourceforge.net/preos.html>.
+     */
     #define G_OS_WINDOWS
 #endif
 
@@ -121,13 +121,9 @@
     #undef G_COMP_VERSION
 #endif
 
+/// \cond DOXYGEN_IGNORE
 #define G_COMP_VERSION(major,minor,patch) ((major)*10000000 + (minor)*100000 + (patch))
-
-/**
- * \def G_COMP_GNUC
- * GNU C/C++ compiler define, see
- * <http://predef.sourceforge.net/precomp.html>.
- */
+/// \endcond
 
 #ifdef __GNUC__
     #ifdef G_COMP_DEFINED
@@ -135,14 +131,14 @@
     #else
         #define G_COMP_DEFINED
     #endif
+
+    /**
+     * \def G_COMP_GNUC
+     * GNU C/C++ compiler define, see
+     * <http://predef.sourceforge.net/precomp.html>.
+     */
     #define G_COMP_GNUC G_COMP_VERSION(__GNUC__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__)
 #endif
-
-/**
- * \def G_COMP_MSVC
- * Microsoft Visual C++ compiler define, see
- * <http://predef.sourceforge.net/precomp.html>.
- */
 
 #ifdef _MSC_VER
     #ifdef G_COMP_DEFINED
@@ -150,6 +146,12 @@
     #else
         #define G_COMP_DEFINED
     #endif
+
+    /**
+     * \def G_COMP_MSVC
+     * Microsoft Visual C++ compiler define, see
+     * <http://predef.sourceforge.net/precomp.html>.
+     */
     #define G_COMP_MSVC G_COMP_VERSION(_MSC_VER/100-6,_MSC_VER%100,_MSC_FULL_VER-_MSC_VER*10000)
 #endif
 
@@ -159,7 +161,9 @@
     #undef G_COMP_DEFINED
 #endif
 
+/// \cond DOXYGEN_IGNORE
 #undef G_COMP_VERSION
+/// \endcond
 
 /*
  * Miscellaneous defines
