@@ -67,19 +67,25 @@ class TestWindow:public DefaultWindow
 {
   public:
 
-    TestWindow():DefaultWindow("test_slerp",800,600),m_pause(false),m_cubic(false) {
+    TestWindow():DefaultWindow("test_slerp",800,600),m_pause(false),m_cubic(true) {
         // Move the camera back to be able to see objects at the origin.
         m_camera.setPosition(Vec3f(0,0,20));
 
         // Use spherical-linear interpolation by default.
-        m_interpolator=&Quatf::getSlerp;
+        m_interpolator=&slerp;
 
-        // Specify two random orientations.
-        RandomEcuyerf rand;
-        m_k0=rand.getQuaternion();
-        m_k1=rand.getQuaternion();
-        m_k2=rand.getQuaternion();
-        m_k3=rand.getQuaternion();
+        // Get some random orientations.
+        RandomEcuyerf rand(0x44766788);
+        m_k0=~rand.getQuaternion();
+        m_k1=~rand.getQuaternion();
+        m_k2=~rand.getQuaternion();
+        m_k3=~rand.getQuaternion();
+
+        // Calculate the tangents for the key frame orientations.
+        m_k0t=m_k0.getTangent(m_k3,m_k1);
+        m_k1t=m_k1.getTangent(m_k0,m_k2);
+        m_k2t=m_k2.getTangent(m_k1,m_k3);
+        m_k3t=m_k3.getTangent(m_k2,m_k0);
 
         // Set some OpenGL states.
         glEnable(GL_CULL_FACE);
@@ -103,22 +109,38 @@ class TestWindow:public DefaultWindow
         m_timer.reset();
 
         if (m_cubic) {
-            m_k=m_k0.getScherp(m_k3,t/4.0,m_k1,m_k2);
-        } else {
             if (t>=0.0 && t<1.0) {
-                m_k=(m_k0.*m_interpolator)(m_k1,t);
-            } else if (t>=1.0 && t<2.0) {
-                m_k=(m_k1.*m_interpolator)(m_k2,t-1.0);
-            } else if (t>=2.0 && t<3.0) {
-                m_k=(m_k2.*m_interpolator)(m_k3,t-2.0);
-            } else if (t>=3.0 && t<4.0) {
-                m_k=(m_k3.*m_interpolator)(m_k0,t-3.0);
+                m_k=squad(m_k0,m_k1,t,m_k0t,m_k1t,m_interpolator);
+            }
+            else if (t>=1.0 && t<2.0) {
+                m_k=squad(m_k1,m_k2,t-1.0,m_k1t,m_k2t,m_interpolator);
+            }
+            else if (t>=2.0 && t<3.0) {
+                m_k=squad(m_k2,m_k3,t-2.0,m_k2t,m_k3t,m_interpolator);
+            }
+            else if (t>=3.0 && t<4.0) {
+                m_k=squad(m_k3,m_k0,t-3.0,m_k3t,m_k0t,m_interpolator);
+            }
+        }
+        else {
+            if (t>=0.0 && t<1.0) {
+                m_k=(*m_interpolator)(m_k0,m_k1,t);
+            }
+            else if (t>=1.0 && t<2.0) {
+                m_k=(*m_interpolator)(m_k1,m_k2,t-1.0);
+            }
+            else if (t>=2.0 && t<3.0) {
+                m_k=(*m_interpolator)(m_k2,m_k3,t-2.0);
+            }
+            else if (t>=3.0 && t<4.0) {
+                m_k=(*m_interpolator)(m_k3,m_k0,t-3.0);
             }
         }
 
         if (t>=4.0) {
             t-=4.0;
-        } else {
+        }
+        else {
             t+=step;
         }
 
@@ -198,17 +220,21 @@ class TestWindow:public DefaultWindow
                 break;
             }
             case 'l': {
-                m_cubic=false;
-                m_interpolator=&Quatf::getLerp;
+                // This will result in changes in rotation velocity within
+                // interpolation intervals.
+                m_interpolator=&nlerp;
                 break;
             }
             case 's': {
-                m_cubic=false;
-                m_interpolator=&Quatf::getSlerp;
+                // This will result in constant rotation velocity within
+                // interpolation intervals.
+                m_interpolator=&slerp;
                 break;
             }
             case 'c': {
-                m_cubic=true;
+                // This will result in smooth transitions between interpolation
+                // intervals.
+                m_cubic=!m_cubic;
                 break;
             }
             default: {
@@ -252,11 +278,15 @@ class TestWindow:public DefaultWindow
   private:
 
     // Use a member function pointer to easily switch between the interpolation methods.
-    typedef Quatf (Quatf::*QuatfInterpolator)(Quatf const&,double) const;
-    QuatfInterpolator m_interpolator;
+    Quatf::Interpolator m_interpolator;
 
-    Quatf m_k,m_k0,m_k1,m_k2,m_k3;
+    // Orientation and position of the interpolated cube.
+    Quatf m_k;
     Vec3f m_p;
+
+    // Key frame orientations and their tangents.
+    Quatf m_k0,m_k1,m_k2,m_k3;
+    Quatf m_k0t,m_k1t,m_k2t,m_k3t;
 
     Timer m_timer;
     bool m_pause,m_cubic;
