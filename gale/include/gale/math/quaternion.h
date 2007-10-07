@@ -3,7 +3,7 @@
  *                      |  _  ||  _  ||  ||  -__|
  *                      |___  ||___._||__||_____|
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
- * see the project page at http://developer.berlios.de/projects/gale/
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
  * Copyright (C) 2005-2007  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
@@ -66,8 +66,8 @@ class Quaternion
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
-     * static methods instead of static variables are used here (see
-     * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14).
+     * static methods instead of static variables are used here, see
+     * <http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14>.
      */
     //@{
 
@@ -351,15 +351,17 @@ class Quaternion
     //@}
 
     /**
-     * \name Interpolation methods
-     * (see http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/)
+     * \name Interpolation related methods, see
+     * <http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/>
      */
     //@{
 
     /// Performs a normalized linear interpolation between the quaternions \a q
-    /// and \a r based on a scalar \a s. The interpolation is commutative,
-    /// the rotation will not have constant velocity, but will be
-    /// torque-minimal. For performance reasons, \a s is not clamped to [0,1].
+    /// and \a r based on a scalar \a s with the following properties:
+    /// - The operation is commutative,
+    /// - the rotation does \b not have constant velocity,
+    /// - the interpolation is torque-minimal.
+    /// For performance reasons, \a s is not clamped to [0,1].
     friend Quaternion nlerp(Quaternion const& q,Quaternion const& r,double s) {
         return ~Quaternion(
             T(q.real+s*(r.real-q.real)),
@@ -368,48 +370,39 @@ class Quaternion
     }
 
     /// Performs a spherical-linear interpolation between the quaternions \a q
-    /// and \a r based on a scalar \a s. The interpolation is not commutative,
-    /// the rotation will have constant velocity, and will be torque-minimal.
+    /// and \a r based on a scalar \a s with the following properties:
+    /// - The operation is \b not commutative,
+    /// - the rotation has constant velocity,
+    /// - the interpolation is torque-minimal.
     /// For performance reasons, \a s is not clamped to [0,1].
     friend Quaternion slerp(Quaternion const& q,Quaternion const& r,double s) {
-        T cos=q.getAngleCosine(r);
+        T cosine=q.getAngleCosine(r);
 
-        if (meta::OpCmpEqualEps::evaluate(cos,T(1))) {
+        if (meta::OpCmpEqualEps::evaluate(cosine,T(1))) {
             // If the quaternions are very close just interpolate linearly.
             return nlerp(q,r,s);
         }
 
-        double angle=::acos(cos);
+        // Calculate the angle between q and r.
+        double angle=::acos(cosine);
+
+        // Calculate the angle between q and the interpolated result.
+        double theta=angle*s;
+
         return (
-            q * T(::sin(angle * (1-s)))
-          + r * T(::sin(angle *    s ))
+            q * T(::sin(angle-theta))
+          + r * T(::sin(      theta))
         )/T(::sin(angle));
     }
 
-    /// Performs a spherical-cubic interpolation between the quaternions \a q
-    /// and \a r based on a scalar \a s within the quadrilateral defined with
-    /// quaternions \a a and \a b (the curve touches the midpoint of the "line"
-    /// from \a a to \a b when \a s = 0.5). For performance reasons, \a s is not
-    /// clamped to [0,1].
-    friend Quaternion squad(Quaternion const& q,Quaternion const& r,double s,Quaternion const& a,Quaternion const& b) {
-        return slerp(slerp(q,r,s),slerp(a,b,s),2*s*(1-s));
-    }
-
-    //@}
-
-    /**
-     * \name Miscellaneous methods
-     */
-    //@{
-
     /// Calculates the complex exponential of a quaternion \a q.
     friend Quaternion exp(Quaternion const& q) {
-        double half=q.imag.getLength();
-        double s=::sin(half);
-        if (abs(s)>std::numeric_limits<T>::epsilon()) {
-            return Quaternion(T(::cos(half)),q.imag*T(s/half));
+        double length=q.imag.getLength();
+        if (length>std::numeric_limits<T>::epsilon()) {
+            double s=::sin(length);
+            return Quaternion(T(::cos(length)),q.imag*T(s/length));
         }
-        return Quaternion(T(::cos(half)),q.imag);
+        return Quaternion(1,Vec::ZERO());
     }
 
     /// Calculates the complex logarithm of a quaternion \a q.
@@ -421,15 +414,33 @@ class Quaternion
                 return Quaternion(0,q.imag*T(half/s));
             }
         }
-        return Quaternion(0,q.imag);
+        return Quaternion(0,Vec::ZERO());
     }
+
+    /// Performs a spherical-cubic interpolation between the quaternions \a q
+    /// and \a r based on a scalar \a s within the quadrilateral defined
+    /// together with the "tangent" quaternions \a a and \a b (the curve touches
+    /// the midpoint of the "line" from \a a to \a b when \a s = 0.5). For
+    /// performance reasons, \a s is not clamped to [0,1].
+    friend Quaternion squad(Quaternion const& q,Quaternion const& r,double s,Quaternion const& a,Quaternion const& b) {
+        return slerp(slerp(q,r,s),slerp(a,b,s),2*s*(1-s));
+    }
+
+    //@}
+
+    /**
+     * \name Miscellaneous methods
+     */
+    //@{
 
     /// Returns the tangent for this quaternion given the predecessor \a a and
     /// the successor \a b, which all need to be normalized.
     Quaternion getTangent(Quaternion const& a,Quaternion const& b) const {
         // For normalized quaternions, the conjugate equals the inverse.
         Quaternion inv=getConjugate();
-        return (*this)*exp(T(-0.25)*(log(inv*a)+log(inv*b)));
+
+        Quaternion t=T(-0.25)*(log(inv*a)+log(inv*b));
+        return (*this)*exp(t);
     }
 
     // Returns a homogeneous matrix that matches the rotation of this quaternion.
