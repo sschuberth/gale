@@ -362,7 +362,7 @@ class Quaternion
     /// Performs a normalized linear interpolation between the quaternions \a q
     /// and \a r based on a scalar \a s with the following properties:
     /// - The operation is commutative,
-    /// - the rotation does \b not have constant velocity,
+    /// - the rotation does \b not have constant speed,
     /// - the interpolation is torque-minimal.
     /// For performance reasons, \a s is not clamped to [0,1].
     friend Quaternion nlerp(Quaternion const& q,Quaternion const& r,double s) {
@@ -375,7 +375,7 @@ class Quaternion
     /// Performs a spherical-linear interpolation between the quaternions \a q
     /// and \a r based on a scalar \a s with the following properties:
     /// - The operation is \b not commutative,
-    /// - the rotation has constant velocity,
+    /// - the rotation has constant speed (tangential acceleration is zero),
     /// - the interpolation is torque-minimal.
     /// For performance reasons, \a s is not clamped to [0,1].
     friend Quaternion slerp(Quaternion const& q,Quaternion const& r,double s) {
