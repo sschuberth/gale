@@ -319,12 +319,13 @@ class Quaternion
     }
 
     /// Returns the cosine of the angle between this quaternion and quaternion
-    /// \a q.
+    /// \a q, which do not need to be normalized.
     T getAngleCosine(Quaternion const& q) const {
         return (~(*this)).getDotProduct(~q);
     }
 
-    /// Returns the angle between this quaternion and quaternion \a v in radians.
+    /// Returns the angle between this quaternion and quaternion \a v, which do
+    /// not need to be normalized, in radians.
     double getAngle(Quaternion const& q) const {
         return ::acos(static_cast<double>(getAngleCosine(q)));
     }
@@ -451,7 +452,8 @@ class Quaternion
         return (*this)*exp(t);
     }
 
-    // Returns a homogeneous matrix that matches the rotation of this quaternion.
+    /// Returns a homogeneous matrix that matches the rotation represented by
+    /// this quaternion, which does not need to be normalized.
     HMat getMatrix() const {
         T wx,wy,wz,xx,xy,xz,yy,yz,zz;
 
