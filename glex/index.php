@@ -133,7 +133,7 @@ if (empty($error)) {
         <?php drawTableBorder('t','white',false,5); ?>
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
-            <a href="http://gale.berlios.de/glex/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a> (a <a href="http://threekings.tk/gale/glex/">mirror</a> is also available)<br />
+            <a href="http://gale.berlios.de/glex/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a> (a <a href="http://threekings.tk/mirror/gale/glex/">mirror</a> is also available)<br />
                 Source code high-lighting is performed by <a href="http://qbnz.com/highlighter/">GeSHi</a><br />
                 &nbsp;
             </td>
