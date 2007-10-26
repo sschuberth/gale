@@ -74,18 +74,18 @@ class TestWindow:public DefaultWindow
         // Use spherical-linear interpolation by default.
         m_interpolator=&slerp;
 
+        int i;
+
         // Get some random orientations.
         RandomEcuyerf rand(0x44766788);
-        m_k0=~rand.getQuaternion();
-        m_k1=~rand.getQuaternion();
-        m_k2=~rand.getQuaternion();
-        m_k3=~rand.getQuaternion();
+        for (i=0;i<4;++i) {
+            m_kf[i]=~rand.getQuaternion();
+        }
 
         // Calculate the tangents for the key frame orientations.
-        m_k0t=m_k0.getTangent(m_k3,m_k1);
-        m_k1t=m_k1.getTangent(m_k0,m_k2);
-        m_k2t=m_k2.getTangent(m_k1,m_k3);
-        m_k3t=m_k3.getTangent(m_k2,m_k0);
+        for (i=0;i<4;++i) {
+            m_kt[i]=m_kf[i].getTangent(m_kf[(i-1)&3],m_kf[(i+1)&3]);
+        }
 
         // Set some OpenGL states.
         glEnable(GL_CULL_FACE);
@@ -102,50 +102,29 @@ class TestWindow:public DefaultWindow
         }
 
         static double t=0.0;
+        int i=roundToZero(static_cast<float>(t));
+
+        if (m_cubic) {
+            m_k=squad(m_kf[i],m_kf[(i+1)&3],t-i,m_kt[i],m_kt[(i+1)&3],m_interpolator);
+        }
+        else {
+            m_k=(*m_interpolator)(m_kf[i],m_kf[(i+1)&3],t-i);
+        }
+
+        double angle=2.0*M_PI*t/4.0+M_PI/4.0;
+        float x=static_cast<float>(::cos(angle)*RADIUS);
+        float y=static_cast<float>(::sin(angle)*RADIUS);
+        m_p=Vec3f(x,y,0);
 
         double elapsed;
         m_timer.getElapsedSeconds(elapsed);
         double step=elapsed/5.0;
         m_timer.reset();
 
-        if (m_cubic) {
-            if (t>=0.0 && t<1.0) {
-                m_k=squad(m_k0,m_k1,t,m_k0t,m_k1t,m_interpolator);
-            }
-            else if (t>=1.0 && t<2.0) {
-                m_k=squad(m_k1,m_k2,t-1.0,m_k1t,m_k2t,m_interpolator);
-            }
-            else if (t>=2.0 && t<3.0) {
-                m_k=squad(m_k2,m_k3,t-2.0,m_k2t,m_k3t,m_interpolator);
-            }
-            else if (t>=3.0 && t<4.0) {
-                m_k=squad(m_k3,m_k0,t-3.0,m_k3t,m_k0t,m_interpolator);
-            }
-        }
-        else {
-            if (t>=0.0 && t<1.0) {
-                m_k=(*m_interpolator)(m_k0,m_k1,t);
-            }
-            else if (t>=1.0 && t<2.0) {
-                m_k=(*m_interpolator)(m_k1,m_k2,t-1.0);
-            }
-            else if (t>=2.0 && t<3.0) {
-                m_k=(*m_interpolator)(m_k2,m_k3,t-2.0);
-            }
-            else if (t>=3.0 && t<4.0) {
-                m_k=(*m_interpolator)(m_k3,m_k0,t-3.0);
-            }
-        }
-
-        if (t>=4.0) {
+        t+=step;
+        while (t>4.0) {
             t-=4.0;
         }
-        else {
-            t+=step;
-        }
-
-        float angle=static_cast<float>(2.0*M_PI/4.0*t+M_PI/4.0);
-        m_p=Vec3f(cosf(angle)*RADIUS,sinf(angle)*RADIUS,0);
 
         return true;
     }
@@ -168,43 +147,21 @@ class TestWindow:public DefaultWindow
 
         HMat4f m;
 
+        // Draw the keyframe cubes.
         glColor3f(0.5f,0.5f,0.5f);
 
-        // First key frame.
-        m=m_k0.getMatrix();
-        m.setPositionVector(Vec3f(+CATHETUS,+CATHETUS,0));
-        glPushMatrix();
-        glMultMatrixf(m);
-        drawCube(1.0);
-        glPopMatrix();
+        for (int i=0;i<4;++i) {
+            m=m_kf[i].getMatrix();
+            m.setPositionVector(Vec3f(CATHETUS*(1.0f-((i+1)&2)),CATHETUS*(1.0f-(i&2)),0));
+            glPushMatrix();
+            glMultMatrixf(m);
+            drawCube(1.0);
+            glPopMatrix();
+        }
 
-        // Second key frame.
-        m=m_k1.getMatrix();
-        m.setPositionVector(Vec3f(-CATHETUS,+CATHETUS,0));
-        glPushMatrix();
-        glMultMatrixf(m);
-        drawCube(1.0);
-        glPopMatrix();
-
-        // Third key frame.
-        m=m_k2.getMatrix();
-        m.setPositionVector(Vec3f(-CATHETUS,-CATHETUS,0));
-        glPushMatrix();
-        glMultMatrixf(m);
-        drawCube(1.0);
-        glPopMatrix();
-
-        // Fourth key frame.
-        m=m_k3.getMatrix();
-        m.setPositionVector(Vec3f(+CATHETUS,-CATHETUS,0));
-        glPushMatrix();
-        glMultMatrixf(m);
-        drawCube(1.0);
-        glPopMatrix();
-
+        // Draw the interpolated cube.
         glColor3f(1.0f,1.0f,1.0f);
 
-        // Interpolated orientation and position.
         m=m_k.getMatrix();
         m.setPositionVector(m_p);
         glPushMatrix();
@@ -215,11 +172,7 @@ class TestWindow:public DefaultWindow
 
     void onKeyEvent(char key) {
         switch (key) {
-            case 'p': {
-                m_pause=!m_pause;
-                break;
-            }
-            case 'l': {
+            case 'n': {
                 // This will result in changes in rotation velocity within
                 // interpolation intervals.
                 m_interpolator=&nlerp;
@@ -237,10 +190,30 @@ class TestWindow:public DefaultWindow
                 m_cubic=!m_cubic;
                 break;
             }
+
+            case 'p': {
+                m_pause=!m_pause;
+                return;
+            }
             default: {
                 DefaultWindow::onKeyEvent(key);
-                break;
+                return;
             }
+        }
+
+        std::cout << "Now using";
+        if (m_interpolator==&nlerp) {
+            std::cout << " normalized";
+        }
+        else if (m_interpolator==&slerp) {
+            std::cout << " spherical";
+        }
+        std::cout << " lerp. Cubic interpolation is turned";
+        if (m_cubic) {
+            std::cout << " on." << std::endl;
+        }
+        else {
+            std::cout << " off." << std::endl;
         }
     }
 
@@ -285,8 +258,8 @@ class TestWindow:public DefaultWindow
     Vec3f m_p;
 
     // Key frame orientations and their tangents.
-    Quatf m_k0,m_k1,m_k2,m_k3;
-    Quatf m_k0t,m_k1t,m_k2t,m_k3t;
+    Quatf m_kf[4];
+    Quatf m_kt[4];
 
     Timer m_timer;
     bool m_pause,m_cubic;
