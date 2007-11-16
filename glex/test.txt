@@ -1,0 +1,33 @@
+body {
+    background-image: url(gradient.php?width=1&height=2000&top=004276&bottom=b2b6bf);
+    background-repeat: repeat-x;
+    background-attachment: fixed;
+    font-family: Arial;
+}
+
+hr {
+    border-style: none;
+    background-color: #c9d0e0;
+    color: #c9d0e0;
+    height: 1px;
+}
+
+img {
+    border-style: none;
+    display: block;
+}
+
+table {
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td {
+    background-color: white;
+    padding: 0px;
+}
+
+td.corner {
+    background-color: transparent;
+}
