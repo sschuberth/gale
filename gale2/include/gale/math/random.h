@@ -173,7 +173,7 @@ class RandomBase
     C m_rand; ///< Instance of the random generator template implementation.
 };
 
-#include "randomecuyer.inl"
+#include "random_ecuyer.inl"
 
 } // namespace math
 
