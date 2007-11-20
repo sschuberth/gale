@@ -1,3 +1,5 @@
+#include <xmmintrin.h>
+
 /**
  * Because there is more than one template parameter, this has to be a complete
  * template specialization. It uses SSE instructions for x86 architectures.
