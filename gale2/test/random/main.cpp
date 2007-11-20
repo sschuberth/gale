@@ -51,7 +51,12 @@ int main(int argc,char *argv[]) {
          << endl;
     cout << endl;
 
+#ifdef GALE_SSE2
+    RandomSSE2f random;
+#else
     RandomEcuyerf random;
+#endif
+
     Timer timer;
 
     unsigned int half0=0,half1=0;

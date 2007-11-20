@@ -174,6 +174,7 @@ class RandomBase
 };
 
 #include "random_ecuyer.inl"
+#include "random_sse2.inl"
 
 } // namespace math
 
