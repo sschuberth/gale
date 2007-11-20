@@ -88,7 +88,7 @@ class TupleBase<4,float,C>
     /// Returns the negation of tuple \a t.
     friend C operator-(C const& t) {
         C tmp;
-        tmp.m_simd=_mm_sub_ps(_mm_set1_ps(0),t.m_simd);
+        tmp.m_simd=_mm_sub_ps(_mm_set_ps1(0),t.m_simd);
         return tmp;
     }
 
@@ -122,7 +122,7 @@ class TupleBase<4,float,C>
 
     /// Multiplies \c this tuple by a scalar \a s.
     C const& operator*=(float s) {
-        m_simd=_mm_mul_ps(m_simd,_mm_set1_ps(s));
+        m_simd=_mm_mul_ps(m_simd,_mm_set_ps1(s));
         return *static_cast<C*>(this);
     }
 
@@ -151,7 +151,7 @@ class TupleBase<4,float,C>
     /// Performs scalar division from the left of each element.
     friend C operator/(float s,C const& t) {
         C tmp;
-        tmp.m_simd=_mm_mul_ps(_mm_set1_ps(s),_mm_rcp_ps(t.m_simd));
+        tmp.m_simd=_mm_mul_ps(_mm_set_ps1(s),_mm_rcp_ps(t.m_simd));
         return tmp;
     }
 
@@ -214,7 +214,7 @@ class TupleBase<4,float,C>
                 m_simd,
                 _mm_mul_ps(
                     _mm_sub_ps(t.m_simd,m_simd),
-                    _mm_set1_ps(s)
+                    _mm_set_ps1(s)
                 )
             );
         return tmp;
