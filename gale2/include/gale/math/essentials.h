@@ -399,7 +399,7 @@ inline long double abs(long double const x)
 /// Returns whether \a x is an exact power of two.
 inline bool isPowerOf2(unsigned int const x)
 {
-    return x && (x&(x-1))==0;
+    return x && !(x&(x-1));
 }
 
 /// Returns the position of the least significant bit set in \a x (the least
