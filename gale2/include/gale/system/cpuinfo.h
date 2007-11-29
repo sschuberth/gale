@@ -86,89 +86,89 @@ class CPUInfo:public global::Singleton<CPUInfo>
         return m_vendor;
     }
 
-#define MAKE_DWORD(a,b,c,d) (a|(int)(b)<<8|(int)(c)<<16|(int)(d)<<24)
-
-    /// Returns if this is an Intel CPU.
+    /// Convenience method that returns whether this is an Intel CPU.
     bool isIntel() const {
         int const* vendor=reinterpret_cast<int const*>(getVendorString());
-        if (*vendor!=MAKE_DWORD('G','e','n','u')) {
+
+        if (*vendor!=*reinterpret_cast<int const*>("Genu")) {
             return false;
         }
 
         ++vendor;
-        if (*vendor!=MAKE_DWORD('i','n','e','I')) {
+        if (*vendor!=*reinterpret_cast<int const*>("ineI")) {
             return false;
         }
 
         ++vendor;
-        if (*vendor!=MAKE_DWORD('n','t','e','l')) {
+        if (*vendor!=*reinterpret_cast<int const*>("ntel")) {
             return false;
         }
 
         return true;
     }
 
-    /// Returns if this is an AMD CPU.
+    /// Convenience method that returns whether this is an AMD CPU.
     bool isAMD() const {
         int const* vendor=reinterpret_cast<int const*>(getVendorString());
-        if (*vendor!=MAKE_DWORD('A','u','t','h')) {
+
+        if (*vendor!=*reinterpret_cast<int const*>("Auth")) {
             return false;
         }
 
         ++vendor;
-        if (*vendor!=MAKE_DWORD('e','n','t','i')) {
+        if (*vendor!=*reinterpret_cast<int const*>("enti")) {
             return false;
         }
 
         ++vendor;
-        if (*vendor!=MAKE_DWORD('c','A','M','D')) {
+        if (*vendor!=*reinterpret_cast<int const*>("cAMD")) {
             return false;
         }
 
         return true;
     }
 
-    /// Returns if this is a Cyrix / VIA CPU.
+    /// Convenience method that returns whether this is a Cyrix / VIA CPU.
     bool isCyrix() const {
         int const* vendor=reinterpret_cast<int const*>(getVendorString());
-        if (*vendor!=MAKE_DWORD('C','y','r','i')) {
+
+        if (*vendor!=*reinterpret_cast<int const*>("Cyri")) {
             return false;
         }
 
         ++vendor;
-        if (*vendor!=MAKE_DWORD('x','I','n','s')) {
+        if (*vendor!=*reinterpret_cast<int const*>("xIns")) {
             return false;
         }
 
         ++vendor;
-        if (*vendor!=MAKE_DWORD('t','e','a','d')) {
+        if (*vendor!=*reinterpret_cast<int const*>("tead")) {
             return false;
         }
 
         return true;
     }
 
-    /// Returns if this is a Centaur / VIA CPU.
+    /// Convenience method that returns whether this is a Centaur / VIA CPU.
     bool isCentaur() const {
         int const* vendor=reinterpret_cast<int const*>(getVendorString());
-        if (*vendor!=MAKE_DWORD('C','e','n','t')) {
+
+        if (*vendor!=*reinterpret_cast<int const*>("Cent")) {
             return false;
         }
 
         ++vendor;
-        if (*vendor!=MAKE_DWORD('a','u','r','H')) {
+        if (*vendor!=*reinterpret_cast<int const*>("aurH")) {
             return false;
         }
 
         ++vendor;
-        if (*vendor!=MAKE_DWORD('a','u','l','s')) {
+        if (*vendor!=*reinterpret_cast<int const*>("auls")) {
             return false;
         }
 
         return true;
     }
-
-#undef MAKE_DWORD
 
     //@}
 
@@ -470,7 +470,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /* Features returned in the EDX register */
 
-    // Bits 0 to 9 are reserved on Intel but have the same meanings as for the
+    // Bits 0 to 9 are reserved on Intel but have the same meanings as in the
     // standard flags on AMD.
 
     // Bit 10 is reserved (on Intel and AMD).
@@ -481,7 +481,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
         return (m_ext_feat_flags_edx&(1<<11))!=0;
     }
 
-    // Bits 12 to 19 are reserved on Intel but have the same meanings as for the
+    // Bits 12 to 19 are reserved on Intel but have the same meanings as in the
     // standard flags on AMD.
 
     /// Returns whether the processor supports the XD Bit to support no-execute
@@ -498,7 +498,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
         return (m_ext_feat_flags_edx&(1<<22))!=0;
     }
 
-    // Bits 23 and 24 are reserved on Intel but have the same meanings as for
+    // Bits 23 and 24 are reserved on Intel but have the same meanings as in
     // the standard flags on AMD.
 
     /// Returns whether the processor implements FXSAVE and FXRSTOR instruction
@@ -568,7 +568,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
         return (m_ext_feat_flags_ecx&(1<<4))!=0;
     }
 
-    // Bits 5 to 31 are reserved on Intel and AMD.
+    // Bits 5 to 31 are reserved (on Intel and AMD).
 
     //@}
 
