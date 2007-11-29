@@ -294,7 +294,7 @@ unsigned int CPUInfo::getMaxCPUIDExtFunc() const
 
 bool CPUInfo::hasCPUID() const
 {
-    // All 64-bit CPUs have the CPUID instruction.
+    // All x86_64 CPUs have the CPUID instruction.
     return true;
 }
 
