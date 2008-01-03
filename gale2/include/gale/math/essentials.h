@@ -238,9 +238,9 @@ inline T min(T const a,T const b,T const c,T const d)
  */
 //@{
 
-/// Rounds \a f to the nearest integer (to the even one in case of ambiguity).
-/// This is the default rounding mode on x86 platforms, so the floating-point
-/// control word is not modified.
+/// Rounds the 32-bit floating point value \a f to the nearest integer (to the
+/// even one in case of ambiguity). This is the default rounding mode on x86
+/// platforms, so the floating-point control word is not modified.
 inline int roundToEven(float const f)
 {
 #ifdef GALE_SSE
@@ -275,14 +275,49 @@ inline int roundToEven(float const f)
 #endif // GALE_SSE
 }
 
-/// Rounds \a f to the nearest integer towards zero (truncating the number).
-/// This is the default ANSI C rounding mode; use this method instead of a cast
-/// to an integer as it is faster.
+/// Rounds the 64-bit floating point value \a d to the nearest integer (to the
+/// even one in case of ambiguity). This is the default rounding mode on x86
+/// platforms, so the floating-point control word is not modified.
+inline int roundToEven(double const d)
+{
+#ifdef GALE_SSE2
+
+    return _mm_cvtsd_si32(_mm_load_ss(&d));
+
+#elif defined(G_COMP_GNUC)
+
+    int i;
+    __asm__(
+        "fistpl %[i]\n\t"
+        : [i] "=m" (i)  /* Output  */
+        : "t" (d)       /* Input   */
+        :               /* Clobber */
+    );
+    return i;
+
+#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
+
+    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
+    int i;
+    __asm {
+        fld d
+        fistp i
+    }
+    return i;
+
+#else // GALE_SSE2
+
+    return static_cast<int>(d+0.5);
+
+#endif // GALE_SSE2
+}
+
+/// Rounds the 32-bit floating point value \a f to the nearest integer towards
+/// zero (truncating the number). This is the default ANSI C rounding mode; use
+/// this method instead of a cast to an integer as it is faster.
 inline int roundToZero(float const f)
 {
-#ifdef GALE_SSE3
-
-#ifdef G_COMP_GNUC
+#if defined(GALE_SSE3) && G_COMP_GNUC
 
     int i;
     __asm__(
@@ -293,7 +328,7 @@ inline int roundToZero(float const f)
     );
     return i;
 
-#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
+#elif defined(GALE_SSE3) && defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
 
     // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     int i;
@@ -303,17 +338,52 @@ inline int roundToZero(float const f)
     }
     return i;
 
-#else // G_COMP_GNUC
+#elif defined(GALE_SSE2)
 
     return _mm_cvttss_si32(_mm_load_ss(&f));
 
-#endif // G_COMP_GNUC
-
-#else // GALE_SSE3
+#else
 
     return static_cast<int>(f);
 
-#endif // GALE_SSE3
+#endif
+}
+
+/// Rounds the 64-bit floating point value \a d to the nearest integer towards
+/// zero (truncating the number). This is the default ANSI C rounding mode; use
+/// this method instead of a cast to an integer as it is faster.
+inline int roundToZero(double const d)
+{
+#if defined(GALE_SSE3) && defined(G_COMP_GNUC)
+
+    int i;
+    __asm__(
+        "fisttpl %[i]\n\t"
+        : [i] "=m" (i)  /* Output  */
+        : "t" (d)       /* Input   */
+        :               /* Clobber */
+    );
+    return i;
+
+#elif defined(GALE_SSE3) && defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
+
+    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
+    int i;
+    __asm {
+        fld d
+        fisttp i
+    }
+    return i;
+
+#elif defined(GALE_SSE2)
+
+    return _mm_cvttsd_si32(_mm_load_ss(&d));
+
+#else
+
+    return static_cast<int>(d);
+
+#endif
 }
 
 //@}
