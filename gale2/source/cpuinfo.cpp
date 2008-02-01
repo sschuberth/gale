@@ -226,9 +226,79 @@ CPUInfo::CPUInfo():
 // Always preserve the EBX register to be compatible with the -fPIC option.
 // Note that specifying EBX in the clobber list does *not* work!
 
+#ifdef G_ARCH_X86_64
+
 bool CPUInfo::hasCPUID() const
 {
     unsigned int eax;
+
+    __asm__(
+        "pushfq\n\t"
+        "popq %%rax\n\t"
+        "xorl $0x00200000,%%eax\n\t"
+        "movl %%eax,%%ecx\n\t"
+        "pushq %%rax\n\t"
+        "popfq\n\t"
+        "pushfq\n\t"
+        "popq %%rax\n\t"
+        "cmpl %%ecx,%%eax\n\t"
+        "sete %%cl\n\t"
+        "movzxl %%cl,%%eax\n\t"
+        : "=a" (eax)    /* Output  */
+        :               /* Input   */
+        : "%ecx", "cc"  /* Clobber */
+    );
+
+    return eax;
+}
+
+unsigned int CPUInfo::getMaxCPUIDStdFunc()
+{
+    unsigned int eax;
+
+    __asm__(
+        "xorl %%eax,%%eax\n\t"
+        "pushq %%rbx\n\t"
+        "cpuid\n\t"
+        "movl %%ebx,%%esi\n\t"
+        "popq %%rbx\n\t"
+        : "=a" (eax),
+          "=S" (*(unsigned int*)m_vendor),
+          "=d" (*(unsigned int*)(m_vendor+4)),
+          "=c" (*(unsigned int*)(m_vendor+8))  /* Output  */
+        :                                      /* Input   */
+        : "cc"                                 /* Clobber */
+    );
+
+    return eax;
+}
+
+unsigned int CPUInfo::getMaxCPUIDExtFunc() const
+{
+    unsigned int eax;
+
+    __asm__(
+        "movl $0x80000000,%%eax\n\t"
+        "pushq %%rbx\n\t"
+        "pushq %%rax\n\t"
+        "cpuid\n\t"
+        "popq %%rcx\n\t"
+        "popq %%rbx\n\t"
+        "subl %%ecx,%%eax\n\t"
+        : "=a" (eax)            /* Output  */
+        :                       /* Input   */
+        : "%ecx", "%edx", "cc"  /* Clobber */
+    );
+
+    return eax;
+}
+
+#else  // G_ARCH_X86_64
+
+bool CPUInfo::hasCPUID() const
+{
+    unsigned int eax;
+
     __asm__(
         "pushfl\n\t"
         "popl %%eax\n\t"
@@ -245,34 +315,35 @@ bool CPUInfo::hasCPUID() const
         :               /* Input   */
         : "%ecx", "cc"  /* Clobber */
     );
+
     return eax;
 }
 
 unsigned int CPUInfo::getMaxCPUIDStdFunc()
 {
     unsigned int eax;
-    int* vendor0=reinterpret_cast<int*>(m_vendor);
-    int* vendor4=vendor0+1;
-    int* vendor8=vendor4+1;
+
     __asm__(
         "xorl %%eax,%%eax\n\t"
         "pushl %%ebx\n\t"
         "cpuid\n\t"
-        "movl %%ebx,%1\n\t"
+        "movl %%ebx,%%esi\n\t"
         "popl %%ebx\n\t"
         : "=a" (eax),
-          "=r" (*vendor0),
-          "=d" (*vendor4),
-          "=c" (*vendor8)  /* Output  */
-        :                  /* Input   */
-        : "cc"             /* Clobber */
+          "=S" (*(unsigned int*)m_vendor),
+          "=d" (*(unsigned int*)(m_vendor+4)),
+          "=c" (*(unsigned int*)(m_vendor+8))  /* Output  */
+        :                                      /* Input   */
+        : "cc"                                 /* Clobber */
     );
+
     return eax;
 }
 
 unsigned int CPUInfo::getMaxCPUIDExtFunc() const
 {
     unsigned int eax;
+
     __asm__(
         "movl $0x80000000,%%eax\n\t"
         "pushl %%ebx\n\t"
@@ -285,8 +356,11 @@ unsigned int CPUInfo::getMaxCPUIDExtFunc() const
         :                       /* Input   */
         : "%ecx", "%edx", "cc"  /* Clobber */
     );
+
     return eax;
 }
+
+#endif // G_ARCH_X86_64
 
 #else // G_COMP_GNUC
 
