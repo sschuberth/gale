@@ -169,12 +169,23 @@
  * Miscellaneous defines
  */
 
-#include <assert.h>
+/**
+ * \def G_ARRAY_LENGTH
+ * Returns the number of elements in an array.
+ */
+
+#ifdef G_ARRAY_LENGTH
+    #undef G_ARRAY_LENGTH
+#endif
+
+#define G_ARRAY_LENGTH(x) (sizeof(x)/sizeof(*x))
 
 /**
  * \def G_ASSERT_CALL
  * Run-time assertion for function call results.
  */
+
+#include <assert.h>
 
 #ifdef G_ASSERT_CALL
     #undef G_ASSERT_CALL
