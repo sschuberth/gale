@@ -34,8 +34,8 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi const& attribs,LPCTSTR title):
-  m_timeout(0)
+RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi const& attribs,LPCTSTR title)
+:   m_timeout(0)
 {
     // Activate the minimal render surface to get a context for OpenGL extension
     // initialization.

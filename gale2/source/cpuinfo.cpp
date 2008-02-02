@@ -36,10 +36,14 @@ namespace system {
 
 CPUInfo& CPU=CPUInfo::the();
 
-CPUInfo::CPUInfo():
-  m_std_misc_info(0),m_std_cache_params(0),m_ext_address_sizes(0),
-  m_std_feat_flags_edx(0),m_std_feat_flags_ecx(0),
-  m_ext_feat_flags_edx(0),m_ext_feat_flags_ecx(0)
+CPUInfo::CPUInfo()
+:   m_std_misc_info(0)
+,   m_std_cache_params(0)
+,   m_ext_address_sizes(0)
+,   m_std_feat_flags_edx(0)
+,   m_std_feat_flags_ecx(0)
+,   m_ext_feat_flags_edx(0)
+,   m_ext_feat_flags_ecx(0)
 {
     // Null-terminate the vendor string.
     m_vendor[0]=m_vendor[3*4]='\0';

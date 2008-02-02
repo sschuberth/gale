@@ -67,7 +67,11 @@ class TestWindow:public DefaultWindow
 {
   public:
 
-    TestWindow():DefaultWindow("test_slerp",800,600),m_pause(false),m_cubic(true) {
+    TestWindow()
+    :   DefaultWindow("test_slerp",800,600)
+    ,   m_pause(false)
+    ,   m_cubic(true)
+    {
         // Move the camera back to be able to see objects at the origin.
         m_camera.setPosition(Vec3f(0,0,20));
 

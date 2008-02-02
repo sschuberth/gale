@@ -95,7 +95,9 @@ class Bindable
   protected:
 
     /// Helper constructor for special objects with a fixed \a id.
-    Bindable(GLuint id=0):m_id(id) {
+    Bindable(GLuint id=0)
+    :   m_id(id)
+    {
         // This is a trick to ensure derived classes implement this static method.
         G_ASSERT_CALL(C::isValid(id));
     }

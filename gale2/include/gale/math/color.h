@@ -289,7 +289,9 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// depending on the bits set in \a mask. Bit 0 maps to the first channel,
     /// bit 1 to second one and so on. This constructor is required to
     /// initialize the static class constants.
-    explicit Color(unsigned int mask):m_hsv_outdated(true) {
+    explicit Color(unsigned int mask)
+    :   m_hsv_outdated(true)
+    {
         meta::LoopFwd<N,meta::OpAssign>::
           iterateIndexMask(Base::getData(),mask,Model::getMaxIntensity(),Model::getMinIntensity());
     }
@@ -312,7 +314,9 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// Converts a color of different type but with the same amount of channels
     /// to this type.
     template<typename U>
-    Color(Color<N,U> const& v):m_hsv_outdated(true) {
+    Color(Color<N,U> const& v)
+    :   m_hsv_outdated(true)
+    {
         meta::LoopFwd<N,meta::OpAssign>::iterate(Base::getData(),v.getData());
     }
 

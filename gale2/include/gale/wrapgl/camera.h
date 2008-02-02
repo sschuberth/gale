@@ -70,8 +70,10 @@ class Camera
     /// Constructor that initializes a perspective camera attached to the given
     /// render \a surface. By default, its screen space is the current viewport
     /// and no transformation is set to the modelview matrix.
-    Camera(system::RenderSurface const& surface):
-      m_surface(surface),m_screen_changed(false) {
+    Camera(system::RenderSurface const& surface)
+    :   m_surface(surface)
+    ,   m_screen_changed(false)
+    {
         // Initialize the camera screen space to the current OpenGL viewport.
         glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&m_screen));
         G_ASSERT_OPENGL
