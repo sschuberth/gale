@@ -28,6 +28,7 @@
 
 #include <time.h>
 
+#include "matrix4.h"
 #include "quaternion.h"
 
 /**
@@ -148,8 +149,8 @@ class RandomBase
      */
     //@{
 
-    /// Returns a random vector.
-    Vector<3,T> getVector() {
+    /// Returns a random 3-component vector.
+    Vector<3,T> getVector3() {
         Vector<3,T> v;
 
         do {
@@ -159,6 +160,42 @@ class RandomBase
         } while (v.getLengthSquared()>1);
 
         return v;
+    }
+
+    /// Returns a random 4-component vector.
+    Vector<4,T> getVector4() {
+        Vector<4,T> v;
+
+        do {
+            v.setX(getRandom0N(2)-1);
+            v.setY(getRandom0N(2)-1);
+            v.setZ(getRandom0N(2)-1);
+            v.setW(getRandom0N(2)-1);
+        } while (v.getLengthSquared()>1);
+
+        return v;
+    }
+
+    /// Returns a random orthonormalized 4x4 homogeneous matrix.
+    HMatrix4<T> getHMatrix4() {
+        HMatrix4<T> m(
+            getVector3(),
+            getVector3(),
+            getVector3()
+        );
+        return m.orthonormalize();
+    }
+
+    /// Returns a random invertible 4x4 matrix.
+    Matrix4<T> getMatrix4() {
+        Matrix4<T> m;
+        do {
+            m.c0=getVector4();
+            m.c1=getVector4();
+            m.c2=getVector4();
+            m.c3=getVector4();
+        } while (abs(m.getDeterminant())<=std::numeric_limits<T>::epsilon());
+        return m;
     }
 
     /// Returns a random quaternion.
