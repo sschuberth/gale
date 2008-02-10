@@ -308,8 +308,8 @@ class Matrix4
     /// a column vector) using homogeneous coordinates.
     Vector<3,T> multFromLeftTo(Vector<3,T> const& v) const {
         // 15 scalar multiplications, 12 scalar additions.
-        T v4=c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3];
-        T s=v4 ? T(1)/v4 : T(1);
+        T v4 = c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3];
+        T  s = v4 ? T(1)/v4 : T(1);
         return Vec(
             s*(c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]),
             s*(c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]),
@@ -321,8 +321,8 @@ class Matrix4
     /// row vector) using homogeneous coordinates.
     Vector<3,T> multFromRightTo(Vector<3,T> const& v) const {
         // 15 scalar multiplications, 12 scalar additions.
-        T v4=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + c3[3];
-        T s=v4 ? T(1)/v4 : T(1);
+        T v4 = v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + c3[3];
+        T  s = v4 ? T(1)/v4 : T(1);
         return Vec(
             s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + c0[3]),
             s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + c1[3]),
@@ -396,6 +396,93 @@ class Matrix4
     /// type \a T.
     friend bool operator!=(Matrix4 const& m,Matrix4 const& n) {
         return !(m==n);
+    }
+
+    //@}
+
+    /**
+     * \name Miscellaneous methods
+     */
+    //@{
+
+    /// Returns the determinant of this matrix.
+    T getDeterminant() const {
+        T a0 = c0[0]*c1[1] - c1[0]*c0[1];
+        T a1 = c0[0]*c2[1] - c2[0]*c0[1];
+        T a2 = c0[0]*c3[1] - c3[0]*c0[1];
+        T a3 = c1[0]*c2[1] - c2[0]*c1[1];
+        T a4 = c1[0]*c3[1] - c3[0]*c1[1];
+        T a5 = c2[0]*c3[1] - c3[0]*c2[1];
+
+        T b0 = c0[2]*c1[3] - c1[2]*c0[3];
+        T b1 = c0[2]*c2[3] - c2[2]*c0[3];
+        T b2 = c0[2]*c3[3] - c3[2]*c0[3];
+        T b3 = c1[2]*c2[3] - c2[2]*c1[3];
+        T b4 = c1[2]*c3[3] - c3[2]*c1[3];
+        T b5 = c2[2]*c3[3] - c3[2]*c2[3];
+
+        return a0*b5 - a1*b4 + a2*b3 + a3*b2 - a4*b1 + a5*b0;
+    }
+
+    /// Returns the adjoint of this matrix.
+    Matrix4 getAdjoint() const {
+        T a0 = c0[0]*c1[1] - c1[0]*c0[1];
+        T a1 = c0[0]*c2[1] - c2[0]*c0[1];
+        T a2 = c0[0]*c3[1] - c3[0]*c0[1];
+        T a3 = c1[0]*c2[1] - c2[0]*c1[1];
+        T a4 = c1[0]*c3[1] - c3[0]*c1[1];
+        T a5 = c2[0]*c3[1] - c3[0]*c2[1];
+
+        T b0 = c0[2]*c1[3] - c1[2]*c0[3];
+        T b1 = c0[2]*c2[3] - c2[2]*c0[3];
+        T b2 = c0[2]*c3[3] - c3[2]*c0[3];
+        T b3 = c1[2]*c2[3] - c2[2]*c1[3];
+        T b4 = c1[2]*c3[3] - c3[2]*c1[3];
+        T b5 = c2[2]*c3[3] - c3[2]*c2[3];
+
+        return Matrix4(
+            Vec(
+                + c1[1]*b5 - c2[1]*b4 + c3[1]*b3,
+                - c0[1]*b5 + c2[1]*b2 - c3[1]*b1,
+                + c0[1]*b4 - c1[1]*b2 + c3[1]*b0,
+                - c0[1]*b3 + c1[1]*b1 - c2[1]*b0
+            ),
+            Vec(
+                - c1[0]*b5 + c2[0]*b4 - c3[0]*b3,
+                + c0[0]*b5 - c2[0]*b2 + c3[0]*b1,
+                - c0[0]*b4 + c1[0]*b2 - c3[0]*b0,
+                + c0[0]*b3 - c1[0]*b1 + c2[0]*b0
+            ),
+            Vec(
+                + c1[3]*a5 - c2[3]*a4 + c3[3]*a3,
+                - c0[3]*a5 + c2[3]*a2 - c3[3]*a1,
+                + c0[3]*a4 - c1[3]*a2 + c3[3]*a0,
+                - c0[3]*a3 + c1[3]*a1 - c2[3]*a0
+            ),
+            Vec(
+                - c1[2]*a5 + c2[2]*a4 - c3[2]*a3,
+                + c0[2]*a5 - c2[2]*a2 + c3[2]*a1,
+                - c0[2]*a4 + c1[2]*a2 - c3[2]*a0,
+                + c0[2]*a3 - c1[2]*a1 + c2[2]*a0
+            )
+        );
+    }
+
+    /// Inverts this matrix. Optionally returns a \a result indicating whether
+    /// the matrix' determinant is non-zero and thus the inverse is viable.
+    Matrix4& invert(bool* result=NULL) {
+        T det=getDeterminant();
+        bool valid=abs(det)>std::numeric_limits<T>::epsilon();
+
+        if (result) {
+            *result=valid;
+        }
+
+        if (valid) {
+            *this=(1/det)*getAdjoint();
+        }
+
+        return *this;
     }
 
     //@}
