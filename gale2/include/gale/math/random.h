@@ -200,7 +200,7 @@ class RandomBase
 
     /// Returns a random quaternion.
     Quaternion<T> getQuaternion() {
-        return Quaternion<T>(getVector(),getRandom0ExclN(T(2*M_PI)));
+        return Quaternion<T>(getVector3(),getRandom0ExclN(T(2*M_PI)));
     }
 
     //@}
