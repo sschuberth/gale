@@ -506,16 +506,27 @@ class HMatrix4
         return *this;
     }
 
-    /// Inverts this matrix if it is orthonormal; the product of a matrix and
-    /// its inverse equals the identity matrix.
-    HMatrix4& invert() {
-        c3=Vec(-c3%c0,-c3%c1,-c3%c2);
+    /// Inverts this matrix. Optionally returns a \a result indicating whether
+    /// the matrix is orthonormal and thus the inverse is viable.
+    HMatrix4& invert(bool* result=NULL) {
+        if (result) {
+            *result=abs(c0%c1)<std::numeric_limits<T>::epsilon()
+                 && abs(c0%c2)<std::numeric_limits<T>::epsilon()
+                 && abs(c1%c2)<std::numeric_limits<T>::epsilon()
+                 && meta::OpCmpEqualEps::evaluate(c0.getLengthSquared(),T(1))
+                 && meta::OpCmpEqualEps::evaluate(c1.getLengthSquared(),T(1))
+                 && meta::OpCmpEqualEps::evaluate(c2.getLengthSquared(),T(1));
+        }
 
-        // Transpose the column vectors.
-        T tmp;
-        tmp=(*this)(1,0); (*this)(1,0)=(*this)(0,1); (*this)(0,1)=tmp;
-        tmp=(*this)(2,0); (*this)(2,0)=(*this)(0,2); (*this)(0,2)=tmp;
-        tmp=(*this)(2,1); (*this)(2,1)=(*this)(1,2); (*this)(1,2)=tmp;
+        if (!result || *result) {
+            c3=Vec(-c3%c0,-c3%c1,-c3%c2);
+
+            // Transpose the column vectors.
+            T tmp;
+            tmp=(*this)(1,0); (*this)(1,0)=(*this)(0,1); (*this)(0,1)=tmp;
+            tmp=(*this)(2,0); (*this)(2,0)=(*this)(0,2); (*this)(0,2)=tmp;
+            tmp=(*this)(2,1); (*this)(2,1)=(*this)(1,2); (*this)(1,2)=tmp;
+        }
 
         return *this;
     }
