@@ -61,6 +61,15 @@ int main()
     assert(projection*Vec3f::Z()==Vec3f::Z());
     assert(projection*Vec3f(1,1,1)==Vec3f(0,1,1));
 
+    Mat4f A=r.getMatrix4(),B=A,C;
+
+    bool result;
+    B.invert(&result);
+    assert(result);
+
+    C=A*B;
+    assert(C==Mat4f::IDENTITY());
+
 #ifdef _WIN32
     system("pause");
 #endif
