@@ -42,7 +42,7 @@ namespace math {
  * because partial specialization of member functions of template classes with
  * multiple template parameters is not supported by C++. Using this class we can
  * fully specialize only those class template member functions that should not
- * be implictly obtained from the base template.
+ * be implicitly obtained from the base template.
  */
 template<typename T>
 struct ColorModel
@@ -300,7 +300,9 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Initialize to black by default.
     Color() {
+#ifndef GALE_INIT
         *this=BLACK();
+#endif
     }
 
     /// Allows to initialize 3-channel colors directly.
