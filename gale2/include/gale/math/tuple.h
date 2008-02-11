@@ -62,10 +62,15 @@ class TupleBase
      */
     //@{
 
-    /// For performance reasons, do not initialize any data by default.
+    /// Create a tuple whose elements are either not initialized at all or
+    /// initialized to 0 if \c GALE_INIT is defined.
     TupleBase() {
         // Do not allow tuples with less than 2 elements.
         assert(N>=2);
+
+#ifdef GALE_INIT
+        meta::LoopFwd<N,meta::OpAssign>::iterate(getData(),0);
+#endif
     }
 
     /// Allows to initialize 2-tuples directly.
@@ -395,7 +400,8 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> >
      */
     //@{
 
-    /// For performance reasons, do not initialize any data by default.
+    /// Create a tuple whose elements are either not initialized at all or
+    /// initialized to 0 if \c GALE_INIT is defined.
     Tuple() {}
 
     /// Allows to initialize 2-tuples directly.

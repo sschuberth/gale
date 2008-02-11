@@ -81,7 +81,8 @@ class Quaternion
         return q;
     }
 
-    /// Returns the identity quaternion (regarding multiplication).
+    /// Returns a quaternion with the real part set to 1 and the imaginary part
+    /// set to 0 (which is the identity quaternion regarding multiplication).
     static Quaternion const& IDENTITY() {
         static Quaternion const q(1,Vec::ZERO());
         return q;
@@ -94,8 +95,13 @@ class Quaternion
      */
     //@{
 
-    /// For performance reasons, do not initialize any data by default.
-    Quaternion() {}
+    /// Create a quaternion whose components are either not initialized at all
+    /// or initialized to 0 if \c GALE_INIT is defined.
+    Quaternion() {
+#ifdef GALE_INIT
+        real=0;
+#endif
+    }
 
     /// Initialized the quaternion to the given \a real number part and the
     /// imaginary number parts given as \a imag.
