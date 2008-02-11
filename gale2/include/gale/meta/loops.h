@@ -88,8 +88,9 @@ struct LoopFwd
     template<typename A>
     static G_INLINE A iterateAbsValues(A const* a) {
         return OP::evaluate(
-                 math::abs(a[index]),
-                 LoopFwd<index,OP>::iterateAbsValues(a));
+            math::abs(a[index]),
+            LoopFwd<index,OP>::iterateAbsValues(a)
+        );
     }
 
     /// Iterates over two arrays adding evaluated values.
