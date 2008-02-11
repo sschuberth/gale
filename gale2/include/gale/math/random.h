@@ -149,7 +149,7 @@ class RandomBase
      */
     //@{
 
-    /// Returns a random 3-component vector.
+    /// Returns a normalized random 3-component vector.
     Vector<3,T> getVector3() {
         Vector<3,T> v;
 
@@ -159,10 +159,10 @@ class RandomBase
             v.setZ(getRandom0N(2)-1);
         } while (v.getLengthSquared()>1);
 
-        return v;
+        return v.normalize();
     }
 
-    /// Returns a random 4-component vector.
+    /// Returns a normalized random 4-component vector.
     Vector<4,T> getVector4() {
         Vector<4,T> v;
 
@@ -173,7 +173,7 @@ class RandomBase
             v.setW(getRandom0N(2)-1);
         } while (v.getLengthSquared()>1);
 
-        return v;
+        return v.normalize();
     }
 
     /// Returns a random orthonormalized 4x4 homogeneous matrix.
