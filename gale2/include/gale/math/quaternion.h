@@ -102,12 +102,16 @@ class Quaternion
     Quaternion(T real,Vec const& imag):
       real(real),imag(imag) {}
 
-    /// Creates a normalized quaternion representing the orientation given by a
-    /// normalized \a axis vector and an \a angle in radians.
+    /// Creates a quaternion that matches the rotation represented by the given
+    /// normalized rotation \a axis vector and rotation \a angle in radians.
     Quaternion(Vec const& axis,double angle) {
-        double half=angle*0.5;
-        real=T(::cos(half));
-        imag=T(::sin(half))*axis;
+        setFromAxisAngle(axis,angle);
+    }
+
+    /// Creates a quaternion that matches the rotation represented by the given
+    /// homogeneous matrix \a m, which needs to be orthonormalized.
+    Quaternion(HMat const& m) {
+        setFromMatrix(m);
     }
 
     //@}
@@ -442,6 +446,97 @@ class Quaternion
      */
     //@{
 
+    /// Sets this quaternion to match the rotation represented by the given
+    /// normalized rotation \a axis vector and rotation \a angle in radians.
+    void setFromAxisAngle(Vec const& axis,double angle) {
+        double half=0.5*angle;
+        real=T(::cos(half));
+        imag=T(::sin(half))*axis;
+    }
+
+    /// Returns a rotation \a axis vector and rotation \a angle in radians that
+    /// match the rotation represented by this quaternion, which needs to be
+    /// normalized.
+    void getToAxisAngle(Vec& axis,double& angle) {
+        T dot=imag.getLengthSquared();
+
+        if (dot>std::numeric_limits<T>::epsilon()) {
+            angle=::acos(real)*2.0;
+            axis=imag/T(::sqrt(static_cast<double>(dot)));
+        }
+        else {
+            angle=0;
+            axis=Vec::X();
+        }
+    }
+
+    /// Sets this quaternion to match the rotation represented by the given
+    /// homogeneous matrix \a m, which needs to be orthonormalized.
+    void setFromMatrix(HMat const& m) {
+        T trace=m(0,0)+m(1,1)+m(2,2);
+
+        if (trace>0) {
+            T r=::sqrt(trace+1);
+            T s=T(0.5)/r;
+
+            real    = T(0.5)*r;
+            imag[0] = (m(2,1)-m(1,2))*s;
+            imag[1] = (m(0,2)-m(2,0))*s;
+            imag[2] = (m(1,0)-m(0,1))*s;
+        }
+        else {
+            unsigned int i=0;
+
+            if (m(1,1)>m(0,0)) {
+                i=1;
+            }
+            if (m(2,2)>m(i,i)) {
+                i=2;
+            }
+
+            static unsigned int next[3]={1,2,0};
+            unsigned int j=next[i];
+            unsigned int k=next[j];
+
+            T r=::sqrt(m(i,i)-m(j,j)-m(k,k)+1);
+            T s=T(0.5)/r;
+
+            real    = (m(k,j)-m(j,k))*s;
+            imag[i] = T(0.5)*r;
+            imag[j] = (m(j,i)+m(i,j))*s;
+            imag[k] = (m(k,i)+m(i,k))*s;
+        }
+    }
+
+    /// Returns a homogeneous matrix \a m that matches the rotation represented
+    /// by this quaternion, which needs to be normalized.
+    void getToMatrix(HMat& m) const {
+        T x,y,z;
+        T wx,wy,wz,xx,xy,xz,yy,yz,zz;
+
+        x=2*imag.getX();
+        y=2*imag.getY();
+        z=2*imag.getZ();
+
+        wx=x*real;
+        wy=y*real;
+        wz=z*real;
+
+        xx=x*imag.getX();
+        xy=y*imag.getX();
+        xz=z*imag.getX();
+
+        yy=y*imag.getY();
+        yz=z*imag.getY();
+
+        zz=z*imag.getZ();
+
+        m.c0=Vec(T(1-(yy+zz)), T(  (xy+wz)), T(  (xz-wy)));
+        m.c1=Vec(T(  (xy-wz)), T(1-(xx+zz)), T(  (yz+wx)));
+        m.c2=Vec(T(  (xz+wy)), T(  (yz-wx)), T(1-(xx+yy)));
+        m.c3=Vec::ZERO();
+    }
+
     /// Returns the tangent for this quaternion given the predecessor \a a and
     /// the successor \a b, which all need to be normalized.
     Quaternion getTangent(Quaternion const& a,Quaternion const& b) const {
@@ -450,35 +545,6 @@ class Quaternion
 
         Quaternion t=T(-0.25)*(log(inv*a)+log(inv*b));
         return (*this)*exp(t);
-    }
-
-    /// Returns a homogeneous matrix that matches the rotation represented by
-    /// this quaternion, which does not need to be normalized.
-    HMat getMatrix() const {
-        T wx,wy,wz,xx,xy,xz,yy,yz,zz;
-
-        wx=real*imag.getX();
-        wy=real*imag.getY();
-        wz=real*imag.getZ();
-
-        xx=imag.getX()*imag.getX();
-        xy=imag.getX()*imag.getY();
-        xz=imag.getX()*imag.getZ();
-
-        yy=imag.getY()*imag.getY();
-        yz=imag.getY()*imag.getZ();
-
-        zz=imag.getZ()*imag.getZ();
-
-        // This implicitly normalizes the quaternion.
-        double s=2.0/getLength();
-
-        return HMat(
-            Vec(T(1-s*(yy+zz)), T(  s*(xy+wz)), T(  s*(xz-wy))),
-            Vec(T(  s*(xy-wz)), T(1-s*(xx+zz)), T(  s*(yz+wx))),
-            Vec(T(  s*(xz+wy)), T(  s*(yz-wx)), T(1-s*(xx+yy))),
-            Vec::ZERO()
-        );
     }
 
     /// Returns the conjugate of this quaternion.
