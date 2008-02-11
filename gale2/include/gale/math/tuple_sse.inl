@@ -14,7 +14,8 @@ class TupleBase<4,float,C>
      */
     //@{
 
-    /// For performance reasons, do not initialize any data by default.
+    /// Create a tuple whose elements are either not initialized at all or
+    /// initialized to 0 if \c GALE_INIT is defined.
     TupleBase() {}
 
     /// Allows to initialize 4-tuples directly.
@@ -211,14 +212,13 @@ class TupleBase<4,float,C>
     /// on a scalar \a s. For performance reasons, \a s is not clamped to [0,1].
     C getLerp(C const& t,float s) const {
         C tmp;
-        tmp.m_simd=
-            _mm_add_ps(
-                m_simd,
-                _mm_mul_ps(
-                    _mm_sub_ps(t.m_simd,m_simd),
-                    _mm_set_ps1(s)
-                )
-            );
+        tmp.m_simd=_mm_add_ps(
+            m_simd,
+            _mm_mul_ps(
+                _mm_sub_ps(t.m_simd,m_simd),
+                _mm_set_ps1(s)
+            )
+        );
         return tmp;
     }
 

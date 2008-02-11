@@ -189,7 +189,8 @@ class HMatrix4
      */
     //@{
 
-    /// For performance reasons, do not initialize the whole matrix by default.
+    /// Create a matrix whose components are either not initialized at all or
+    /// initialized to 0 if \c GALE_INIT is defined.
     HMatrix4():
       m_c0w(0),m_c1w(0),m_c2w(0),m_c3w(1) {}
 

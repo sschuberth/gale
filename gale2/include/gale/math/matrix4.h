@@ -157,7 +157,8 @@ class Matrix4
      */
     //@{
 
-    /// For performance reasons, do not initialize any data by default.
+    /// Create a matrix whose components are either not initialized at all or
+    /// initialized to 0 if \c GALE_INIT is defined.
     Matrix4() {}
 
     /// Initialize the column vectors with vectors \a c0 to \a c3.
