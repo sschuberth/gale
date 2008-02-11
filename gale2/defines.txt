@@ -1,9 +1,16 @@
+#define GALE_INIT
+
+    If defined, tuples and related classes are initialized to 0 instead of
+    leaving them uninitialized for performance reasons.
+
+
 #define GALE_SSE
 #define GALE_SSE2
 #define GALE_SSE3
 
     If defined, GALE uses SSE / SSE2 / SSE3 instructions on x86 machines to
     speed up certain calculations.
+
 
 #define GALE_TINY
 
