@@ -302,9 +302,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Initialize to black by default.
     Color() {
-#ifndef GALE_INIT
         *this=BLACK();
-#endif
     }
 
     /// Allows to initialize 3-channel colors directly.
