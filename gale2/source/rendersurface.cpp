@@ -151,9 +151,12 @@ LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
         case WM_ERASEBKGND: {
             return 1;
         }
-    }
 
-    return DefWindowProc(getWindowHandle(),uMsg,wParam,lParam);
+        default: {
+            // Let Window's default handler process other messages.
+            return DefWindowProc(getWindowHandle(),uMsg,wParam,lParam);
+        }
+    }
 }
 
 #endif // G_OS_WINDOWS
