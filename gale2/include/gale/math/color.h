@@ -340,6 +340,12 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         return Base::getData()[0];
     }
 
+    /// Returns a \c constant reference to the red channel.
+    T const& getR() const {
+        assert(N>=1);
+        return Base::getData()[0];
+    }
+
     /// Assigns a new value to the red channel.
     void setR(T const& r) {
         assert(N>=1);
@@ -353,6 +359,12 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         return Base::getData()[1];
     }
 
+    /// Returns a \c constant reference to the green channel.
+    T const& getG() const {
+        assert(N>=2);
+        return Base::getData()[1];
+    }
+
     /// Assigns a new value to the green channel.
     void setG(T const& g) {
         assert(N>=2);
@@ -362,6 +374,12 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns a reference to the blue channel.
     T& getB() {
+        assert(N>=3);
+        return Base::getData()[2];
+    }
+
+    /// Returns a \c constant reference to the blue channel.
+    T const& getB() const {
         assert(N>=3);
         return Base::getData()[2];
     }
