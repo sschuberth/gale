@@ -87,7 +87,7 @@ struct BiasScale
     //@{
 
     /// Returns whether transformation \a a equals transformation \a b.
-    friend bool operator==(BiasScale const& a,BiasScale const& b) const {
+    friend bool operator==(BiasScale const& a,BiasScale const& b) {
         return meta::OpCmpEqualEps::evaluate(a.bias,b.bias)
             && meta::OpCmpEqualEps::evaluate(a.scale,b.scale);
     }
@@ -168,7 +168,7 @@ struct ScaleBias
     //@{
 
     /// Returns whether transformation \a a equals transformation \a b.
-    friend bool operator==(ScaleBias const& a,ScaleBias const& b) const {
+    friend bool operator==(ScaleBias const& a,ScaleBias const& b) {
         return meta::OpCmpEqualEps::evaluate(a.scale,b.scale)
             && meta::OpCmpEqualEps::evaluate(a.bias,b.bias);
     }
