@@ -334,6 +334,25 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
      */
     //@{
 
+    /// Assigns new values to the red, green and blue channels.
+    void setRGB(T const& r,T const& g,T const& b) {
+        assert(N>=3);
+        Base::getData()[0]=r;
+        Base::getData()[1]=g;
+        Base::getData()[2]=b;
+        m_hsv_outdated=true;
+    }
+
+    /// Assigns new values to the red, green, blue and alpha channels.
+    void setRGBA(T const& r,T const& g,T const& b,T const& a) {
+        assert(N>=4);
+        Base::getData()[0]=r;
+        Base::getData()[1]=g;
+        Base::getData()[2]=b;
+        Base::getData()[3]=a;
+        m_hsv_outdated=true;
+    }
+
     /// Returns a reference to the red channel.
     T& getR() {
         assert(N>=1);
@@ -415,6 +434,19 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
      * \name HSV color model channel access methods
      */
     //@{
+
+    /// Assigns new values to the hue, saturation and value channels.
+    void setHSV(T const& h,T const& s,T const& v) {
+        assert(N>=3);
+        HSV2RGB(m_h=h,m_s=s,m_v=v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
+    }
+
+    /// Assigns new values to the hue, saturation, value and alpha channels.
+    void setHSVA(T const& h,T const& s,T const& v,T const& a) {
+        assert(N>=4);
+        HSV2RGB(m_h=h,m_s=s,m_v=v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
+        Base::getData()[3]=a;
+    }
 
     /// Returns a reference to the hue channel.
     T& getH() {
