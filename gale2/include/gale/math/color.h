@@ -57,13 +57,14 @@ struct ColorModel
         return std::numeric_limits<T>::max();
     }
 
-    /// Converts a color representation from the RGB to the HSV model. All
-    /// channel values are interpreted to range from the value returned by
-    /// getMinIntensity() to the value returned by getMaxIntensity().
+    /// Converts a color representation from the RGB to the HSV model. The RGB
+    /// input channel values have to be in the range from getMinIntensity() to
+    /// getMaxIntensity(). The HSV output channel values will be in range
+    /// [0,360[ for hue, and in range [0,100] for saturation and value.
     static void RGB2HSV(T const r,T const g,T const b,T& h,T& s,T& v) {
-        const T range=getMaxIntensity()-getMinIntensity();
+        // Convert RGB values to range [0,1].
+        T const range=getMaxIntensity()-getMinIntensity();
 
-        // Always convert RGB values to range [0,1].
         double R=clamp(double(r-getMinIntensity())/range,0.0,1.0);
         double G=clamp(double(g-getMinIntensity())/range,0.0,1.0);
         double B=clamp(double(b-getMinIntensity())/range,0.0,1.0);
@@ -94,36 +95,39 @@ struct ColorModel
                 H=(R==m)?(3+gd):(5-rd);
             }
 
-            H=(H<6)?(H*60):0;
+            if (H<0) {
+                H+=6;
+            }
+            else if (H>=6) {
+                H-=6;
+            }
         }
         else {
             // Achromatic case, actually hue is undefined!
             H=0;
         }
 
-        // At this point hue ranges from 0 to 360, saturation and value from 0
-        // to 1. Convert these ranges back to the initial RGB channel range.
-        h=T(H*range/360+getMinIntensity());
-        s=T(S*range+getMinIntensity());
-        v=T(V*range+getMinIntensity());
+        // At this point hue is in range [0,6[, saturation and value in range
+        // [0,1]. Convert the first to degrees and the latter two to percent.
+        h=T(H*60);
+        s=T(S*100);
+        v=T(V*100);
     }
 
-    /// Converts a color representation from the HSV to the RGB model. All
-    /// channel values are interpreted to range from the value returned by
-    /// getMinIntensity() to the value returned by getMaxIntensity().
+    /// Converts a color representation from the HSV to the RGB model. The HSV
+    /// input channel values have to be in range [0,360[ for hue, and in range
+    /// [0,100] for saturation and value. The RGB output channel values will be
+    /// in the range from getMinIntensity() to getMaxIntensity().
     static void HSV2RGB(T const h,T const s,T const v,T& r,T& g,T& b) {
-        const T range=getMaxIntensity()-getMinIntensity();
-
-        // Always convert HSV values to range [0,1].
-        double H=clamp(double(h-getMinIntensity())/range,0.0,1.0);
-        double S=clamp(double(s-getMinIntensity())/range,0.0,1.0);
-        double V=clamp(double(v-getMinIntensity())/range,0.0,1.0);
+        // Convert H value to range [0,6[ and SV values to range [0,1].
+        double H=clamp(double(h)/60.0,0.0,6.0);
+        double S=clamp(double(s)/100.0,0.0,1.0);
+        double V=clamp(double(v)/100.0,0.0,1.0);
 
         double R,G,B;
 
         if (S>0) {
-            H*=6;
-            long i=roundToZero(static_cast<float>(H));
+            long i=roundToZero(H);
             double f=H-i;
 
             double p=V*(1-S);
@@ -131,8 +135,7 @@ struct ColorModel
             double t=V*(1-S*(1-f));
 
             switch (i) {
-                case 6:
-                case 0: {
+                default: {
                     R=V; G=t; B=p;
                     break;
                 }
@@ -163,8 +166,10 @@ struct ColorModel
             R=G=B=V;
         }
 
-        // At this point red, green and blue range from 0 to 1. Convert this
-        // range back to the initial HSV channel range.
+        // At this point red, green and blue are in range [0,1]. Convert them
+        // to the intensity range.
+        T const range=getMaxIntensity()-getMinIntensity();
+
         r=T(R*range+getMinIntensity());
         g=T(G*range+getMinIntensity());
         b=T(B*range+getMinIntensity());
