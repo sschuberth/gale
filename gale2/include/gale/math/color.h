@@ -211,11 +211,13 @@ template<unsigned int N,typename T>
 class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 {
     //@{
-    /// This type definition simplifies base class access to identifiers that
+
+    /// These type definitions simplify base class access to identifiers that
     /// are not visible until instantiation time because they do not dependent
     /// on template arguments.
     typedef TupleBase<N,T,Color<N,T> > Base;
     typedef ColorModel<T> Model;
+
     //@}
 
   public:
