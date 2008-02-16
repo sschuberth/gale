@@ -459,8 +459,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     void setH(T const& h) {
         assert(N>=1);
         updateHSV();
-        m_h=h;
-        HSV2RGB(m_h,m_s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
+        HSV2RGB(m_h=h,m_s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
     }
 
     /// Returns a reference to the saturation channel.
@@ -474,8 +473,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     void setS(T const& s) {
         assert(N>=2);
         updateHSV();
-        m_s=s;
-        HSV2RGB(m_h,m_s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
+        HSV2RGB(m_h,m_s=s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
     }
 
     /// Returns a reference to the value channel.
@@ -489,8 +487,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     void setV(T const& v) {
         assert(N>=3);
         updateHSV();
-        m_v=v;
-        HSV2RGB(m_h,m_s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
+        HSV2RGB(m_h,m_s,m_v=v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
     }
 
     //@}
@@ -513,6 +510,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     friend Color operator!(Color const& c) {
         return Color(c).invert();
     }
+
     //@}
 
   private:
