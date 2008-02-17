@@ -146,7 +146,6 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Assigns new values to the x- and y-components.
     void set(T const x,T const y) {
-        assert(N>=2);
         Base::getData()[0]=x;
         Base::getData()[1]=y;
     }
@@ -170,37 +169,31 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the x-component.
     T getX() {
-        assert(N>=1);
         return Base::getData()[0];
     }
 
     /// Returns a \c constant reference to the x-component.
     T const& getX() const {
-        assert(N>=1);
         return Base::getData()[0];
     }
 
     /// Assigns a new value to the x-component.
     void setX(T const& x) {
-        assert(N>=1);
         Base::getData()[0]=x;
     }
 
     /// Returns the y-component.
     T getY() {
-        assert(N>=2);
         return Base::getData()[1];
     }
 
     /// Returns a \c constant reference to the y-component.
     T const& getY() const {
-        assert(N>=2);
         return Base::getData()[1];
     }
 
     /// Assigns a new value to the y-component.
     void setY(T const& y) {
-        assert(N>=2);
         Base::getData()[1]=y;
     }
 
