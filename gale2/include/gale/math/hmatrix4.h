@@ -73,7 +73,7 @@ class HMatrix4
     {
         /// Creates a rotation matrix about the x-axis for the given \a angle in
         /// radians.
-        static HMatrix4 RotationX(double angle) {
+        static HMatrix4 RotationX(double const angle) {
             double s=::sin(angle),c=::cos(angle);
 
             return HMatrix4(
@@ -86,7 +86,7 @@ class HMatrix4
 
         /// Creates a rotation matrix about the y-axis for the given \a angle in
         /// radians.
-        static HMatrix4 RotationY(double angle) {
+        static HMatrix4 RotationY(double const angle) {
             double s=::sin(angle),c=::cos(angle);
 
             return HMatrix4(
@@ -99,7 +99,7 @@ class HMatrix4
 
         /// Creates a rotation matrix about the z-axis for the given \a angle in
         /// radians.
-        static HMatrix4 RotationZ(double angle) {
+        static HMatrix4 RotationZ(double const angle) {
             double s=::sin(angle),c=::cos(angle);
 
             return HMatrix4(
@@ -112,7 +112,7 @@ class HMatrix4
 
         /// Creates a rotation matrix about the given normalized \a axis for the
         /// given \a angle in radians.
-        static HMatrix4 Rotation(Vec const& axis,double angle) {
+        static HMatrix4 Rotation(Vec const& axis,double const angle) {
             double s=::sin(angle),c=1-::cos(angle);
             double xs=s*axis.getX(),ys=s*axis.getY(),zs=s*axis.getZ();
             double xc=c*axis.getX(),yc=c*axis.getY(),zc=c*axis.getZ();
@@ -127,7 +127,7 @@ class HMatrix4
 
         /// Creates a translation matrix for the given \a distance along
         /// the normalized \a direction.
-        static HMatrix4 Translation(Vec const& direction,T distance=1) {
+        static HMatrix4 Translation(Vec const& direction,T const distance=1) {
             return HMatrix4(
                 Vec::X(),
                 Vec::Y(),
@@ -138,7 +138,7 @@ class HMatrix4
 
         /// Creates a scaling matrix for the given factors along the \a x, \a y
         /// and \a z axes.
-        static HMatrix4 Scaling(T x,T y,T z) {
+        static HMatrix4 Scaling(T const x,T const y,T const z) {
             return HMatrix4(
                 Vec(x,0,0),
                 Vec(0,y,0),
@@ -229,14 +229,14 @@ class HMatrix4
 
     /// Returns a reference to the data element located at \a row and \a column.
     /// Despite usual in maths, the index starts at 0 (not 1).
-    T& operator()(unsigned int row,unsigned int column) {
+    T& operator()(unsigned int const row,unsigned int const column) {
         assert(row<3 && column<4);
         return (*this)[(column<<2)+row];
     }
 
     /// Returns a constant reference to the data element located at \a row and
     /// \a column. Despite usual in maths, the index starts at 0 (not 1).
-    T const& operator()(unsigned int row,unsigned int column) const {
+    T const& operator()(unsigned int const row,unsigned int const column) const {
         assert(row<3 && column<4);
         return (*this)[(column<<2)+row];
     }
@@ -431,7 +431,7 @@ class HMatrix4
     //@{
 
     /// Multiplies each element of \c this matrix by a scalar \a s.
-    HMatrix4 const& operator*=(T s) {
+    HMatrix4 const& operator*=(T const s) {
         c0*=s;
         c1*=s;
         c2*=s;
@@ -440,7 +440,7 @@ class HMatrix4
     }
 
     /// Divides each element of \c this matrix by a scalar \a s.
-    HMatrix4 const& operator/=(T s) {
+    HMatrix4 const& operator/=(T const s) {
         c0/=s;
         c1/=s;
         c2/=s;
@@ -449,22 +449,22 @@ class HMatrix4
     }
 
     /// Multiplies each element of matrix \a m by a scalar \a s from the right.
-    friend HMatrix4 operator*(HMatrix4 const& m,T s) {
+    friend HMatrix4 operator*(HMatrix4 const& m,T const s) {
         return HMatrix4(m.c0*s,m.c1*s,m.c2*s,m.c3*s);
     }
 
     /// Multiplies each element of matrix \a m by a scalar \a s from the left.
-    friend HMatrix4 operator*(T s,HMatrix4 const& m) {
+    friend HMatrix4 operator*(T const s,HMatrix4 const& m) {
         return m*s;
     }
 
     /// Divides each element of matrix \a m by a scalar \a s.
-    friend HMatrix4 operator/(HMatrix4 const& m,T s) {
+    friend HMatrix4 operator/(HMatrix4 const& m,T const s) {
         return m*(1/s);
     }
 
     /// Divides a scalar \a s by each element of matrix \a m.
-    friend HMatrix4 operator/(T s,HMatrix4 const& m) {
+    friend HMatrix4 operator/(T const s,HMatrix4 const& m) {
         return HMatrix4(s/m.c0,s/m.c1,s/m.c2,s/m.c3);
     }
 
@@ -509,7 +509,7 @@ class HMatrix4
 
     /// Inverts this matrix. Optionally returns a \a result indicating whether
     /// the matrix is orthonormal and thus the inverse is viable.
-    HMatrix4& invert(bool* result=NULL) {
+    HMatrix4& invert(bool* const result=NULL) {
         if (result) {
             *result=abs(c0%c1)<std::numeric_limits<T>::epsilon()
                  && abs(c0%c2)<std::numeric_limits<T>::epsilon()

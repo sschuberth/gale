@@ -63,7 +63,7 @@ class RandomBase
     }
 
     /// Initializes the generator with the given seed value.
-    RandomBase(unsigned int seed) {
+    RandomBase(unsigned int const seed) {
         setSeed(seed);
     }
 
@@ -75,7 +75,7 @@ class RandomBase
     //@{
 
     /// Sets the generator seed to the given value.
-    void setSeed(unsigned int seed) {
+    void setSeed(unsigned int const seed) {
         m_rand.setSeed(seed);
     }
 
@@ -92,7 +92,7 @@ class RandomBase
     //@{
 
     /// Returns an integer random number in range [0,range].
-    unsigned int getRandom(unsigned int range) {
+    unsigned int getRandom(unsigned int const range) {
         // Mask all bits starting from the MSB set in the range.
         unsigned int mask=range;
         mask|=mask>>1;
@@ -116,7 +116,7 @@ class RandomBase
     }
 
     /// Returns a floating-point random number in range [0,range].
-    T getRandom0N(T range) {
+    T getRandom0N(T const range) {
         return getRandom01()*range;
     }
 
@@ -127,7 +127,7 @@ class RandomBase
     }
 
     /// Returns a floating-point random number in range [0,range[.
-    T getRandom0ExclN(T range) {
+    T getRandom0ExclN(T const range) {
         return getRandom0Excl1()*range;
     }
 
@@ -138,7 +138,7 @@ class RandomBase
     }
 
     /// Returns a floating-point random number in range ]0,range].
-    T getRandomExcl0N(T range) {
+    T getRandomExcl0N(T const range) {
         return getRandomExcl01()*range;
     }
 

@@ -198,35 +198,35 @@ class TupleBase
     //@{
 
     /// Multiplies each element of \c this tuple by a scalar \a s.
-    C const& operator*=(T s) {
+    C const& operator*=(T const s) {
         meta::LoopFwd<N,meta::OpArithMul>::iterate(getData(),s);
         return *static_cast<C*>(this);
     }
 
     /// Divides each element of \c this tuple by a scalar \a s.
-    C const& operator/=(T s) {
+    C const& operator/=(T const s) {
         assert(abs(s)>std::numeric_limits<T>::epsilon());
         return (*this)*=1/s;
     }
 
     /// Multiplies each element of tuple \a t by a scalar \a s from the right.
-    friend C operator*(C const& t,T s) {
+    friend C operator*(C const& t,T const s) {
         return C(t)*=s;
     }
 
     /// Multiplies each element of tuple \a t by a scalar \a s from the left.
-    friend C operator*(T s,C const& t) {
+    friend C operator*(T const s,C const& t) {
         return t*s;
     }
 
     /// Divides each element of tuple \a t by a scalar \a s.
-    friend C operator/(C const& t,T s) {
+    friend C operator/(C const& t,T const s) {
         // The value of s is checked downstream in operator/=(T s).
         return C(t)/=s;
     }
 
     /// Divides a scalar \a s by each element of tuple \a t.
-    friend C operator/(T s,C const& t) {
+    friend C operator/(T const s,C const& t) {
         C tmp;
         meta::LoopFwd<N,meta::OpArithReci>::iterate(tmp.getData(),t.getData());
         return s*tmp;
@@ -262,16 +262,16 @@ class TupleBase
     /// Calculates the element-wise minimum of \c this tuple and tuple \a t.
     C getMinElements(C const& t) const {
         C tmp;
-        meta::LoopFwd<N,meta::OpCalcMin>::
-          iterate(tmp.getData(),getData(),t.getData());
+        meta::LoopFwd<N,meta::OpCalcMin>
+            ::iterate(tmp.getData(),getData(),t.getData());
         return tmp;
     }
 
     /// Calculates the element-wise maximum of \c this tuple and tuple \a t.
     C getMaxElements(C const& t) const {
         C tmp;
-        meta::LoopFwd<N,meta::OpCalcMax>::
-          iterate(tmp.getData(),getData(),t.getData());
+        meta::LoopFwd<N,meta::OpCalcMax>
+            ::iterate(tmp.getData(),getData(),t.getData());
         return tmp;
     }
 
@@ -285,36 +285,36 @@ class TupleBase
     /// Returns whether all elements in \a t are less than their counterpart in
     /// \a u.
     friend bool operator<(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpLess>::
-                 iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpLess>
+                   ::iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether all elements in \a t are less than or equal to their
     /// counterpart in \a u.
     friend bool operator<=(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpLessEqual>::
-                 iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpLessEqual>
+                   ::iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether all elements in \a t are greater than their counterpart
     /// in \a u.
     friend bool operator>(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpGreater>::
-                 iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpGreater>
+                   ::iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether all elements in \a t are greater than or equal to their
     /// counterpart in \a u.
     friend bool operator>=(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpGreaterEqual>::
-                 iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpGreaterEqual>
+                   ::iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether all elements in \a t equal their counterpart in \a u
     /// with regard to a tolerance depending on the precision of data type \a T.
     friend bool operator==(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpEqualEps>::
-                 iterateCondAnd(t.getData(),u.getData());
+        return meta::LoopFwd<N,meta::OpCmpEqualEps>
+                   ::iterateCondAnd(t.getData(),u.getData());
     }
 
     /// Returns whether the elements in \a t are not equal to their counterparts
@@ -333,10 +333,10 @@ class TupleBase
 
     /// Linearly interpolates between the tuples \a t and \a u based on a scalar
     /// \a s. For performance reasons, \a s is not clamped to [0,1].
-    friend C lerp(C const& t,C const& u,double s) {
+    friend C lerp(C const& t,C const& u,double const s) {
         C tmp;
-        meta::LoopFwd<N,meta::OpCalcLerp>::
-          iterate(tmp.getData(),t.getData(),u.getData(),s);
+        meta::LoopFwd<N,meta::OpCalcLerp>
+            ::iterate(tmp.getData(),t.getData(),u.getData(),s);
         return tmp;
     }
 

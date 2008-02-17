@@ -111,7 +111,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// set in \a mask. Bit 0 maps to the first component, bit 1 to second one
     /// and so on. This constructor is required to initialize the static class
     /// constants.
-    explicit Vector(unsigned int mask) {
+    explicit Vector(unsigned int const mask) {
         meta::LoopFwd<N,meta::OpAssign>::iterateIndexMask(Base::getData(),mask);
     }
 
@@ -268,7 +268,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns whether all elements equal their counterpart in \a v with regard
     /// to the tolerance \a t.
-    bool equals(Vector const& v,T t=T(1e-6)) {
+    bool equals(Vector const& v,T const t=T(1e-6)) {
         return (v-*this).getLengthSquared()<=t*t;
     }
 

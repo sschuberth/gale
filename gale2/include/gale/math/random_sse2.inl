@@ -12,7 +12,7 @@ struct RandomSSE2Impl
     //@{
 
     /// Sets the generator seed to the given value.
-    void setSeed(unsigned int seed) {
+    void setSeed(unsigned int const seed) {
         m_seed=_mm_set_epi32(seed+7,seed+9,seed+13,seed+17);
     }
 

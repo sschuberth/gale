@@ -105,12 +105,12 @@ class Quaternion
 
     /// Initialized the quaternion to the given \a real number part and the
     /// imaginary number parts given as \a imag.
-    Quaternion(T real,Vec const& imag):
+    Quaternion(T const real,Vec const& imag):
       real(real),imag(imag) {}
 
     /// Creates a quaternion that matches the rotation represented by the given
     /// normalized rotation \a axis vector and rotation \a angle in radians.
-    Quaternion(Vec const& axis,double angle) {
+    Quaternion(Vec const& axis,double const angle) {
         setFromAxisAngle(axis,angle);
     }
 
@@ -236,36 +236,36 @@ class Quaternion
     //@{
 
     /// Multiplies \c this quaternion by a scalar \a s.
-    Quaternion const& operator*=(T s) {
+    Quaternion const& operator*=(T const s) {
         real*=s;
         imag*=s;
         return *this;
     }
 
     /// Divides \c this quaternion by a scalar \a s.
-    Quaternion const& operator/=(T s) {
+    Quaternion const& operator/=(T const s) {
         assert(abs(s)>std::numeric_limits<T>::epsilon());
         return (*this)*=1/s;
     }
 
     /// Performs scalar multiplication from the right.
-    friend Quaternion operator*(Quaternion const& q,T s) {
+    friend Quaternion operator*(Quaternion const& q,T const s) {
         return Quaternion(q)*=s;
     }
 
     /// Performs scalar multiplication from the left.
-    friend Quaternion operator*(T s,Quaternion const& q) {
+    friend Quaternion operator*(T const s,Quaternion const& q) {
         return q*s;
     }
 
     /// Performs scalar division from the right.
-    friend Quaternion operator/(Quaternion const& q,T s) {
+    friend Quaternion operator/(Quaternion const& q,T const s) {
         // The value of s is checked downstream in operator/=(T s).
         return Quaternion(q)/=s;
     }
 
     /// Performs scalar division from the left.
-    friend Quaternion operator/(T s,Quaternion const& q) {
+    friend Quaternion operator/(T const s,Quaternion const& q) {
         return Quaternion(s/q.real,s/q.imag);
     }
 
@@ -376,7 +376,7 @@ class Quaternion
     /// - the rotation does \b not have constant speed,
     /// - the interpolation is torque-minimal.
     /// For performance reasons, \a s is not clamped to [0,1].
-    friend Quaternion nlerp(Quaternion const& q,Quaternion const& r,double s) {
+    friend Quaternion nlerp(Quaternion const& q,Quaternion const& r,double const s) {
         return ~Quaternion(
             T(q.real+s*(r.real-q.real)),
             lerp(q.imag,r.imag,s)
@@ -389,7 +389,7 @@ class Quaternion
     /// - the rotation has constant speed (tangential acceleration is zero),
     /// - the interpolation is torque-minimal.
     /// For performance reasons, \a s is not clamped to [0,1].
-    friend Quaternion slerp(Quaternion const& q,Quaternion const& r,double s) {
+    friend Quaternion slerp(Quaternion const& q,Quaternion const& r,double const s) {
         T cosine=q.getAngleCosine(r);
 
         if (meta::OpCmpEqualEps::evaluate(cosine,T(1))) {
@@ -438,9 +438,9 @@ class Quaternion
     /// Optionally, an \a interpolator may be specified. For performance
     /// reasons, \a s is not clamped to [0,1].
     friend Quaternion squad(
-      Quaternion const& q,Quaternion const& r,double s,
+      Quaternion const& q,Quaternion const& r,double const s,
       Quaternion const& a,Quaternion const& b,
-      Interpolator interpolator=Quaternion::slerp)
+      Interpolator const interpolator=Quaternion::slerp)
     {
         return interpolator(interpolator(q,r,s),interpolator(a,b,s),2*s*(1-s));
     }
@@ -454,7 +454,7 @@ class Quaternion
 
     /// Sets this quaternion to match the rotation represented by the given
     /// normalized rotation \a axis vector and rotation \a angle in radians.
-    void setFromAxisAngle(Vec const& axis,double angle) {
+    void setFromAxisAngle(Vec const& axis,double const angle) {
         double half=0.5*angle;
         real=T(::cos(half));
         imag=T(::sin(half))*axis;

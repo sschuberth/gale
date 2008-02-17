@@ -124,35 +124,35 @@ class TupleBase<4,float,C>
     //@{
 
     /// Multiplies \c this tuple by a scalar \a s.
-    C const& operator*=(float s) {
+    C const& operator*=(float const s) {
         m_simd=_mm_mul_ps(m_simd,_mm_set_ps1(s));
         return *static_cast<C*>(this);
     }
 
     /// Divides \c this tuple by a scalar \a s.
-    C const& operator/=(float s) {
+    C const& operator/=(float const s) {
         assert(abs(s)>std::numeric_limits<float>::epsilon());
         return (*this)*=1/s;
     }
 
     /// Performs scalar multiplication from the right of each element.
-    friend C operator*(C const& t,float s) {
+    friend C operator*(C const& t,float const s) {
         return C(t)*=s;
     }
 
     /// Performs scalar multiplication from the left of each element.
-    friend C operator*(float s,C const& t) {
+    friend C operator*(float const s,C const& t) {
         return t*s;
     }
 
     /// Performs scalar division from the right of each element.
-    friend C operator/(C const& t,float s) {
+    friend C operator/(C const& t,float const s) {
         // The value of s is checked downstream in operator/=(float s).
         return C(t)/=s;
     }
 
     /// Performs scalar division from the left of each element.
-    friend C operator/(float s,C const& t) {
+    friend C operator/(float const s,C const& t) {
         C tmp;
         tmp.m_simd=_mm_mul_ps(_mm_set_ps1(s),_mm_rcp_ps(t.m_simd));
         return tmp;
@@ -208,14 +208,14 @@ class TupleBase<4,float,C>
      */
     //@{
 
-    /// Linearly interpolates between \c this tuple and another tuple \a t based
-    /// on a scalar \a s. For performance reasons, \a s is not clamped to [0,1].
-    C getLerp(C const& t,float s) const {
+    /// Linearly interpolates between the tuples \a t and \a u based on a scalar
+    /// \a s. For performance reasons, \a s is not clamped to [0,1].
+    friend C lerp(C const& t,C const& u,float const s) {
         C tmp;
         tmp.m_simd=_mm_add_ps(
-            m_simd,
+            t.m_simd,
             _mm_mul_ps(
-                _mm_sub_ps(t.m_simd,m_simd),
+                _mm_sub_ps(u.m_simd,t.m_simd),
                 _mm_set_ps1(s)
             )
         );

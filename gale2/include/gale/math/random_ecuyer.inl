@@ -12,7 +12,7 @@ struct RandomEcuyerImpl
     //@{
 
     /// Sets the generator seed to the given value.
-    void setSeed(unsigned int seed) {
+    void setSeed(unsigned int const seed) {
         // Generate the internal seeds needed for the generator state using a
         // Linear Congruential Generator. The only condition, stated at the end
         // of the 1999 L'Ecuyer paper, is that the seeds must be greater than 1,

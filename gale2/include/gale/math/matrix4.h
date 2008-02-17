@@ -77,12 +77,12 @@ class Matrix4
         /// \a clip_top being mapped to the lower left and upper right window
         /// corners respectively.
         static Matrix4 OrthographicProjection(
-          double clip_left,
-          double clip_right,
-          double clip_bottom,
-          double clip_top,
-          double clip_near=-1.0,
-          double clip_far=1.0)
+          double const clip_left,
+          double const clip_right,
+          double const clip_bottom,
+          double const clip_top,
+          double const clip_near=-1.0,
+          double const clip_far=1.0)
         {
             // Right plus / minus left clipping values.
             double rpl=clip_right+clip_left;
@@ -108,11 +108,11 @@ class Matrix4
         /// \a view_width and \a view_height, a vertical field of view of \a fov
         /// and clipping planes located at \a clip_near and \a clip_far.
         static Matrix4 PerspectiveProjection(
-          int view_width,
-          int view_height,
-          double fov=M_PI*0.25,
-          double clip_near=0.001,
-          double clip_far=1000.0)
+          int const view_width,
+          int const view_height,
+          double const fov=M_PI*0.25,
+          double const clip_near=0.001,
+          double const clip_far=1000.0)
         {
             double f=1.0/::tan(fov*0.5);
             double a=static_cast<double>(view_width)/view_height;
@@ -196,14 +196,14 @@ class Matrix4
 
     /// Returns a reference to the data element located at \a row and \a column.
     /// Despite usual in maths, the index starts at 0 (not 1).
-    T& operator()(unsigned int row,unsigned int column) {
+    T& operator()(unsigned int const row,unsigned int const column) {
         assert(row<4 && column<4);
         return (*this)[(column<<2)+row];
     }
 
     /// Returns a constant reference to the data element located at \a row and
     /// \a column. Despite usual in maths, the index starts at 0 (not 1).
-    T const& operator()(unsigned int row,unsigned int column) const {
+    T const& operator()(unsigned int const row,unsigned int const column) const {
         assert(row<4 && column<4);
         return (*this)[(column<<2)+row];
     }
@@ -339,7 +339,7 @@ class Matrix4
     //@{
 
     /// Multiplies each element of \c this matrix by a scalar \a s.
-    Matrix4 const& operator*=(T s) {
+    Matrix4 const& operator*=(T const s) {
         c0*=s;
         c1*=s;
         c2*=s;
@@ -348,7 +348,7 @@ class Matrix4
     }
 
     /// Divides each element of \c this matrix by a scalar \a s.
-    Matrix4 const& operator/=(T s) {
+    Matrix4 const& operator/=(T const s) {
         c0/=s;
         c1/=s;
         c2/=s;
@@ -357,22 +357,22 @@ class Matrix4
     }
 
     /// Multiplies each element of matrix \a m by a scalar \a s from the right.
-    friend Matrix4 operator*(Matrix4 const& m,T s) {
+    friend Matrix4 operator*(Matrix4 const& m,T const s) {
         return Matrix4(m.c0*s,m.c1*s,m.c2*s,m.c3*s);
     }
 
     /// Multiplies each element of matrix \a m by a scalar \a s from the left.
-    friend Matrix4 operator*(T s,Matrix4 const& m) {
+    friend Matrix4 operator*(T const s,Matrix4 const& m) {
         return m*s;
     }
 
     /// Divides each element of matrix \a m by a scalar \a s.
-    friend Matrix4 operator/(Matrix4 const& m,T s) {
+    friend Matrix4 operator/(Matrix4 const& m,T const s) {
         return m*(1/s);
     }
 
     /// Divides a scalar \a s by each element of matrix \a m.
-    friend Matrix4 operator/(T s,Matrix4 const& m) {
+    friend Matrix4 operator/(T const s,Matrix4 const& m) {
         return Matrix4(s/m.c0,s/m.c1,s/m.c2,s/m.c3);
     }
 
@@ -471,7 +471,7 @@ class Matrix4
 
     /// Inverts this matrix. Optionally returns a \a result indicating whether
     /// the matrix' determinant is non-zero and thus the inverse is viable.
-    Matrix4& invert(bool* result=NULL) {
+    Matrix4& invert(bool* const result=NULL) {
         T det=getDeterminant();
         bool valid=abs(det)>std::numeric_limits<T>::epsilon();
 
