@@ -74,14 +74,14 @@ class TupleBase
     }
 
     /// Allows to initialize 2-tuples directly.
-    TupleBase(T const& e0,T const& e1) {
+    TupleBase(T const e0,T const e1) {
         assert(N==2);
         m_data[0]=e0;
         m_data[1]=e1;
     }
 
     /// Allows to initialize 3-tuples directly.
-    TupleBase(T const& e0,T const& e1,T const& e2) {
+    TupleBase(T const e0,T const e1,T const e2) {
         assert(N==3);
         m_data[0]=e0;
         m_data[1]=e1;
@@ -89,7 +89,7 @@ class TupleBase
     }
 
     /// Allows to initialize 4-tuples directly.
-    TupleBase(T const& e0,T const& e1,T const& e2,T const& e3) {
+    TupleBase(T const e0,T const e1,T const e2,T const e3) {
         assert(N==4);
         m_data[0]=e0;
         m_data[1]=e1;
@@ -405,13 +405,13 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> >
     Tuple() {}
 
     /// Allows to initialize 2-tuples directly.
-    Tuple(T const& e0,T const& e1):Base(e0,e1) {}
+    Tuple(T const e0,T const e1):Base(e0,e1) {}
 
     /// Allows to initialize 3-tuples directly.
-    Tuple(T const& e0,T const& e1,T const& e2):Base(e0,e1,e2) {}
+    Tuple(T const e0,T const e1,T const e2):Base(e0,e1,e2) {}
 
     /// Allows to initialize 4-tuples directly.
-    Tuple(T const& e0,T const& e1,T const& e2,T const& e3):Base(e0,e1,e2,e3) {}
+    Tuple(T const e0,T const e1,T const e2,T const e3):Base(e0,e1,e2,e3) {}
 
     //@}
 };

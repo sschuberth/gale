@@ -19,7 +19,7 @@ class TupleBase<4,float,C>
     TupleBase() {}
 
     /// Allows to initialize 4-tuples directly.
-    TupleBase(float const& e0,float const& e1,float const& e2,float const& e3) {
+    TupleBase(float const e0,float const e1,float const e2,float const e3) {
         m_simd=_mm_setr_ps(e0,e1,e2,e3);
     }
 

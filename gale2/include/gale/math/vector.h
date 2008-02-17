@@ -122,13 +122,13 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     Vector() {}
 
     /// Allows to initialize 2-vectors directly.
-    Vector(T const& x,T const& y):Base(x,y) {}
+    Vector(T const x,T const y):Base(x,y) {}
 
     /// Allows to initialize 3-vectors directly.
-    Vector(T const& x,T const& y,T const& z):Base(x,y,z) {}
+    Vector(T const x,T const y,T const z):Base(x,y,z) {}
 
     /// Allows to initialize 4-vectors directly.
-    Vector(T const& x,T const& y,T const& z,T const& w):Base(x,y,z,w) {}
+    Vector(T const x,T const y,T const z,T const w):Base(x,y,z,w) {}
 
     /// Converts a vector of different type but with the same amount of
     /// components to this type.
@@ -145,14 +145,14 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     //@{
 
     /// Assigns new values to the x- and y-components.
-    void set(T const& x,T const& y) {
+    void set(T const x,T const y) {
         assert(N>=2);
         Base::getData()[0]=x;
         Base::getData()[1]=y;
     }
 
     /// Assigns new values to the x-, y- and z-components.
-    void set(T const& x,T const& y,T const& z) {
+    void set(T const x,T const y,T const z) {
         assert(N>=3);
         Base::getData()[0]=x;
         Base::getData()[1]=y;
@@ -160,7 +160,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     }
 
     /// Assigns new values to the x-, y-, z- and w-components.
-    void set(T const& x,T const& y,T const& z,T const& w) {
+    void set(T const x,T const y,T const z,T const w) {
         assert(N>=4);
         Base::getData()[0]=x;
         Base::getData()[1]=y;
@@ -168,8 +168,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         Base::getData()[3]=w;
     }
 
-    /// Returns a reference to the x-component.
-    T& getX() {
+    /// Returns the x-component.
+    T getX() {
         assert(N>=1);
         return Base::getData()[0];
     }
@@ -186,8 +186,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         Base::getData()[0]=x;
     }
 
-    /// Returns a reference to the y-component.
-    T& getY() {
+    /// Returns the y-component.
+    T getY() {
         assert(N>=2);
         return Base::getData()[1];
     }
@@ -204,8 +204,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         Base::getData()[1]=y;
     }
 
-    /// Returns a reference to the z-component.
-    T& getZ() {
+    /// Returns the z-component.
+    T getZ() {
         assert(N>=3);
         return Base::getData()[2];
     }
@@ -222,8 +222,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         Base::getData()[2]=z;
     }
 
-    /// Returns a reference to the w-component.
-    T& getW() {
+    /// Returns the w-component.
+    T getW() {
         assert(N>=4);
         return Base::getData()[3];
     }
