@@ -78,7 +78,7 @@ class Bindable
 
     /// Sets the current binding to the object described by \a id or to this
     /// object if the ID is negative.
-    virtual void setCurrentBinding(GLint id=-1) const=0;
+    virtual void setCurrentBinding(GLint const id=-1) const=0;
 
     /// Binds this object to the OpenGL state, making it the current one.
     void bind() const {
@@ -95,7 +95,7 @@ class Bindable
   protected:
 
     /// Helper constructor for special objects with a fixed \a id.
-    Bindable(GLuint id=0)
+    Bindable(GLuint const id=0)
     :   m_id(id)
     {
         // This is a trick to ensure derived classes implement this static method.

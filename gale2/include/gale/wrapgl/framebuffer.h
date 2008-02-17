@@ -56,7 +56,7 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
       public:
 
         /// Checks whether the given \a id describes a valid render buffer.
-        static bool isValid(GLuint id) {
+        static bool isValid(GLuint const id) {
             return glIsRenderbufferEXT(id)!=GL_FALSE;
         }
 
@@ -81,21 +81,21 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
 
         /// Sets the current binding to the render buffer described by \a id or
         /// to the this render buffer if the ID is negative.
-        void setCurrentBinding(GLint id=-1) const {
+        void setCurrentBinding(GLint const id=-1) const {
             glBindRenderbufferEXT(TARGET,id<0?m_id:id);
             G_ASSERT_OPENGL
         }
 
         /// Initializes the render buffer with the given \a width, \a height and
         /// internal \a format.
-        void init(GLsizei width,GLsizei height,GLenum format) const {
+        void init(GLsizei const width,GLsizei const height,GLenum const format) const {
             bind();
             glRenderbufferStorageEXT(TARGET,format,width,height);
             G_ASSERT_OPENGL
         }
 
         /// Returns the value(s) of the parameter with the given \a name.
-        void getParameter(GLenum name,GLint* params) const {
+        void getParameter(GLenum const name,GLint* const params) const {
             bind();
             glGetRenderbufferParameterivEXT(TARGET,name,params);
             G_ASSERT_OPENGL
@@ -103,7 +103,7 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
     };
 
     /// Checks whether the given \a id describes a valid frame buffer.
-    static bool isValid(GLuint id) {
+    static bool isValid(GLuint const id) {
         return glIsFramebufferEXT(id)!=GL_FALSE;
     }
 
@@ -129,14 +129,14 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
 
     /// Sets the current binding to the frame buffer described by \a id or to
     /// the this frame buffer if the ID is negative.
-    void setCurrentBinding(GLint id) const {
+    void setCurrentBinding(GLint const id=-1) const {
         glBindFramebufferEXT(TARGET,id<0?m_id:id);
         G_ASSERT_OPENGL
     }
 
     /// Attaches the given render buffer \a image to the logical buffer
     /// specified by \a attachment.
-    void attach(RenderBuffer const& image,GLenum attachment) const {
+    void attach(RenderBuffer const& image,GLenum const attachment) const {
         bind();
         glFramebufferRenderbufferEXT(TARGET,attachment,image.TARGET,image.getID());
         G_ASSERT_OPENGL
@@ -144,7 +144,7 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
 
     /// Attaches the given 1D texture \a image to the logical buffer specified
     /// by \a attachment.
-    void attach(Texture1D const& image,GLenum attachment,GLint level=0) const {
+    void attach(Texture1D const& image,GLenum const attachment,GLint const level=0) const {
         bind();
         glFramebufferTexture1DEXT(TARGET,attachment,image.TARGET,image.getID(),level);
         G_ASSERT_OPENGL
@@ -152,7 +152,7 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
 
     /// Attaches the given 2D texture \a image to the logical buffer specified
     /// by \a attachment.
-    void attach(Texture2D const& image,GLenum attachment,GLint level=0) const {
+    void attach(Texture2D const& image,GLenum const attachment,GLint const level=0) const {
         bind();
         glFramebufferTexture2DEXT(TARGET,attachment,image.TARGET,image.getID(),level);
         G_ASSERT_OPENGL
@@ -160,7 +160,7 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
 
     /// Attaches the given 3D texture \a image to the logical buffer specified
     /// by \a attachment.
-    void attach(Texture3D const& image,GLenum attachment,GLint zoffset,GLint level=0) const {
+    void attach(Texture3D const& image,GLenum const attachment,GLint const zoffset,GLint const level=0) const {
         bind();
         glFramebufferTexture3DEXT(TARGET,attachment,image.TARGET,image.getID(),level,zoffset);
         G_ASSERT_OPENGL
@@ -168,7 +168,7 @@ class FrameBuffer:public Bindable<FrameBuffer,GL_FRAMEBUFFER_EXT,GL_FRAMEBUFFER_
 
     /// Returns the value(s) of the parameter with the given \a name for the
     /// specified \a attachment.
-    void getParameter(GLenum attachment,GLenum name,GLint* params) const {
+    void getParameter(GLenum const attachment,GLenum const name,GLint* const params) const {
         bind();
         glGetFramebufferAttachmentParameterivEXT(TARGET,attachment,name,params);
         G_ASSERT_OPENGL

@@ -94,14 +94,14 @@ class Camera
     }
 
     /// Sets screen space origin to use.
-    void setScreenSpaceOrigin(int x,int y) {
+    void setScreenSpaceOrigin(int const x,int const y) {
         m_screen.x=x;
         m_screen.y=y;
         m_screen_changed=true;
     }
 
     /// Sets screen space dimensions to use.
-    void setScreenSpaceDimensions(int width,int height) {
+    void setScreenSpaceDimensions(int const width,int const height) {
         m_screen.width=width;
         m_screen.height=height;
         m_screen_changed=true;
@@ -132,7 +132,7 @@ class Camera
     /// Activates the camera by applying all its settings to the current render
     /// context. If \a force is \c true, the camera settings are also applied if
     /// they did not change.
-    void apply(bool force=false);
+    void apply(bool const force=false);
 
     /**
      * \name Absolute transformations in the world coordinate system
@@ -153,7 +153,7 @@ class Camera
     /// Makes the camera look at the given \a point. If \a flip is \c true, the
     /// camera is allowed to flip in order to minimize the "right" angle between
     /// old and new orientation.
-    void setLookTarget(math::Vec3f const& point,bool flip=false) {
+    void setLookTarget(math::Vec3f const& point,bool const flip=false) {
         using namespace math;
         HMat4f::Vec const& position=m_modelview.getPositionVector();
 
@@ -186,7 +186,7 @@ class Camera
 
     /// Moves the camera right (for a positive \a distance) or left along its
     /// x-axis.
-    void strafe(float distance) {
+    void strafe(float const distance) {
         math::HMat4f::Vec& position=m_modelview.getPositionVector();
         math::HMat4f::Vec const& right=m_modelview.getRightVector();
         position+=right*distance;
@@ -196,7 +196,7 @@ class Camera
 
     /// Moves the camera up (for a positive \a distance) or down along its
     /// y-axis.
-    void elevate(float distance) {
+    void elevate(float const distance) {
         math::HMat4f::Vec& position=m_modelview.getPositionVector();
         math::HMat4f::Vec const& up=m_modelview.getUpVector();
         position+=up*distance;
@@ -206,7 +206,7 @@ class Camera
 
     /// Moves the camera backward (for a positive \a distance) or forward along
     /// its z-axis.
-    void zoom(float distance) {
+    void zoom(float const distance) {
         math::HMat4f::Vec& position=m_modelview.getPositionVector();
         math::HMat4f::Vec const& backward=m_modelview.getBackwardVector();
         position+=backward*distance;
@@ -215,7 +215,7 @@ class Camera
     }
 
     /// Rotates the camera around the given \a axis about the given \a angle.
-    void rotate(math::Vec3f const& axis,double angle) {
+    void rotate(math::Vec3f const& axis,double const angle) {
         math::Quatf q(~axis,angle);
 
         // Normalize the vectors to avoid rounding errors.
@@ -228,21 +228,21 @@ class Camera
 
     /// Rotates the camera about its x-axis. For a positive \a angle, the camera
     /// will look up.
-    void pitch(double angle) {
+    void pitch(double const angle) {
         math::HMat4f::Vec const& right=m_modelview.getRightVector();
         rotate(right,angle);
     }
 
     /// Rotates the camera about its y-axis. For a positive \a angle, the camera
     /// will look left.
-    void yaw(double angle) {
+    void yaw(double const angle) {
         math::HMat4f::Vec const& up=m_modelview.getUpVector();
         rotate(up,angle);
     }
 
     /// Rotates the camera about its z-axis. For a positive \a angle, the camera
     /// will tilt left.
-    void roll(double angle) {
+    void roll(double const angle) {
         math::HMat4f::Vec const& backward=m_modelview.getBackwardVector();
         rotate(backward,angle);
     }

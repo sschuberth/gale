@@ -51,21 +51,21 @@ struct LoopFwd
 
     /// Iterates over a destination array applying a scalar.
     template<typename A,typename B>
-    static G_INLINE void iterate(A* a,B const& b) {
+    static G_INLINE void iterate(A* const a,B const& b) {
         LoopFwd<index,OP>::iterate(a,b);
         OP::evaluate(a[index],b);
     }
 
     /// Iterates over a destination array and a source array.
     template<typename A,typename B>
-    static G_INLINE void iterate(A* a,B const* b) {
+    static G_INLINE void iterate(A* const a,B const* const b) {
         LoopFwd<index,OP>::iterate(a,b);
         OP::evaluate(a[index],b[index]);
     }
 
     /// Iterates over a destination array and two source arrays.
     template<typename A,typename B,typename C>
-    static G_INLINE void iterate(A* a,B const* b,C const* c) {
+    static G_INLINE void iterate(A* const a,B const* const b,C const* const c) {
         LoopFwd<index,OP>::iterate(a,b,c);
         a[index]=OP::evaluate(b[index],c[index]);
     }
@@ -73,20 +73,20 @@ struct LoopFwd
     /// Iterates over a destination array and two source arrays applying a
     /// scalar.
     template<typename A,typename B,typename C,typename D>
-    static G_INLINE void iterate(A* a,B const* b,C const* c,D const& d) {
+    static G_INLINE void iterate(A* const a,B const* const b,C const* const c,D const& d) {
         LoopFwd<index,OP>::iterate(a,b,c,d);
         a[index]=OP::evaluate(b[index],c[index],d);
     }
 
     /// Iterates over a single array evaluating a scalar.
     template<typename A>
-    static G_INLINE A iterate(A const* a) {
+    static G_INLINE A iterate(A const* const a) {
         return OP::evaluate(a[index],LoopFwd<index,OP>::iterate(a));
     }
 
     /// Iterates over a single array of absolute values evaluating a scalar.
     template<typename A>
-    static G_INLINE A iterateAbsValues(A const* a) {
+    static G_INLINE A iterateAbsValues(A const* const a) {
         return OP::evaluate(
             math::abs(a[index]),
             LoopFwd<index,OP>::iterateAbsValues(a)
@@ -95,14 +95,14 @@ struct LoopFwd
 
     /// Iterates over two arrays adding evaluated values.
     template<typename A,typename B>
-    static G_INLINE A iterateCombAdd(A const* a,B const* b) {
+    static G_INLINE A iterateCombAdd(A const* const a,B const* const b) {
         return LoopFwd<index,OP>::iterateCombAdd(a,b)
              + OP::evaluate(a[index],b[index]);
     }
 
     /// Iterates over two arrays evaluating an "and" condition.
     template<typename A,typename B>
-    static G_INLINE bool iterateCondAnd(A const* a,B const* b) {
+    static G_INLINE bool iterateCondAnd(A const* const a,B const* const b) {
         return LoopFwd<index,OP>::iterateCondAnd(a,b)
             && OP::evaluate(a[index],b[index]);
     }
@@ -110,7 +110,7 @@ struct LoopFwd
     /// Iterates over a destination array \a a setting its elements according to
     /// the bit mask \a b to either the value of \a set or \a clear.
     template<typename A,typename B>
-    static G_INLINE void iterateIndexMask(A* a,B const& b,A set=1,A clear=0) {
+    static G_INLINE void iterateIndexMask(A* const a,B const& b,A const set=1,A const clear=0) {
         LoopFwd<index,OP>::iterateIndexMask(a,b,set,clear);
         OP::evaluate(a[index],b&(1<<index)?set:clear);
     }
@@ -125,57 +125,57 @@ struct LoopFwd<1,OP>
 {
     /// Iterates over a destination array applying a scalar.
     template<typename A,typename B>
-    static G_INLINE void iterate(A* a,B const& b) {
+    static G_INLINE void iterate(A* const a,B const& b) {
         OP::evaluate(a[0],b);
     }
 
     /// Iterates over a destination array and a source array.
     template<typename A,typename B>
-    static G_INLINE void iterate(A* a,B const* b) {
+    static G_INLINE void iterate(A* const a,B const* const b) {
         OP::evaluate(a[0],b[0]);
     }
 
     /// Iterates over a destination array and two source arrays.
     template<typename A,typename B,typename C>
-    static G_INLINE void iterate(A* a,B const* b,C const* c) {
+    static G_INLINE void iterate(A* const a,B const* const b,C const* const c) {
         a[0]=OP::evaluate(b[0],c[0]);
     }
 
     /// Iterates over a destination array and two source arrays applying a
     /// scalar.
     template<typename A,typename B,typename C,typename D>
-    static G_INLINE void iterate(A* a,B const* b,C const* c,D const& d) {
+    static G_INLINE void iterate(A* const a,B const* const b,C const* const c,D const& d) {
         a[0]=OP::evaluate(b[0],c[0],d);
     }
 
     /// Iterates over a single array evaluating a scalar.
     template<typename A>
-    static G_INLINE A const& iterate(A const* a) {
+    static G_INLINE A const& iterate(A const* const a) {
         return a[0];
     }
 
     /// Iterates over a single array of absolute values evaluating a scalar.
     template<typename A>
-    static G_INLINE A iterateAbsValues(A const* a) {
+    static G_INLINE A iterateAbsValues(A const* const a) {
         return math::abs(a[0]);
     }
 
     /// Iterates over two arrays adding evaluated values.
     template<typename A,typename B>
-    static G_INLINE A iterateCombAdd(A const* a,B const* b) {
+    static G_INLINE A iterateCombAdd(A const* const a,B const* const b) {
         return OP::evaluate(a[0],b[0]);
     }
 
     /// Iterates over two arrays evaluating an "and" condition.
     template<typename A,typename B>
-    static G_INLINE bool iterateCondAnd(A const* a,B const* b) {
+    static G_INLINE bool iterateCondAnd(A const* const a,B const* const b) {
         return OP::evaluate(a[0],b[0]);
     }
 
     /// Iterates over a destination array \a a setting its elements according to
     /// the bit mask \a b to either the value of \a set or \a clear.
     template<typename A,typename B>
-    static G_INLINE void iterateIndexMask(A* a,B const& b,A set=1,A clear=0) {
+    static G_INLINE void iterateIndexMask(A* const a,B const& b,A const set=1,A const clear=0) {
         OP::evaluate(a[0],b&1?set:clear);
     }
 };

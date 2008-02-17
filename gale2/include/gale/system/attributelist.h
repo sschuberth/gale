@@ -69,7 +69,7 @@ class AttributeList
     }
 
     /// Appends / replaces the specified \a type and \a value to / in the list.
-    bool insert(T type,T value) {
+    bool insert(T const type,T const value) {
         int pos=find(type);
         if (pos>0) {
             // Replace its value if the type already exists.
@@ -86,7 +86,7 @@ class AttributeList
     }
 
     /// Removes the given \a type (together with its value) from the list.
-    bool remove(T type) {
+    bool remove(T const type) {
         int pos=find(type);
         if (pos<0) {
             // Return immediately if the type does not exist.
@@ -122,7 +122,7 @@ class AttributeList
 
     /// Searches for the given \a type in the list returning its index or -1 if
     /// it cannot be found.
-    int find(T type) {
+    int find(T const type) {
         int i=0;
         while (i<m_size) {
             // Avoid warnings about floating-point comparisons being unreliable.

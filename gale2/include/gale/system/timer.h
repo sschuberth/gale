@@ -46,7 +46,7 @@ class Timer
 
     /// Suspends the execution of the current thread for the given amount of
     /// milliseconds.
-    static void sleep(unsigned int milliseconds) {
+    static void sleep(unsigned int const milliseconds) {
 #ifdef G_OS_WINDOWS
         Sleep(milliseconds);
 #else
