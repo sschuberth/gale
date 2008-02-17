@@ -12,25 +12,27 @@ class TestWindow:public DefaultWindow
 
     TestWindow()
     :   DefaultWindow("test_color")
-    ,   m_value(255)
+    ,   m_value(100)
     ,   m_mode(0)
     {
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
         // Set the clear color to red to see if scissoring works.
-        glClearColor(1,0,0,0);
+        Col4f c=Col4f::YELLOW();
+        c=c.getComplement();
+        glClearColor(c.getR(),c.getG(),c.getB(),c.getA());
     }
 
     bool onIdle() {
         static int step=2;
 
         m_value+=step;
-        if ((m_value<=0)||(m_value>=255)) {
+        if ((m_value<=0)||(m_value>=100)) {
             if (step<0) {
                 m_value=0;
             }
             else {
-                m_value=255;
+                m_value=100;
             }
             step=-step;
             m_mode=(m_mode+1)&3;
@@ -63,12 +65,12 @@ class TestWindow:public DefaultWindow
             glBegin(GL_QUADS);
             unsigned int y0=0,y1;
             for (unsigned int k=0;k<QUADS_Y;++k) {
-                color.setS(k);
+                color.setS(static_cast<float>(k)/QUADS_Y*100);
                 y1=((k+1)*step_y)>>16;
 
                 unsigned int x0=0,x1;
                 for (unsigned int i=0;i<QUADS_X;++i) {
-                    color.setH(i);
+                    color.setH(static_cast<float>(i)/QUADS_X*360);
                     x1=((i+1)*step_x)>>16;
 
                     glColor3ubv(color);
@@ -94,19 +96,19 @@ class TestWindow:public DefaultWindow
             m_rand.setSeed(0);
 
             Col4ub color;
-            color.setV(255);
+            color.setV(100);
             glBegin(GL_QUADS);
             unsigned y0=0,y1;
             for (unsigned k=0;k<QUADS_Y;++k) {
-                color.setS(k);
+                color.setS(static_cast<float>(k)/QUADS_Y*100);
                 y1=((k+1)*step_y)>>16;
 
                 unsigned x0=0,x1;
                 for (unsigned i=0;i<QUADS_X;++i) {
-                    color.setH(i);
+                    color.setH(static_cast<float>(i)/QUADS_X*360);
                     x1=((i+1)*step_x)>>16;
 
-                    long long alpha=roundToEven(m_value*m_rand.getRandom01());
+                    long long alpha=roundToEven(m_value*2.55f*m_rand.getRandom01());
                     color.setA(static_cast<Col4ub::Type>(alpha));
                     glColor4ubv(color);
                     glVertex2i(x0,y0);
