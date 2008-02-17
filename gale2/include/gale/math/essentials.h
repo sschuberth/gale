@@ -182,11 +182,39 @@ inline unsigned long countSetBits(unsigned long x) {
  */
 //@{
 
-/// Clamps \a x to the range specified by \a a and \a b.
+/// Clamps \a x to range [\a a,\a b], where \a a <= \a b.
 template<typename T>
 inline T clamp(T const x,T const a,T const b)
 {
-    return (a<b)?min(max(a,x),b):min(max(b,x),a);
+    return min(max(a,x),b);
+}
+
+/// Clamps \a x to range [\a a,\a b] or range [\a b,\a a].
+template<typename T>
+inline T clampSafe(T const x,T const a,T const b)
+{
+    return (a<=b)?clamp(x,a,b):clamp(x,b,a);
+}
+
+/// Wraps \a x to range [\a a,\a b[, where \a a <= \a b.
+template<typename T>
+inline T wrap(T x,T const a,T const b)
+{
+    T const range=b-a;
+    while (x<a) {
+        x+=range;
+    }
+    while (x>=b) {
+        x-=range;
+    }
+    return x;
+}
+
+/// Wraps \a x to range [\a a,\a b[ or range [\a b,\a a[.
+template<typename T>
+inline T wrapSafe(T x,T const a,T const b)
+{
+    return (a<=b)?wrap(x,a,b):wrap(x,b,a);
 }
 
 /// Returns the maximum value among \a a and \a b.
