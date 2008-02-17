@@ -505,6 +505,11 @@ class Matrix4
         return m.multFromLeftTo(v);
     }
 
+    /// Returns an inverted copy of matrix \a m.
+    friend Matrix4 operator!(Matrix4 const& m) {
+        return Matrix4(m).invert();
+    }
+
     //@}
 
 #ifndef GALE_TINY
