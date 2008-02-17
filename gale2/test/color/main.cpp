@@ -12,7 +12,7 @@ class TestWindow:public DefaultWindow
 
     TestWindow()
     :   DefaultWindow("test_color")
-    ,   m_value(100)
+    ,   m_value(100.0f)
     ,   m_mode(0)
     {
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -128,7 +128,8 @@ class TestWindow:public DefaultWindow
 
   private:
 
-    int m_value,m_mode;
+    float m_value;
+    int m_mode;
     RandomEcuyerf m_rand;
 };
 
