@@ -63,11 +63,11 @@ struct ColorModel
     /// [0,360[ for hue, and in range [0,100] for saturation and value.
     static void RGB2HSV(T const r,T const g,T const b,float& h,float& s,float& v) {
         // Convert RGB values to range [0,1].
-        float const range=getMaxIntensity()-getMinIntensity();
+        T const range=getMaxIntensity()-getMinIntensity();
 
-        float R=clamp((r-getMinIntensity())/range,0.0f,1.0f);
-        float G=clamp((g-getMinIntensity())/range,0.0f,1.0f);
-        float B=clamp((b-getMinIntensity())/range,0.0f,1.0f);
+        float R=clamp(float(r-getMinIntensity())/range,0.0f,1.0f);
+        float G=clamp(float(g-getMinIntensity())/range,0.0f,1.0f);
+        float B=clamp(float(b-getMinIntensity())/range,0.0f,1.0f);
 
         float m=min(R,G,B);
         float V=max(R,G,B);
@@ -350,38 +350,32 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns the red channel.
     T getR() {
-        assert(N>=1);
         return Base::getData()[0];
     }
 
     /// Returns a \c constant reference to the red channel.
     T const& getR() const {
-        assert(N>=1);
         return Base::getData()[0];
     }
 
     /// Assigns a new value to the red channel.
     void setR(T const r) {
-        assert(N>=1);
         Base::getData()[0]=r;
         m_hsv_outdated=true;
     }
 
     /// Returns the green channel.
     T getG() {
-        assert(N>=2);
         return Base::getData()[1];
     }
 
     /// Returns a \c constant reference to the green channel.
     T const& getG() const {
-        assert(N>=2);
         return Base::getData()[1];
     }
 
     /// Assigns a new value to the green channel.
     void setG(T const g) {
-        assert(N>=2);
         Base::getData()[1]=g;
         m_hsv_outdated=true;
     }
@@ -445,28 +439,24 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns the hue channel.
     float getH() {
-        assert(N>=1);
         updateHSV();
         return m_h;
     }
 
     /// Assigns a new value to the hue channel.
     void setH(float const h) {
-        assert(N>=1);
         updateHSV();
         HSV2RGB(m_h=h,m_s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
     }
 
     /// Returns the saturation channel.
     float getS() {
-        assert(N>=2);
         updateHSV();
         return m_s;
     }
 
     /// Assigns a new value to the saturation channel.
     void setS(float const s) {
-        assert(N>=2);
         updateHSV();
         HSV2RGB(m_h,m_s=s,m_v,Base::getData()[0],Base::getData()[1],Base::getData()[2]);
     }
@@ -503,6 +493,93 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
      * \name Miscellaneous methods
      */
     //@{
+
+    /// Returns a \a blend of 5 colors that match this color to form a palette.
+    void getBlend(Color (&blend)[5]) {
+        assert(N>=3);
+        updateHSV();
+
+        float h,s,v;
+
+        if (m_v>70) {
+            v=m_v-30;
+        }
+        else {
+            v=m_v+30;
+        }
+
+        blend[0].setH(m_h);
+        blend[0].setS(m_s);
+        blend[0].setV(v);
+
+        blend[2].setV(v);
+
+        if (m_h>=0 && m_h<30) {
+            blend[1].setH(m_h+30);
+            blend[1].setS(m_s);
+            blend[1].setV(m_v);
+
+            blend[2].setH(m_h+30);
+            blend[2].setS(m_s);
+        }
+        else if (m_h>=30 && m_h<60) {
+            blend[1].setH(m_h+150);
+            blend[1].setS(clamp(m_s-30,0.0f,100.0f));
+            blend[1].setV(clamp(m_v-20,0.0f,100.0f));
+
+            blend[2].setH(m_h+150);
+            blend[2].setS(clamp(m_s-50,0.0f,100.0f));
+            blend[2].setV(clamp(m_v+20,0.0f,100.0f));
+        }
+        else if (m_h>=60 && m_h<180) {
+            h=m_h-40;
+
+            blend[1].setH(h);
+            blend[1].setS(m_s);
+            blend[1].setV(m_v);
+
+            blend[2].setH(h);
+            blend[2].setS(m_s);
+        }
+        else if (m_h>=180 && m_h<220) {
+            blend[1].setH(m_h-160);
+            blend[1].setS(m_s);
+            blend[1].setV(m_v);
+
+            blend[2].setH(m_h-170);
+            blend[2].setS(m_s);
+        }
+        else if (m_h>=220 && m_h<300) {
+            s=clamp(m_s-40,0.0f,100.0f);
+
+            blend[1].setH(m_h);
+            blend[1].setS(s);
+            blend[1].setV(m_v);
+
+            blend[2].setH(m_h);
+            blend[2].setS(s);
+        }
+        else {
+            h=wrap(m_h+20,0.0f,360.0f);
+
+            if (m_s>50) {
+                s=m_s-40;
+            }
+            else {
+                s=m_s+40;
+            }
+
+            blend[1].setH(h);
+            blend[1].setS(s);
+            blend[1].setV(m_v);
+
+            blend[2].setH(h);
+            blend[2].setS(s);
+        }
+
+        blend[3].setHSV(0,0,100-m_v);
+        blend[4].setHSV(0,0,m_v);
+    }
 
     /// Returns the complementary color of this color.
     Color getComplement() {
