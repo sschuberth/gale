@@ -91,7 +91,7 @@ class Timer
     /// Sets a new start time for the timer.
     bool start() {
 #ifdef G_OS_WINDOWS
-        return QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_start))!=FALSE;
+        return QueryPerformanceCounter(&m_start)!=FALSE;
 #else
         m_start=times(NULL);
         return m_start!=-1;
@@ -102,30 +102,38 @@ class Timer
     /// the timing. It may be resumed by calling start() again.
     bool stop(double& seconds) {
 #ifdef G_OS_WINDOWS
-        bool result=(QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_stop))!=FALSE);
+        if (QueryPerformanceCounter(&m_stop)!=TRUE) {
+            return false;
+        }
 
         // On modern CPUs with power-saving capabilities the frequency may vary,
         // so get it each time here.
-        long long frequency;
-        result=result && (QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&frequency))!=FALSE);
+        LARGE_INTEGER frequency;
+        if (QueryPerformanceFrequency(&frequency)!=TRUE) {
+            return false;
+        }
 
         // Convert the counter difference to the number of seconds elapsed.
-        m_offset+=m_stop-m_start;
-        seconds=static_cast<double>(m_offset)/frequency;
+        m_offset+=m_stop.QuadPart-m_start.QuadPart;
+        seconds=static_cast<double>(m_offset)/frequency.QuadPart;
 #else
         m_stop=times(NULL);
-        bool result=(m_stop!=-1);
+        if (m_stop==-1) {
+            return false;
+        }
 
         // On modern CPUs with power-saving capabilities the clock ticks may
         // vary, so get it each time here.
         long ticks=sysconf(_SC_CLK_TCK);
-        result=result && (ticks!=-1);
+        if (ticks==-1) {
+            return false;
+        }
 
         m_offset+=m_stop-m_start;
         seconds=static_cast<double>(m_offset)/ticks;
 #endif
 
-        return result;
+        return true;
     }
 
     /// Returns the elapsed time in seconds since reset() was called without
@@ -151,7 +159,8 @@ class Timer
     /// Needed restore the affinity mask after the last instance's destruction.
     static DWORD_PTR s_mask;
 
-    long long m_offset,m_start,m_stop;
+    long long m_offset;
+    LARGE_INTEGER m_start,m_stop;
 #else
     clock_t m_offset,m_start,m_stop;
 #endif
