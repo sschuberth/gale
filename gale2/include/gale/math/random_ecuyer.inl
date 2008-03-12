@@ -21,34 +21,38 @@ struct RandomEcuyerImpl
 // Linear Congruential Generator
 #define LCG(n) ((69069*n)&0xffffffffUL)
 
-        m_seed0=LCG(seed);
-        if (m_seed0<2) {
-            m_seed0+=2;
+        seed0=LCG(seed);
+        if (seed0<2) {
+            seed0+=2;
         }
 
-        m_seed1=LCG(m_seed0);
-        if (m_seed1<8) {
-            m_seed1+=8;
+        seed1=LCG(seed0);
+        if (seed1<8) {
+            seed1+=8;
         }
 
-        m_seed2=LCG(m_seed1);
-        if (m_seed2<16) {
-            m_seed2+=16;
+        seed2=LCG(seed1);
+        if (seed2<16) {
+            seed2+=16;
         }
 
 #undef LCG
-       }
+
+        // We skip the "warm-up" here so save some code size and performance.
+    }
 
     /// Generates a pseudo random number within the full range of 32 bits.
     unsigned int getRandom() {
 // Use a mask of 0xffffffffUL to make in work on 64-bit machines.
 #define TAUSWORTHE(s,a,b,c,d) (((s&c)<<d)&0xffffffffUL)^((((s<<a)&0xffffffffUL)^s)>>b)
 
-        m_seed0=TAUSWORTHE(m_seed0, 13, 19, 4294967294UL, 12);
-        m_seed1=TAUSWORTHE(m_seed1,  2, 25, 4294967288UL,  4);
-        m_seed2=TAUSWORTHE(m_seed2,  3, 11, 4294967280UL, 17);
+        seed0=TAUSWORTHE(seed0, 13, 19, 4294967294UL, 12);
+        seed1=TAUSWORTHE(seed1,  2, 25, 4294967288UL,  4);
+        seed2=TAUSWORTHE(seed2,  3, 11, 4294967280UL, 17);
 
-        return m_seed0^m_seed1^m_seed2;
+        // The original implementation does not allow 0 to be returned and
+        // generates a new number in that case.
+        return seed0^seed1^seed2;
 
 #undef TAUSWORTHE
     }
@@ -60,9 +64,9 @@ struct RandomEcuyerImpl
      */
     //@{
 
-    unsigned int m_seed0; ///< The first seed number.
-    unsigned int m_seed1; ///< The second seed number.
-    unsigned int m_seed2; ///< The third seed number.
+    unsigned int seed0; ///< The first seed number.
+    unsigned int seed1; ///< The second seed number.
+    unsigned int seed2; ///< The third seed number.
 
     //@}
 };
