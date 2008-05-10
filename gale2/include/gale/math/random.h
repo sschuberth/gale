@@ -31,6 +31,8 @@
 #include "matrix4.h"
 #include "quaternion.h"
 
+#include "../global/types.h"
+
 /**
  * \file
  * Pseudo Random Number Generators (PRNG)
@@ -59,11 +61,11 @@ class RandomBase
     /// Initializes the generator with a seed value that is derived from the
     /// current system time.
     RandomBase() {
-        setSeed(static_cast<unsigned int>(time(NULL)));
+        setSeed(static_cast<g_uint32>(time(NULL)));
     }
 
     /// Initializes the generator with the given seed value.
-    RandomBase(unsigned int const seed) {
+    RandomBase(g_uint32 seed) {
         setSeed(seed);
     }
 
@@ -75,12 +77,12 @@ class RandomBase
     //@{
 
     /// Sets the generator seed to the given value.
-    void setSeed(unsigned int const seed) {
+    void setSeed(g_uint32 seed) {
         m_rand.setSeed(seed);
     }
 
     /// Generates a pseudo random number within the full range of 32 bits.
-    unsigned int getRandom() {
+    g_uint32 getRandom() {
         return m_rand.getRandom();
     }
 
@@ -92,9 +94,9 @@ class RandomBase
     //@{
 
     /// Returns an integer random number in range [0,range].
-    unsigned int getRandom(unsigned int const range) {
+    g_uint32 getRandom(g_uint32 const range) {
         // Mask all bits starting from the MSB set in the range.
-        unsigned int mask=range;
+        g_uint32 mask=range;
         mask|=mask>>1;
         mask|=mask>>2;
         mask|=mask>>4;
@@ -102,10 +104,11 @@ class RandomBase
         mask|=mask>>16;
 
         // Draw numbers until one in range [0,range] is found.
-        unsigned int n;
+        g_uint32 n;
         do {
             n=getRandom()&mask;
         } while (n>range);
+
         return n;
     }
 

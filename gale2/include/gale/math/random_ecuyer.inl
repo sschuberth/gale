@@ -12,7 +12,7 @@ struct RandomEcuyerImpl
     //@{
 
     /// Sets the generator seed to the given value.
-    void setSeed(unsigned int const seed) {
+    void setSeed(g_uint32 seed) {
         // Generate the internal seeds needed for the generator state using a
         // Linear Congruential Generator. The only condition, stated at the end
         // of the 1999 L'Ecuyer paper, is that the seeds must be greater than 1,
@@ -42,7 +42,7 @@ struct RandomEcuyerImpl
     }
 
     /// Generates a pseudo random number within the full range of 32 bits.
-    unsigned int getRandom() {
+    g_uint32 getRandom() {
 // Use a mask of 0xffffffffUL to make in work on 64-bit machines.
 #define TAUSWORTHE(s,a,b,c,d) (((s&c)<<d)&0xffffffffUL)^((((s<<a)&0xffffffffUL)^s)>>b)
 
@@ -64,9 +64,9 @@ struct RandomEcuyerImpl
      */
     //@{
 
-    unsigned int seed0; ///< The first seed number.
-    unsigned int seed1; ///< The second seed number.
-    unsigned int seed2; ///< The third seed number.
+    g_uint32 seed0; ///< The first seed number.
+    g_uint32 seed1; ///< The second seed number.
+    g_uint32 seed2; ///< The third seed number.
 
     //@}
 };
@@ -76,7 +76,7 @@ struct RandomEcuyerImpl
  */
 //@{
 
-typedef RandomBase<double,RandomEcuyerImpl> RandomEcuyerd;
-typedef RandomBase<float,RandomEcuyerImpl> RandomEcuyerf;
+typedef RandomBase<g_real64,RandomEcuyerImpl> RandomEcuyerd;
+typedef RandomBase<g_real32,RandomEcuyerImpl> RandomEcuyerf;
 
 //@}
