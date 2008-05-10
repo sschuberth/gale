@@ -38,7 +38,12 @@ struct RandomEcuyerImpl
 
 #undef LCG
 
-        // We skip the "warm-up" here so save some code size and performance.
+#ifndef GALE_TINY
+        // "Warm up" the random generator.
+        for (g_int32 i=0;i<6;++i) {
+            getRandom();
+        }
+#endif
     }
 
     /// Generates a pseudo random number within the full range of 32 bits.
