@@ -214,6 +214,7 @@ class RandomBase
 };
 
 #include "random_ecuyer.inl"
+#include "random_mother.inl"
 
 } // namespace math
 
