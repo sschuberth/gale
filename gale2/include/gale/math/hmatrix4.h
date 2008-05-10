@@ -498,6 +498,19 @@ class HMatrix4
      */
     //@{
 
+    /// Returns the determinant of this matrix.
+    T getDeterminant() const {
+        T a0 = c0[0]*c1[1] - c1[0]*c0[1];
+        T a1 = c0[0]*c2[1] - c2[0]*c0[1];
+        T a3 = c1[0]*c2[1] - c2[0]*c1[1];
+
+        T const& b2 = c0[2];
+        T const& b4 = c1[2];
+        T const& b5 = c2[2];
+
+        return a0*b5 - a1*b4 + a3*b2;
+    }
+
     /// Orthonormalizes this matrix using a modified Gram-Schmidt algorithm so
     /// the column vectors are orthogonal to each other and normalized.
     HMatrix4& orthonormalize() {
