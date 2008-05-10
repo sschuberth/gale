@@ -265,9 +265,9 @@ class Matrix4
         // 64 scalar multiplications, 48 scalar additions.
         for (int row=3;row>=0;--row) {
             int col1=row+4,col2=row+8,col3=row+12;
-            c0[row] = m[row]*n[0]  + m[col1]*n[1]  + m[col2]*n[2]  + m[col3]*n[3];
-            c1[row] = m[row]*n[4]  + m[col1]*n[5]  + m[col2]*n[6]  + m[col3]*n[7];
-            c2[row] = m[row]*n[8]  + m[col1]*n[9]  + m[col2]*n[10] + m[col3]*n[11];
+            c0[row] = m[row]*n[ 0] + m[col1]*n[ 1] + m[col2]*n[ 2] + m[col3]*n[ 3];
+            c1[row] = m[row]*n[ 4] + m[col1]*n[ 5] + m[col2]*n[ 6] + m[col3]*n[ 7];
+            c2[row] = m[row]*n[ 8] + m[col1]*n[ 9] + m[col2]*n[10] + m[col3]*n[11];
             c3[row] = m[row]*n[12] + m[col1]*n[13] + m[col2]*n[14] + m[col3]*n[15];
         }
 

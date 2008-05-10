@@ -378,9 +378,9 @@ class HMatrix4
         // 36 scalar multiplications, 27 scalar additions (includes translation).
         for (int row=2;row>=0;--row) {
             int col1=row+4,col2=row+8,col3=row+12;
-            c0[row] = m[row]*n[0]  + m[col1]*n[1]  + m[col2]*n[2];
-            c1[row] = m[row]*n[4]  + m[col1]*n[5]  + m[col2]*n[6];
-            c2[row] = m[row]*n[8]  + m[col1]*n[9]  + m[col2]*n[10];
+            c0[row] = m[row]*n[ 0] + m[col1]*n[ 1] + m[col2]*n[ 2];
+            c1[row] = m[row]*n[ 4] + m[col1]*n[ 5] + m[col2]*n[ 6];
+            c2[row] = m[row]*n[ 8] + m[col1]*n[ 9] + m[col2]*n[10];
             c3[row] = m[row]*n[12] + m[col1]*n[13] + m[col2]*n[14] + m[col3];
         }
 
