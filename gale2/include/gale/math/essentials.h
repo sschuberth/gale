@@ -53,51 +53,29 @@ namespace math {
 //@{
 
 /// Converts the given \a angle specified in degrees to radians.
+template<typename T>
+inline float convDegToRad(T const angle)
+{
+    return static_cast<float>(M_PI*angle/180.0);
+}
+
+/// Converts the given double precision \a angle specified in degrees to radians.
 inline double convDegToRad(double const angle)
 {
     return static_cast<double>(M_PI*angle/180.0);
 }
 
-/// Converts the given \a angle specified in degrees to radians.
-inline float convDegToRad(float const angle)
-{
-    return static_cast<float>(M_PI*angle/180.0);
-}
-
-/// Converts the given \a angle specified in degrees to radians.
-inline float convDegToRad(int const angle)
-{
-    return static_cast<float>(M_PI*angle/180.0);
-}
-
-/// Converts the given \a angle specified in degrees to radians.
-inline float convDegToRad(short const angle)
-{
-    return static_cast<float>(M_PI*angle/180.0);
-}
-
 /// Converts the given \a angle specified in radians to degrees.
+template<typename T>
+inline float convRadToDeg(T const angle)
+{
+    return static_cast<float>(angle*180.0/M_PI);
+}
+
+/// Converts the given double precision \a angle specified in radians to degrees.
 inline double convRadToDeg(double const angle)
 {
     return static_cast<double>(angle*180.0/M_PI);
-}
-
-/// Converts the given \a angle specified in radians to degrees.
-inline float convRadToDeg(float const angle)
-{
-    return static_cast<float>(angle*180.0/M_PI);
-}
-
-/// Converts the given \a angle specified in radians to degrees.
-inline float convRadToDeg(int const angle)
-{
-    return static_cast<float>(angle*180.0/M_PI);
-}
-
-/// Converts the given \a angle specified in radians to degrees.
-inline float convRadToDeg(short const angle)
-{
-    return static_cast<float>(angle*180.0/M_PI);
 }
 
 //@}
