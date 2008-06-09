@@ -31,6 +31,7 @@
  * Means to identify CPUs and their features in detail
  */
 
+#include "../global/platform.h"
 #include "../global/singleton.h"
 
 namespace gale {
@@ -176,6 +177,41 @@ class CPUInfo:public global::Singleton<CPUInfo>
      * \name Methods to determine the number of processing units
      */
     //@{
+
+    /// Returns the number of processors (i.e. CPU sockets).
+    unsigned int getProcessors() const {
+        unsigned count=1;
+
+#ifdef G_OS_WINDOWS
+        SYSTEM_INFO info;
+        GetSystemInfo(&info);
+
+        // This also counts multiple cores and logical processors ...
+        count=info.dwNumberOfProcessors;
+
+        // ... but what we want is the number of CPUs (i.e. sockets)!
+        if (getCoresPerProcessor()) {
+            count/=getCoresPerProcessor();
+        }
+
+        if (hasHTT()) {
+            if (getThreadsPerCore()) {
+                count/=getThreadsPerCore();
+            }
+        }
+#elif defined(G_OS_LINUX)
+        // Get the number of "online" processors. This also counts multiple
+        // cores, but what we want here is the number of CPUs (i.e. sockets)!
+        // Note: HT-enabled single-socket, single-core machines return 1 here!
+        count=sysconf(_SC_NPROCESSORS_ONLN);
+
+        if (getCoresPerProcessor()) {
+            count/=getCoresPerProcessor();
+        }
+#endif
+
+        return count;
+    }
 
     /// Returns the number of cores per processor package.
     unsigned int getCoresPerProcessor() const {
