@@ -312,11 +312,11 @@ unsigned int CPUInfo::getMaxCPUIDExtFunc() const
 
     __asm__(
         "movl $0x80000000,%%eax\n\t"
-        EMIT1(push,bx)
         EMIT1(push,ax)
+        EMIT1(push,bx)
         "cpuid\n\t"
-        EMIT1(pop,cx)
         EMIT1(pop,bx)
+        EMIT1(pop,cx)
         "subl %%ecx,%%eax\n\t"
         : "=a" (eax)            /* Output  */
         :                       /* Input   */
