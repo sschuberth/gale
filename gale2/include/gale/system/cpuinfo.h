@@ -195,11 +195,14 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Returns the number of hardware threads per core.
     unsigned int getThreadsPerCore() const {
+        unsigned int threads=1;
         if (hasHTT() && (isIntel() || !hasCmpLegacy())) {
-            unsigned int threads=(m_std_misc_info&0x00ff0000)>>16;
-            return threads/getCoresPerProcessor();
+            threads=(m_std_misc_info&0x00ff0000)>>16;
+            if (getCoresPerProcessor()) {
+                threads/=getCoresPerProcessor();
+            }
         }
-        return 1;
+        return threads;
     }
 
     //@}
