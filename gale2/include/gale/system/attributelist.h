@@ -79,9 +79,15 @@ class AttributeList
 
         // Append the new attribute.
         assert(m_size<N-2);
+
+// Avoid a buffer overrun warning from the VS code analyzer which does not take
+// the above assertion into account.
+#pragma warning(disable:6386)
         m_attributes[m_size++]=type;
         m_attributes[m_size++]=value;
         m_attributes[m_size]=0;
+#pragma warning(default:6386)
+
         return true;
     }
 
