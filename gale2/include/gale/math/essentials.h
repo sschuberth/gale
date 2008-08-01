@@ -288,7 +288,7 @@ inline int roundToEven(double const d)
 {
 #ifdef GALE_SSE2
 
-    return _mm_cvtsd_si32(_mm_load_ss(&d));
+    return _mm_cvtsd_si32(_mm_load_sd(&d));
 
 #elif defined(G_COMP_GNUC)
 
@@ -383,7 +383,7 @@ inline int roundToZero(double const d)
 
 #elif defined(GALE_SSE2)
 
-    return _mm_cvttsd_si32(_mm_load_ss(&d));
+    return _mm_cvttsd_si32(_mm_load_sd(&d));
 
 #else
 
