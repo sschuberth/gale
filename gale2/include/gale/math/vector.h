@@ -253,7 +253,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// Normalizes this vector so its length equals 1 (if it is not very small).
     Vector& normalize() {
         double length=getLength();
-        if (length>std::numeric_limits<T>::epsilon()) {
+        if (length>Numerics<T>::ZERO_TOLERANCE()) {
             (*this)/=T(length);
         }
         return *this;
@@ -314,7 +314,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         Vector v=getCrossProduct(Vector::X());
 
         // If the x-axis is (almost) collinear to this vector, take the y-axis.
-        if (v.getLengthSquared()<=std::numeric_limits<T>::epsilon()) {
+        if (v.getLengthSquared()<=Numerics<T>::ZERO_TOLERANCE()) {
             v=getCrossProduct(Vector::Y());
         }
 
@@ -329,7 +329,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns whether this vector is collinear to vector \a v.
     bool isCollinear(Vector const& v) const {
-        return meta::OpCmpEqualEps::evaluate(
+        return meta::OpCmpEqual::evaluate(
             v.getCrossProduct(*this).getLengthSquared(),
             T(0)
         );

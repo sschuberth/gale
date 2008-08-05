@@ -197,7 +197,7 @@ class RandomBase
             m.c1=getVector4();
             m.c2=getVector4();
             m.c3=getVector4();
-        } while (abs(m.getDeterminant())<=std::numeric_limits<T>::epsilon());
+        } while (abs(m.getDeterminant())<=Numerics<T>::ZERO_TOLERANCE());
         return m;
     }
 

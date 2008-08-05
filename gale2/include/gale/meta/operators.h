@@ -88,13 +88,24 @@ struct OpArithMul
     }
 };
 
+/// Division operator.
+struct OpArithDiv
+{
+    /// Divides \a a by \a b.
+    template<typename T>
+    static G_INLINE void evaluate(T& a,T const& b) {
+        assert(math::abs(b)>math::Numerics<T>::ZERO_TOLERANCE());
+        a/=b;
+    }
+};
+
 /// Reciprocal operator.
 struct OpArithReci
 {
     /// Calculates the reciprocal of \a b and stores the result into \a a.
     template<typename T>
     static G_INLINE void evaluate(T& a,T const& b) {
-        assert(math::abs(b)>std::numeric_limits<T>::epsilon());
+        assert(math::abs(b)>math::Numerics<T>::ZERO_TOLERANCE());
         a=1/b;
     }
 };
@@ -140,17 +151,17 @@ struct OpCmpGreaterEqual
 };
 
 /// Boolean "equal" comparison operator.
-struct OpCmpEqualEps
+struct OpCmpEqual
 {
     /// Returns whether \a a equals \a b with regard to a tolerance depending on the
     /// precision of data type \a T.
     template<typename T>
     static G_INLINE bool evaluate(
       T const& a,T const& b,
-      T const& epsilon=std::numeric_limits<T>::epsilon())
+      T const& tolerance=math::Numerics<T>::ZERO_TOLERANCE())
     {
         // Note that epsilon may be 0 for integral types!
-        return math::abs(b-a)<=epsilon;
+        return math::abs(b-a)<=tolerance;
     }
 };
 

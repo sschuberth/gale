@@ -232,8 +232,8 @@ class TestWindow:public DefaultWindow
 
         if (event!=ME_BUTTON_NONE) {
             if (event&ME_BUTTON_LEFT) {
-                m_camera.rotate(m_camera.getModelview().getUpVector(),convDegToRad(-mouse_diff_x)*0.5);
-                m_camera.rotate(m_camera.getModelview().getRightVector(),convDegToRad(-mouse_diff_y)*0.5);
+                m_camera.rotate(m_camera.getModelview().getUpVector(),-mouse_diff_x*Constd::DEG_TO_RAD()*0.5);
+                m_camera.rotate(m_camera.getModelview().getRightVector(),-mouse_diff_y*Constd::DEG_TO_RAD()*0.5);
             }
 
             if (event&ME_BUTTON_MIDDLE) {
@@ -242,7 +242,7 @@ class TestWindow:public DefaultWindow
             }
 
             if (event&ME_BUTTON_RIGHT) {
-                m_camera.zoom(convDegToRad(mouse_diff_y));
+                m_camera.zoom(mouse_diff_y*Constf::DEG_TO_RAD());
             }
 
             repaint();

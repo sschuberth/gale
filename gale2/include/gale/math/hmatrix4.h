@@ -524,12 +524,12 @@ class HMatrix4
     /// the matrix is orthonormal and thus the inverse is viable.
     HMatrix4& invert(bool* const result=NULL) {
         if (result) {
-            *result=abs(c0%c1)<std::numeric_limits<T>::epsilon()
-                 && abs(c0%c2)<std::numeric_limits<T>::epsilon()
-                 && abs(c1%c2)<std::numeric_limits<T>::epsilon()
-                 && meta::OpCmpEqualEps::evaluate(c0.getLengthSquared(),T(1))
-                 && meta::OpCmpEqualEps::evaluate(c1.getLengthSquared(),T(1))
-                 && meta::OpCmpEqualEps::evaluate(c2.getLengthSquared(),T(1));
+            *result=abs(c0%c1)<=Numerics<T>::ZERO_TOLERANCE()
+                 && abs(c0%c2)<=Numerics<T>::ZERO_TOLERANCE()
+                 && abs(c1%c2)<=Numerics<T>::ZERO_TOLERANCE()
+                 && meta::OpCmpEqual::evaluate(c0.getLengthSquared(),T(1))
+                 && meta::OpCmpEqual::evaluate(c1.getLengthSquared(),T(1))
+                 && meta::OpCmpEqual::evaluate(c2.getLengthSquared(),T(1));
         }
 
         if (!result || *result) {

@@ -153,8 +153,9 @@ class TupleBase
 
     /// Element-wise divides \c this tuple by tuple \a t.
     C const& operator/=(C const& t) {
-        // The value of t is checked downstream in OpArithReci.
-        return (*this)*=1/t;
+        // The value of t is checked downstream in OpArithDiv.
+        meta::LoopFwd<N,meta::OpArithDiv>::iterate(getData(),t.getData());
+        return *static_cast<C*>(this);
     }
 
     /// Returns tuple \a t unchanged; provided for convenience.
@@ -205,8 +206,9 @@ class TupleBase
 
     /// Divides each element of \c this tuple by a scalar \a s.
     C const& operator/=(T const s) {
-        assert(abs(s)>std::numeric_limits<T>::epsilon());
-        return (*this)*=1/s;
+        // The value of t is checked downstream in OpArithDiv.
+        meta::LoopFwd<N,meta::OpArithDiv>::iterate(getData(),s);
+        return *static_cast<C*>(this);
     }
 
     /// Multiplies each element of tuple \a t by a scalar \a s from the right.
@@ -313,7 +315,7 @@ class TupleBase
     /// Returns whether all elements in \a t equal their counterpart in \a u
     /// with regard to a tolerance depending on the precision of data type \a T.
     friend bool operator==(C const& t,C const& u) {
-        return meta::LoopFwd<N,meta::OpCmpEqualEps>
+        return meta::LoopFwd<N,meta::OpCmpEqual>
                    ::iterateCondAnd(t.getData(),u.getData());
     }
 

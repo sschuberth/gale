@@ -128,12 +128,12 @@ class DefaultWindow:public RenderWindow
             // Rotate the camera.
 
             if (event&ME_BUTTON_LEFT) {
-                m_camera.pitch(convDegToRad(-mouse_diff_y)/10);
-                m_camera.rotate(Vec3f::Y(),convDegToRad(-mouse_diff_x)/10);
+                m_camera.pitch(-mouse_diff_y*Constd::DEG_TO_RAD()/10);
+                m_camera.rotate(Vec3f::Y(),-mouse_diff_x*Constd::DEG_TO_RAD()/10);
             }
 
             if (event&ME_BUTTON_RIGHT) {
-                m_camera.roll(convDegToRad(-mouse_diff_x)/10);
+                m_camera.roll(-mouse_diff_x*Constd::DEG_TO_RAD()/10);
             }
 
             repaint();

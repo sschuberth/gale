@@ -38,47 +38,143 @@
 #endif
 #include <math.h>
 
+#include <float.h>
+#include <limits.h>
+
 #include <intrin.h>
 #include <stdlib.h>
-
-#include <limits>
 
 namespace gale {
 
 namespace math {
 
 /**
- * \name Angle conversion related functions
+ * Definition of data type specific mathematical constants.
  */
-//@{
-
-/// Converts the given \a angle specified in degrees to radians.
 template<typename T>
-inline float convDegToRad(T const angle)
+struct Constants
 {
-    return static_cast<float>(M_PI*angle/180.0);
-}
+    /// Returns the ratio of a circle's circumference to its diameter.
+    static T PI() {
+        return static_cast<T>(M_PI);
+    }
 
-/// Converts the given double precision \a angle specified in degrees to radians.
-inline double convDegToRad(double const angle)
-{
-    return static_cast<double>(M_PI*angle/180.0);
-}
+    /// Returns the factor to convert degrees to radians.
+    static T const& DEG_TO_RAD() {
+        static T const f=PI()/T(180);
+        return f;
+    }
 
-/// Converts the given \a angle specified in radians to degrees.
+    /// Returns the factor to convert radians to degrees.
+    static T const& RAD_TO_DEG() {
+        static T const f=T(180)/PI();
+        return f;
+    }
+};
+
+typedef Constants<double> Constd;
+typedef Constants<float> Constf;
+
+/**
+ * Definition of data type specific numeric limits.
+ */
 template<typename T>
-inline float convRadToDeg(T const angle)
+struct Numerics
 {
-    return static_cast<float>(angle*180.0/M_PI);
-}
+    /// Returns the minimum / minimum positive value for integral / floating
+    /// point data types.
+    static T MIN();
 
-/// Converts the given double precision \a angle specified in radians to degrees.
-inline double convRadToDeg(double const angle)
+    /// Returns the maximum value for the data type.
+    static T MAX();
+
+    /// Returns the smallest effective increment from 1.
+    static T EPSILON();
+
+    /// Returns the maximum difference to be tolerated when comparing to 0.
+    static T ZERO_TOLERANCE();
+};
+
+typedef Numerics<double> Numd;
+typedef Numerics<float> Numf;
+typedef Numerics<int> Numi;
+typedef Numerics<unsigned int> Numui;
+typedef Numerics<short> Nums;
+typedef Numerics<unsigned short> Numus;
+typedef Numerics<signed char> Numb;
+typedef Numerics<unsigned char> Numub;
+
+template<>
+struct Numerics<double>
 {
-    return static_cast<double>(angle*180.0/M_PI);
-}
+    static double MIN()                    { return DBL_MIN;      }
+    static double MAX()                    { return DBL_MAX;      }
+    static double EPSILON()                { return DBL_EPSILON;  }
+    static double ZERO_TOLERANCE()         { return 1e-08;        }
+};
 
-//@}
+template<>
+struct Numerics<float>
+{
+    static float MIN()                     { return FLT_MIN;      }
+    static float MAX()                     { return FLT_MAX;      }
+    static float EPSILON()                 { return FLT_EPSILON;  }
+    static float ZERO_TOLERANCE()          { return 1e-06f;       }
+};
+
+template<>
+struct Numerics<int>
+{
+    static int MIN()                       { return INT_MIN;      }
+    static int MAX()                       { return INT_MAX;      }
+    static int EPSILON()                   { return 0;            }
+    static int ZERO_TOLERANCE()            { return 0;            }
+};
+
+template<>
+struct Numerics<unsigned int>
+{
+    static unsigned int MIN()              { return 0;            }
+    static unsigned int MAX()              { return UINT_MAX;     }
+    static unsigned int EPSILON()          { return 0;            }
+    static unsigned int ZERO_TOLERANCE()   { return 0;            }
+};
+
+template<>
+struct Numerics<short>
+{
+    static short MIN()                     { return SHRT_MIN;     }
+    static short MAX()                     { return SHRT_MAX;     }
+    static short EPSILON()                 { return 0;            }
+    static short ZERO_TOLERANCE()          { return 0;            }
+};
+
+template<>
+struct Numerics<unsigned short>
+{
+    static unsigned short MIN()            { return 0;            }
+    static unsigned short MAX()            { return USHRT_MAX;    }
+    static unsigned short EPSILON()        { return 0;            }
+    static unsigned short ZERO_TOLERANCE() { return 0;            }
+};
+
+template<>
+struct Numerics<signed char>
+{
+    static signed char MIN()               { return SCHAR_MIN;    }
+    static signed char MAX()               { return SCHAR_MAX;    }
+    static signed char EPSILON()           { return 0;            }
+    static signed char ZERO_TOLERANCE()    { return 0;            }
+};
+
+template<>
+struct Numerics<unsigned char>
+{
+    static unsigned char MIN()             { return 0;            }
+    static unsigned char MAX()             { return CHAR_MAX;     }
+    static unsigned char EPSILON()         { return 0;            }
+    static unsigned char ZERO_TOLERANCE()  { return 0;            }
+};
 
 /**
  * \name Bit juggling functions

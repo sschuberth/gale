@@ -244,7 +244,7 @@ class Quaternion
 
     /// Divides \c this quaternion by a scalar \a s.
     Quaternion const& operator/=(T const s) {
-        assert(abs(s)>std::numeric_limits<T>::epsilon());
+        assert(abs(s)>Numerics<T>::ZERO_TOLERANCE());
         return (*this)*=1/s;
     }
 
@@ -279,7 +279,7 @@ class Quaternion
     /// Returns whether all elements in \a q equal their counterpart in \a r
     /// with regard to a tolerance depending on the precision of data type \a T.
     friend bool operator==(Quaternion const& q,Quaternion const& r) {
-        return meta::OpCmpEqualEps::evaluate(q.real,r.real) && q.imag==r.imag;
+        return meta::OpCmpEqual::evaluate(q.real,r.real) && q.imag==r.imag;
     }
 
     /// Returns whether the elements in \a q are not equal to their counterparts
@@ -310,7 +310,7 @@ class Quaternion
     /// small).
     Quaternion& normalize() {
         double length=getLength();
-        if (length>std::numeric_limits<T>::epsilon()) {
+        if (length>Numerics<T>::ZERO_TOLERANCE()) {
             (*this)/=T(length);
         }
         return *this;
@@ -392,7 +392,7 @@ class Quaternion
     friend Quaternion slerp(Quaternion const& q,Quaternion const& r,double const s) {
         T cosine=q.getAngleCosine(r);
 
-        if (meta::OpCmpEqualEps::evaluate(cosine,T(1))) {
+        if (meta::OpCmpEqual::evaluate(cosine,T(1))) {
             // If the quaternions are very close just interpolate linearly.
             return nlerp(q,r,s);
         }
@@ -412,7 +412,7 @@ class Quaternion
     /// Calculates the complex exponential of a quaternion \a q.
     friend Quaternion exp(Quaternion const& q) {
         double length=q.imag.getLength();
-        if (length>std::numeric_limits<T>::epsilon()) {
+        if (length>Numerics<T>::ZERO_TOLERANCE()) {
             double s=::sin(length);
             return Quaternion(T(::cos(length)),q.imag*T(s/length));
         }
@@ -424,7 +424,7 @@ class Quaternion
         if (abs(q.real)<1) {
             double half=::acos(q.real);
             double s=::sin(half);
-            if (abs(s)>std::numeric_limits<T>::epsilon()) {
+            if (abs(s)>Numerics<T>::ZERO_TOLERANCE()) {
                 return Quaternion(0,q.imag*T(half/s));
             }
         }
@@ -466,7 +466,7 @@ class Quaternion
     void getToAxisAngle(Vec& axis,double& angle) {
         T dot=imag.getLengthSquared();
 
-        if (dot>std::numeric_limits<T>::epsilon()) {
+        if (dot>Numerics<T>::ZERO_TOLERANCE()) {
             angle=::acos(real)*2.0;
             axis=imag/T(::sqrt(static_cast<double>(dot)));
         }

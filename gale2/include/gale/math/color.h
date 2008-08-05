@@ -49,12 +49,12 @@ struct ColorModel
 {
     /// Returns the minimum intensity value allowed for a color channel.
     static T getMinIntensity() {
-        return std::numeric_limits<T>::min();
+        return Numerics<T>::MIN();
     }
 
     /// Returns the maximum intensity value allowed for a color channel.
     static T getMaxIntensity() {
-        return std::numeric_limits<T>::max();
+        return Numerics<T>::MAX();
     }
 
     /// Converts a color representation from the RGB to the HSV model. The RGB

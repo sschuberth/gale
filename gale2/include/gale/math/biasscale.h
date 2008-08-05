@@ -88,8 +88,8 @@ struct BiasScale
 
     /// Returns whether transformation \a a equals transformation \a b.
     friend bool operator==(BiasScale const& a,BiasScale const& b) {
-        return meta::OpCmpEqualEps::evaluate(a.bias,b.bias)
-            && meta::OpCmpEqualEps::evaluate(a.scale,b.scale);
+        return meta::OpCmpEqual::evaluate(a.bias,b.bias)
+            && meta::OpCmpEqual::evaluate(a.scale,b.scale);
     }
 
     /// Returns whether this transformation is the identity and thus performs a
@@ -169,8 +169,8 @@ struct ScaleBias
 
     /// Returns whether transformation \a a equals transformation \a b.
     friend bool operator==(ScaleBias const& a,ScaleBias const& b) {
-        return meta::OpCmpEqualEps::evaluate(a.scale,b.scale)
-            && meta::OpCmpEqualEps::evaluate(a.bias,b.bias);
+        return meta::OpCmpEqual::evaluate(a.scale,b.scale)
+            && meta::OpCmpEqual::evaluate(a.bias,b.bias);
     }
 
     /// Returns whether this transformation is the identity and thus performs a

@@ -473,7 +473,7 @@ class Matrix4
     /// the matrix' determinant is non-zero and thus the inverse is viable.
     Matrix4& invert(bool* const result=NULL) {
         T det=getDeterminant();
-        bool valid=abs(det)>std::numeric_limits<T>::epsilon();
+        bool valid=(abs(det)>Numerics<T>::ZERO_TOLERANCE());
 
         if (result) {
             *result=valid;

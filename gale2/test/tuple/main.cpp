@@ -14,7 +14,7 @@
 using namespace gale::math;
 using namespace gale::system;
 
-using gale::meta::OpCmpEqualEps;
+using gale::meta::OpCmpEqual;
 
 using namespace std;
 
@@ -105,16 +105,16 @@ void test_tuple()
     assert(t4f_c[3]==t4f_a[3]*t4f_b[3]);
 
     t4f_c=t4f_a/t4f_b[3];
-    assert(OpCmpEqualEps::evaluate(t4f_c[0],t4f_a[0]/t4f_b[3],0.000001f));
-    assert(OpCmpEqualEps::evaluate(t4f_c[1],t4f_a[1]/t4f_b[3],0.000001f));
-    assert(OpCmpEqualEps::evaluate(t4f_c[2],t4f_a[2]/t4f_b[3],0.000001f));
-    assert(OpCmpEqualEps::evaluate(t4f_c[3],t4f_a[3]/t4f_b[3],0.000001f));
+    assert(OpCmpEqual::evaluate(t4f_c[0],t4f_a[0]/t4f_b[3]));
+    assert(OpCmpEqual::evaluate(t4f_c[1],t4f_a[1]/t4f_b[3]));
+    assert(OpCmpEqual::evaluate(t4f_c[2],t4f_a[2]/t4f_b[3]));
+    assert(OpCmpEqual::evaluate(t4f_c[3],t4f_a[3]/t4f_b[3]));
 
     t4f_a=2.0f/t4f_c;
-    assert(OpCmpEqualEps::evaluate(t4f_a[0],2.0f/t4f_c[0],0.001f));
-    assert(OpCmpEqualEps::evaluate(t4f_a[1],2.0f/t4f_c[1],0.001f));
-    assert(OpCmpEqualEps::evaluate(t4f_a[2],2.0f/t4f_c[2],0.001f));
-    assert(OpCmpEqualEps::evaluate(t4f_a[3],2.0f/t4f_c[3],0.001f));
+    assert(OpCmpEqual::evaluate(t4f_a[0],2.0f/t4f_c[0]));
+    assert(OpCmpEqual::evaluate(t4f_a[1],2.0f/t4f_c[1]));
+    assert(OpCmpEqual::evaluate(t4f_a[2],2.0f/t4f_c[2]));
+    assert(OpCmpEqual::evaluate(t4f_a[3],2.0f/t4f_c[3]));
 #endif
 
     cout << "Check construction of objects ..."
@@ -184,9 +184,9 @@ void test_tuple()
     {
         float s=12.3f;
         Tuple<3,float> tmp=t3f_a/s;
-        assert(OpCmpEqualEps::evaluate(tmp[0],t3f_a[0]/s));
-        assert(OpCmpEqualEps::evaluate(tmp[1],t3f_a[1]/s));
-        assert(OpCmpEqualEps::evaluate(tmp[2],t3f_a[2]/s));
+        assert(OpCmpEqual::evaluate(tmp[0],t3f_a[0]/s));
+        assert(OpCmpEqual::evaluate(tmp[1],t3f_a[1]/s));
+        assert(OpCmpEqual::evaluate(tmp[2],t3f_a[2]/s));
     }
 
     cout << "Check minimum element determination ..."
@@ -248,10 +248,10 @@ void test_tuple()
     {
         double const s=0.63;
         Tuple<4,double> tmp=lerp(t4d_a,t4d_b,s);
-        assert(OpCmpEqualEps::evaluate(tmp[0],t4d_a[0]+(t4d_b[0]-t4d_a[0])*s));
-        assert(OpCmpEqualEps::evaluate(tmp[1],t4d_a[1]+(t4d_b[1]-t4d_a[1])*s));
-        assert(OpCmpEqualEps::evaluate(tmp[2],t4d_a[2]+(t4d_b[2]-t4d_a[2])*s));
-        assert(OpCmpEqualEps::evaluate(tmp[3],t4d_a[3]+(t4d_b[3]-t4d_a[3])*s));
+        assert(OpCmpEqual::evaluate(tmp[0],t4d_a[0]+(t4d_b[0]-t4d_a[0])*s));
+        assert(OpCmpEqual::evaluate(tmp[1],t4d_a[1]+(t4d_b[1]-t4d_a[1])*s));
+        assert(OpCmpEqual::evaluate(tmp[2],t4d_a[2]+(t4d_b[2]-t4d_a[2])*s));
+        assert(OpCmpEqual::evaluate(tmp[3],t4d_a[3]+(t4d_b[3]-t4d_a[3])*s));
     }
 
     cout << "Check remaining vector vs. vector operators ..."
@@ -264,14 +264,14 @@ void test_tuple()
         );
 
         Tuple<3,float> res=((t3f_a+t3f_b)-t3f_b)*tmp;
-        assert(OpCmpEqualEps::evaluate(res[0],(t3f_a[0]+t3f_b[0]-t3f_b[0])*tmp[0]));
-        assert(OpCmpEqualEps::evaluate(res[1],(t3f_a[1]+t3f_b[1]-t3f_b[1])*tmp[1]));
-        assert(OpCmpEqualEps::evaluate(res[2],(t3f_a[2]+t3f_b[2]-t3f_b[2])*tmp[2]));
+        assert(OpCmpEqual::evaluate(res[0],(t3f_a[0]+t3f_b[0]-t3f_b[0])*tmp[0]));
+        assert(OpCmpEqual::evaluate(res[1],(t3f_a[1]+t3f_b[1]-t3f_b[1])*tmp[1]));
+        assert(OpCmpEqual::evaluate(res[2],(t3f_a[2]+t3f_b[2]-t3f_b[2])*tmp[2]));
 
         Tuple<3,float> res2=tmp/res;
-        assert(OpCmpEqualEps::evaluate(res2[0],tmp[0]/res[0]));
-        assert(OpCmpEqualEps::evaluate(res2[1],tmp[1]/res[1]));
-        assert(OpCmpEqualEps::evaluate(res2[2],tmp[2]/res[2]));
+        assert(OpCmpEqual::evaluate(res2[0],tmp[0]/res[0]));
+        assert(OpCmpEqual::evaluate(res2[1],tmp[1]/res[1]));
+        assert(OpCmpEqual::evaluate(res2[2],tmp[2]/res[2]));
     }
 
     cout << "Check remaining vector vs. scalar operators ..."
@@ -280,14 +280,14 @@ void test_tuple()
         float s=344.5f,t=24.6f;
 
         Tuple<3,float> res=t3f_a*s;
-        assert(OpCmpEqualEps::evaluate(res[0],t3f_a[0]*s));
-        assert(OpCmpEqualEps::evaluate(res[1],t3f_a[1]*s));
-        assert(OpCmpEqualEps::evaluate(res[2],t3f_a[2]*s));
+        assert(OpCmpEqual::evaluate(res[0],t3f_a[0]*s));
+        assert(OpCmpEqual::evaluate(res[1],t3f_a[1]*s));
+        assert(OpCmpEqual::evaluate(res[2],t3f_a[2]*s));
 
         Tuple<3,float> res2=res/t;
-        assert(OpCmpEqualEps::evaluate(res2[0],res[0]/t,numeric_limits<float>::epsilon()*40));
-        assert(OpCmpEqualEps::evaluate(res2[1],res[1]/t,numeric_limits<float>::epsilon()*40));
-        assert(OpCmpEqualEps::evaluate(res2[2],res[2]/t,numeric_limits<float>::epsilon()*40));
+        assert(OpCmpEqual::evaluate(res2[0],res[0]/t));
+        assert(OpCmpEqual::evaluate(res2[1],res[1]/t));
+        assert(OpCmpEqual::evaluate(res2[2],res[2]/t));
 
     }
 
@@ -365,7 +365,7 @@ void test_vector()
     cout << "Check magnitude related methods ..."
          << endl;
     b.normalize();
-    assert(OpCmpEqualEps::evaluate(b.getLengthSquared(),Vec4d::X()[0]));
+    assert(OpCmpEqual::evaluate(b.getLengthSquared(),Vec4d::X()[0]));
 
     cout << "Check the cross product operator ..."
          << endl;
@@ -375,7 +375,7 @@ void test_vector()
          << endl;
     double axy1=Vec3i::X().getAngle(Vec3i::Y());
     double axy2=Vec3i::X().getAccurateAngle(Vec3i::Y());
-    assert(OpCmpEqualEps::evaluate(axy1,axy2));
+    assert(OpCmpEqual::evaluate(axy1,axy2));
 
     cout << "Check getting an orthogonal vector ..."
          << endl;
