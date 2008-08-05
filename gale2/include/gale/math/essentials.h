@@ -72,8 +72,15 @@ struct Constants
     }
 };
 
+/**
+ * \name Type definitions for mathematical constants
+ */
+//@{
+
 typedef Constants<double> Constd;
 typedef Constants<float> Constf;
+
+//@}
 
 /**
  * Definition of data type specific numeric limits.
@@ -95,6 +102,11 @@ struct Numerics
     static T ZERO_TOLERANCE();
 };
 
+/**
+ * \name Type definitions for numeric limits
+ */
+//@{
+
 typedef Numerics<double> Numd;
 typedef Numerics<float> Numf;
 typedef Numerics<int> Numi;
@@ -104,6 +116,9 @@ typedef Numerics<unsigned short> Numus;
 typedef Numerics<signed char> Numb;
 typedef Numerics<unsigned char> Numub;
 
+//@}
+
+/// \cond DOXYGEN_IGNORE
 template<>
 struct Numerics<double>
 {
@@ -175,6 +190,8 @@ struct Numerics<unsigned char>
     static unsigned char EPSILON()         { return 0;            }
     static unsigned char ZERO_TOLERANCE()  { return 0;            }
 };
+/// \endcond
+
 
 /**
  * \name Bit juggling functions
