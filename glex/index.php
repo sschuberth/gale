@@ -34,12 +34,13 @@
 
 <?php
 
+// GeSHi is included in any case for the version information in the footer.
+include_once 'geshi/geshi.php';
+
 if (empty($error)) {
     if (empty($spec)) {
         echo '<div style="height: 128px"></div>';
     } else {
-        include_once 'geshi/geshi.php';
-
         $geshi=&new GeSHi();
 
         $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
