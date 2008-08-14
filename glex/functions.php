@@ -117,10 +117,14 @@ function writeMacroHeader($extension,$procs) {
 
     global $cmdline;
 
-    // TODO: Verify / simplify these regular expressions.
-    $type="\w+\s*\**\w+\s*\**";
+    // Real-world argument examples:
+    // enum texunit
+    // const float *m
+    // void* *params
+    $type="\w+\s*\**\s*\**\w+\s*\**\s*\**";
     $name="\w+";
     $arguments="($type\s*,?\s*)*";
+
     preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;?/",$procs,$matches,PREG_SET_ORDER);
 
     for ($i=0;$i<count($matches);++$i) {
