@@ -127,7 +127,8 @@ function writeMacroHeader($extension,$procs) {
 
     preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;?/",$procs,$matches,PREG_SET_ORDER);
 
-    for ($i=0;$i<count($matches);++$i) {
+    $count=count($matches);
+    for ($i=0;$i<$count;++$i) {
         // For custom data types, prepend "GL".
         $replaced1=addDataTypePrefix($matches[$i][1]);
 
@@ -143,6 +144,8 @@ function writeMacroHeader($extension,$procs) {
         // Check that we have at least once prefixed an OpenGL data type (e.g.
         // the return type), else remove the invalid match.
         if (!$replaced1 && !$replaced3) {
+            // Note that $i is not an index but a key into the array. This means
+            // deleting an entry will not make the following entries "move up".
             unset($matches[$i]);
         }
     }
