@@ -87,24 +87,32 @@ function parseSpecIntoArray($spec,&$struct) {
 function writeMacroHeader($extension,$procs) {
     function addDataTypePrefix(&$arguments) {
         $patterns=array(
-            "/(^|\W)(\w+ARB)/",
-            "/(^|\W)(enum)/",
             "/(^|\W)(boolean)/",
-            "/(^|\W)(bitfield)/",
             "/(^|\W)(byte)/",
-            "/(^|\W)(short)/",
-            "/(^|\W)(int)/",
-            "/(^|\W)(sizei)/",
             "/(^|\W)(ubyte)/",
+            "/(^|\W)(char)/",
+            "/(^|\W)(short)/",
             "/(^|\W)(ushort)/",
+            "/(^|\W)(int)/",
             "/(^|\W)(uint)/",
+            "/(^|\W)(sizei)/",
+            "/(^|\W)(enum)/",
+            "/(^|\W)(bitfield)/",
+            "/(^|\W)(half)/",
             "/(^|\W)(float)/",
             "/(^|\W)(clampf)/",
             "/(^|\W)(double)/",
             "/(^|\W)(clampd)/",
-            "/(^|\W)(void)/"
+            "/(^|\W)(time)/",
+            "/(^|\W)(void)/",
+            "/(^|\W)(\w+ARB)/"
         );
-        $arguments=preg_replace($patterns,"\\1GL\\2",$arguments);
+        $result=preg_replace($patterns,"\\1GL\\2",$arguments);
+        if ($result===NULL || $result===$arguments) {
+            return FALSE;
+        }
+        $arguments=$result;
+        return TRUE;
     }
 
     global $cmdline;
@@ -117,7 +125,7 @@ function writeMacroHeader($extension,$procs) {
 
     for ($i=0;$i<count($matches);++$i) {
         // For custom data types, prepend "GL".
-        addDataTypePrefix($matches[$i][1]);
+        $replaced1=addDataTypePrefix($matches[$i][1]);
 
         // If there is no lower case prefix, prepend "gl" to the name.
         $match=&$matches[$i][2];
@@ -126,7 +134,13 @@ function writeMacroHeader($extension,$procs) {
         }
 
         // For custom data types, prepend "GL".
-        addDataTypePrefix($matches[$i][3]);
+        $replaced3=addDataTypePrefix($matches[$i][3]);
+
+        // Check that we have at least once prefixed an OpenGL data type (e.g.
+        // the return type), else remove the invalid match.
+        if (!$replaced1 && !$replaced3) {
+            unset($matches[$i]);
+        }
     }
 
     $type_length_max=0;
