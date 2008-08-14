@@ -6,11 +6,19 @@ if (!empty($file)) {
     header('Content-type: text/plain');
     header('Content-Disposition: attachment; filename="'.$file.'"');
 
+    // First try dynamically generated files in the server's temporary directory ...
     $code=file_get_contents(SERVER_TMP_DIRECTORY.$file);
-    if (!empty($unix2dos))
-        $code=preg_replace('/\n/',"\r\n",$code);
-    echo $code;
-    return;
+    if ($code===FALSE) {
+        // .. then fall back to default files in the scripts's directory.
+        $code=file_get_contents($file);
+    }
+    if ($code!==FALSE) {
+        if (!empty($unix2dos)) {
+            $code=preg_replace('/\n/',"\r\n",$code);
+        }
+        echo $code;
+        return;
+    }
 }
 
 header('HTTP/1.0 404 Not Found');
