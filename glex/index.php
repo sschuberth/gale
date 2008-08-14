@@ -53,36 +53,36 @@ if (empty($error)) {
 
         // writeMacroHeader
         echo '<table style="width: 70%">';
-            drawTableBorder('t','white',false,2);
+            drawTableBorder('t','white',FALSE,2);
             showSourceCode($p);
-            drawTableBorder('b','white',false,2);
+            drawTableBorder('b','white',FALSE,2);
         echo '</table>';
 
         echo '<div style="height: 16px"></div>';
 
         // writePrototypeHeader
         echo '<table style="width: 70%">';
-            drawTableBorder('t','white',false,2);
+            drawTableBorder('t','white',FALSE,2);
             showSourceCode($h);
-            drawTableBorder('b','white',false,2);
+            drawTableBorder('b','white',FALSE,2);
         echo '</table>';
 
         echo '<div style="height: 16px"></div>';
 
         // writeInitializationCode
         echo '<table style="width: 70%">';
-            drawTableBorder('t','white',false,2);
+            drawTableBorder('t','white',FALSE,2);
             showSourceCode($c);
-            drawTableBorder('b','white',false,2);
+            drawTableBorder('b','white',FALSE,2);
         echo '</table>';
 
         echo '<div style="height: 16px"></div>';
 
         // GLEX_globals.h
         echo '<table style="width: 70%">';
-            drawTableBorder('t','white',false,2);
+            drawTableBorder('t','white',FALSE,2);
             showSourceCode('GLEX_globals.h');
-            drawTableBorder('b','white',false,2);
+            drawTableBorder('b','white',FALSE,2);
         echo '</table>';
 
         echo '<div style="height: 32px"></div>';
@@ -112,7 +112,7 @@ else {
 ?>
 
     <table style="width: 70%">
-        <?php drawTableBorder('t','#c7d1d2',true); ?>
+        <?php drawTableBorder('t','#c7d1d2',TRUE); ?>
         <tr>
             <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
             <td style="background-color: #d3e0e7; padding: 10px">
@@ -128,13 +128,13 @@ else {
             </td>
             <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
         </tr>
-        <?php drawTableBorder('b','#678285',true); ?>
+        <?php drawTableBorder('b','#678285',TRUE); ?>
     </table>
 
     <div style="height: 128px"></div>
 
     <table style="width: 50%">
-        <?php drawTableBorder('t','white',false,5); ?>
+        <?php drawTableBorder('t','white',FALSE,5); ?>
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
             <a href="http://gale.berlios.de/glex/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a> (a <a href="http://threekings.tk/mirror/gale/glex/">mirror</a> is also available)<br />
@@ -165,7 +165,7 @@ else {
                 <?= getFunctionsRevision(); ?> &bull; <?= getFunctionsDate(); ?>
             </td>
         </tr>
-        <?php drawTableBorder('b','white',false,5); ?>
+        <?php drawTableBorder('b','white',FALSE,5); ?>
     </table>
 </body>
 

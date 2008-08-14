@@ -233,7 +233,7 @@ function writePrototypeHeader($extension,$procs,$tokens) {
             // Indent the inner of a structure and append it.
             $all=$type[1]."\n";
             $tok=strtok($type[2],';');
-            while ($tok!==false) {
+            while ($tok!==FALSE) {
                 $trimtok=trim($tok);
                 if (!empty($trimtok)) {
                     $all.='    '.$trimtok.";\n";
@@ -368,7 +368,7 @@ function writeInitializationCode($extension) {
     return $file;
 }
 
-function drawTableBorder($prefix,$color,$edge=false,$colspan=1) {
+function drawTableBorder($prefix,$color,$edge=FALSE,$colspan=1) {
     $color_url=urlencode($color);
 
     echo '<tr>';
