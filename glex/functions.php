@@ -58,7 +58,8 @@ function parseSpecIntoArray($spec,&$struct) {
                 $content.=' ';
             }
             $content.=$ltline;
-        } else {
+        }
+        else {
             // We can stop parsing when we have reached e.g. the revision history.
             if (is_int(strpos($line,OPENGL_SPEC_BREAK_SECTION))) {
                 break;

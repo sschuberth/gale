@@ -12,7 +12,8 @@ if ($cmdline) {
     for ($i=1;$i<$argc;++$i) {
         parse_str($argv[$i]);
     }
-} else {
+}
+else {
     // Suppress any errors in case these variables are not set.
     @$spec=$_REQUEST['spec'];
     @$debug=$_REQUEST['debug'];
@@ -22,7 +23,8 @@ if (empty($spec)) {
     if ($cmdline) {
         // When run from the command line, the spec has to be passed as an argument.
         exit('Usage: '.basename($argv[0]).' spec=<URI or URL to OpenGL extension specification text file> [debug=<verbosity level 1 or 2>]');
-    } else {
+    }
+    else {
         // If the script is run on a web server, prompt for the spec.
         header('Location: index.php');
         return;
@@ -39,7 +41,8 @@ if ($debug==1) {
         // Dump only the section header.
         echo $section."\n";
     }
-} else if ($debug==2) {
+}
+else if ($debug==2) {
     // Dump the array containing the file structure if debugging is enabled.
     echo "*** debug *** Dumping file structure array\n";
     print_r($struct);
@@ -79,10 +82,10 @@ if (empty($procs)) {
     if ($cmdline) {
         // Print out the error message to the console.
         exit("Error: $error.");
-    } else {
+    }
+    else {
         // If the script is run on a web server, display an error on the index page.
         header('Location: index.php?spec='.$spec.'&error='.rawurlencode($error));
-        return;
     }
     return;
 }
@@ -110,7 +113,8 @@ if ($cmdline) {
         copy(dirname($argv[0]).'/'.$g,$g);
         echo ' saved as "'.$g."\".\n";
     }
-} else {
+}
+else {
     $p=writeMacroHeader($extension,$procs);
     $h=writePrototypeHeader($extension,$procs,$tokens);
     $c=writeInitializationCode($extension);

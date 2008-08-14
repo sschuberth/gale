@@ -40,7 +40,8 @@ include_once 'geshi/geshi.php';
 if (empty($error)) {
     if (empty($spec)) {
         echo '<div style="height: 128px"></div>';
-    } else {
+    }
+    else {
         $geshi=&new GeSHi();
 
         $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
@@ -86,7 +87,8 @@ if (empty($error)) {
 
         echo '<div style="height: 32px"></div>';
     }
-} else {
+}
+else {
     echo '<div style="height: 32px"></div>';
 
     echo '<table style="width: 50%">';
