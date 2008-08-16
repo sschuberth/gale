@@ -72,8 +72,8 @@ struct BiasScale
 
     /// Initializes the transformation to the given \a bias and \a scale which
     /// are the identity by default.
-    BiasScale(T const bias=0,T const scale=1):
-      bias(bias),scale(scale) {}
+    BiasScale(T const bias=0,T const scale=1)
+    :   bias(bias),scale(scale) {}
 
     /// Initializes the transformation from a transformation that applies the
     /// scale first and then the bias.
@@ -150,8 +150,8 @@ struct ScaleBias
 
     /// Initializes the transformation to the given \a scale and \a bias which
     /// are the identity by default.
-    ScaleBias(T const scale=1,T const bias=0):
-      scale(scale),bias(bias) {}
+    ScaleBias(T const scale=1,T const bias=0)
+    :   scale(scale),bias(bias) {}
 
     /// Initializes the transformation from a transformation that applies the
     /// bias first and then the scale.

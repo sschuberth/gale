@@ -162,8 +162,8 @@ class Matrix4
     Matrix4() {}
 
     /// Initialize the column vectors with vectors \a c0 to \a c3.
-    Matrix4(Vec const& c0,Vec const& c1,Vec const& c2,Vec const& c3):
-      c0(c0),c1(c1),c2(c2),c3(c3) {}
+    Matrix4(Vec const& c0,Vec const& c1,Vec const& c2,Vec const& c3)
+    :   c0(c0),c1(c1),c2(c2),c3(c3) {}
 
     //@}
 

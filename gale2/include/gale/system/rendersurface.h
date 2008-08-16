@@ -55,8 +55,8 @@ class RenderSurface
     /// Type definition for a context handle that identifies a render surface.
     struct ContextHandle {
         /// Constructor to simplify handle initialization.
-        ContextHandle(HDC device=NULL,HGLRC render=NULL):
-          device(device),render(render) {}
+        ContextHandle(HDC device=NULL,HGLRC render=NULL)
+        :   device(device),render(render) {}
 
         HDC device;   ///< Handle to the Windows device context.
         HGLRC render; ///< Handle to the Windows render context.
@@ -65,8 +65,8 @@ class RenderSurface
     /// Simple structure to hold the dimensions of a render surface.
     struct Dimensions {
         /// Constructor to simplify dimensions initialization.
-        Dimensions(int width=0,int height=0):
-          width(width),height(height) {}
+        Dimensions(int width=0,int height=0)
+        :   width(width),height(height) {}
 
         int width;  ///< Width of the render surface.
         int height; ///< Height of the render surface.

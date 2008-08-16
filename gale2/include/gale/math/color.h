@@ -306,12 +306,12 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     }
 
     /// Allows to initialize 3-channel colors directly.
-    Color(T const r,T const g,T const b):
-      Base(r,g,b),m_hsv_outdated(true) {}
+    Color(T const r,T const g,T const b)
+    :   Base(r,g,b),m_hsv_outdated(true) {}
 
     /// Allows to initialize 4-channel colors directly.
-    Color(T const r,T const g,T const b,T const a):
-      Base(r,g,b,a),m_hsv_outdated(true) {}
+    Color(T const r,T const g,T const b,T const a)
+    :   Base(r,g,b,a),m_hsv_outdated(true) {}
 
     /// Converts a color of different type but with the same amount of channels
     /// to this type.

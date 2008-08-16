@@ -191,12 +191,12 @@ class HMatrix4
 
     /// Create a matrix whose components are either not initialized at all or
     /// initialized to 0 if \c GALE_INIT is defined.
-    HMatrix4():
-      m_c0w(0),m_c1w(0),m_c2w(0),m_c3w(1) {}
+    HMatrix4()
+    :   m_c0w(0),m_c1w(0),m_c2w(0),m_c3w(1) {}
 
     /// Initialize the column vectors with vectors \a c0, \a c1, \a c2 and \a c3.
-    HMatrix4(Vec const& c0,Vec const& c1,Vec const& c2,Vec const& c3):
-      c0(c0),m_c0w(0),c1(c1),m_c1w(0),c2(c2),m_c2w(0),c3(c3),m_c3w(1) {}
+    HMatrix4(Vec const& c0,Vec const& c1,Vec const& c2,Vec const& c3)
+    :   c0(c0),m_c0w(0),c1(c1),m_c1w(0),c2(c2),m_c2w(0),c3(c3),m_c3w(1) {}
 
     //@}
 

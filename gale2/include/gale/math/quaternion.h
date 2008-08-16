@@ -105,8 +105,8 @@ class Quaternion
 
     /// Initialized the quaternion to the given \a real number part and the
     /// imaginary number parts given as \a imag.
-    Quaternion(T const real,Vec const& imag):
-      real(real),imag(imag) {}
+    Quaternion(T const real,Vec const& imag)
+    :   real(real),imag(imag) {}
 
     /// Creates a quaternion that matches the rotation represented by the given
     /// normalized rotation \a axis vector and rotation \a angle in radians.
