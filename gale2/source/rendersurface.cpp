@@ -34,11 +34,11 @@ namespace system {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-ATOM RenderSurface::s_atom=0;
 int RenderSurface::s_instances=0;
+ATOM RenderSurface::s_atom=0;
 
 RenderSurface::WindowHandle RenderSurface::s_window=NULL;
-RenderSurface::ContextHandle RenderSurface::s_handle=NULL;
+RenderSurface::ContextHandle RenderSurface::s_handle;
 
 LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
@@ -60,80 +60,79 @@ LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wP
 
 RenderSurface::RenderSurface()
 {
-    // We only need to create one rendering context once for all instances.
-    if (s_instances==0) {
-        // Register a minimal class whose windows allocate a unique device context.
-        WNDCLASS cls;
-        memset(&cls,0,sizeof(cls));
-        cls.style=CS_OWNDC|CS_SAVEBITS;
-        cls.lpfnWndProc=WindowProc;
-        cls.hCursor=LoadCursor(NULL,IDC_ARROW);
-        cls.lpszClassName="G";
-
-        s_atom=RegisterClass(&cls);
-        assert(s_atom!=0);
-
-        // Create a dummy window and get its device context.
-        s_window=CreateWindow(
-        /* lpClassName  */ MAKEINTATOM(s_atom),
-        /* lpWindowName */ NULL,
-        /* dwStyle      */ 0,
-        /* x            */ 0,
-        /* y            */ 0,
-        /* nWidth       */ 0,
-        /* nHeight      */ 0,
-        /* hWndParent   */ HWND_DESKTOP,
-        /* hMenu        */ NULL,
-        /* hInstance    */ NULL,
-        /* lpParam      */ NULL
-        );
-        assert(s_window!=NULL);
-
-        s_handle.device=GetWindowDC(s_window);
-        assert(s_handle.device!=NULL);
-
-        // Set the device context to a pixel format that uses OpenGL acceleration.
-        PIXELFORMATDESCRIPTOR pfd;
-        memset(&pfd,0,sizeof(pfd));
-        pfd.nSize=sizeof(pfd);
-        pfd.nVersion=1;
-        pfd.dwFlags=PFD_DRAW_TO_WINDOW
-                  | PFD_SUPPORT_OPENGL
-                  | PFD_GENERIC_ACCELERATED
-                  | PFD_SUPPORT_COMPOSITION
-        ;
-
-        int format=ChoosePixelFormat(s_handle.device,&pfd);
-        assert(format!=0);
-
-        G_ASSERT_CALL(SetPixelFormat(s_handle.device,format,&pfd));
-
-        // Create and activate a rendering context.
-        s_handle.render=wglCreateContext(s_handle.device);
-        assert(s_handle.render!=NULL);
+    // We only need to create the window class and dummy context once.
+    if (s_instances++) {
+        return;
     }
-    ++s_instances;
+
+    // Register a minimal window class used by all contexts we want to create.
+    WNDCLASS cls;
+    memset(&cls,0,sizeof(cls));
+    cls.style=CS_OWNDC|CS_SAVEBITS;
+    cls.lpfnWndProc=WindowProc;
+    cls.hCursor=LoadCursor(NULL,IDC_ARROW);
+    cls.lpszClassName="G";
+
+    s_atom=RegisterClass(&cls);
+    assert(s_atom!=0);
+
+    // Create a dummy window and get its device context.
+    s_window=CreateWindow(
+    /* lpClassName  */ MAKEINTATOM(s_atom),
+    /* lpWindowName */ NULL,
+    /* dwStyle      */ 0,
+    /* x            */ 0,
+    /* y            */ 0,
+    /* nWidth       */ 0,
+    /* nHeight      */ 0,
+    /* hWndParent   */ HWND_DESKTOP,
+    /* hMenu        */ NULL,
+    /* hInstance    */ NULL,
+    /* lpParam      */ NULL
+    );
+    assert(s_window!=NULL);
+
+    s_handle.device=GetWindowDC(s_window);
+    assert(s_handle.device!=NULL);
+
+    // Set the device context to a pixel format that uses OpenGL acceleration.
+    PIXELFORMATDESCRIPTOR pfd;
+    memset(&pfd,0,sizeof(pfd));
+    pfd.nSize=sizeof(pfd);
+    pfd.nVersion=1;
+    pfd.dwFlags=PFD_DRAW_TO_WINDOW
+              | PFD_SUPPORT_OPENGL
+              | PFD_GENERIC_ACCELERATED
+              | PFD_SUPPORT_COMPOSITION
+    ;
+
+    int format=ChoosePixelFormat(s_handle.device,&pfd);
+    assert(format!=0);
+
+    G_ASSERT_CALL(SetPixelFormat(s_handle.device,format,&pfd));
+
+    // Create and activate a rendering context.
+    s_handle.render=wglCreateContext(s_handle.device);
+    assert(s_handle.render!=NULL);
 }
 
 RenderSurface::~RenderSurface()
 {
-    --s_instances;
-    if (s_instances<=0) {
-        assert(s_instances==0);
-
-        // Clean up again.
-        destroy();
-
-        G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL));
+    if (--s_instances>0) {
+        return;
     }
+    assert(s_instances==0);
+
+    // Clean up again.
+    destroy();
+
+    G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL));
 }
 
 void RenderSurface::destroy()
 {
-    ContextHandle handle=getContextHandle();
-
-    G_ASSERT_CALL(wglDeleteContext(handle.render));
-    G_ASSERT_CALL(ReleaseDC(getWindowHandle(),handle.device));
+    G_ASSERT_CALL(wglDeleteContext(getContextHandle().render));
+    G_ASSERT_CALL(ReleaseDC(getWindowHandle(),getContextHandle().device));
     G_ASSERT_CALL(DestroyWindow(getWindowHandle()));
 }
 

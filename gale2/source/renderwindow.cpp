@@ -34,12 +34,12 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi const& attribs,LPCTSTR title)
+RenderWindow::RenderWindow(int width,int height,AttributeListi const& attribs,LPCTSTR title)
 :   m_timeout(0)
 {
     // Activate the minimal render surface to get a context for OpenGL extension
     // initialization.
-    G_ASSERT_CALL(RenderSurface::setCurrentContext());
+    G_ASSERT_CALL(setCurrentContext(RenderSurface::getContextHandle()));
 
     if (GLEX_WGL_ARB_pixel_format!=GL_TRUE) {
         // Initialize an OpenGL extension for more sophisticated selection of a
@@ -53,7 +53,7 @@ RenderWindow::RenderWindow(int client_width,int client_height,AttributeListi con
         G_ASSERT_CALL(GLEX_ARB_color_buffer_float_init());
     }
 
-    RECT rect={0,0,client_width,client_height};
+    RECT rect={0,0,width,height};
     G_ASSERT_CALL(AdjustWindowRect(&rect,WS_OVERLAPPEDWINDOW,FALSE));
 
     // Create a render window and get its device context.

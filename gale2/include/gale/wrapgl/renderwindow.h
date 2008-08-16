@@ -59,21 +59,16 @@ class RenderWindow:public system::RenderSurface
     /// to render to. The properties of the pixel format to use are determined
     /// by \a attribs, and \a title specifies the caption. The window will be
     /// hidden initially, but it will become the current rendering context.
-    RenderWindow(int client_width,int client_height,system::AttributeListi const& attribs,LPCTSTR title);
+    RenderWindow(int width,int height,system::AttributeListi const& attribs,LPCTSTR title);
 
-    /// Returns the handle for the window associated with this render context.
-    WindowHandle getWindowHandle() const {
+    /// Returns the handle to the window associated with this render surface.
+    WindowHandle const& getWindowHandle() const {
         return m_window;
     }
 
-    /// Returns the handle for this render context.
-    ContextHandle getContextHandle() const {
-        return ContextHandle(m_handle.device,m_handle.render);
-    }
-
-    /// Sets this to be the active render context for the current thread.
-    bool setCurrentContext() {
-        return wglMakeCurrent(m_handle.device,m_handle.render)!=FALSE;
+    /// Returns the handle to the context associated with this render surface.
+    ContextHandle const& getContextHandle() const {
+        return m_handle;
     }
 
     /// Returns the currently set timeout value in seconds.

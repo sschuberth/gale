@@ -77,6 +77,11 @@ class RenderSurface
         return ContextHandle(wglGetCurrentDC(),wglGetCurrentContext());
     }
 
+    /// Sets the active render context for the current thread.
+    static bool setCurrentContext(ContextHandle const& handle) {
+        return wglMakeCurrent(handle.device,handle.render)!=FALSE;
+    }
+
     /// Creates a minimal render surface with a hidden window without changing
     /// the current rendering context.
     RenderSurface();
@@ -85,22 +90,22 @@ class RenderSurface
     ~RenderSurface();
 
     /// Returns the handle to the window associated with this render surface.
-    virtual WindowHandle getWindowHandle() const {
+    virtual WindowHandle const& getWindowHandle() const {
         return s_window;
     }
 
     /// Returns the handle to the context associated with this render surface.
-    virtual ContextHandle getContextHandle() const {
-        return ContextHandle(s_handle.device,s_handle.render);
+    virtual ContextHandle const& getContextHandle() const {
+        return s_handle;
     }
 
     /// Sets this to be the active render context for the current thread.
     bool setCurrentContext() {
-        return wglMakeCurrent(s_handle.device,s_handle.render)!=FALSE;
+        return setCurrentContext(getContextHandle());
     }
 
-    /// Returns both the width and height of this render surface.
-    virtual Dimensions getDimensions() const {
+    /// Returns the width and height of this render surface.
+    Dimensions getDimensions() const {
         RECT rect;
         GetClientRect(getWindowHandle(),&rect);
         return Dimensions(rect.right,rect.bottom);
@@ -115,8 +120,8 @@ class RenderSurface
     /// Handles window messages and forwards them to the event handlers.
     virtual LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
 
-    static ATOM s_atom;     ///< Identifier for the registered window class.
     static int s_instances; ///< Counter for the number of instances.
+    static ATOM s_atom;     ///< Identifier for the registered window class.
 
   private:
 
