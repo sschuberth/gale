@@ -25,6 +25,8 @@
 
 #include "gale/wrapgl/renderwindow.h"
 
+#include "GLEX_WGL_ARB_create_context.h"
+
 using namespace gale::system;
 
 namespace gale {
@@ -34,7 +36,7 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-RenderWindow::RenderWindow(int width,int height,AttributeListi const& attribs,LPCTSTR title)
+RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel,LPCTSTR title)
 :   m_timeout(0)
 {
     // Activate the minimal render surface to get a context for OpenGL extension
@@ -76,25 +78,37 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attribs,LP
     assert(m_handle.device!=NULL);
 
     // Make sure some required attributes are specified.
-    AttributeListi attrs=attribs;
-    attrs.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
-    attrs.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
-    attrs.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
-    attrs.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
+    AttributeListi attr=attr_pixel;
+    attr.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
+    attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
+    attr.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
+    attr.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
 
     // Set the device context to the first pixel format that matches the
     // specified attributes.
     GLint format;
     UINT count;
-    G_ASSERT_CALL(wglChoosePixelFormatARB(m_handle.device,attrs,NULL,1,&format,&count));
+    G_ASSERT_CALL(wglChoosePixelFormatARB(m_handle.device,attr,NULL,1,&format,&count));
     assert(count>0);
 
     G_ASSERT_CALL(SetPixelFormat(m_handle.device,format,NULL));
 
-    // Create and activate a rendering context.
-    m_handle.render=wglCreateContext(m_handle.device);
+    // Try to initialize an extension required to create an OpenGL 3.0 compatible
+    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
+    if (GLEX_WGL_ARB_create_context || GLEX_WGL_ARB_create_context_init()) {
+        attr.clear();
+        attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
+        m_handle.render=wglCreateContextAttribsARB(m_handle.device,0,attr);
+    }
+
+    if (!m_handle.render) {
+        // Fall back to an old-style rendering context.
+        m_handle.render=wglCreateContext(m_handle.device);
+    }
+
     assert(m_handle.render!=NULL);
 
+    // Activate the rendering context.
     G_ASSERT_CALL(setCurrentContext());
 }
 
