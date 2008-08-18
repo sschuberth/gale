@@ -57,9 +57,9 @@ class RenderWindow:public system::RenderSurface
 
     /// Creates a window with a client size of the given \a width and \a height
     /// to render to. The properties of the pixel format to use are determined
-    /// by \a attribs, and \a title specifies the caption. The window will be
+    /// by \a attr_pixel, and \a title specifies the caption. The window will be
     /// hidden initially, but it will become the current rendering context.
-    RenderWindow(int width,int height,system::AttributeListi const& attribs,LPCTSTR title);
+    RenderWindow(int width,int height,system::AttributeListi const& attr_pixel,LPCTSTR title);
 
     /// Returns the handle to the window associated with this render surface.
     WindowHandle const& getWindowHandle() const {
