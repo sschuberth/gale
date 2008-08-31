@@ -155,6 +155,7 @@ class Camera
     /// old and new orientation.
     void setLookTarget(math::Vec3f const& point,bool const flip=false) {
         using namespace math;
+
         HMat4f::Vec const& position=m_modelview.getPositionVector();
 
         HMat4f::Vec& backward=m_modelview.getBackwardVector();

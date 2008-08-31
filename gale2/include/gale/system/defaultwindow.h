@@ -31,16 +31,13 @@
  * Default window and camera navigation implementations
  */
 
-#include "../wrapgl/renderwindow.h"
-#include "../wrapgl/camera.h"
+#include "renderwindow.h"
 
-#ifndef NDEBUG
-    #include <iostream>
-#endif
+#include "../wrapgl/camera.h"
 
 namespace gale {
 
-namespace wrapgl {
+namespace system {
 
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(disable:4355)
@@ -68,8 +65,8 @@ class DefaultWindow:public RenderWindow
     };
 
     /// Returns the default pixel format attributes to use.
-    static system::AttributeListi const& getPixelAttributes() {
-        static system::AttributeListi attribs;
+    static global::AttributeListi const& getPixelAttributes() {
+        static global::AttributeListi attribs;
         if (attribs.getSize()==0) {
             attribs.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
             attribs.insert(WGL_COLOR_BITS_ARB,24);
@@ -233,7 +230,7 @@ class DefaultWindow:public RenderWindow
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(default:4355)
 
-} // namespace wrapgl
+} // namespace system
 
 } // namespace gale
 

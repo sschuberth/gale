@@ -31,11 +31,11 @@
  * A static array implementation to store attribute pairs
  */
 
-#include "../global/defines.h"
+#include "defines.h"
 
 namespace gale {
 
-namespace system {
+namespace global {
 
 // Make sure data members are tightly packed.
 #pragma pack(push,1)
@@ -160,7 +160,7 @@ typedef AttributeList<float> AttributeListf;
 
 //@}
 
-} // namespace system
+} // namespace global
 
 } // namespace gale
 

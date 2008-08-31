@@ -31,13 +31,14 @@
  * A render window implementation
  */
 
-#include "../system/attributelist.h"
-#include "../system/rendersurface.h"
-#include "../system/timer.h"
+#include "rendersurface.h"
+#include "timer.h"
+
+#include "../global/attributelist.h"
 
 namespace gale {
 
-namespace wrapgl {
+namespace system {
 
 /**
  * This class creates an on-screen window with a system-provided frame buffer to
@@ -59,7 +60,7 @@ class RenderWindow:public system::RenderSurface
     /// to render to. The properties of the pixel format to use are determined
     /// by \a attr_pixel, and \a title specifies the caption. The window will be
     /// hidden initially, but it will become the current rendering context.
-    RenderWindow(int width,int height,system::AttributeListi const& attr_pixel,LPCTSTR title);
+    RenderWindow(int width,int height,global::AttributeListi const& attr_pixel,LPCTSTR title);
 
     /// Returns the handle to the window associated with this render surface.
     WindowHandle const& getWindowHandle() const {
@@ -127,7 +128,7 @@ class RenderWindow:public system::RenderSurface
 
 #endif // G_OS_WINDOWS
 
-} // namespace wrapgl
+} // namespace system
 
 } // namespace gale
 

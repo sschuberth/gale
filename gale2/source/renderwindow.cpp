@@ -23,15 +23,15 @@
  *
  */
 
-#include "gale/wrapgl/renderwindow.h"
+#include "gale/system/renderwindow.h"
 
 #include "GLEX_WGL_ARB_create_context.h"
 
-using namespace gale::system;
+using namespace gale::global;
 
 namespace gale {
 
-namespace wrapgl {
+namespace system {
 
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
@@ -188,6 +188,6 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 
 #endif // G_OS_WINDOWS
 
-} // namespace wrapgl
+} // namespace system
 
 } // namespace gale
