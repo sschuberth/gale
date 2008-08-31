@@ -60,11 +60,11 @@ class DefaultWindow:public RenderWindow
 
     /// Defines bit masks for mouse events.
     enum MouseEvent {
-        ME_BUTTON_NONE   = 0x00, ///< No mouse button was pressed.
-        ME_BUTTON_LEFT   = 0x01, ///< The left mouse button was pressed.
-        ME_BUTTON_MIDDLE = 0x02, ///< The middle mouse button was pressed.
-        ME_BUTTON_RIGHT  = 0x04, ///< The right mouse button was pressed.
-        ME_WHEEL_SCROLL  = 0x08  ///< The mouse wheel was scrolled.
+        ME_BUTTON_NONE   = 0,      ///< No mouse button was pressed.
+        ME_BUTTON_LEFT   = 1 << 0, ///< The left mouse button was pressed.
+        ME_BUTTON_MIDDLE = 1 << 1, ///< The middle mouse button was pressed.
+        ME_BUTTON_RIGHT  = 1 << 2, ///< The right mouse button was pressed.
+        ME_WHEEL_SCROLL  = 1 << 3  ///< The mouse wheel was scrolled.
     };
 
     /// Returns the default pixel format attributes to use.
@@ -87,11 +87,12 @@ class DefaultWindow:public RenderWindow
     :   RenderWindow(client_width,client_height,getPixelAttributes(),title)
     ,   m_camera(*this)
     {
-#ifndef NDEBUG
-        std::cout << "Vendor   : " << glGetString(GL_VENDOR) << std::endl;
-        std::cout << "Renderer : " << glGetString(GL_RENDERER) << std::endl;
-        std::cout << "Version  : " << glGetString(GL_VERSION) << std::endl;
-#endif
+        // Add an "About" entry to the system menu.
+        HMENU menu=GetSystemMenu(getWindowHandle(),FALSE);
+        if (menu) {
+            AppendMenu(menu,MF_SEPARATOR,NULL,NULL);
+            AppendMenu(menu,MF_STRING,ID_ABOUT_DLG,_T("&About ..."));
+        }
     }
 
     /// Captures the Escape key to quit the application.
@@ -144,6 +145,8 @@ class DefaultWindow:public RenderWindow
     }
 
   protected:
+
+    static UINT_PTR const ID_ABOUT_DLG=0x00AB;
 
     /// Handles window messages and forwards them to the event handlers.
     LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam) {
@@ -201,6 +204,16 @@ class DefaultWindow:public RenderWindow
                 short wheel=HIWORD(wParam)*WHEEL_DELTA;
                 onMouseEvent(LOWORD(lParam),HIWORD(lParam),wheel,ME_WHEEL_SCROLL);
                 break;
+            }
+
+            case WM_SYSCOMMAND: {
+                if (wParam==ID_ABOUT_DLG) {
+                    TCHAR buffer[512];
+                    _stprintf_s(buffer,_T("Vendor: %s\nRenderer: %s\nVersion: %s"),glGetString(GL_VENDOR),glGetString(GL_RENDERER),glGetString(GL_VERSION));
+                    MessageBox(getWindowHandle(),buffer,_T("About"),MB_OK);
+                    break;
+                }
+                // No break here!
             }
 
             default: {
