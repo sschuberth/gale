@@ -83,6 +83,7 @@
     #endif
 
     #include <windows.h>
+    #include <tchar.h>
 
     /**
      * \def PFD_SUPPORT_COMPOSITION

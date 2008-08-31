@@ -71,7 +71,7 @@ RenderSurface::RenderSurface()
     cls.style=CS_OWNDC|CS_SAVEBITS;
     cls.lpfnWndProc=WindowProc;
     cls.hCursor=LoadCursor(NULL,IDC_ARROW);
-    cls.lpszClassName="G";
+    cls.lpszClassName=_T("G");
 
     s_atom=RegisterClass(&cls);
     assert(s_atom!=0);
