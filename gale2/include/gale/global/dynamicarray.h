@@ -36,8 +36,11 @@ namespace gale {
 namespace global {
 
 /**
- * Simple dynamic array implementation to be used in favor of std::vector for
- * very small programs that cannot use STL due to size constraints.
+ * Simple dynamic array implementation to be used in favor of e.g. std::vector
+ * for very small programs that cannot use STL due to size constraints. In
+ * contrast to std::vector, for efficiency the default constructor is only
+ * called on non-built-in types, and objects that contain pointers to themselves
+ * are not supported.
  */
 template<class T>
 class DynamicArray
