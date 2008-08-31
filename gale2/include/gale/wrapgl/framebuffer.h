@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Frame buffer implementation
+ * A frame buffer object wrapper
  */
 
 #include "texture.h"

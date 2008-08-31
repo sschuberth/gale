@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Render surface abstraction
+ * A render surface abstraction
  */
 
 #include "../global/platform.h"

@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Camera transformation and navigation implementation
+ * An implementation for camera transformation and navigation
  */
 
 #include "../system/rendersurface.h"

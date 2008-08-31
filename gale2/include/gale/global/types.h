@@ -26,6 +26,11 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+/**
+ * \file
+ * Platform independent type definitions
+ */
+
 #include "platform.h"
 
 #ifdef G_OS_LINUX

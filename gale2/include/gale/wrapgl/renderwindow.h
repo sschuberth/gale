@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Render window implementation
+ * A render window implementation
  */
 
 #include "../system/attributelist.h"

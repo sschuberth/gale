@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Basis for bindable OpenGL objects
+ * A basis for bindable OpenGL objects
  */
 
 #include "../global/defines.h"

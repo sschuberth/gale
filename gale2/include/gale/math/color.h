@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Color representation class implementations
+ * An implementation to represent colors
  */
 
 #include "tuple.h"

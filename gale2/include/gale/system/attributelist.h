@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Convenience data structures
+ * A static array implementation to store attribute pairs
  */
 
 #include "../global/defines.h"

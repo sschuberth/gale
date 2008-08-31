@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Default window and camera navigation implementation
+ * Default window and camera navigation implementations
  */
 
 #include "../wrapgl/renderwindow.h"
