@@ -36,8 +36,8 @@ namespace gale {
 namespace global {
 
 /**
- * Singleton design pattern implementation as described in "More Effective
- * C++" by Scott Meyers (Addison-Wesley, 1996a), item 26.
+ * Simple dynamic array implementation to be used in favor of std::vector for
+ * very small programs that cannot use STL due to size constraints.
  */
 template<class T>
 class DynamicArray
