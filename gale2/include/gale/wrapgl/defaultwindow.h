@@ -32,12 +32,11 @@
  */
 
 #include "renderwindow.h"
-
-#include "../wrapgl/camera.h"
+#include "camera.h"
 
 namespace gale {
 
-namespace system {
+namespace wrapgl {
 
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(disable:4355)
@@ -230,7 +229,7 @@ class DefaultWindow:public RenderWindow
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(default:4355)
 
-} // namespace system
+} // namespace wrapgl
 
 } // namespace gale
 

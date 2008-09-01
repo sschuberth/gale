@@ -1,6 +1,6 @@
 #include <gale/math/random.h>
 #include <gale/system/timer.h>
-#include <gale/system/defaultwindow.h>
+#include <gale/wrapgl/defaultwindow.h>
 
 void drawCube(float edge) {
     edge/=2;
@@ -58,6 +58,7 @@ void drawCube(float edge) {
 
 using namespace gale::math;
 using namespace gale::system;
+using namespace gale::wrapgl;
 
 float const CATHETUS=5.0f;
 float const RADIUS=sqrtf(2*CATHETUS*CATHETUS);

@@ -23,7 +23,7 @@
  *
  */
 
-#include "gale/system/renderwindow.h"
+#include "gale/wrapgl/renderwindow.h"
 
 #include "GLEX_WGL_ARB_create_context.h"
 
@@ -31,7 +31,7 @@ using namespace gale::global;
 
 namespace gale {
 
-namespace system {
+namespace wrapgl {
 
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
@@ -55,6 +55,7 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
         G_ASSERT_CALL(GLEX_ARB_color_buffer_float_init());
     }
 
+    // Calculate the window size from the desired client area size.
     RECT rect={0,0,width,height};
     G_ASSERT_CALL(AdjustWindowRect(&rect,WS_OVERLAPPEDWINDOW,FALSE));
 
@@ -188,6 +189,6 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 
 #endif // G_OS_WINDOWS
 
-} // namespace system
+} // namespace wrapgl
 
 } // namespace gale

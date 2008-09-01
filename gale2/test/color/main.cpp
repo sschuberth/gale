@@ -1,10 +1,10 @@
-#include <gale/system/defaultwindow.h>
+#include <gale/wrapgl/defaultwindow.h>
 
 #include <gale/math/color.h>
 #include <gale/math/random.h>
 
 using namespace gale::math;
-using namespace gale::system;
+using namespace gale::wrapgl;
 
 class TestWindow:public DefaultWindow
 {

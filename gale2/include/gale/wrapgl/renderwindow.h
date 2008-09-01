@@ -31,14 +31,13 @@
  * A render window implementation
  */
 
-#include "rendersurface.h"
-#include "timer.h"
-
 #include "../global/attributelist.h"
+#include "../system/rendersurface.h"
+#include "../system/timer.h"
 
 namespace gale {
 
-namespace system {
+namespace wrapgl {
 
 /**
  * This class creates an on-screen window with a system-provided frame buffer to
@@ -128,7 +127,7 @@ class RenderWindow:public system::RenderSurface
 
 #endif // G_OS_WINDOWS
 
-} // namespace system
+} // namespace wrapgl
 
 } // namespace gale
 
