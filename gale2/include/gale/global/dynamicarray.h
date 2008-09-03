@@ -55,8 +55,8 @@ class DynamicArray
     /// Creates an empty array without any memory allocated.
     DynamicArray(int size=0,int capacity=0)
     :   m_data(NULL)
-    ,   m_size(size)
-    ,   m_capacity(capacity)
+    ,   m_size(0)
+    ,   m_capacity(0)
     {
         setCapacity(capacity);
         setSize(size);
@@ -141,8 +141,14 @@ class DynamicArray
         }
 
         if (size>m_capacity) {
-            // Reserve memory for 1.5 times the new size.
-            setCapacity(size+size/2);
+            if (m_capacity==0) {
+                // Get only the needed amount of memory at first.
+                setCapacity(size);
+            }
+            else {
+                // Reserve memory for 1.5 times the new size.
+                setCapacity(size+size/2);
+            }
         }
 
         // If we grow in size, construct insetted items.
