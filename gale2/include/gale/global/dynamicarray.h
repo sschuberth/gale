@@ -31,6 +31,8 @@
  * A dynamic array implementation to store arbitrary objects
  */
 
+#include "../meta/tools.h"
+
 namespace gale {
 
 namespace global {
@@ -95,6 +97,18 @@ class DynamicArray
     /// side effect, this also provides indexed data access.
     operator T const*() const {
         return getData();
+    }
+
+    //@}
+
+    /**
+     * \name Initialization / assignment operators
+     */
+    //@{
+
+    meta::ArrayInitializer<T> operator=(T const& value) {
+        m_data[0]=value;
+        return meta::ArrayInitializer<T>(m_data+1);
     }
 
     //@}
