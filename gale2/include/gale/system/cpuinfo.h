@@ -180,7 +180,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Returns the number of processors (i.e. CPU sockets).
     unsigned int getProcessors() const {
-        unsigned count=1;
+        unsigned int count=1;
 
 #ifdef G_OS_WINDOWS
         SYSTEM_INFO info;
@@ -210,35 +210,42 @@ class CPUInfo:public global::Singleton<CPUInfo>
         }
 #endif
 
-        return count;
+        return count<1?1:count;
     }
 
     /// Returns the number of cores per processor package.
     unsigned int getCoresPerProcessor() const {
+        unsigned int count=1;
+
         if (isIntel()) {
-            return ((m_std_cache_params&0xfc000000)>>26)+1;
+            count=((m_std_cache_params&0xfc000000)>>26)+1;
         }
         else if (isAMD()) {
             if (hasHTT() && hasCmpLegacy()) {
                 // This method to determine the number of cores is deprecated
                 // but we use it if it is supported.
-                return (m_std_misc_info&0x00ff0000)>>16;
+                count=(m_std_misc_info&0x00ff0000)>>16;
             }
-            return (m_ext_address_sizes&0x000000ff)+1;
+            else {
+                count=(m_ext_address_sizes&0x000000ff)+1;
+            }
         }
-        return 1;
+
+        return count<1?1:count;
     }
 
     /// Returns the number of hardware threads per core.
     unsigned int getThreadsPerCore() const {
-        unsigned int threads=1;
+        unsigned int count=1;
+
         if (hasHTT() && (isIntel() || !hasCmpLegacy())) {
-            threads=(m_std_misc_info&0x00ff0000)>>16;
+            count=(m_std_misc_info&0x00ff0000)>>16;
             if (getCoresPerProcessor()) {
-                threads/=getCoresPerProcessor();
+                count/=getCoresPerProcessor();
             }
         }
-        return threads;
+
+        return count<1?1:count;
     }
 
     //@}
