@@ -37,20 +37,23 @@ namespace meta {
 
 /**
  * Helper class allowing to initialize arrays with a comma separated list. See
- * the DynamicArray class for an example usage.
+ * the DynamicArray assignment operator implementation for an example usage.
  */
 template<typename T>
 struct ArrayInitializer
 {
+    /// Constructor to initialize the iterator.
     ArrayInitializer(T* iterator)
     :   iterator(iterator) {}
 
+    /// Operator to assign a list of comma separated values to the array pointed
+    /// to by the iterator.
     ArrayInitializer& operator,(T const& value) {
         *iterator++=value;
         return *this;
     }
 
-    T* iterator;
+    T* iterator; ///< Stores the current position within the array.
 };
 
 } // namespace meta

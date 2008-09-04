@@ -106,6 +106,8 @@ class DynamicArray
      */
     //@{
 
+    /// Returns a array initializer object for a scalar assignment to be able to
+    /// use a comma separated list of values for array assignment.
     meta::ArrayInitializer<T> operator=(T const& value) {
         m_data[0]=value;
         return meta::ArrayInitializer<T>(m_data+1);
