@@ -106,7 +106,7 @@ class DynamicArray
      */
     //@{
 
-    /// Returns a array initializer object for a scalar assignment to be able to
+    /// Returns an array initializer object for a scalar assignment to be able to
     /// use a comma separated list of values for array assignment.
     meta::ArrayInitializer<T> operator=(T const& value) {
         m_data[0]=value;
@@ -191,7 +191,7 @@ class DynamicArray
         m_size=0;
     }
 
-    /// Inserts an \a item at the given \a position into the array. If position
+    /// Inserts an \a item at the given \a position into the array. If \a position
     /// is -1, the item gets appended at the end of the array.
     void insert(T const& item,int position=-1) {
         if (position==-1 || position>m_size) {
@@ -205,6 +205,23 @@ class DynamicArray
         memmove(&m_data[position+1],&m_data[position],(m_size-position-1)*sizeof(T));
 
         m_data[position]=item;
+    }
+
+    /// Inserts a static \a array at the given \a position into the dynamic array.
+    /// If \a position is -1, the item gets appended at the end of the array.
+    template<size_t size>
+    void insert(T const (&array)[size],int position=-1) {
+        if (position==-1 || position>m_size) {
+            position=m_size;
+        }
+
+        // Adjust the size for a new object.
+        setSize(m_size+size);
+
+        // Move insetted items to create a gap.
+        memmove(&m_data[position+size],&m_data[position],(m_size-position-size)*sizeof(T));
+
+        memcpy(&m_data[position],array,size*sizeof(T));
     }
 
     /// Removes \a count items starting at \a begin from the array. If \a begin
