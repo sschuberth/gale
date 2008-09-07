@@ -64,6 +64,16 @@ class DynamicArray
         setSize(size);
     }
 
+    /// Creates a dynamic array from the given static array.
+    template<size_t size>
+    DynamicArray(T const (&array)[size])
+    :   m_data(NULL)
+    ,   m_size(0)
+    ,   m_capacity(0)
+    {
+        insert(array);
+    }
+
     /// Destroys all items in the array and frees all memory.
     ~DynamicArray() {
         clear();
@@ -246,6 +256,59 @@ class DynamicArray
         memmove(&m_data[begin],&m_data[end],(m_size-end)*sizeof(T));
 
         m_size-=end-begin;
+    }
+
+    //@}
+
+    /**
+     * \name Sorted array methods
+     */
+    //@{
+
+    /// Inserts an \a item into a sorted array. If \a forced, the item will also
+    /// be inserted if it already exists, resulting in multiple occurrences.
+    void insertSorted(T const& item,bool forced=false) {
+        int index;
+        if (!findSorted(item,index) || forced) {
+            insert(item,index);
+        }
+    }
+
+    /// Returns whether the \a item could be found in a sorted array, and at
+    /// which \a index. If the \a item was not found, \a index contains the
+    /// position where it was expected to be found.
+    bool findSorted(T const& item,int& index) const {
+        if (m_size<1) {
+            return false;
+        }
+
+        int first=0,last=m_size-1;
+
+        while (last-first>1) {
+            index=(first+last)/2;
+
+            if (item>m_data[index]) {
+                first=index;
+            }
+            else if (item<m_data[index]) {
+                last=index;
+            }
+            else {
+                return true;
+            }
+        }
+
+        if (item<=m_data[first]) {
+            index=first;
+        }
+        else if (item<=m_data[last]) {
+            index=last;
+        }
+        else {
+            index=-1;
+        }
+
+        return index>0 && item==m_data[index];
     }
 
     //@}
