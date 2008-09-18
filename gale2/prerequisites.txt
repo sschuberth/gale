@@ -1,27 +1,42 @@
 In order to create the build system and compile GALE, you will need the
-following software to be installed on your development machine. Note that while
-newer or older versions than the ones listed might work well, they are untested:
+following software to be installed on your development machine.
 
 Common
 ======
 
-- CMake 2.4.x (http://www.cmake.org/)
-- Doxygen 1.5.2 (http://www.doxygen.org/)
+- CMake 2.4 or newer (http://www.cmake.org/)
+- Doxygen 1.5 or newer (http://www.doxygen.org/)
 
 Windows
 =======
 
-- Cygwin (http://www.cygwin.com/) with the packages
+Tools
+-----
+
+- Cygwin (http://www.cygwin.com/)
+
+  For PHP you will need to add one of the following sources during setup:
+    * ftp://sunsite.dk/projects/cygwinports/
+    * ftp://sourceware.org/pub/cygwinports/
+
+  Then install the follwing packages:
     * bash
     * coreutils
     * findutils
-    * php (from http://jabberwock.vm.bytemark.co.uk/~maxb/cygphp/)
+    * php
     * sed
     * wget
+
+Compiler
+--------
+
 - Visual Studio .NET 2003 or Visual Studio 2005
 
 Linux
 =====
+
+Tools
+-----
 
 - GNU BASH (http://www.gnu.org/software/bash/)
 - GNU Coreutils (http://www.gnu.org/software/coreutils/)
@@ -29,4 +44,8 @@ Linux
 - PHP (http://www.php.net/)
 - Sed (http://sed.sourceforge.net/)
 - Wget (http://www.gnu.org/software/wget/)
-- GCC 4.1.x (http://gcc.gnu.org/)
+
+Compiler
+--------
+
+- GCC 4.1 or newer (http://gcc.gnu.org/)
