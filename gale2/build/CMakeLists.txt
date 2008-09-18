@@ -1,3 +1,5 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+
 SET(project_name "gale")
 SET(header_root "../include")
 SET(source_root "../source")
