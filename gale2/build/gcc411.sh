@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 pushd `dirname $0`/../glex > /dev/null
 

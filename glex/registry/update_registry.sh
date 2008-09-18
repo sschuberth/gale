@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ $# -ne 1 -o ! -d $1 ]; then
     echo Usage: $0 \<directory\>
