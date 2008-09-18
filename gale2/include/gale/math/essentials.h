@@ -44,6 +44,11 @@
 #include <intrin.h>
 #include <stdlib.h>
 
+#ifdef G_COMP_MSVC
+    #pragma intrinsic(_BitScanForward)
+    #pragma intrinsic(_BitScanReverse)
+#endif
+
 namespace gale {
 
 namespace math {
@@ -207,39 +212,15 @@ inline unsigned long countLeadingZeroBits(unsigned long x)
         return sizeof(x)*8;
     }
 
-    unsigned long result;
-    __asm__(
-        "bsrl %[x],%[result]\n\t"
-        "xorl $31,%[result]\n\t"
-        : [result] "=r" (result)  /* Output  */
-        : [x] "r" (x)             /* Input   */
-        : "cc"                    /* Clobber */
-    );
-    return result;
+    return __builtin_clz(x);
 
 #elif defined(G_COMP_MSVC)
-
-#ifdef G_ARCH_X86_64
 
     unsigned long index;
     if (!_BitScanReverse(&index,x)) {
         return sizeof(x)*8;
     }
     return index^31;
-
-#else // G_ARCH_X86_64
-
-    if (x==0) {
-        return sizeof(x)*8;
-    }
-
-    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
-    __asm {
-        bsr eax,x
-        xor eax,31
-    }
-
-#endif // G_ARCH_X86_64
 
 #else // G_COMP_GNUC
 
@@ -595,27 +576,21 @@ inline bool isPowerOf2(unsigned int const x)
 /// significant bit has index 0).
 inline int getLSBSet(unsigned int x)
 {
+#ifdef G_COMP_GNUC
+
     if (x==0) {
         return -1;
     }
 
-#ifdef G_COMP_GNUC
+    return __builtin_ctz(x);
 
-    int result;
-    __asm__(
-        "bsfl %[x],%[result]\n\t"
-        : [result] "=r" (result)  /* Output  */
-        : [x] "r" (x)             /* Input   */
-        : "cc"                    /* Clobber */
-    );
-    return result;
+#elif defined(G_COMP_MSVC)
 
-#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
-
-    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
-    __asm {
-        bsf eax,x
+    unsigned long index;
+    if (_BitScanForward(&index,x)) {
+        return static_cast<int>(index);
     }
+    return -1;
 
 #else // G_COMP_GNUC
 
@@ -634,27 +609,21 @@ inline int getLSBSet(unsigned int x)
 /// significant bit has index 0).
 inline int getMSBSet(unsigned int x)
 {
+#ifdef G_COMP_GNUC
+
     if (x==0) {
         return -1;
     }
 
-#ifdef G_COMP_GNUC
+    return 31-__builtin_clz(x);
 
-    int result;
-    __asm__(
-        "bsrl %[x],%[result]\n\t"
-        : [result] "=r" (result)  /* Output  */
-        : [x] "r" (x)             /* Input   */
-        : "cc"                    /* Clobber */
-    );
-    return result;
+#elif defined(G_COMP_MSVC)
 
-#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
-
-    // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
-    __asm {
-        bsr eax,x
+    unsigned long index;
+    if (_BitScanReverse(&index,x)) {
+        return static_cast<int>(index);
     }
+    return -1;
 
 #else // G_COMP_GNUC
 
