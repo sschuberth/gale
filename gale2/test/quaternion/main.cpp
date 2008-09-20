@@ -232,12 +232,8 @@ class TestWindow:public DefaultWindow
 
         if (event!=ME_BUTTON_NONE) {
             if (event&ME_BUTTON_LEFT) {
-                HMat4f m=m_camera.getModelview();
-                m*=HMat4f::Factory::Translation(-m_camera.getPosition());
-                m*=HMat4f::Factory::RotationY(-mouse_diff_x*Constd::DEG_TO_RAD()*0.5);
-                m*=HMat4f::Factory::RotationX(-mouse_diff_y*Constd::DEG_TO_RAD()*0.5);
-                m*=HMat4f::Factory::Translation(m_camera.getPosition());
-                m_camera.setModelview(m);
+                m_camera.rotate(m_camera.getModelview().getUpVector(),-mouse_diff_x*Constd::DEG_TO_RAD()*0.5);
+                m_camera.rotate(m_camera.getModelview().getRightVector(),-mouse_diff_y*Constd::DEG_TO_RAD()*0.5);
             }
 
             if (event&ME_BUTTON_MIDDLE) {
