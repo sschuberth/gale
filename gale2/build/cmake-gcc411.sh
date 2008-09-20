@@ -19,7 +19,7 @@ popd > /dev/null
 
 pushd `dirname $0` > /dev/null
 
-buildname=`basename $0 .sh`
+buildname=gcc41
 
 rm -fr ${buildname}
 mkdir -p ${buildname}
