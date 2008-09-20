@@ -64,6 +64,18 @@ class DynamicArray
         setSize(size);
     }
 
+    /// Creates a copy of the given dynamic array.
+    DynamicArray(DynamicArray const& other)
+    :   m_data(NULL)
+    ,   m_size(0)
+    ,   m_capacity(0)
+    {
+        setSize(other.m_size);
+        for (int i=0;i<m_size;++i) {
+            new(&m_data[i]) T(other.m_data[i]);
+        }
+    }
+
     /// Creates a dynamic array from the given static array.
     template<size_t size>
     DynamicArray(T const (&array)[size])
@@ -316,8 +328,8 @@ class DynamicArray
   protected:
 
     T* m_data;      ///< Pointer to the memory chunk storing the array.
-    int m_capacity; ///< The array's capacity, i.e. allocated memory.
-    int m_size;     ///< The array's size, i.e. used memory.
+    int m_capacity; ///< The array's capacity, i.e. allocated memory, in units of T.
+    int m_size;     ///< The array's size, i.e. used memory, in units of T.
 };
 
 } // namespace global
