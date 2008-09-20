@@ -3,8 +3,13 @@
 #include <gale/math/color.h>
 #include <gale/math/random.h>
 
+#include <gale/model/mesh.h>
+
 using namespace gale::math;
 using namespace gale::wrapgl;
+
+using namespace gale::global;
+using namespace gale::model;
 
 class TestWindow:public DefaultWindow
 {
@@ -12,125 +17,68 @@ class TestWindow:public DefaultWindow
 
     TestWindow()
     :   DefaultWindow("test_color")
-    ,   m_value(100.0f)
-    ,   m_mode(0)
     {
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-
-        // Set the clear color to red to see if scissoring works.
-        Col4f c=Col4f::YELLOW();
-        c=c.getComplement();
-        glClearColor(c.getR(),c.getG(),c.getB(),c.getA());
+        m_mesh=Mesh::Factory::Octahedron();
+        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     }
 
-    bool onIdle() {
-        static int step=2;
-
-        m_value+=step;
-        if ((m_value<=0)||(m_value>=100)) {
-            if (step<0) {
-                m_value=0;
-            }
-            else {
-                m_value=100;
-            }
-            step=-step;
-            m_mode=(m_mode+1)&3;
-        }
-
-        return true;
+    ~TestWindow() {
+        delete m_mesh;
     }
 
     void onResize(int width,int height) {
-        m_camera.setProjection(Mat4d::Factory::OrthographicProjection(0,width,0,height));
+        m_camera.setScreenSpaceDimensions(width,height);
+        m_camera.setProjection(Mat4d::Factory::PerspectiveProjection(width,height));
     }
 
     void onPaint() {
-        unsigned int const QUADS_X=256;
-        unsigned int const QUADS_Y=256;
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        // Use fixed point integer math.
-        RenderSurface::Dimensions dims=getDimensions();
-        unsigned step_x=(dims.width<<16)/QUADS_X;
-        unsigned step_y=(dims.height<<16)/QUADS_Y;
+        m_camera.apply();
 
-        if (m_mode<2) {
-            m_camera.setScreenSpaceOrigin(0,0);
-            m_camera.setScreenSpaceDimensions(dims.width,dims.height);
-            m_camera.apply();
-            glClear(GL_COLOR_BUFFER_BIT);
+        Mesh::Renderer r(*m_mesh);
+        r.compile();
+        r.render();
+    }
 
-            Col3ub color;
-            color.setV(m_value);
-            glBegin(GL_QUADS);
-            unsigned int y0=0,y1;
-            for (unsigned int k=0;k<QUADS_Y;++k) {
-                color.setS(static_cast<float>(k)/QUADS_Y*100);
-                y1=((k+1)*step_y)>>16;
+    void onMouseEvent(int x,int y,int wheel,int event) {
+        static int mouse_prev_x=0,mouse_prev_y=0;
 
-                unsigned int x0=0,x1;
-                for (unsigned int i=0;i<QUADS_X;++i) {
-                    color.setH(static_cast<float>(i)/QUADS_X*360);
-                    x1=((i+1)*step_x)>>16;
+        // This is positive if the mouse cursor was moved to the right.
+        int mouse_diff_x=x-mouse_prev_x;
 
-                    glColor3ubv(color);
-                    glVertex2i(x0,y0);
-                    glVertex2i(x1,y0);
-                    glVertex2i(x1,y1);
-                    glVertex2i(x0,y1);
+        // This is positive if the mouse cursor was moved downwards.
+        int mouse_diff_y=y-mouse_prev_y;
 
-                    x0=x1;
-                }
-                y0=y1;
+        if (event!=ME_BUTTON_NONE) {
+            if (event&ME_BUTTON_LEFT) {
+                HMat4f m=m_camera.getModelview();
+                m*=HMat4f::Factory::Translation(-m_camera.getPosition());
+                m*=HMat4f::Factory::RotationY(-mouse_diff_x*Constd::DEG_TO_RAD()*0.5);
+                m*=HMat4f::Factory::RotationX(-mouse_diff_y*Constd::DEG_TO_RAD()*0.5);
+                m*=HMat4f::Factory::Translation(m_camera.getPosition());
+                m_camera.setModelview(m);
             }
-            glEnd();
-        }
-        else {
-            m_camera.setScreenSpaceOrigin(dims.width/4,dims.height/4);
-            m_camera.setScreenSpaceDimensions(dims.width/2,dims.height/2);
-            m_camera.apply();
-            glClear(GL_COLOR_BUFFER_BIT);
 
-            glEnable(GL_BLEND);
-
-            m_rand.setSeed(0);
-
-            Col4ub color;
-            color.setV(100);
-            glBegin(GL_QUADS);
-            unsigned y0=0,y1;
-            for (unsigned k=0;k<QUADS_Y;++k) {
-                color.setS(static_cast<float>(k)/QUADS_Y*100);
-                y1=((k+1)*step_y)>>16;
-
-                unsigned x0=0,x1;
-                for (unsigned i=0;i<QUADS_X;++i) {
-                    color.setH(static_cast<float>(i)/QUADS_X*360);
-                    x1=((i+1)*step_x)>>16;
-
-                    long long alpha=roundToEven(m_value*2.55f*m_rand.getRandom01());
-                    color.setA(static_cast<Col4ub::Type>(alpha));
-                    glColor4ubv(color);
-                    glVertex2i(x0,y0);
-                    glVertex2i(x1,y0);
-                    glVertex2i(x1,y1);
-                    glVertex2i(x0,y1);
-
-                    x0=x1;
-                }
-                y0=y1;
+            if (event&ME_BUTTON_MIDDLE) {
+                m_camera.strafe(static_cast<float>(-mouse_diff_x)/100);
+                m_camera.elevate(static_cast<float>(mouse_diff_y)/100);
             }
-            glEnd();
 
-            glDisable(GL_BLEND);
+            if (event&ME_BUTTON_RIGHT) {
+                m_camera.zoom(mouse_diff_y*Constf::DEG_TO_RAD());
+            }
+
+            repaint();
         }
+
+        mouse_prev_x=x;
+        mouse_prev_y=y;
     }
 
   private:
 
-    float m_value;
-    int m_mode;
-    RandomEcuyerf m_rand;
+    Mesh* m_mesh;
 };
 
 // Enable memory leak detection, see:
@@ -151,5 +99,6 @@ int main()
 #ifndef NDEBUG
     _CrtDumpMemoryLeaks();
 #endif
+
     return 0;
 }
