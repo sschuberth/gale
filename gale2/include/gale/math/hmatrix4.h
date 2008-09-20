@@ -125,14 +125,14 @@ class HMatrix4
             );
         }
 
-        /// Creates a translation matrix for the given \a distance along
-        /// the normalized \a direction.
-        static HMatrix4 Translation(Vec const& direction,T const distance=1) {
+        /// Creates a translation matrix along the given \a direction,
+        /// optionally scaled by \a factor.
+        static HMatrix4 Translation(Vec const& direction,T const factor=1) {
             return HMatrix4(
                 Vec::X(),
                 Vec::Y(),
                 Vec::Z(),
-                direction*distance
+                direction*factor
             );
         }
 
