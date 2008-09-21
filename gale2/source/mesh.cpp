@@ -74,7 +74,7 @@ void Mesh::Renderer::render()
     glDrawElements(GL_TRIANGLES,triangles.getSize(),GL_UNSIGNED_INT,triangles);
 }
 
-int Mesh::nextTo(int xi,int vi)
+int Mesh::nextTo(int xi,int vi) const
 {
     IndexList const& vn=neighbors[vi];
     unsigned int const* vnp=&vn[0];
@@ -97,7 +97,7 @@ int Mesh::nextTo(int xi,int vi)
     return -1;
 }
 
-int Mesh::prevTo(int xi,int vi)
+int Mesh::prevTo(int xi,int vi) const
 {
     IndexList const& vn=neighbors[vi];
     unsigned int const* vnp=&vn[0];

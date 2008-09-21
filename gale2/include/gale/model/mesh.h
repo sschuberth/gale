@@ -42,10 +42,10 @@ struct Mesh
     }
 
     /// Returns the index of the vertex following \a xi in the neighborhood of \a vi.
-    int nextTo(int xi,int vi);
+    int nextTo(int xi,int vi) const;
 
     /// Returns the index of the vertex preceding \a xi in the neighborhood of \a vi.
-    int prevTo(int xi,int vi);
+    int prevTo(int xi,int vi) const;
 
     VertexList vertices;
     NeighborList neighbors;
