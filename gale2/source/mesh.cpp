@@ -8,7 +8,7 @@ namespace model {
 
 int Mesh::nextTo(int xi,int vi) const
 {
-    IndexList const& vn=neighbors[vi];
+    IndexArray const& vn=neighbors[vi];
     unsigned int const* vnp=&vn[0];
 
     // Prepare for a trick to compare vertices by their index in the vertex array.
@@ -31,7 +31,7 @@ int Mesh::nextTo(int xi,int vi) const
 
 int Mesh::prevTo(int xi,int vi) const
 {
-    IndexList const& vn=neighbors[vi];
+    IndexArray const& vn=neighbors[vi];
     unsigned int const* vnp=&vn[0];
 
     // Prepare for a trick to compare vertices by their index in the vertex array.
@@ -62,14 +62,14 @@ int Mesh::insert(int ai,int bi)
 
     //unsigned int xn[]={ai,bi};
     //neighbors.insert(xn);
-    IndexList xn;
+    IndexArray xn;
     xn.insert(ai);
     xn.insert(bi);
     neighbors.insert(xn);
 
     int n;
 
-    IndexList& an=neighbors[ai];
+    IndexArray& an=neighbors[ai];
     for (n=0;n<an.getSize();++n) {
         if (an[n]==bi) {
             an[n]=xi;
@@ -77,7 +77,7 @@ int Mesh::insert(int ai,int bi)
         }
     }
 
-    IndexList& bn=neighbors[bi];
+    IndexArray& bn=neighbors[bi];
     for (n=0;n<bn.getSize();++n) {
         if (bn[n]==ai) {
             bn[n]=xi;

@@ -13,7 +13,7 @@ void Mesh::Subdivider::polyhedral()
     int xi=old.vertices.getSize();
 
     for (int vi=0;vi<xi;++vi) {
-        IndexList const& vn=old.neighbors[vi];
+        IndexArray const& vn=old.neighbors[vi];
 
         Vec3f const& v=old.vertices[vi];
 
@@ -33,7 +33,7 @@ void Mesh::Subdivider::polyhedral()
     old=mesh;
 
     for (int vi=xi;vi<old.vertices.getSize();++vi) {
-        IndexList& vn=mesh.neighbors[vi];
+        IndexArray& vn=mesh.neighbors[vi];
 
         // Get any neighbor of v, pick the first one.
         int ai=vn[0];
