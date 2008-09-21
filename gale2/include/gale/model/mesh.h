@@ -20,12 +20,19 @@ struct Mesh
         static Mesh* Octahedron();
     };
 
-    struct Subdivider
+    class Subdivider
     {
+      public:
+
         Subdivider(Mesh& mesh)
         :   mesh(mesh) {}
 
-        void polyhedral();
+        void divPolyhedral();
+        void divLoop();
+
+      protected:
+
+        void assignNeighbors(Mesh const& old,Mesh& mesh,int x0i);
 
         Mesh& mesh;
     };
@@ -61,9 +68,9 @@ struct Mesh
     /// \a vi, both given as indices into the vertex array.
     int prevTo(int xi,int vi) const;
 
-    /// Inserts a new vertex on the edge between \a ai and \a bi and returns its
-    /// index in the vertex array.
-    int insert(int ai,int bi);
+    /// Inserts a new vertex \a x on the edge between \a ai and \a bi and
+    /// returns its index in the vertex array.
+    int insert(int ai,int bi,math::Vec3f const& x);
 
     VertexArray vertices;    ///< Array of vertices in the mesh.
     NeighborArray neighbors; ///< Array of arrays of neighboring vertex indices.

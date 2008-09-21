@@ -52,15 +52,11 @@ int Mesh::prevTo(int xi,int vi) const
     return -1;
 }
 
-int Mesh::insert(int ai,int bi)
+int Mesh::insert(int ai,int bi,Vec3f const& x)
 {
-    Vec3f const& a=vertices[ai];
-    Vec3f const& b=vertices[bi];
-
-    // Add a new vertex an index xi with is the arithmetic average of its two
-    // neighbors.
+    // Add a new vertex at index xi.
     int xi=vertices.getSize();
-    vertices.insert((a+b)*0.5f);
+    vertices.insert(x);
 
     unsigned int xn[]={ai,bi};
     neighbors.insert(xn);

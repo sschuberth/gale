@@ -14,7 +14,6 @@ void Mesh::Renderer::compile()
 
     for (int vi=0;vi<mesh.vertices.getSize();++vi) {
         IndexArray const& vn=mesh.neighbors[vi];
-
         Vec3f const& v=mesh.vertices[vi];
 
         for (int n=0;n<vn.getSize();++n) {
