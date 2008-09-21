@@ -20,6 +20,16 @@ struct Mesh
         static Mesh* Octahedron();
     };
 
+    struct Subdivider
+    {
+        Subdivider(Mesh& mesh)
+        :   mesh(mesh) {}
+
+        void polyhedral();
+
+        Mesh& mesh;
+    };
+
     struct Renderer
     {
         Renderer(Mesh& mesh)
@@ -46,6 +56,9 @@ struct Mesh
 
     /// Returns the index of the vertex preceding \a xi in the neighborhood of \a vi.
     int prevTo(int xi,int vi) const;
+
+    /// Inserts a new vertex on the edge between \a ai and \a bi and returns its index.
+    int insert(int ai,int bi);
 
     VertexList vertices;
     NeighborList neighbors;

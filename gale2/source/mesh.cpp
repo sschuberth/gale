@@ -1,82 +1,10 @@
 #include "gale/model/mesh.h"
 
-#include "gale/global/platform.h"
-
 using namespace gale::math;
 
 namespace gale {
 
 namespace model {
-
-Mesh* Mesh::Factory::Octahedron()
-{
-    // http://mathworld.wolfram.com/Octahedron.html
-    static float const a=1.0f/(2.0f*::sqrt(2.0f));
-    static float const b=0.5f;
-
-    static Vec3f vertices[]={
-        // Square base vertices.
-        Vec3f(+a, 0,+a),
-        Vec3f(+a, 0,-a),
-        Vec3f(-a, 0,-a),
-        Vec3f(-a, 0,+a),
-
-        // Top and bottom vertices.
-        Vec3f( 0,+b, 0),
-        Vec3f( 0,-b, 0)
-    };
-
-    static unsigned int neighbors[][4]={
-        {1,5,3,4},
-        {0,4,2,5},
-        {1,4,3,5},
-        {0,5,2,4},
-        {0,3,2,1},
-        {0,1,2,3}
-    };
-
-    Mesh* m=new Mesh(vertices);
-
-    for (int i=0;i<G_ARRAY_LENGTH(vertices);++i) {
-        m->neighbors[i].insert(neighbors[i]);
-    }
-
-    return m;
-}
-
-void Mesh::Renderer::compile()
-{
-    triangles.clear();
-
-    for (int vi=0;vi<mesh.vertices.getSize();++vi) {
-        IndexList const& vn=mesh.neighbors[vi];
-
-        Vec3f const& v=mesh.vertices[vi];
-
-        for (int n=0;n<vn.getSize();++n) {
-            int ai=vn[n];
-            int bi=mesh.nextTo(ai,vi);
-
-            // Be sure to walk each edge of a triangle only once.
-            Vec3f const& a=mesh.vertices[ai];
-            Vec3f const& b=mesh.vertices[bi];
-            if (&a<&v || &b<&v) {
-                continue;
-            }
-
-            triangles.insert(vi);
-            triangles.insert(ai);
-            triangles.insert(bi);
-        }
-    }
-}
-
-void Mesh::Renderer::render()
-{
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3,GL_FLOAT,0,mesh.vertices);
-    glDrawElements(GL_TRIANGLES,triangles.getSize(),GL_UNSIGNED_INT,triangles);
-}
 
 int Mesh::nextTo(int xi,int vi) const
 {
@@ -122,6 +50,42 @@ int Mesh::prevTo(int xi,int vi) const
     }
 
     return -1;
+}
+
+int Mesh::insert(int ai,int bi)
+{
+    Vec3f const& a=vertices[ai];
+    Vec3f const& b=vertices[bi];
+
+    int xi=vertices.getSize();
+    vertices.insert((a+b)*0.5f);
+
+    //unsigned int xn[]={ai,bi};
+    //neighbors.insert(xn);
+    IndexList xn;
+    xn.insert(ai);
+    xn.insert(bi);
+    neighbors.insert(xn);
+
+    int n;
+
+    IndexList& an=neighbors[ai];
+    for (n=0;n<an.getSize();++n) {
+        if (an[n]==bi) {
+            an[n]=xi;
+            break;
+        }
+    }
+
+    IndexList& bn=neighbors[bi];
+    for (n=0;n<bn.getSize();++n) {
+        if (bn[n]==ai) {
+            bn[n]=xi;
+            break;
+        }
+    }
+
+    return xi;
 }
 
 } // namespace model
