@@ -50,7 +50,7 @@ class DynamicArray
   public:
 
     /**
-     * \name Constructors and destructors
+     * \name Constructors, destructor and assignment
      */
     //@{
 
@@ -71,9 +71,25 @@ class DynamicArray
     ,   m_capacity(0)
     {
         setSize(other.m_size);
+
+        // The copy constructor is called when copying to an newly created
+        // object, so we just create all array members in-place for their part.
         for (int i=0;i<m_size;++i) {
             new(&m_data[i]) T(other.m_data[i]);
         }
+    }
+
+    /// Assigns an \a other dynamic array to this dynamic array.
+    DynamicArray& operator=(DynamicArray const& other) {
+        setSize(other.m_size);
+
+        // The assignment operator is called when copying to an already existing
+        // object, so we just assign all array members for their part.
+        for (int i=0;i<m_size;++i) {
+            m_data[i]=other.m_data[i];
+        }
+
+        return *this;
     }
 
     /// Creates a dynamic array from the given static array.
