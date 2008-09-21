@@ -56,7 +56,7 @@ class Bindable
     /// Returns the object's maximum size. The exact interpretation depends on
     /// the object type, i.e. for textures this is the maximum dimension in
     /// texels, for frame buffers the maximum number of color buffer attachments.
-    static GLint getMaxSize() {
+    static GLint MaxSize() {
         GLint param;
         glGetIntegerv(MAX,&param);
         G_ASSERT_OPENGL
@@ -72,7 +72,7 @@ class Bindable
     }
 
     /// Returns this object's ID.
-    GLuint getID() const {
+    GLuint ID() const {
         return m_id;
     }
 
@@ -82,7 +82,7 @@ class Bindable
 
     /// Binds this object to the OpenGL state, making it the current one.
     void bind() const {
-        if (getCurrentBinding()!=getID()) {
+        if (getCurrentBinding()!=ID()) {
             setCurrentBinding();
         }
     }

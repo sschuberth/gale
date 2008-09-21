@@ -61,12 +61,12 @@ class RandomBase
     /// Initializes the generator with a seed value that is derived from the
     /// current system time.
     RandomBase() {
-        setSeed(static_cast<g_uint32>(time(NULL)));
+        init(static_cast<g_uint32>(time(NULL)));
     }
 
     /// Initializes the generator with the given seed value.
     RandomBase(g_uint32 seed) {
-        setSeed(seed);
+        init(seed);
     }
 
     //@}
@@ -77,13 +77,13 @@ class RandomBase
     //@{
 
     /// Sets the generator seed to the given value.
-    void setSeed(g_uint32 seed) {
-        m_rand.setSeed(seed);
+    void init(g_uint32 seed) {
+        m_rand.init(seed);
     }
 
     /// Generates a pseudo random number within the full range of 32 bits.
-    g_uint32 getRandom() {
-        return m_rand.getRandom();
+    g_uint32 random() {
+        return m_rand.random();
     }
 
     //@}
@@ -94,7 +94,7 @@ class RandomBase
     //@{
 
     /// Returns an integer random number in range [0,range].
-    g_uint32 getRandom(g_uint32 const range) {
+    g_uint32 random(g_uint32 const range) {
         // Mask all bits starting from the MSB set in the range.
         g_uint32 mask=range;
         mask|=mask>>1;
@@ -106,43 +106,43 @@ class RandomBase
         // Draw numbers until one in range [0,range] is found.
         g_uint32 n;
         do {
-            n=getRandom()&mask;
+            n=random()&mask;
         } while (n>range);
 
         return n;
     }
 
     /// Returns a floating-point random number in range [0,1].
-    T getRandom01() {
+    T random01() {
         static T const s=1/T(UINT_MAX);
-        return getRandom()*s;
+        return random()*s;
     }
 
     /// Returns a floating-point random number in range [0,range].
-    T getRandom0N(T const range) {
-        return getRandom01()*range;
+    T random0N(T const range) {
+        return random01()*range;
     }
 
     /// Returns a floating-point random number in range [0,1[.
-    T getRandom0Excl1() {
+    T random0Excl1() {
         static T const s=1/(T(UINT_MAX)+1);
-        return getRandom()*s;
+        return random()*s;
     }
 
     /// Returns a floating-point random number in range [0,range[.
-    T getRandom0ExclN(T const range) {
-        return getRandom0Excl1()*range;
+    T random0ExclN(T const range) {
+        return random0Excl1()*range;
     }
 
     /// Returns a floating-point random number in range ]0,1].
-    T getRandomExcl01() {
+    T randomExcl01() {
         static T const s=1/(T(UINT_MAX)+1);
-        return T(getRandom()+0.5)*s;
+        return T(random()+0.5)*s;
     }
 
     /// Returns a floating-point random number in range ]0,range].
-    T getRandomExcl0N(T const range) {
-        return getRandomExcl01()*range;
+    T randomExcl0N(T const range) {
+        return randomExcl01()*range;
     }
 
     //@}
@@ -153,57 +153,57 @@ class RandomBase
     //@{
 
     /// Returns a normalized random 3-component vector.
-    Vector<3,T> getVector3() {
+    Vector<3,T> randomVec3() {
         Vector<3,T> v;
 
         do {
-            v.setX(getRandom0N(2)-1);
-            v.setY(getRandom0N(2)-1);
-            v.setZ(getRandom0N(2)-1);
-        } while (v.getLengthSquared()>1);
+            v.setX(random0N(2)-1);
+            v.setY(random0N(2)-1);
+            v.setZ(random0N(2)-1);
+        } while (v.length2()>1);
 
         return v.normalize();
     }
 
     /// Returns a normalized random 4-component vector.
-    Vector<4,T> getVector4() {
+    Vector<4,T> randomVec4() {
         Vector<4,T> v;
 
         do {
-            v.setX(getRandom0N(2)-1);
-            v.setY(getRandom0N(2)-1);
-            v.setZ(getRandom0N(2)-1);
-            v.setW(getRandom0N(2)-1);
-        } while (v.getLengthSquared()>1);
+            v.setX(random0N(2)-1);
+            v.setY(random0N(2)-1);
+            v.setZ(random0N(2)-1);
+            v.setW(random0N(2)-1);
+        } while (v.length2()>1);
 
         return v.normalize();
     }
 
     /// Returns a random orthonormalized 4x4 homogeneous matrix.
-    HMatrix4<T> getHMatrix4() {
+    HMatrix4<T> randomHMat4() {
         HMatrix4<T> m(
-            getVector3(),
-            getVector3(),
-            getVector3()
+            randomVec3(),
+            randomVec3(),
+            randomVec3()
         );
         return m.orthonormalize();
     }
 
     /// Returns a random invertible 4x4 matrix.
-    Matrix4<T> getMatrix4() {
+    Matrix4<T> randomMat4() {
         Matrix4<T> m;
         do {
-            m.c0=getVector4();
-            m.c1=getVector4();
-            m.c2=getVector4();
-            m.c3=getVector4();
-        } while (abs(m.getDeterminant())<=Numerics<T>::ZERO_TOLERANCE());
+            m.c0=randomVec4();
+            m.c1=randomVec4();
+            m.c2=randomVec4();
+            m.c3=randomVec4();
+        } while (abs(m.determinant())<=Numerics<T>::ZERO_TOLERANCE());
         return m;
     }
 
     /// Returns a random quaternion.
-    Quaternion<T> getQuaternion() {
-        return Quaternion<T>(getVector3(),getRandom0ExclN(T(2*M_PI)));
+    Quaternion<T> randomQuat() {
+        return Quaternion<T>(randomVec3(),random0ExclN(T(2*M_PI)));
     }
 
     //@}

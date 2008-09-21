@@ -83,12 +83,12 @@ class TestWindow:public DefaultWindow
         // Get some random orientations.
         RandomEcuyerf rand(0x44766788);
         for (i=0;i<4;++i) {
-            m_kf[i]=~rand.getQuaternion();
+            m_kf[i]=~rand.randomQuat();
         }
 
         // Calculate the tangents for the key frame orientations.
         for (i=0;i<4;++i) {
-            m_kt[i]=m_kf[i].getTangent(m_kf[(i-1)&3],m_kf[(i+1)&3]);
+            m_kt[i]=m_kf[i].tangent(m_kf[(i-1)&3],m_kf[(i+1)&3]);
         }
 
         // Set some OpenGL states.
@@ -121,7 +121,7 @@ class TestWindow:public DefaultWindow
         m_p=Vec3f(x,y,0);
 
         double elapsed;
-        m_timer.getElapsedSeconds(elapsed);
+        m_timer.elapsed(elapsed);
         double step=elapsed/5.0;
         m_timer.reset();
 
@@ -155,7 +155,7 @@ class TestWindow:public DefaultWindow
         glColor3f(0.5f,0.5f,0.5f);
 
         for (int i=0;i<4;++i) {
-            m_kf[i].getToMatrix(m);
+            m_kf[i].toMatrix(m);
             m.setPositionVector(Vec3f(CATHETUS*(1.0f-((i+1)&2)),CATHETUS*(1.0f-(i&2)),0));
             glPushMatrix();
             glMultMatrixf(m);
@@ -166,7 +166,7 @@ class TestWindow:public DefaultWindow
         // Draw the interpolated cube.
         glColor3f(1.0f,1.0f,1.0f);
 
-        m_k.getToMatrix(m);
+        m_k.toMatrix(m);
         m.setPositionVector(m_p);
         glPushMatrix();
         glMultMatrixf(m);
@@ -281,7 +281,7 @@ int main()
 {
     TestWindow window;
 
-    ShowWindow(window.getWindowHandle(),SW_SHOW);
+    ShowWindow(window.windowHandle(),SW_SHOW);
     window.processEvents();
 
 #ifndef NDEBUG

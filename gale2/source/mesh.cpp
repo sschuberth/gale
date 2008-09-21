@@ -70,7 +70,7 @@ int Mesh::insert(int ai,int bi)
 
     // In the neighborhood of ai, replace bi with xi.
     IndexArray& an=neighbors[ai];
-    for (n=0,np=an.getData();n<an.getSize();++n,++np) {
+    for (n=0,np=an.data();n<an.getSize();++n,++np) {
         if (*np==bi) {
             *np=xi;
             break;
@@ -79,7 +79,7 @@ int Mesh::insert(int ai,int bi)
 
     // In the neighborhood of bi, replace ai with xi.
     IndexArray& bn=neighbors[bi];
-    for (n=0,np=bn.getData();n<bn.getSize();++n,++np) {
+    for (n=0,np=bn.data();n<bn.getSize();++n,++np) {
         if (*np==ai) {
             *np=xi;
             break;

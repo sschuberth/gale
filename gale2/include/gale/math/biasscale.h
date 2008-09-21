@@ -104,13 +104,13 @@ struct BiasScale
     }
 
     /// Concatenates the \a other transformation to this transformation.
-    BiasScale getConcat(BiasScale const& other) const {
+    BiasScale concat(BiasScale const& other) const {
         return BiasScale(bias+other.bias/scale,scale*other.scale);
     }
 
     /// Returns the inverse to this transformation so that their concatenation
     /// would be the identity transformation.
-    ScaleBias<T> getInverse() const;
+    ScaleBias<T> inverse() const;
 
     //@}
 
@@ -185,13 +185,13 @@ struct ScaleBias
     }
 
     /// Concatenates the \a other transformation to this transformation.
-    ScaleBias getConcat(ScaleBias const& other) const {
+    ScaleBias concat(ScaleBias const& other) const {
         return ScaleBias(scale*other.scale,bias*other.scale+other.bias);
     }
 
     /// Returns the inverse to this transformation so that their concatenation
     /// would be the identity transformation.
-    BiasScale<T> getInverse() const {
+    BiasScale<T> inverse() const {
         if (scale==0) {
             return BiasScale<T>(-bias,1);
         }
@@ -212,7 +212,7 @@ inline BiasScale<T>::BiasScale(ScaleBias<T> const& other)
 }
 
 template<typename T>
-inline ScaleBias<T> BiasScale<T>::getInverse() const
+inline ScaleBias<T> BiasScale<T>::inverse() const
 {
     if (scale==0) {
         return ScaleBias<T>(0,0);

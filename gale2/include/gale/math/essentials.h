@@ -574,7 +574,7 @@ inline bool isPowerOf2(unsigned int const x)
 
 /// Returns the position of the least significant bit set in \a x (the least
 /// significant bit has index 0).
-inline int getLSBSet(unsigned int x)
+inline int indexLSBSet(unsigned int x)
 {
 #ifdef G_COMP_GNUC
 
@@ -607,7 +607,7 @@ inline int getLSBSet(unsigned int x)
 
 /// Returns the position of the most significant bit set in \a x (the least
 /// significant bit has index 0).
-inline int getMSBSet(unsigned int x)
+inline int indexMSBSet(unsigned int x)
 {
 #ifdef G_COMP_GNUC
 
@@ -643,7 +643,7 @@ inline int getMSBSet(unsigned int x)
 
 /// Returns the smallest power of 2 that is greater than or equal to \a x,
 /// except for \a x=0 and \a x>2147483648 which returns 0.
-inline unsigned int getCeilPow2(unsigned int const x)
+inline unsigned int ceilPow2(unsigned int const x)
 {
 #ifdef G_COMP_GNUC
 
@@ -681,7 +681,7 @@ inline unsigned int getCeilPow2(unsigned int const x)
     if (x==0) {
         return 0;
     }
-    int i=getMSBSet(x-1)+1;
+    int i=indexMSBSet(x-1)+1;
     return 1UL<<static_cast<unsigned int>(i);
 
 #endif // G_COMP_GNUC
@@ -689,7 +689,7 @@ inline unsigned int getCeilPow2(unsigned int const x)
 
 /// Returns the largest power of 2 that is smaller than or equal to \a x, except
 /// for \a x=0 which returns 0.
-inline unsigned int getFloorPow2(unsigned int const x)
+inline unsigned int floorPow2(unsigned int const x)
 {
 #ifdef G_COMP_GNUC
 
@@ -718,7 +718,7 @@ inline unsigned int getFloorPow2(unsigned int const x)
 
 #else // G_COMP_GNUC
 
-    int i=getMSBSet(x);
+    int i=indexMSBSet(x);
     if (i<0) {
         return 0;
     }

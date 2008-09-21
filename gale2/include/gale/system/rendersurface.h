@@ -90,24 +90,24 @@ class RenderSurface
     ~RenderSurface();
 
     /// Returns the handle to the window associated with this render surface.
-    virtual WindowHandle const& getWindowHandle() const {
+    virtual WindowHandle const& windowHandle() const {
         return s_window;
     }
 
     /// Returns the handle to the context associated with this render surface.
-    virtual ContextHandle const& getContextHandle() const {
+    virtual ContextHandle const& contextHandle() const {
         return s_handle;
     }
 
     /// Sets this to be the active render context for the current thread.
     bool setCurrentContext() {
-        return setCurrentContext(getContextHandle());
+        return setCurrentContext(contextHandle());
     }
 
     /// Returns the width and height of this render surface.
-    Dimensions getDimensions() const {
+    Dimensions dimensions() const {
         RECT rect;
-        GetClientRect(getWindowHandle(),&rect);
+        GetClientRect(windowHandle(),&rect);
         return Dimensions(rect.right,rect.bottom);
     }
 

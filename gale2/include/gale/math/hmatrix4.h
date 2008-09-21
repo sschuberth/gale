@@ -206,25 +206,25 @@ class HMatrix4
     //@{
 
     /// Returns a pointer to the matrix data in memory.
-    T* getData() {
-        return c0.getData();
+    T* data() {
+        return c0.data();
     }
 
     /// Returns a \c constant pointer to the matrix data in memory
-    T const* getData() const {
-        return c0.getData();
+    T const* data() const {
+        return c0.data();
     }
 
     /// Casts \c this matrix to a pointer of type \a T. As an intended side
     /// effect, this also provides indexed data access.
     operator T*() {
-        return getData();
+        return data();
     }
 
     /// Casts \c this matrix to a pointer of type \a T \c const. As an intended
     /// side effect, this also provides indexed data access.
     operator T const*() const {
-        return getData();
+        return data();
     }
 
     /// Returns a reference to the data element located at \a row and \a column.
@@ -499,7 +499,7 @@ class HMatrix4
     //@{
 
     /// Returns the determinant of this matrix.
-    T getDeterminant() const {
+    T determinant() const {
         T a0 = c0[0]*c1[1] - c1[0]*c0[1];
         T a1 = c0[0]*c2[1] - c2[0]*c0[1];
         T a3 = c1[0]*c2[1] - c2[0]*c1[1];
@@ -527,9 +527,9 @@ class HMatrix4
             *result=abs(c0%c1)<=Numerics<T>::ZERO_TOLERANCE()
                  && abs(c0%c2)<=Numerics<T>::ZERO_TOLERANCE()
                  && abs(c1%c2)<=Numerics<T>::ZERO_TOLERANCE()
-                 && meta::OpCmpEqual::evaluate(c0.getLengthSquared(),T(1))
-                 && meta::OpCmpEqual::evaluate(c1.getLengthSquared(),T(1))
-                 && meta::OpCmpEqual::evaluate(c2.getLengthSquared(),T(1));
+                 && meta::OpCmpEqual::evaluate(c0.length2(),T(1))
+                 && meta::OpCmpEqual::evaluate(c1.length2(),T(1))
+                 && meta::OpCmpEqual::evaluate(c2.length2(),T(1));
         }
 
         if (!result || *result) {

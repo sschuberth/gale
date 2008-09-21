@@ -69,7 +69,7 @@ CPUInfo::CPUInfo()
     int info[4];
 #endif
 
-    if (getMaxCPUIDStdFunc()>=1) {
+    if (maxCPUIDStdFunc()>=1) {
         // Input  : EAX = 0x00000001
         //
         // Output : EAX = Processor signature
@@ -103,7 +103,7 @@ CPUInfo::CPUInfo()
 #endif // G_COMP_MSVC
     }
 
-    if (getMaxCPUIDStdFunc()>=4) {
+    if (maxCPUIDStdFunc()>=4) {
         // Required to get the number of cores on Intel processors.
 
 #ifdef G_COMP_MSVC
@@ -132,7 +132,7 @@ CPUInfo::CPUInfo()
 #endif // G_COMP_MSVC
     }
 
-    if (getMaxCPUIDExtFunc()>=1) {
+    if (maxCPUIDExtFunc()>=1) {
         // Input  : EAX = 0x80000001
         //
         // Output : EAX = Reserved (Intel) / processor signature (AMD)
@@ -162,7 +162,7 @@ CPUInfo::CPUInfo()
 #endif // G_COMP_MSVC
     }
 
-    if (getMaxCPUIDExtFunc()>=8) {
+    if (maxCPUIDExtFunc()>=8) {
         // Required to get the number of cores on AMD processors.
 
 #ifdef G_COMP_MSVC
@@ -233,7 +233,7 @@ __declspec(naked) bool CPUInfo::hasCPUID() const
 
 #endif // G_ARCH_X86_64
 
-unsigned int CPUInfo::getMaxCPUIDStdFunc()
+unsigned int CPUInfo::maxCPUIDStdFunc()
 {
     int info[4];
     __cpuid(info,0);
@@ -243,7 +243,7 @@ unsigned int CPUInfo::getMaxCPUIDStdFunc()
     return static_cast<unsigned int>(info[0]);
 }
 
-unsigned int CPUInfo::getMaxCPUIDExtFunc() const
+unsigned int CPUInfo::maxCPUIDExtFunc() const
 {
     int info[4];
     __cpuid(info,0x80000000);
@@ -285,7 +285,7 @@ bool CPUInfo::hasCPUID() const
     return eax;
 }
 
-unsigned int CPUInfo::getMaxCPUIDStdFunc()
+unsigned int CPUInfo::maxCPUIDStdFunc()
 {
     unsigned int eax;
 
@@ -306,7 +306,7 @@ unsigned int CPUInfo::getMaxCPUIDStdFunc()
     return eax;
 }
 
-unsigned int CPUInfo::getMaxCPUIDExtFunc() const
+unsigned int CPUInfo::maxCPUIDExtFunc() const
 {
     unsigned int eax;
 

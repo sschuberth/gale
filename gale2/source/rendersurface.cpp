@@ -131,9 +131,9 @@ RenderSurface::~RenderSurface()
 
 void RenderSurface::destroy()
 {
-    G_ASSERT_CALL(wglDeleteContext(getContextHandle().render));
-    G_ASSERT_CALL(ReleaseDC(getWindowHandle(),getContextHandle().device));
-    G_ASSERT_CALL(DestroyWindow(getWindowHandle()));
+    G_ASSERT_CALL(wglDeleteContext(contextHandle().render));
+    G_ASSERT_CALL(ReleaseDC(windowHandle(),contextHandle().device));
+    G_ASSERT_CALL(DestroyWindow(windowHandle()));
 }
 
 LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
@@ -153,7 +153,7 @@ LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 
         default: {
             // Let Window's default handler process other messages.
-            return DefWindowProc(getWindowHandle(),uMsg,wParam,lParam);
+            return DefWindowProc(windowHandle(),uMsg,wParam,lParam);
         }
     }
 }

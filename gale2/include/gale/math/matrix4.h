@@ -173,25 +173,25 @@ class Matrix4
     //@{
 
     /// Returns a pointer to the matrix data in memory.
-    T* getData() {
-        return c0.getData();
+    T* data() {
+        return c0.data();
     }
 
     /// Returns a \c constant pointer to the matrix data in memory
-    T const* getData() const {
-        return c0.getData();
+    T const* data() const {
+        return c0.data();
     }
 
     /// Casts \c this matrix to a pointer of type \a T. As an intended side
     /// effect, this also provides indexed data access.
     operator T*() {
-        return getData();
+        return data();
     }
 
     /// Casts \c this matrix to a pointer of type \a T \c const. As an intended
     /// side effect, this also provides indexed data access.
     operator T const*() const {
-        return getData();
+        return data();
     }
 
     /// Returns a reference to the data element located at \a row and \a column.
@@ -407,7 +407,7 @@ class Matrix4
     //@{
 
     /// Returns the determinant of this matrix.
-    T getDeterminant() const {
+    T determinant() const {
         T a0 = c0[0]*c1[1] - c1[0]*c0[1];
         T a1 = c0[0]*c2[1] - c2[0]*c0[1];
         T a2 = c0[0]*c3[1] - c3[0]*c0[1];
@@ -426,7 +426,7 @@ class Matrix4
     }
 
     /// Returns the adjoint of this matrix.
-    Matrix4 getAdjoint() const {
+    Matrix4 adjoint() const {
         T a0 = c0[0]*c1[1] - c1[0]*c0[1];
         T a1 = c0[0]*c2[1] - c2[0]*c0[1];
         T a2 = c0[0]*c3[1] - c3[0]*c0[1];
@@ -472,7 +472,7 @@ class Matrix4
     /// Inverts this matrix. Optionally returns a \a result indicating whether
     /// the matrix' determinant is non-zero and thus the inverse is viable.
     Matrix4& invert(bool* const result=NULL) {
-        T det=getDeterminant();
+        T det=determinant();
         bool valid=(abs(det)>Numerics<T>::ZERO_TOLERANCE());
 
         if (result) {
@@ -480,7 +480,7 @@ class Matrix4
         }
 
         if (valid) {
-            *this=(1/det)*getAdjoint();
+            *this=(1/det)*adjoint();
         }
 
         return *this;

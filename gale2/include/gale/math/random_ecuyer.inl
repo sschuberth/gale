@@ -11,8 +11,8 @@ struct RandomEcuyerImpl
      */
     //@{
 
-    /// Sets the generator seed to the given value.
-    void setSeed(g_uint32 seed) {
+    /// Initializes the random generator with the given \a seed value.
+    void init(g_uint32 seed) {
         // Generate the internal seeds needed for the generator state using a
         // Linear Congruential Generator. The only condition, stated at the end
         // of the 1999 L'Ecuyer paper, is that the seeds must be greater than 1,
@@ -41,13 +41,13 @@ struct RandomEcuyerImpl
 #ifndef GALE_TINY
         // "Warm up" the random generator.
         for (g_int32 i=0;i<6;++i) {
-            getRandom();
+            random();
         }
 #endif
     }
 
     /// Generates a pseudo random number within the full range of 32 bits.
-    g_uint32 getRandom() {
+    g_uint32 random() {
 // Use a mask of 0xffffffffUL to make in work on 64-bit machines.
 #define TAUSWORTHE(s,a,b,c,d) (((s&c)<<d)&0xffffffffUL)^((((s<<a)&0xffffffffUL)^s)>>b)
 

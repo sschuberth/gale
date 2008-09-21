@@ -70,10 +70,10 @@ class CPUInfo:public global::Singleton<CPUInfo>
     bool hasCPUID() const;
 
     /// Returns the highest standard function number supported.
-    unsigned int getMaxCPUIDStdFunc();
+    unsigned int maxCPUIDStdFunc();
 
     /// Returns the highest extended function number supported.
-    unsigned int getMaxCPUIDExtFunc() const;
+    unsigned int maxCPUIDExtFunc() const;
 
     //@}
 
@@ -83,13 +83,13 @@ class CPUInfo:public global::Singleton<CPUInfo>
     //@{
 
     /// Return the CPU vendor string.
-    char const* getVendorString() const {
+    char const* vendorString() const {
         return m_vendor;
     }
 
     /// Convenience method that returns whether this is an Intel CPU.
     bool isIntel() const {
-        int const* vendor=reinterpret_cast<int const*>(getVendorString());
+        int const* vendor=reinterpret_cast<int const*>(vendorString());
 
         if (*vendor!=*reinterpret_cast<int const*>("Genu")) {
             return false;
@@ -110,7 +110,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Convenience method that returns whether this is an AMD CPU.
     bool isAMD() const {
-        int const* vendor=reinterpret_cast<int const*>(getVendorString());
+        int const* vendor=reinterpret_cast<int const*>(vendorString());
 
         if (*vendor!=*reinterpret_cast<int const*>("Auth")) {
             return false;
@@ -131,7 +131,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Convenience method that returns whether this is a Cyrix / VIA CPU.
     bool isCyrix() const {
-        int const* vendor=reinterpret_cast<int const*>(getVendorString());
+        int const* vendor=reinterpret_cast<int const*>(vendorString());
 
         if (*vendor!=*reinterpret_cast<int const*>("Cyri")) {
             return false;
@@ -152,7 +152,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Convenience method that returns whether this is a Centaur / VIA CPU.
     bool isCentaur() const {
-        int const* vendor=reinterpret_cast<int const*>(getVendorString());
+        int const* vendor=reinterpret_cast<int const*>(vendorString());
 
         if (*vendor!=*reinterpret_cast<int const*>("Cent")) {
             return false;
@@ -179,7 +179,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
     //@{
 
     /// Returns the number of processors (i.e. CPU sockets).
-    unsigned int getProcessors() const {
+    unsigned int processors() const {
         unsigned int count=1;
 
 #ifdef G_OS_WINDOWS
@@ -190,13 +190,13 @@ class CPUInfo:public global::Singleton<CPUInfo>
         count=info.dwNumberOfProcessors;
 
         // ... but what we want is the number of CPUs (i.e. sockets)!
-        if (getCoresPerProcessor()) {
-            count/=getCoresPerProcessor();
+        if (coresPerProcessor()) {
+            count/=coresPerProcessor();
         }
 
         if (hasHTT()) {
-            if (getThreadsPerCore()) {
-                count/=getThreadsPerCore();
+            if (threadsPerCore()) {
+                count/=threadsPerCore();
             }
         }
 #elif defined(G_OS_LINUX)
@@ -205,8 +205,8 @@ class CPUInfo:public global::Singleton<CPUInfo>
         // Note: HT-enabled single-socket, single-core machines return 1 here!
         count=sysconf(_SC_NPROCESSORS_ONLN);
 
-        if (getCoresPerProcessor()) {
-            count/=getCoresPerProcessor();
+        if (coresPerProcessor()) {
+            count/=coresPerProcessor();
         }
 #endif
 
@@ -214,7 +214,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
     }
 
     /// Returns the number of cores per processor package.
-    unsigned int getCoresPerProcessor() const {
+    unsigned int coresPerProcessor() const {
         unsigned int count=1;
 
         if (isIntel()) {
@@ -235,13 +235,13 @@ class CPUInfo:public global::Singleton<CPUInfo>
     }
 
     /// Returns the number of hardware threads per core.
-    unsigned int getThreadsPerCore() const {
+    unsigned int threadsPerCore() const {
         unsigned int count=1;
 
         if (hasHTT() && (isIntel() || !hasCmpLegacy())) {
             count=(m_std_misc_info&0x00ff0000)>>16;
-            if (getCoresPerProcessor()) {
-                count/=getCoresPerProcessor();
+            if (coresPerProcessor()) {
+                count/=coresPerProcessor();
             }
         }
 

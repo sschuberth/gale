@@ -128,25 +128,25 @@ class Quaternion
     //@{
 
     /// Returns a pointer to the internal data representation.
-    T* getData() {
+    T* data() {
         return reinterpret_cast<T*>(this);
     }
 
     /// Returns a \c constant pointer to the internal data representation.
-    T const* getData() const {
+    T const* data() const {
         return reinterpret_cast<T*>(this);
     }
 
     /// Casts \c this quaternion to a pointer of type \a T. As an intended side
     /// effect, this also provides indexed data access.
     operator T*() {
-        return getData();
+        return data();
     }
 
     /// Casts \c this quaternion to a pointer of type \a T \c const. As an
     /// intended side effect, this also provides indexed data access.
     operator T const*() const {
-        return getData();
+        return data();
     }
 
     //@}
@@ -225,7 +225,7 @@ class Quaternion
     /// normalized, this results in a rotation of \a v about \a q.
     friend Vec operator*(Quaternion const& q,Vec const& v) {
         // 18 scalar multiplications, 54 scalar additions.
-        return (q*Quaternion(0,v)*q.getConjugate()).imag;
+        return (q*Quaternion(0,v)*q.conjugate()).imag;
     }
 
     //@}
@@ -297,21 +297,21 @@ class Quaternion
     //@{
 
     /// Returns the squared Cartesian length of this quaternion.
-    T getLengthSquared() const {
-        return getDotProduct(*this);
+    T length2() const {
+        return dot(*this);
     }
 
     /// Returns the Cartesian length of this quaternion.
-    double getLength() const {
-        return ::sqrt(static_cast<double>(getLengthSquared()));
+    double length() const {
+        return ::sqrt(static_cast<double>(length2()));
     }
 
     /// Normalizes this quaternion so its length equals 1 (if it is not very
     /// small).
     Quaternion& normalize() {
-        double length=getLength();
-        if (length>Numerics<T>::ZERO_TOLERANCE()) {
-            (*this)/=T(length);
+        double l=length();
+        if (l>Numerics<T>::ZERO_TOLERANCE()) {
+            (*this)/=T(l);
         }
         return *this;
     }
@@ -324,20 +324,20 @@ class Quaternion
     //@{
 
     /// Calculates the dot product between this quaternion and quaternion \a q.
-    T getDotProduct(Quaternion const& q) const {
+    T dot(Quaternion const& q) const {
         return real*q.real+(imag%q.imag);
     }
 
     /// Returns the cosine of the angle between this quaternion and quaternion
     /// \a q, which do not need to be normalized.
-    T getAngleCosine(Quaternion const& q) const {
-        return (~(*this)).getDotProduct(~q);
+    T angleCosine(Quaternion const& q) const {
+        return (~(*this)).dot(~q);
     }
 
     /// Returns the angle between this quaternion and quaternion \a v, which do
     /// not need to be normalized, in radians.
-    double getAngle(Quaternion const& q) const {
-        return ::acos(static_cast<double>(getAngleCosine(q)));
+    double angle(Quaternion const& q) const {
+        return ::acos(static_cast<double>(angleCosine(q)));
     }
 
     //@}
@@ -354,12 +354,12 @@ class Quaternion
 
     /// Calculates the dot product between the quaternions \a q and \a r.
     friend T operator%(Quaternion const& q,Quaternion const& r) {
-        return q.getDotProduct(r);
+        return q.dot(r);
     }
 
     /// Returns an inverted copy of quaternion \a q.
     friend Quaternion operator!(Quaternion const& q) {
-        return q.getConjugate()/q.getLengthSquared();
+        return q.conjugate()/q.length2();
     }
 
     //@}
@@ -390,7 +390,7 @@ class Quaternion
     /// - the interpolation is torque-minimal.
     /// For performance reasons, \a s is not clamped to [0,1].
     friend Quaternion slerp(Quaternion const& q,Quaternion const& r,double const s) {
-        T cosine=q.getAngleCosine(r);
+        T cosine=q.angleCosine(r);
 
         if (meta::OpCmpEqual::evaluate(cosine,T(1))) {
             // If the quaternions are very close just interpolate linearly.
@@ -411,10 +411,10 @@ class Quaternion
 
     /// Calculates the complex exponential of a quaternion \a q.
     friend Quaternion exp(Quaternion const& q) {
-        double length=q.imag.getLength();
-        if (length>Numerics<T>::ZERO_TOLERANCE()) {
-            double s=::sin(length);
-            return Quaternion(T(::cos(length)),q.imag*T(s/length));
+        double l=q.imag.length();
+        if (l>Numerics<T>::ZERO_TOLERANCE()) {
+            double s=::sin(l);
+            return Quaternion(T(::cos(l)),q.imag*T(s/l));
         }
         return Quaternion(1,Vec::ZERO());
     }
@@ -463,8 +463,8 @@ class Quaternion
     /// Returns a rotation \a axis vector and rotation \a angle in radians that
     /// match the rotation represented by this quaternion, which needs to be
     /// normalized.
-    void getToAxisAngle(Vec& axis,double& angle) {
-        T dot=imag.getLengthSquared();
+    void toAxisAngle(Vec& axis,double& angle) {
+        T dot=imag.length2();
 
         if (dot>Numerics<T>::ZERO_TOLERANCE()) {
             angle=::acos(real)*2.0;
@@ -516,7 +516,7 @@ class Quaternion
 
     /// Returns a homogeneous matrix \a m that matches the rotation represented
     /// by this quaternion, which needs to be normalized.
-    void getToMatrix(HMat& m) const {
+    void toMatrix(HMat& m) const {
         T x,y,z;
         T wx,wy,wz,xx,xy,xz,yy,yz,zz;
 
@@ -545,16 +545,16 @@ class Quaternion
 
     /// Returns the tangent for this quaternion given the predecessor \a a and
     /// the successor \a b, which all need to be normalized.
-    Quaternion getTangent(Quaternion const& a,Quaternion const& b) const {
+    Quaternion tangent(Quaternion const& a,Quaternion const& b) const {
         // For normalized quaternions, the conjugate equals the inverse.
-        Quaternion inv=getConjugate();
+        Quaternion inv=conjugate();
 
         Quaternion t=T(-0.25)*(log(inv*a)+log(inv*b));
         return (*this)*exp(t);
     }
 
     /// Returns the conjugate of this quaternion.
-    Quaternion getConjugate() const {
+    Quaternion conjugate() const {
         return Quaternion(real,-imag);
     }
 

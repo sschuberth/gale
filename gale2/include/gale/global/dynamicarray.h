@@ -116,25 +116,25 @@ class DynamicArray
     //@{
 
     /// Returns a pointer to the internal data array.
-    T* getData() {
+    T* data() {
         return m_data;
     }
 
     /// Returns a \c constant pointer to the internal data array.
-    T const* getData() const {
+    T const* data() const {
         return m_data;
     }
 
     /// Casts \c this array to a pointer of type \a T. As an intended side
     /// effect, this also provides indexed data access.
     operator T*() {
-        return getData();
+        return data();
     }
 
     /// Casts \c this array to a pointer of type \a T \c const. As an intended
     /// side effect, this also provides indexed data access.
     operator T const*() const {
-        return getData();
+        return data();
     }
 
     //@}

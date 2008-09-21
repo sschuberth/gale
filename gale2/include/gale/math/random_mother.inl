@@ -9,8 +9,8 @@ struct RandomMotherImpl
      */
     //@{
 
-    /// Sets the generator seed to the given value.
-    void setSeed(g_uint32 seed) {
+    /// Initializes the random generator with the given \a seed value.
+    void init(g_uint32 seed) {
         g_int32 i;
 
         // Make random numbers and put them into the buffer.
@@ -22,13 +22,13 @@ struct RandomMotherImpl
 #ifndef GALE_TINY
         // "Warm up" the random generator.
         for (i=0;i<19;++i) {
-            getRandom();
+            random();
         }
 #endif
     }
 
     /// Generates a pseudo random number within the full range of 32 bits.
-    g_uint32 getRandom() {
+    g_uint32 random() {
         g_uint64 sum = g_uint64(2111111111ul)*g_uint64(x[3])
                      + g_uint64(        1492)*g_uint64(x[2])
                      + g_uint64(        1776)*g_uint64(x[1])

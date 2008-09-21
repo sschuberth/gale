@@ -62,12 +62,12 @@ class RenderWindow:public system::RenderSurface
     RenderWindow(int width,int height,global::AttributeListi const& attr_pixel,LPCTSTR title);
 
     /// Returns the handle to the window associated with this render surface.
-    WindowHandle const& getWindowHandle() const {
+    WindowHandle const& windowHandle() const {
         return m_window;
     }
 
     /// Returns the handle to the context associated with this render surface.
-    ContextHandle const& getContextHandle() const {
+    ContextHandle const& contextHandle() const {
         return m_handle;
     }
 
@@ -88,8 +88,8 @@ class RenderWindow:public system::RenderSurface
 
     /// Invalidates the whole window and requests to repaint its contents.
     void repaint() {
-        InvalidateRect(getWindowHandle(),NULL,FALSE);
-        UpdateWindow(getWindowHandle());
+        InvalidateRect(windowHandle(),NULL,FALSE);
+        UpdateWindow(windowHandle());
     }
 
     /// Event handler that gets called when there are no messages to process.

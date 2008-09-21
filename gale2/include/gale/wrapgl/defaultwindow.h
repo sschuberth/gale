@@ -64,7 +64,7 @@ class DefaultWindow:public RenderWindow
     };
 
     /// Returns the default pixel format attributes to use.
-    static global::AttributeListi const& getPixelAttributes() {
+    static global::AttributeListi const& PixelAttributes() {
         static global::AttributeListi attribs;
         if (attribs.getSize()==0) {
             attribs.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
@@ -80,11 +80,11 @@ class DefaultWindow:public RenderWindow
 
     /// Creates a window with reasonable defaults set.
     DefaultWindow(LPCTSTR title,int client_width=500,int client_height=500)
-    :   RenderWindow(client_width,client_height,getPixelAttributes(),title)
+    :   RenderWindow(client_width,client_height,PixelAttributes(),title)
     ,   m_camera(*this)
     {
         // Add an "About" entry to the system menu.
-        HMENU menu=GetSystemMenu(getWindowHandle(),FALSE);
+        HMENU menu=GetSystemMenu(windowHandle(),FALSE);
         if (menu) {
             AppendMenu(menu,MF_SEPARATOR,NULL,NULL);
             AppendMenu(menu,MF_STRING,ID_ABOUT_DLG,_T("&About ..."));
@@ -183,7 +183,7 @@ class DefaultWindow:public RenderWindow
                 }
                 else {
                     if (!capture) {
-                        SetCapture(getWindowHandle());
+                        SetCapture(windowHandle());
                         capture=true;
                     }
                 }
@@ -206,7 +206,7 @@ class DefaultWindow:public RenderWindow
                 if (wParam==ID_ABOUT_DLG) {
                     TCHAR buffer[512];
                     _stprintf_s(buffer,_T("Vendor: %s\nRenderer: %s\nVersion: %s"),glGetString(GL_VENDOR),glGetString(GL_RENDERER),glGetString(GL_VERSION));
-                    MessageBox(getWindowHandle(),buffer,_T("About"),MB_OK);
+                    MessageBox(windowHandle(),buffer,_T("About"),MB_OK);
                     break;
                 }
                 // No break here!

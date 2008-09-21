@@ -112,7 +112,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// and so on. This constructor is required to initialize the static class
     /// constants.
     explicit Vector(unsigned int const mask) {
-        meta::LoopFwd<N,meta::OpAssign>::iterateIndexMask(Base::getData(),mask);
+        meta::LoopFwd<N,meta::OpAssign>::iterateIndexMask(Base::data(),mask);
     }
 
   public:
@@ -137,7 +137,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// components to this type.
     template<typename U>
     Vector(Vector<N,U> const& v) {
-        meta::LoopFwd<N,meta::OpAssign>::iterate(Base::getData(),v.getData());
+        meta::LoopFwd<N,meta::OpAssign>::iterate(Base::data(),v.data());
     }
 
     //@}
@@ -149,91 +149,91 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Assigns new values to the x- and y-components.
     void set(T const x,T const y) {
-        Base::getData()[0]=x;
-        Base::getData()[1]=y;
+        Base::data()[0]=x;
+        Base::data()[1]=y;
     }
 
     /// Assigns new values to the x-, y- and z-components.
     void set(T const x,T const y,T const z) {
         assert(N>=3);
-        Base::getData()[0]=x;
-        Base::getData()[1]=y;
-        Base::getData()[2]=z;
+        Base::data()[0]=x;
+        Base::data()[1]=y;
+        Base::data()[2]=z;
     }
 
     /// Assigns new values to the x-, y-, z- and w-components.
     void set(T const x,T const y,T const z,T const w) {
         assert(N>=4);
-        Base::getData()[0]=x;
-        Base::getData()[1]=y;
-        Base::getData()[2]=z;
-        Base::getData()[3]=w;
+        Base::data()[0]=x;
+        Base::data()[1]=y;
+        Base::data()[2]=z;
+        Base::data()[3]=w;
     }
 
     /// Returns the x-component.
     T getX() {
-        return Base::getData()[0];
+        return Base::data()[0];
     }
 
     /// Returns a \c constant reference to the x-component.
     T const& getX() const {
-        return Base::getData()[0];
+        return Base::data()[0];
     }
 
     /// Assigns a new value to the x-component.
     void setX(T const& x) {
-        Base::getData()[0]=x;
+        Base::data()[0]=x;
     }
 
     /// Returns the y-component.
     T getY() {
-        return Base::getData()[1];
+        return Base::data()[1];
     }
 
     /// Returns a \c constant reference to the y-component.
     T const& getY() const {
-        return Base::getData()[1];
+        return Base::data()[1];
     }
 
     /// Assigns a new value to the y-component.
     void setY(T const& y) {
-        Base::getData()[1]=y;
+        Base::data()[1]=y;
     }
 
     /// Returns the z-component.
     T getZ() {
         assert(N>=3);
-        return Base::getData()[2];
+        return Base::data()[2];
     }
 
     /// Returns a \c constant reference to the z-component.
     T const& getZ() const {
         assert(N>=3);
-        return Base::getData()[2];
+        return Base::data()[2];
     }
 
     /// Assigns a new value to the z-component.
     void setZ(T const& z) {
         assert(N>=3);
-        Base::getData()[2]=z;
+        Base::data()[2]=z;
     }
 
     /// Returns the w-component.
     T getW() {
         assert(N>=4);
-        return Base::getData()[3];
+        return Base::data()[3];
     }
 
     /// Returns a \c constant reference to the w-component.
     T const& getW() const {
         assert(N>=4);
-        return Base::getData()[3];
+        return Base::data()[3];
     }
 
     /// Assigns a new value to the w-component.
     void setW(T const& w) {
         assert(N>=4);
-        Base::getData()[3]=w;
+        Base::data()[3]=w;
     }
 
     //@}
@@ -244,20 +244,20 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     //@{
 
     /// Returns the squared Cartesian length of this vector.
-    T getLengthSquared() const {
-        return getDotProduct(*this);
+    T length2() const {
+        return dot(*this);
     }
 
     /// Returns the Cartesian length of this vector.
-    double getLength() const {
-        return ::sqrt(static_cast<double>(getLengthSquared()));
+    double length() const {
+        return ::sqrt(static_cast<double>(length2()));
     }
 
     /// Normalizes this vector so its length equals 1 (if it is not very small).
     Vector& normalize() {
-        double length=getLength();
-        if (length>Numerics<T>::ZERO_TOLERANCE()) {
-            (*this)/=T(length);
+        double l=length();
+        if (l>Numerics<T>::ZERO_TOLERANCE()) {
+            (*this)/=T(l);
         }
         return *this;
     }
@@ -265,7 +265,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// Returns whether all elements equal their counterpart in \a v with regard
     /// to the tolerance \a t.
     bool equals(Vector const& v,T const t=T(1e-6)) {
-        return (v-*this).getLengthSquared()<=t*t;
+        return (v-*this).length2()<=t*t;
     }
 
     //@}
@@ -276,56 +276,56 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     //@{
 
     /// Calculates the cross product between this vector and vector \a v.
-    Vector getCrossProduct(Vector const& v) const {
+    Vector cross(Vector const& v) const {
         assert(N==3);
         return Vector(
-            Base::getData()[1]*v.getData()[2] - Base::getData()[2]*v.getData()[1],
-            Base::getData()[2]*v.getData()[0] - Base::getData()[0]*v.getData()[2],
-            Base::getData()[0]*v.getData()[1] - Base::getData()[1]*v.getData()[0]
+            Base::data()[1]*v.data()[2] - Base::data()[2]*v.data()[1],
+            Base::data()[2]*v.data()[0] - Base::data()[0]*v.data()[2],
+            Base::data()[0]*v.data()[1] - Base::data()[1]*v.data()[0]
         );
     }
 
     /// Calculates the dot product between this vector and vector \a v.
-    T getDotProduct(Vector const& v) const {
+    T dot(Vector const& v) const {
         return meta::LoopFwd<N,meta::OpCalcProd>::iterateCombAdd(
-            Base::getData(),
-            v.getData()
+            Base::data(),
+            v.data()
         );
     }
 
     /// Returns the cosine of the angle between this vector and vector \a v.
-    T getAngleCosine(Vector const& v) const {
-        return (~(*this)).getDotProduct(~v);
+    T angleCosine(Vector const& v) const {
+        return (~(*this)).dot(~v);
     }
 
     /// Returns the angle between this vector and vector \a v in radians.
-    double getAngle(Vector const& v) const {
-        return ::acos(static_cast<double>(getAngleCosine(v)));
+    double angle(Vector const& v) const {
+        return ::acos(static_cast<double>(angleCosine(v)));
     }
 
     /// Returns a highly accurate calculation of the angle between this vector
     /// and vector \a v in radians.
-    double getAccurateAngle(Vector const& v) const {
+    double accurateAngle(Vector const& v) const {
         Vector tn=~(*this),vn=~v;
-        double dot=tn.getDotProduct(vn);
-        return ::atan2(tn.getCrossProduct(vn).getLength(),dot);
+        double d=tn.dot(vn);
+        return ::atan2(tn.cross(vn).length(),d);
     }
 
     /// Returns an arbitrary vector which is orthogonal to this vector.
-    Vector getOrthoVector() const {
+    Vector orthoVector() const {
         // Try the x-axis to create an orthogonal vector.
-        Vector v=getCrossProduct(Vector::X());
+        Vector v=cross(Vector::X());
 
         // If the x-axis is (almost) collinear to this vector, take the y-axis.
-        if (v.getLengthSquared()<=Numerics<T>::ZERO_TOLERANCE()) {
-            v=getCrossProduct(Vector::Y());
+        if (v.length2()<=Numerics<T>::ZERO_TOLERANCE()) {
+            v=cross(Vector::Y());
         }
 
         return v;
     }
 
     /// Returns the projection of this vector onto the given vector \a v.
-    Vector getProjectionOnto(Vector const& v) const {
+    Vector projectionOnto(Vector const& v) const {
         Vector const tmp=~v;
         return ((*this)%tmp)*tmp;
     }
@@ -333,7 +333,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// Returns whether this vector is collinear to vector \a v.
     bool isCollinear(Vector const& v) const {
         return meta::OpCmpEqual::evaluate(
-            v.getCrossProduct(*this).getLengthSquared(),
+            v.cross(*this).length2(),
             T(0)
         );
     }
@@ -352,12 +352,12 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Calculates the cross product between the vectors \a v and \a w.
     friend Vector operator^(Vector const& v,Vector const& w) {
-        return v.getCrossProduct(w);
+        return v.cross(w);
     }
 
     /// Calculates the dot product between the vectors \a v and \a w.
     friend T operator%(Vector const& v,Vector const& w) {
-        return v.getDotProduct(w);
+        return v.dot(w);
     }
 
     //@}

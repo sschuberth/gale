@@ -19,7 +19,7 @@ class TestWindow:public DefaultWindow
 
         // Set the clear color to red to see if scissoring works.
         Col4f c=Col4f::YELLOW();
-        c=c.getComplement();
+        c=c.complement();
         glClearColor(c.getR(),c.getG(),c.getB(),c.getA());
     }
 
@@ -50,7 +50,7 @@ class TestWindow:public DefaultWindow
         unsigned int const QUADS_Y=256;
 
         // Use fixed point integer math.
-        RenderSurface::Dimensions dims=getDimensions();
+        RenderSurface::Dimensions dims=dimensions();
         unsigned step_x=(dims.width<<16)/QUADS_X;
         unsigned step_y=(dims.height<<16)/QUADS_Y;
 
@@ -93,7 +93,7 @@ class TestWindow:public DefaultWindow
 
             glEnable(GL_BLEND);
 
-            m_rand.setSeed(0);
+            m_rand.init(0);
 
             Col4ub color;
             color.setV(100);
@@ -108,7 +108,7 @@ class TestWindow:public DefaultWindow
                     color.setH(static_cast<float>(i)/QUADS_X*360);
                     x1=((i+1)*step_x)>>16;
 
-                    long long alpha=roundToEven(m_value*2.55f*m_rand.getRandom01());
+                    long long alpha=roundToEven(m_value*2.55f*m_rand.random01());
                     color.setA(static_cast<Col4ub::Type>(alpha));
                     glColor4ubv(color);
                     glVertex2i(x0,y0);
@@ -145,7 +145,7 @@ int main()
 {
     TestWindow window;
 
-    ShowWindow(window.getWindowHandle(),SW_SHOW);
+    ShowWindow(window.windowHandle(),SW_SHOW);
     window.processEvents();
 
 #ifndef NDEBUG

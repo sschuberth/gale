@@ -41,7 +41,7 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
 {
     // Activate the minimal render surface to get a context for OpenGL extension
     // initialization.
-    G_ASSERT_CALL(setCurrentContext(RenderSurface::getContextHandle()));
+    G_ASSERT_CALL(setCurrentContext(RenderSurface::contextHandle()));
 
     if (GLEX_WGL_ARB_pixel_format!=GL_TRUE) {
         // Initialize an OpenGL extension for more sophisticated selection of a
@@ -141,7 +141,7 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
     // If there is a timeout set ...
     if (m_timeout>0) {
         double elapsed;
-        m_timer.getElapsedSeconds(elapsed);
+        m_timer.elapsed(elapsed);
         // ... and the timeout elapsed, call the event handler.
         if (elapsed>=m_timeout) {
             onTimeout();
@@ -163,10 +163,10 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
             G_ASSERT_OPENGL
 
             // Due to WGL_DOUBLE_BUFFER_ARB we always should have a double-buffer.
-            SwapBuffers(getContextHandle().device);
+            SwapBuffers(contextHandle().device);
 
             // Notify Windows that we have finished painting.
-            ValidateRect(getWindowHandle(),NULL);
+            ValidateRect(windowHandle(),NULL);
 
             break;
         }

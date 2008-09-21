@@ -83,11 +83,6 @@ class Camera
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height));
     }
 
-    /// Returns the render surface the camera is attached to.
-    system::RenderSurface const& getSurface() const {
-        return m_surface;
-    }
-
     /// Returns the currently set screen space.
     ScreenSpace const& getScreenSpace() const {
         return m_screen;

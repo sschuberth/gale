@@ -19,7 +19,7 @@ using namespace gale::system;
 using namespace std;
 
 int main(int argc,char *argv[]) {
-    RandomEcuyerf random;
+    RandomEcuyerf r;
 
     Timer timer;
 
@@ -29,22 +29,22 @@ int main(int argc,char *argv[]) {
     timer.start();
     int i;
     for (i=N;i>=0;--i) {
-        unsigned int r=random.getRandom();
+        unsigned int n=r.random();
     }
     double s;
     timer.stop(s);
 
     for (i=N;i>=0;--i) {
-        unsigned int r=random.getRandom();
+        unsigned int n=r.random();
 
-        if (r<UINT_MAX/2) {
+        if (n<UINT_MAX/2) {
             ++half0;
         }
         else {
             ++half1;
         }
 
-        if (r&1) {
+        if (n&1) {
             ++odd;
         }
         else {
@@ -52,7 +52,7 @@ int main(int argc,char *argv[]) {
         }
     }
 
-    cout << "getRandom() statistics" << endl << "----------------------" << endl << endl;
+    cout << "random() method statistics" << endl << "----------------------" << endl << endl;
     cout << "range: " << half0 << " / " << half1 << endl;
     cout << "parity: " << even << " / " << odd << endl;
     cout << unsigned int(N*(1.0/s)) << " random numbers per second" << endl << endl;

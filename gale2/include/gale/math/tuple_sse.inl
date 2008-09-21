@@ -31,25 +31,25 @@ class TupleBase<4,float,C>
     //@{
 
     /// Returns a pointer to the internal data array.
-    float* getData() {
+    float* data() {
         return m_simd.m128_f32;
     }
 
     /// Returns a \c constant pointer to the internal data array.
-    float const* getData() const {
+    float const* data() const {
         return m_simd.m128_f32;
     }
 
     /// Casts \c this tuple to a pointer of type \a float. As an intended side
     /// effect, this also provides indexed data access.
     operator float*() {
-        return getData();
+        return data();
     }
 
     /// Casts \c this tuple to a \c constant pointer of type \a float. As an
     /// intended side effect, this also provides indexed data access.
     operator float const*() const {
-        return getData();
+        return data();
     }
 
     //@}
@@ -166,28 +166,28 @@ class TupleBase<4,float,C>
     //@{
 
     /// Determines the minimum element of \c this tuple.
-    float getMinElement() const {
-        return meta::LoopFwd<4,meta::OpCalcMin>::iterate(getData());
+    float minElement() const {
+        return meta::LoopFwd<4,meta::OpCalcMin>::iterate(data());
     }
 
     /// Determines the maximum element of \c this tuple.
-    float getMaxElement() const {
-        return meta::LoopFwd<4,meta::OpCalcMax>::iterate(getData());
+    float maxElement() const {
+        return meta::LoopFwd<4,meta::OpCalcMax>::iterate(data());
     }
 
     /// Determines the absolute minimum element of \c this tuple.
-    float getAbsMinElement() const {
-        return meta::LoopFwd<4,meta::OpCalcMin>::iterateAbsValues(getData());
+    float absMinElement() const {
+        return meta::LoopFwd<4,meta::OpCalcMin>::iterateAbsValues(data());
     }
 
     /// Determines the absolute maximum element of \c this tuple.
-    float getAbsMaxElement() const {
-        return meta::LoopFwd<4,meta::OpCalcMax>::iterateAbsValues(getData());
+    float absMaxElement() const {
+        return meta::LoopFwd<4,meta::OpCalcMax>::iterateAbsValues(data());
     }
 
     /// Calculates the element-wise minimum of \c this tuple and another tuple
     /// \a t.
-    C getMinElements(C const& t) const {
+    C minElements(C const& t) const {
         C tmp;
         tmp.m_simd=_mm_min_ps(m_simd,t.m_simd);
         return tmp;
@@ -195,7 +195,7 @@ class TupleBase<4,float,C>
 
     /// Calculates the element-wise maximum of \c this tuple and another tuple
     /// \a t.
-    C getMaxElements(C const& t) const {
+    C maxElements(C const& t) const {
         C tmp;
         tmp.m_simd=_mm_max_ps(m_simd,t.m_simd);
         return tmp;

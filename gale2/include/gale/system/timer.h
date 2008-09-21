@@ -138,7 +138,7 @@ class Timer
 
     /// Returns the elapsed time in seconds since reset() was called without
     /// stopping the timing.
-    bool getElapsedSeconds(double& seconds) {
+    bool elapsed(double& seconds) {
         return stop(seconds) && start();
     }
 

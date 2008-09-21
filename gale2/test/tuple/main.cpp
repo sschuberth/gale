@@ -27,14 +27,14 @@ void test_color();
 int main()
 {
     cout << "Found "
-         << CPU.getCoresPerProcessor()
+         << CPU.coresPerProcessor()
          << " core(s) per processor, each supporting "
-         << CPU.getThreadsPerCore()
+         << CPU.threadsPerCore()
          << " hardware thread(s)."
          << endl;
 
     cout << "CPU vendor: "
-         << CPU.getVendorString()
+         << CPU.vendorString()
          << endl;
 
     cout << "Instruction sets:"
@@ -72,7 +72,7 @@ void test_tuple()
     Tuple<4,float> t4f_a(t4f_a0,t4f_a1,t4f_a2,t4f_a3);
     Tuple<4,float> t4f_b(t4f_b0,t4f_b1,t4f_b2,t4f_b3);
 
-    Tuple<4,float> t4f_c=t4f_a.getMinElements(t4f_b);
+    Tuple<4,float> t4f_c=t4f_a.minElements(t4f_b);
     assert(t4f_c[0]==gale::math::min(t4f_a0,t4f_b0));
     assert(t4f_c[1]==gale::math::min(t4f_a1,t4f_b1));
     assert(t4f_c[2]==gale::math::min(t4f_a2,t4f_b2));
@@ -119,21 +119,21 @@ void test_tuple()
 
     cout << "Check construction of objects ..."
          << endl;
-    Tuple<2,int> t2i_a(1,2),t2i_b(r.getRandom(),r.getRandom());
+    Tuple<2,int> t2i_a(1,2),t2i_b(r.random(),r.random());
 
     Tuple<3,float> t3f_a(3.0f,4.0f,5.0f);
     Tuple<3,float> t3f_b(
-        static_cast<float>(r.getRandom0N(1000.0f)),
-        static_cast<float>(r.getRandom0N(1000.0f)),
-        static_cast<float>(r.getRandom0N(1000.0f))
+        static_cast<float>(r.random0N(1000.0f)),
+        static_cast<float>(r.random0N(1000.0f)),
+        static_cast<float>(r.random0N(1000.0f))
     );
 
     Tuple<4,double> t4d_a(5.0,6.0,7.0,8.0);
     Tuple<4,double> t4d_b(
-        static_cast<double>(r.getRandom0N(1000.0)),
-        static_cast<double>(r.getRandom0N(1000.0)),
-        static_cast<double>(r.getRandom0N(1000.0)),
-        static_cast<double>(r.getRandom0N(1000.0))
+        static_cast<double>(r.random0N(1000.0)),
+        static_cast<double>(r.random0N(1000.0)),
+        static_cast<double>(r.random0N(1000.0)),
+        static_cast<double>(r.random0N(1000.0))
     );
 
     cout << t2i_a << ", " << t2i_b << endl;
@@ -192,7 +192,7 @@ void test_tuple()
     cout << "Check minimum element determination ..."
          << endl;
     {
-        float tmp=t3f_b.getMinElement();
+        float tmp=t3f_b.minElement();
         assert(tmp<=t3f_b[0]);
         assert(tmp<=t3f_b[1]);
         assert(tmp<=t3f_b[2]);
@@ -201,7 +201,7 @@ void test_tuple()
     cout << "Check maximum element determination ..."
          << endl;
     {
-        double tmp=t4d_b.getMaxElement();
+        double tmp=t4d_b.maxElement();
         assert(tmp>=t4d_b[0]);
         assert(tmp>=t4d_b[1]);
         assert(tmp>=t4d_b[2]);
@@ -214,12 +214,12 @@ void test_tuple()
         Tuple<3,float> tmp1=+t3f_b;
         Tuple<3,float> tmp2=-t3f_a;
 
-        float tmp_min=tmp2.getAbsMinElement();
+        float tmp_min=tmp2.absMinElement();
         assert(tmp_min<=fabs(tmp2[0]));
         assert(tmp_min<=fabs(tmp2[1]));
         assert(tmp_min<=fabs(tmp2[2]));
 
-        float tmp_max=tmp2.getAbsMaxElement();
+        float tmp_max=tmp2.absMaxElement();
         assert(tmp_max>=fabs(tmp2[0]));
         assert(tmp_max>=fabs(tmp2[1]));
         assert(tmp_max>=fabs(tmp2[2]));
@@ -228,7 +228,7 @@ void test_tuple()
     cout << "Check element-wise minimum determination ..."
          << endl;
     {
-        Tuple<3,float> tmp=t3f_a.getMinElements(t3f_b);
+        Tuple<3,float> tmp=t3f_a.minElements(t3f_b);
         assert(tmp[0]<=t3f_a[0] && tmp[0]<=t3f_b[0]);
         assert(tmp[1]<=t3f_a[1] && tmp[1]<=t3f_b[1]);
         assert(tmp[2]<=t3f_a[2] && tmp[2]<=t3f_b[2]);
@@ -237,7 +237,7 @@ void test_tuple()
     cout << "Check element-wise maximum determination ..."
          << endl;
     {
-        Tuple<3,float> tmp=t3f_a.getMaxElements(t3f_b);
+        Tuple<3,float> tmp=t3f_a.maxElements(t3f_b);
         assert(tmp[0]>=t3f_a[0] && tmp[0]>=t3f_b[0]);
         assert(tmp[1]>=t3f_a[1] && tmp[1]>=t3f_b[1]);
         assert(tmp[2]>=t3f_a[2] && tmp[2]>=t3f_b[2]);
@@ -258,9 +258,9 @@ void test_tuple()
          << endl;
     {
         Tuple<3,float> tmp(
-            static_cast<float>(r.getRandom0N(1000.0f)),
-            static_cast<float>(r.getRandom0N(1000.0f)),
-            static_cast<float>(r.getRandom0N(1000.0f))
+            static_cast<float>(r.random0N(1000.0f)),
+            static_cast<float>(r.random0N(1000.0f)),
+            static_cast<float>(r.random0N(1000.0f))
         );
 
         Tuple<3,float> res=((t3f_a+t3f_b)-t3f_b)*tmp;
@@ -365,7 +365,7 @@ void test_vector()
     cout << "Check magnitude related methods ..."
          << endl;
     b.normalize();
-    assert(OpCmpEqual::evaluate(b.getLengthSquared(),Vec4d::X()[0]));
+    assert(OpCmpEqual::evaluate(b.length2(),Vec4d::X()[0]));
 
     cout << "Check the cross product operator ..."
          << endl;
@@ -373,15 +373,15 @@ void test_vector()
 
     cout << "Check angle related methods ..."
          << endl;
-    double axy1=Vec3i::X().getAngle(Vec3i::Y());
-    double axy2=Vec3i::X().getAccurateAngle(Vec3i::Y());
+    double axy1=Vec3i::X().angle(Vec3i::Y());
+    double axy2=Vec3i::X().accurateAngle(Vec3i::Y());
     assert(OpCmpEqual::evaluate(axy1,axy2));
 
     cout << "Check getting an orthogonal vector ..."
          << endl;
-    assert(Vec3f::X().getOrthoVector().equals(Vec3f::Z()));
-    assert(Vec3f::Y().getOrthoVector().equals(-Vec3f::Z()));
-    assert(Vec3f::Z().getOrthoVector().equals(Vec3f::Y()));
+    assert(Vec3f::X().orthoVector().equals(Vec3f::Z()));
+    assert(Vec3f::Y().orthoVector().equals(-Vec3f::Z()));
+    assert(Vec3f::Z().orthoVector().equals(Vec3f::Y()));
 
     cout << "Check unary sign, conversion constructor and collinear methods ..."
          << endl;
@@ -415,38 +415,38 @@ void test_vector()
 void test_color()
 {
     Col3d black=Col3d::BLACK();
-    static Col3d const col3d(Col3d::getMinIntensity(),Col3d::getMinIntensity(),Col3d::getMinIntensity());
+    static Col3d const col3d(Col3d::MIN_INTENSITY(),Col3d::MIN_INTENSITY(),Col3d::MIN_INTENSITY());
     assert(col3d==black);
 
     Col3f blue=Col3f::BLUE();
-    static Col3f const col3f(Col3f::getMinIntensity(),Col3f::getMinIntensity(),Col3f::getMaxIntensity());
+    static Col3f const col3f(Col3f::MIN_INTENSITY(),Col3f::MIN_INTENSITY(),Col3f::MAX_INTENSITY());
     assert(col3f==blue);
 
     Col3i green=Col3i::GREEN();
-    static Col3i const col3i(Col3i::getMinIntensity(),Col3i::getMaxIntensity(),Col3i::getMinIntensity());
+    static Col3i const col3i(Col3i::MIN_INTENSITY(),Col3i::MAX_INTENSITY(),Col3i::MIN_INTENSITY());
     assert(col3i==green);
 
     Col3ui cyan=Col3ui::CYAN();
-    static Col3ui const col3ui(Col3ui::getMinIntensity(),Col3ui::getMaxIntensity(),Col3ui::getMaxIntensity());
+    static Col3ui const col3ui(Col3ui::MIN_INTENSITY(),Col3ui::MAX_INTENSITY(),Col3ui::MAX_INTENSITY());
     assert(col3ui==cyan);
 
     Col3s red=Col3s::RED();
-    static Col3s const col3s(Col3s::getMaxIntensity(),Col3s::getMinIntensity(),Col3s::getMinIntensity());
+    static Col3s const col3s(Col3s::MAX_INTENSITY(),Col3s::MIN_INTENSITY(),Col3s::MIN_INTENSITY());
     assert(col3s==red);
 
     Col3us magenta=Col3us::MAGENTA();
-    static Col3us const col3us(Col3us::getMaxIntensity(),Col3us::getMinIntensity(),Col3us::getMaxIntensity());
+    static Col3us const col3us(Col3us::MAX_INTENSITY(),Col3us::MIN_INTENSITY(),Col3us::MAX_INTENSITY());
     assert(col3us==magenta);
 
     Col3b yellow=Col3b::YELLOW();
-    static Col3b const col3b(Col3b::getMaxIntensity(),Col3b::getMaxIntensity(),Col3b::getMinIntensity());
+    static Col3b const col3b(Col3b::MAX_INTENSITY(),Col3b::MAX_INTENSITY(),Col3b::MIN_INTENSITY());
     assert(col3b==yellow);
 
     Col3ub white=Col3ub::WHITE();
-    static Col3ub const col3ub(Col3ub::getMaxIntensity(),Col3ub::getMaxIntensity(),Col3ub::getMaxIntensity());
+    static Col3ub const col3ub(Col3ub::MAX_INTENSITY(),Col3ub::MAX_INTENSITY(),Col3ub::MAX_INTENSITY());
     assert(col3ub==white);
 
-    assert(white.invert()==Col3ub::BLACK());
+    assert(white.inverse()==Col3ub::BLACK());
 
     Col4f white4=Col4f::WHITE();
     white4.setA(0.5);
