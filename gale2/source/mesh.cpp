@@ -57,30 +57,31 @@ int Mesh::insert(int ai,int bi)
     Vec3f const& a=vertices[ai];
     Vec3f const& b=vertices[bi];
 
+    // Add a new vertex an index xi with is the arithmetic average of its two
+    // neighbors.
     int xi=vertices.getSize();
     vertices.insert((a+b)*0.5f);
 
-    //unsigned int xn[]={ai,bi};
-    //neighbors.insert(xn);
-    IndexArray xn;
-    xn.insert(ai);
-    xn.insert(bi);
+    unsigned int xn[]={ai,bi};
     neighbors.insert(xn);
 
     int n;
+    unsigned int* np;
 
+    // In the neighborhood of ai, replace bi with xi.
     IndexArray& an=neighbors[ai];
-    for (n=0;n<an.getSize();++n) {
-        if (an[n]==bi) {
-            an[n]=xi;
+    for (n=0,np=an.getData();n<an.getSize();++n,++np) {
+        if (*np==bi) {
+            *np=xi;
             break;
         }
     }
 
+    // In the neighborhood of bi, replace ai with xi.
     IndexArray& bn=neighbors[bi];
-    for (n=0;n<bn.getSize();++n) {
-        if (bn[n]==ai) {
-            bn[n]=xi;
+    for (n=0,np=bn.getData();n<bn.getSize();++n,++np) {
+        if (*np==ai) {
+            *np=xi;
             break;
         }
     }
