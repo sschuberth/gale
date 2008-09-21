@@ -49,14 +49,18 @@ void Mesh::Renderer::compile()
     triangles.clear();
 
     for (int vi=0;vi<mesh.vertices.getSize();++vi) {
-        Vec3f& v=mesh.vertices[vi];
+        IndexList const& vn=mesh.neighbors[vi];
 
-        for (int ai=0;ai<mesh.neighbors[vi].getSize();++ai) {
+        Vec3f const& v=mesh.vertices[vi];
+
+        for (int n=0;n<vn.getSize();++n) {
+            int ai=vn[n];
             int bi=mesh.nextTo(ai,vi);
-            Vec3f& b=mesh.vertices[bi];
 
             // Be sure to walk each edge of a triangle only once.
-            if (&b<&v) {
+            Vec3f const& a=mesh.vertices[ai];
+            Vec3f const& b=mesh.vertices[bi];
+            if (&a<&v || &b<&v) {
                 continue;
             }
 
