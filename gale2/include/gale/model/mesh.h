@@ -41,9 +41,11 @@ struct Mesh
         neighbors.setSize(size);
     }
 
-    int nextTo(int x,int v);
+    /// Returns the index of the vertex following \a xi in the neighborhood of \a vi.
+    int nextTo(int xi,int vi);
 
-    int prevTo(int x,int v);
+    /// Returns the index of the vertex preceding \a xi in the neighborhood of \a vi.
+    int prevTo(int xi,int vi);
 
     VertexList vertices;
     NeighborList neighbors;

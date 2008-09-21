@@ -53,14 +53,16 @@ void Mesh::Renderer::compile()
 
         for (int ai=0;ai<mesh.neighbors[vi].getSize();++ai) {
             int bi=mesh.nextTo(ai,vi);
-
             Vec3f& b=mesh.vertices[bi];
 
-            if (&v<&b) {
-                triangles.insert(vi);
-                triangles.insert(ai);
-                triangles.insert(bi);
+            // Be sure to walk each edge of a triangle only once.
+            if (&b<&v) {
+                continue;
             }
+
+            triangles.insert(vi);
+            triangles.insert(ai);
+            triangles.insert(bi);
         }
     }
 }
@@ -72,44 +74,46 @@ void Mesh::Renderer::render()
     glDrawElements(GL_TRIANGLES,triangles.getSize(),GL_UNSIGNED_INT,triangles);
 }
 
-int Mesh::nextTo(int x,int v)
+int Mesh::nextTo(int xi,int vi)
 {
-    IndexList const& nv=neighbors[v];
-    unsigned int const* nvp=&nv[0];
+    IndexList const& vn=neighbors[vi];
+    unsigned int const* vnp=&vn[0];
 
     // Prepare for a trick to compare vertices by their index in the vertex array.
-    Vec3f const* p=&vertices[0]+x;
+    Vec3f const* xp=&vertices[0]+xi;
 
     // Search v's neighborhood for x, and return x' successor.
-    for (int n=0;n<nv.getSize();++n) {
-        if (&vertices[*nvp++]==p) {
+    for (int n=0;n<vn.getSize();++n) {
+        if (&vertices[*vnp++]==xp) {
             ++n;
-            if (n>=nv.getSize()) {
-                n-=nv.getSize();
+            if (n>=vn.getSize()) {
+                // Wrap in the neighborhood.
+                n-=vn.getSize();
             }
-            return nv[n];
+            return vn[n];
         }
     }
 
     return -1;
 }
 
-int Mesh::prevTo(int x,int v)
+int Mesh::prevTo(int xi,int vi)
 {
-    IndexList const& nv=neighbors[v];
-    unsigned int const* nvp=&nv[0];
+    IndexList const& vn=neighbors[vi];
+    unsigned int const* vnp=&vn[0];
 
     // Prepare for a trick to compare vertices by their index in the vertex array.
-    Vec3f const* p=&vertices[0]+x;
+    Vec3f const* xp=&vertices[0]+xi;
 
     // Search v's neighborhood for x, and return x' predecessor.
-    for (int n=0;n<nv.getSize();++n) {
-        if (&vertices[*nvp++]==p) {
+    for (int n=0;n<vn.getSize();++n) {
+        if (&vertices[*vnp++]==xp) {
             --n;
             if (n<0) {
-                n+=nv.getSize();
+                // Wrap in the neighborhood.
+                n+=vn.getSize();
             }
-            return nv[n];
+            return vn[n];
         }
     }
 
