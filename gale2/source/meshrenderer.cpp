@@ -20,7 +20,9 @@ void Mesh::Renderer::compile()
             int ai=vn[n];
             int bi=mesh.nextTo(ai,vi);
 
-            // Be sure to walk each pair of vertices, i.e. edge, only once.
+            // Be sure to walk each pair of vertices, i.e. edge, only once. Use
+            // the address in memory to define a relation on the universe of
+            // vertices.
             Vec3f const& a=mesh.vertices[ai];
             Vec3f const& b=mesh.vertices[bi];
             if (&a<&v || &b<&v) {

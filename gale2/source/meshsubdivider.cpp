@@ -22,7 +22,9 @@ void Mesh::Subdivider::divPolyhedral()
         for (int n=0;n<vn.getSize();++n) {
             int ui=vn[n];
 
-            // Be sure to walk each pair of vertices, i.e. edge, only once.
+            // Be sure to walk each pair of vertices, i.e. edge, only once. Use
+            // the address in memory to define a relation on the universe of
+            // vertices.
             Vec3f const& u=old.vertices[ui];
             if (&u<&v) {
                 continue;
@@ -61,7 +63,9 @@ void Mesh::Subdivider::divLoop()
             Vec3f const& u=old.vertices[ui];
             q+=u;
 
-            // Be sure to walk each pair of vertices, i.e. edge, only once.
+            // Be sure to walk each pair of vertices, i.e. edge, only once. Use
+            // the address in memory to define a relation on the universe of
+            // vertices.
             if (&u<&v) {
                 continue;
             }
