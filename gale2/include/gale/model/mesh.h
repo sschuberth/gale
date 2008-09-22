@@ -27,8 +27,8 @@ struct Mesh
         Subdivider(Mesh& mesh)
         :   mesh(mesh) {}
 
-        void divPolyhedral();
-        void divLoop();
+        void divPolyhedral(int steps=1);
+        void divLoop(int steps=1);
 
       protected:
 

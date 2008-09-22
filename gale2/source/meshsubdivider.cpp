@@ -6,85 +6,89 @@ namespace gale {
 
 namespace model {
 
-void Mesh::Subdivider::divPolyhedral()
+void Mesh::Subdivider::divPolyhedral(int steps)
 {
-    Mesh old=mesh;
+    while (steps-->0) {
+        Mesh old=mesh;
 
-    // Store the index of the first new vertex.
-    int x0i=old.vertices.getSize();
+        // Store the index of the first new vertex.
+        int x0i=old.vertices.getSize();
 
-    // Loop over all vertices in the base mesh.
-    for (int vi=0;vi<x0i;++vi) {
-        IndexArray const& vn=old.neighbors[vi];
-        Vec3f const& v=old.vertices[vi];
+        // Loop over all vertices in the base mesh.
+        for (int vi=0;vi<x0i;++vi) {
+            IndexArray const& vn=old.neighbors[vi];
+            Vec3f const& v=old.vertices[vi];
 
-        // Loop over v's neighborhood.
-        for (int n=0;n<vn.getSize();++n) {
-            int ui=vn[n];
+            // Loop over v's neighborhood.
+            for (int n=0;n<vn.getSize();++n) {
+                int ui=vn[n];
 
-            // Be sure to walk each pair of vertices, i.e. edge, only once. Use
-            // the address in memory to define a relation on the universe of
-            // vertices.
-            Vec3f const& u=old.vertices[ui];
-            if (&u<&v) {
-                continue;
+                // Be sure to walk each pair of vertices, i.e. edge, only once. Use
+                // the address in memory to define a relation on the universe of
+                // vertices.
+                Vec3f const& u=old.vertices[ui];
+                if (&u<&v) {
+                    continue;
+                }
+
+                // Add a new vertex as the arithmetic average of its two neighbors.
+                mesh.insert(ui,vi,(u+v)*0.5f);
             }
-
-            // Add a new vertex as the arithmetic average of its two neighbors.
-            mesh.insert(ui,vi,(u+v)*0.5f);
         }
-    }
 
-    old=mesh;
-    assignNeighbors(old,mesh,x0i);
+        old=mesh;
+        assignNeighbors(old,mesh,x0i);
+    }
 }
 
-void Mesh::Subdivider::divLoop()
+void Mesh::Subdivider::divLoop(int steps)
 {
-    Mesh old=mesh;
+    while (steps-->0) {
+        Mesh old=mesh;
 
-    // Store the index of the first new vertex.
-    int x0i=old.vertices.getSize();
+        // Store the index of the first new vertex.
+        int x0i=old.vertices.getSize();
 
-    // Loop over all vertices in the base mesh.
-    for (int vi=0;vi<x0i;++vi) {
-        IndexArray const& vn=old.neighbors[vi];
-        Vec3f const& v=old.vertices[vi];
+        // Loop over all vertices in the base mesh.
+        for (int vi=0;vi<x0i;++vi) {
+            IndexArray const& vn=old.neighbors[vi];
+            Vec3f const& v=old.vertices[vi];
 
-        int valence=vn.getSize();
-        double weight=::pow(0.375+0.25*::cos(2.0*Constd::PI()/valence),2.0)+0.375;
+            int valence=vn.getSize();
+            double weight=::pow(0.375+0.25*::cos(2.0*Constd::PI()/valence),2.0)+0.375;
 
-        Vec3f q=Vec3f::ZERO();
+            Vec3f q=Vec3f::ZERO();
 
-        // Loop over v's neighborhood.
-        for (int n=0;n<vn.getSize();++n) {
-            int ui=vn[n];
+            // Loop over v's neighborhood.
+            for (int n=0;n<vn.getSize();++n) {
+                int ui=vn[n];
 
-            Vec3f const& u=old.vertices[ui];
-            q+=u;
+                Vec3f const& u=old.vertices[ui];
+                q+=u;
 
-            // Be sure to walk each pair of vertices, i.e. edge, only once. Use
-            // the address in memory to define a relation on the universe of
-            // vertices.
-            if (&u<&v) {
-                continue;
+                // Be sure to walk each pair of vertices, i.e. edge, only once. Use
+                // the address in memory to define a relation on the universe of
+                // vertices.
+                if (&u<&v) {
+                    continue;
+                }
+
+                Vec3f x = v*0.375f + u*0.375f
+                        + old.vertices[old.nextTo(ui,vi)]*0.125f
+                        + old.vertices[old.prevTo(ui,vi)]*0.125f;
+
+                // Add a new vertex as calculated from its neighbors.
+                mesh.insert(ui,vi,x);
             }
 
-            Vec3f x = v*0.375f + u*0.375f
-                    + old.vertices[old.nextTo(ui,vi)]*0.125f
-                    + old.vertices[old.prevTo(ui,vi)]*0.125f;
-
-            // Add a new vertex as calculated from its neighbors.
-            mesh.insert(ui,vi,x);
+            // Modify the existing vertex as calculated from the weighted q vertex.
+            q/=static_cast<float>(valence);
+            mesh.vertices[vi]=lerp(q,mesh.vertices[vi],weight);
         }
 
-        // Modify the existing vertex as calculated from the weighted q vertex.
-        q/=static_cast<float>(valence);
-        mesh.vertices[vi]=lerp(q,mesh.vertices[vi],weight);
+        old=mesh;
+        assignNeighbors(old,mesh,x0i);
     }
-
-    old=mesh;
-    assignNeighbors(old,mesh,x0i);
 }
 
 void Mesh::Subdivider::assignNeighbors(Mesh const& old,Mesh& mesh,int x0i)
