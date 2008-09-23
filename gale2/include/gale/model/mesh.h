@@ -17,7 +17,9 @@ struct Mesh
 
     struct Factory
     {
+        static Mesh* Tetrahedron();
         static Mesh* Octahedron();
+        static Mesh* Hexahedron();
     };
 
     class Subdivider
