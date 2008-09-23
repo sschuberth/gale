@@ -50,7 +50,7 @@ class DynamicArray
   public:
 
     /**
-     * \name Constructors, destructor and assignment
+     * \name Constructors and destructors
      */
     //@{
 
@@ -77,19 +77,6 @@ class DynamicArray
         for (int i=0;i<m_size;++i) {
             new(&m_data[i]) T(other.m_data[i]);
         }
-    }
-
-    /// Assigns an \a other dynamic array to this dynamic array.
-    DynamicArray& operator=(DynamicArray const& other) {
-        setSize(other.m_size);
-
-        // The assignment operator is called when copying to an already existing
-        // object, so we just assign all array members for their part.
-        for (int i=0;i<m_size;++i) {
-            m_data[i]=other.m_data[i];
-        }
-
-        return *this;
     }
 
     /// Creates a dynamic array from the given static array.
@@ -143,6 +130,19 @@ class DynamicArray
      * \name Initialization / assignment operators
      */
     //@{
+
+    /// Assigns an \a other dynamic array to this dynamic array.
+    DynamicArray& operator=(DynamicArray const& other) {
+        setSize(other.m_size);
+
+        // The assignment operator is called when copying to an already existing
+        // object, so we just assign all array members for their part.
+        for (int i=0;i<m_size;++i) {
+            m_data[i]=other.m_data[i];
+        }
+
+        return *this;
+    }
 
     /// Returns an array initializer object for a scalar assignment to be able to
     /// use a comma separated list of values for array assignment.
