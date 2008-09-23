@@ -54,7 +54,7 @@ class TupleBase
 {
   public:
 
-    /// Data type definition for external access to the template argument.
+    /// Definition for external access to the data type.
     typedef T Type;
 
     /**

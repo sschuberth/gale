@@ -54,7 +54,7 @@ class Quaternion
 {
   public:
 
-    /// Data type definition for external access to the template argument.
+    /// Definition for external access to the data type.
     typedef T Type;
 
     /// Definition of the type of vector used to store the imaginary number parts.

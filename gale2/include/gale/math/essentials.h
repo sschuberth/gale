@@ -59,6 +59,9 @@ namespace math {
 template<typename T>
 struct Constants
 {
+    /// Definition for external access to the data type.
+    typedef T Type;
+
     /// Returns the ratio of a circle's circumference to its diameter.
     static T PI() {
         return static_cast<T>(M_PI);
@@ -93,6 +96,9 @@ typedef Constants<float> Constf;
 template<typename T>
 struct Numerics
 {
+    /// Definition for external access to the data type.
+    typedef T Type;
+
     /// Returns the minimum / minimum positive value for integral / floating
     /// point data types.
     static T MIN();

@@ -49,6 +49,9 @@ class DynamicArray
 {
   public:
 
+    /// Definition for external access to the data type.
+    typedef T Type;
+
     /**
      * \name Constructors and destructors
      */

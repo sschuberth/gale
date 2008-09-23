@@ -50,7 +50,7 @@ class RandomBase
 {
   public:
 
-    /// Data type definition for external access to the template argument.
+    /// Definition for external access to the data type.
     typedef T Type;
 
     /**
@@ -210,7 +210,7 @@ class RandomBase
 
   private:
 
-    C m_rand; ///< Instance of the random generator template implementation.
+    C m_rand; ///< Instance of the random generator implementation.
 };
 
 #include "random_ecuyer.inl"

@@ -46,7 +46,7 @@ struct ScaleBias;
 template<typename T>
 struct BiasScale
 {
-    /// Data type definition for external access to the template argument.
+    /// Definition for external access to the data type.
     typedef T Type;
 
     /**
@@ -124,7 +124,7 @@ struct BiasScale
 template<typename T>
 struct ScaleBias
 {
-    /// Data type definition for external access to the template argument.
+    /// Definition for external access to the data type.
     typedef T Type;
 
     /**
