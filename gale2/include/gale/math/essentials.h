@@ -78,6 +78,12 @@ struct Constants
         static T const f=T(180)/PI();
         return f;
     }
+
+    /// Returns the Golden Ratio as commonly used in arts.
+    static T const& GOLDEN_RATIO() {
+        static T const r=(1+::sqrt(T(5)))/T(2);
+        return r;
+    }
 };
 
 /**
