@@ -132,7 +132,7 @@ class Quaternion
         return reinterpret_cast<T*>(this);
     }
 
-    /// Returns a \c constant pointer to the internal data representation.
+    /// Returns a constant pointer to the internal data representation.
     T const* data() const {
         return reinterpret_cast<T*>(this);
     }

@@ -356,7 +356,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         return Base::data()[0];
     }
 
-    /// Returns a \c constant reference to the red channel.
+    /// Returns a constant reference to the red channel.
     T const& getR() const {
         return Base::data()[0];
     }
@@ -372,7 +372,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         return Base::data()[1];
     }
 
-    /// Returns a \c constant reference to the green channel.
+    /// Returns a constant reference to the green channel.
     T const& getG() const {
         return Base::data()[1];
     }
@@ -389,7 +389,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         return Base::data()[2];
     }
 
-    /// Returns a \c constant reference to the blue channel.
+    /// Returns a constant reference to the blue channel.
     T const& getB() const {
         assert(N>=3);
         return Base::data()[2];
@@ -408,7 +408,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         return Base::data()[3];
     }
 
-    /// Returns a \c constant reference to the alpha channel.
+    /// Returns a constant reference to the alpha channel.
     T const& getA() const {
         assert(N>=4);
         return Base::data()[3];

@@ -35,7 +35,7 @@ class TupleBase<4,float,C>
         return m_simd.m128_f32;
     }
 
-    /// Returns a \c constant pointer to the internal data array.
+    /// Returns a constant pointer to the internal data array.
     float const* data() const {
         return m_simd.m128_f32;
     }
@@ -46,7 +46,7 @@ class TupleBase<4,float,C>
         return data();
     }
 
-    /// Casts \c this tuple to a \c constant pointer of type \a float. As an
+    /// Casts \c this tuple to a constant pointer of type \a float. As an
     /// intended side effect, this also provides indexed data access.
     operator float const*() const {
         return data();

@@ -177,7 +177,7 @@ class Matrix4
         return c0.data();
     }
 
-    /// Returns a \c constant pointer to the matrix data in memory
+    /// Returns a constant pointer to the matrix data in memory
     T const* data() const {
         return c0.data();
     }
@@ -201,7 +201,7 @@ class Matrix4
         return (*this)[(column<<2)+row];
     }
 
-    /// Returns a \c constant reference to the data element located at \a row
+    /// Returns a constant reference to the data element located at \a row
     /// and \a column. Despite usual in maths, the index starts at 0 (not 1).
     T const& operator()(unsigned int const row,unsigned int const column) const {
         assert(row<4 && column<4);

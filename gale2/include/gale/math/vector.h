@@ -175,7 +175,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return Base::data()[0];
     }
 
-    /// Returns a \c constant reference to the x-component.
+    /// Returns a constant reference to the x-component.
     T const& getX() const {
         return Base::data()[0];
     }
@@ -190,7 +190,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return Base::data()[1];
     }
 
-    /// Returns a \c constant reference to the y-component.
+    /// Returns a constant reference to the y-component.
     T const& getY() const {
         return Base::data()[1];
     }
@@ -206,7 +206,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return Base::data()[2];
     }
 
-    /// Returns a \c constant reference to the z-component.
+    /// Returns a constant reference to the z-component.
     T const& getZ() const {
         assert(N>=3);
         return Base::data()[2];
@@ -224,7 +224,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return Base::data()[3];
     }
 
-    /// Returns a \c constant reference to the w-component.
+    /// Returns a constant reference to the w-component.
     T const& getW() const {
         assert(N>=4);
         return Base::data()[3];

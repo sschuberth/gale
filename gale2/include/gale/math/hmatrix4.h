@@ -210,7 +210,7 @@ class HMatrix4
         return c0.data();
     }
 
-    /// Returns a \c constant pointer to the matrix data in memory
+    /// Returns a constant pointer to the matrix data in memory
     T const* data() const {
         return c0.data();
     }
@@ -234,7 +234,7 @@ class HMatrix4
         return (*this)[(column<<2)+row];
     }
 
-    /// Returns a \c constant reference to the data element located at \a row
+    /// Returns a constant reference to the data element located at \a row
     /// and \a column. Despite usual in maths, the index starts at 0 (not 1).
     T const& operator()(unsigned int const row,unsigned int const column) const {
         assert(row<3 && column<4);
@@ -247,7 +247,7 @@ class HMatrix4
         return c0;
     }
 
-    /// Returns a \c constant reference to the first column vector which is
+    /// Returns a constant reference to the first column vector which is
     /// interpreted to point right in the right-handed coordinate system
     /// orientation.
     Vec const& getRightVector() const {
@@ -266,7 +266,7 @@ class HMatrix4
         return c1;
     }
 
-    /// Returns a \c constant reference to the second column vector which is
+    /// Returns a constant reference to the second column vector which is
     /// interpreted to point up in the right-handed coordinate system
     /// orientation.
     Vec const& getUpVector() const {
@@ -285,7 +285,7 @@ class HMatrix4
         return c2;
     }
 
-    /// Returns a \c constant reference to the third column vector which is
+    /// Returns a constant reference to the third column vector which is
     /// interpreted to point backward in the right-handed coordinate system
     /// orientation.
     Vec const& getBackwardVector() const {
@@ -304,7 +304,7 @@ class HMatrix4
         return c3;
     }
 
-    /// Returns a \c constant reference to the fourth column vector which is
+    /// Returns a constant reference to the fourth column vector which is
     /// interpreted to be the coordinate system position.
     Vec const& getPositionVector() const {
         return c3;

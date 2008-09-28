@@ -110,7 +110,7 @@ class DynamicArray
         return m_data;
     }
 
-    /// Returns a \c constant pointer to the internal data array.
+    /// Returns a constant pointer to the internal data array.
     T const* data() const {
         return m_data;
     }
