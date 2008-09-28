@@ -298,17 +298,27 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return (~(*this)).dot(~v);
     }
 
-    /// Returns the angle between this vector and vector \a v in radians.
+    /// Returns the smallest angle between this vector and vector \a v in radians.
     double angle(Vector const& v) const {
         return ::acos(static_cast<double>(angleCosine(v)));
     }
 
-    /// Returns a highly accurate but more expensive calculation of the angle
-    /// between this vector and vector \a v in radians.
-    double accurateAngle(Vector const& v) const {
-        Vector tn=~(*this),vn=~v;
-        double d=tn%vn;
-        return ::atan2((tn^vn).length(),d);
+    /// Returns the oriented angle between this vector and vector \a v in radians.
+    /// The angle is measured in positive rotation direction around the reference
+    /// vector \a r.
+    double orientedAngle(Vector const& v,Vector const& r) const {
+        double a=angle(v);
+        Vector n=cross(v);
+
+        if (r%n<=0) {
+            // n is orthogonal to the plane stretched by the two angle vectors.
+            // If r does not project onto the positive direction of n, it points
+            // to the other half space with respect to the plane and the angle
+            // should "flip" by 180 degrees.
+            a+=Constd::PI();
+        }
+
+        return a;
     }
 
     /// Returns an arbitrary vector which is orthogonal to this vector.
