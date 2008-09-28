@@ -142,7 +142,7 @@ class Plane
      */
     //@{
 
-    /// Returns the minimal distance of \a v to the plane.
+    /// Returns the distance of \a v to the plane along the normal vector.
     double distanceTo(Vec3d const& v) const {
         return (v%m_normal)+m_distance;
     }
