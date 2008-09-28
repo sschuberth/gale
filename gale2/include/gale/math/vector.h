@@ -303,12 +303,12 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return ::acos(static_cast<double>(angleCosine(v)));
     }
 
-    /// Returns a highly accurate calculation of the angle between this vector
-    /// and vector \a v in radians.
+    /// Returns a highly accurate but more expensive calculation of the angle
+    /// between this vector and vector \a v in radians.
     double accurateAngle(Vector const& v) const {
         Vector tn=~(*this),vn=~v;
-        double d=tn.dot(vn);
-        return ::atan2(tn.cross(vn).length(),d);
+        double d=tn%vn;
+        return ::atan2((tn^vn).length(),d);
     }
 
     /// Returns an arbitrary vector which is orthogonal to this vector.
@@ -324,16 +324,16 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return v;
     }
 
-    /// Returns the projection of this vector onto the given vector \a v.
-    Vector projectionOnto(Vector const& v) const {
-        Vector const tmp=~v;
-        return ((*this)%tmp)*tmp;
+    /// Returns the orthogonal projection of this vector onto the given vector
+    /// \a v.
+    Vector orthoProjection(Vector const& v) const {
+        return dot(v)/v.length2()*v;
     }
 
     /// Returns whether this vector is collinear to vector \a v.
     bool isCollinear(Vector const& v) const {
         return meta::OpCmpEqual::evaluate(
-            v.cross(*this).length2(),
+            (v^(*this)).length2(),
             T(0)
         );
     }
