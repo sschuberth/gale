@@ -343,6 +343,19 @@ inline T min(T const a,T const b,T const c,T const d)
     return min(min(a,b,c),d);
 }
 
+/// Returns the sign of \a x, or 0 if \a x is 0.
+template<typename T>
+inline T sgn(T const x)
+{
+    if (x<0) {
+        return -1;
+    }
+    else if (x>0) {
+        return 1;
+    }
+    return 0;
+}
+
 //@}
 
 /**
