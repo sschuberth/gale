@@ -307,14 +307,22 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// The angle is measured in positive rotation direction around the reference
     /// vector \a r.
     double orientedAngle(Vector const& v,Vector const& r) const {
-        // Calculate the unoriented angle between the two angle vectors.
         Vector tn=~(*this),vn=~v;
-        double a=::acos(static_cast<double>(tn%vn));
 
         // Calculate the normal between the two angle vectors and project the
         // reference vector onto it.
         Vector n=cross(v);
         T d=r%n;
+
+        if (d==0 && tn+vn==Vector::ZERO()) {
+            // If the two normalized angle vectors compensate each other,
+            // they point to opposite directions, and the angle should
+            // be exactly 180 degrees.
+            return Constd::PI();
+        }
+
+        // Calculate the unoriented angle between the two angle vectors.
+        double a=::acos(static_cast<double>(tn%vn));
 
         if (d<0) {
             // If d is negative, r projects onto the negative direction of n,
@@ -322,12 +330,6 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
             // plane stretched by the two angle vectors, and the angle should
             // start at 180 degrees.
             a+=Constd::PI();
-        }
-        else if (d==0 && tn+vn==Vector::ZERO()) {
-            // If the two normalized angle vectors compensate each other,
-            // they point to opposite directions, and the angle should
-            // be exactly 180 degrees.
-            a=Constd::PI();
         }
 
         return a;
