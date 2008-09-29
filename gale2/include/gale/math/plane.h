@@ -151,8 +151,8 @@ class Plane
 
   protected:
 
-    Vec3d m_normal;
-    double m_distance;
+    Vec3d m_normal;    ///< The plane's normal vector (A, B, C in the formula).
+    double m_distance; ///< Negative distance to the origin (D in the formula).
 };
 
 } // namespace math
