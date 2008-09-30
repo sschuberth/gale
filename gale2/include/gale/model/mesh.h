@@ -17,9 +17,20 @@ struct Mesh
 
     struct Factory
     {
+        /**
+         * \name Platonic Solids
+         * Factory methods to create the five Platonic Solids, each with unit
+         * edge length, see <http://mathworld.wolfram.com/PlatonicSolid.html>.
+         */
+        //@{
+
         static Mesh* Tetrahedron();
         static Mesh* Octahedron();
         static Mesh* Hexahedron();
+        static Mesh* Icosahedron();
+        static Mesh* Dodecahedron();
+
+        //@}
     };
 
     class Subdivider

@@ -12,8 +12,11 @@ Mesh* Mesh::Factory::Tetrahedron()
     static float const a=0.5f;
 
     static Vec3f const vertices[]={
+        // Vertices on the lower edge, which is orthogonal to the upper edge.
         Vec3f(-a,-a,+a),
         Vec3f(+a,-a,-a),
+
+        // Vertices on the upper edge, which is orthogonal to the lower edge.
         Vec3f(+a,+a,+a),
         Vec3f(-a,+a,-a)
     };
@@ -119,6 +122,82 @@ Mesh* Mesh::Factory::Hexahedron()
     m->neighbors[7].setSize(4);
     m->neighbors[7]=1,4,6,2;
 
+    return m;
+}
+
+Mesh* Mesh::Factory::Icosahedron()
+{
+    // http://mathworld.wolfram.com/Icosahedron.html
+    static float const a=0.5f;
+    static float const b=1.0f/(2.0f*Constf::GOLDEN_RATIO());
+
+    static Vec3f const vertices[]={
+        Vec3f( 0,-b,+a),
+        Vec3f(-b,-a, 0),
+        Vec3f(+b,-a, 0),
+        Vec3f( 0,-b,-a),
+        Vec3f( 0,+b,-a),
+        Vec3f(+a, 0,-b),
+        Vec3f(-a, 0,-b),
+        Vec3f( 0,+b,+a),
+        Vec3f(-a, 0,+b),
+        Vec3f(+a, 0,+b),
+        Vec3f(-b,+a, 0),
+        Vec3f(+b,+a, 0)
+    };
+
+    // Create a mesh from the static vertex array. Instead of hard-coding the
+    // neighborhood, do a brute-force search for the correct edge length.
+    Mesh* m=new Mesh(vertices);
+
+    static float const e=::sqrt(2*(a*a-a*b+b*b));
+
+    for (int i=0;i<G_ARRAY_LENGTH(vertices);++i) {
+        // Get the reference vector, i.e. to one to determine the neighborhood of.
+        Vec3f const& r=m->vertices[i];
+
+        // Each vertex has 5 neighbors.
+        m->neighbors[i].setSize(5);
+
+        // "n" is the current neighbor index, "u" points to the first neighbor.
+        int n=0;
+        Vec3f u;
+
+        for (int k=0;k<G_ARRAY_LENGTH(vertices);++k) {
+            // Get the vector from the reference to the (possible) neighbor.
+            Vec3f v=m->vertices[k]-r;
+
+            if (i==k || !meta::OpCmpEqual::evaluate(static_cast<float>(v.length()),e)) {
+                // Skip measuring the distance to itself or if it does not equal
+                // the required edge length.
+                continue;
+            }
+
+            if (n==0) {
+                // Save the first neighbor found.
+                u=v;
+            }
+            else {
+                // Project the neighbors onto the plane "r" is the normal for.
+                Vec3f up=u-u.orthoProjection(r);
+                Vec3f vp=v-v.orthoProjection(r);
+
+                // Get the oriented angle between the neighbors in the plane.
+                double oa=up.orientedAngle(vp,r)*Constd::RAD_TO_DEG();
+                n=roundToEven(oa/72.0);
+            }
+
+            // Store the neighbor's vertex index at the calculated position.
+            m->neighbors[i][n++]=k;
+        }
+    }
+
+    return m;
+}
+
+Mesh* Mesh::Factory::Dodecahedron()
+{
+    Mesh* m=new Mesh();
     return m;
 }
 
