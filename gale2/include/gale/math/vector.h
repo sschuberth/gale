@@ -327,9 +327,9 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         if (d<0) {
             // If d is negative, r projects onto the negative direction of n,
             // i.e. it points to the other half space with respect to the
-            // plane stretched by the two angle vectors, and the angle should
-            // start at 180 degrees.
-            a+=Constd::PI();
+            // plane stretched by the two angle vectors, and the angle amounts
+            // to what is missing to a full circle.
+            a=2*Constd::PI()-a;
         }
 
         return a;
