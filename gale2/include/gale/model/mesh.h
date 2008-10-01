@@ -41,7 +41,7 @@ struct Mesh
         :   mesh(mesh) {}
 
         void divPolyhedral(int steps=1);
-        void divLoop(int steps=1);
+        void divLoop(int steps=1,bool move=true);
 
       protected:
 

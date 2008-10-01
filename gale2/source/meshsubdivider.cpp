@@ -41,7 +41,7 @@ void Mesh::Subdivider::divPolyhedral(int steps)
     }
 }
 
-void Mesh::Subdivider::divLoop(int steps)
+void Mesh::Subdivider::divLoop(int steps,bool move)
 {
     while (steps-->0) {
         Mesh old=mesh;
@@ -81,9 +81,12 @@ void Mesh::Subdivider::divLoop(int steps)
                 mesh.insert(ui,vi,x);
             }
 
-            // Modify the existing vertex as calculated from the weighted q vertex.
-            q/=static_cast<float>(valence);
-            mesh.vertices[vi]=lerp(q,mesh.vertices[vi],weight);
+            if (move) {
+                // Modify the existing vertex as calculated from the weighted q
+                // vertex.
+                q/=static_cast<float>(valence);
+                mesh.vertices[vi]=lerp(q,mesh.vertices[vi],weight);
+            }
         }
 
         old=mesh;
