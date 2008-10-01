@@ -43,30 +43,30 @@ Mesh* Mesh::Factory::Tetrahedron()
 Mesh* Mesh::Factory::Octahedron()
 {
     // http://mathworld.wolfram.com/Octahedron.html
-    static float const a=1.0f/(2.0f*::sqrt(2.0f));
-    static float const b=0.5f;
+    static float const a=0.5f;
+    static float const b=1.0f/(2.0f*::sqrt(2.0f));
 
     static Vec3f const vertices[]={
-        // Square base vertices.
-        Vec3f(+a, 0,+a),
-        Vec3f(+a, 0,-a),
-        Vec3f(-a, 0,-a),
-        Vec3f(-a, 0,+a),
-
         // Top and bottom vertices.
-        Vec3f( 0,+b, 0),
-        Vec3f( 0,-b, 0)
+        Vec3f( 0,+a, 0),
+        Vec3f( 0,-a, 0),
+
+        // Square base vertices.
+        Vec3f(+b, 0,+b),
+        Vec3f(+b, 0,-b),
+        Vec3f(-b, 0,-b),
+        Vec3f(-b, 0,+b)
     };
 
     // Define neighbors in counter-clockwise ordering on the surface, i.e. in
     // mathematically positive direction of rotation for the implied surface.
     static unsigned int const neighbors[][4]={
-        {1,4,3,5},
-        {0,5,2,4},
-        {1,5,3,4},
-        {0,4,2,5},
-        {0,1,2,3},
-        {0,3,2,1}
+        {2,3,4,5},
+        {2,5,4,3},
+        {3,0,5,1},
+        {2,1,4,0},
+        {3,1,5,0},
+        {2,0,4,1}
     };
 
     // Create a mesh from the static arrays.
@@ -197,7 +197,35 @@ Mesh* Mesh::Factory::Icosahedron()
 
 Mesh* Mesh::Factory::Dodecahedron()
 {
-    Mesh* m=new Mesh();
+    // http://mathworld.wolfram.com/Dodecahedron.html
+    static float const a=0.5f;
+    static float const b=1.0f/(2.0f*Constf::GOLDEN_RATIO());
+    static float const c=(2.0f-Constf::GOLDEN_RATIO())*0.5f;
+
+    static Vec3f const vertices[]={
+        Vec3f(-c, 0,-a),
+        Vec3f(+c, 0,-a),
+        Vec3f(+b,-b,-b),
+        Vec3f( 0,-a,-c),
+        Vec3f(-b,-b,-b),
+        Vec3f(-b,+b,-b),
+        Vec3f( 0,+a,-c),
+        Vec3f(+b,+b,-b),
+        Vec3f(-c, 0,+a),
+        Vec3f(+c, 0,+a),
+        Vec3f(+b,+b,+b),
+        Vec3f( 0,+a,+c),
+        Vec3f(-b,+b,+b),
+        Vec3f(-b,-b,+b),
+        Vec3f( 0,-a,+c),
+        Vec3f(+b,-b,+b),
+        Vec3f(-a,-c, 0),
+        Vec3f(+a,-c, 0),
+        Vec3f(+a,+c, 0),
+        Vec3f(-a,+c, 0)
+    };
+
+    Mesh* m=new Mesh(vertices);
     return m;
 }
 
