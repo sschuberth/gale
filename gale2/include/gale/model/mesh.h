@@ -9,14 +9,20 @@ namespace gale {
 
 namespace model {
 
+/**
+ * A vertex-vertex mesh data structure implementation as described at
+ * <http://en.wikipedia.org/wiki/Polygon_mesh#Vertex-Vertex_Meshes>.
+ */
 struct Mesh
 {
     typedef global::DynamicArray<math::Vec3f> VertexArray;
     typedef global::DynamicArray<unsigned int> IndexArray;
     typedef global::DynamicArray<IndexArray> NeighborArray;
 
-    struct Factory
+    class Factory
     {
+      public:
+
         /**
          * \name Platonic Solids
          * Factory methods to create the five Platonic Solids, each with unit
@@ -31,6 +37,10 @@ struct Mesh
         static Mesh* Dodecahedron();
 
         //@}
+
+      protected:
+
+        static void populateNeighborhood(Mesh* mesh,float distance,int neighbors);
     };
 
     class Subdivider
@@ -45,7 +55,7 @@ struct Mesh
 
       protected:
 
-        void assignNeighbors(Mesh const& old,Mesh& mesh,int x0i);
+        static void assignNeighbors(Mesh const& old,Mesh& mesh,int x0i);
 
         Mesh& mesh;
     };

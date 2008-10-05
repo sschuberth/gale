@@ -150,47 +150,9 @@ Mesh* Mesh::Factory::Icosahedron()
     // neighborhood, do a brute-force search for the correct edge length.
     Mesh* m=new Mesh(vertices);
 
+    // Make all vertices neighbors whose distance matches the required edge length.
     static float const e=::sqrt(2*(a*a-a*b+b*b));
-
-    for (int i=0;i<G_ARRAY_LENGTH(vertices);++i) {
-        // Get the reference vector, i.e. to one to determine the neighborhood of.
-        Vec3f const& r=m->vertices[i];
-
-        // Each vertex has 5 neighbors.
-        m->neighbors[i].setSize(5);
-
-        // "n" is the current neighbor index, "u" points to the first neighbor.
-        int n=0;
-        Vec3f u;
-
-        for (int k=0;k<G_ARRAY_LENGTH(vertices);++k) {
-            // Get the vector from the reference to the (possible) neighbor.
-            Vec3f v=m->vertices[k]-r;
-
-            if (i==k || !meta::OpCmpEqual::evaluate(static_cast<float>(v.length()),e)) {
-                // Skip measuring the distance to itself or if it does not equal
-                // the required edge length.
-                continue;
-            }
-
-            if (n==0) {
-                // Save the first neighbor found.
-                u=v;
-            }
-            else {
-                // Project the neighbors onto the plane "r" is the normal for.
-                Vec3f up=u-u.orthoProjection(r);
-                Vec3f vp=v-v.orthoProjection(r);
-
-                // Get the oriented angle between the neighbors in the plane.
-                double oa=up.orientedAngle(vp,r)*Constd::RAD_TO_DEG();
-                n=roundToEven(oa/72.0);
-            }
-
-            // Store the neighbor's vertex index at the calculated position.
-            m->neighbors[i][n++]=k;
-        }
-    }
+    populateNeighborhood(m,e,5);
 
     return m;
 }
@@ -227,6 +189,49 @@ Mesh* Mesh::Factory::Dodecahedron()
 
     Mesh* m=new Mesh(vertices);
     return m;
+}
+
+void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int neighbors)
+{
+    for (int i=0;i<mesh->vertices.getSize();++i) {
+        // Get the reference vector, i.e. to one to determine the neighborhood of.
+        Vec3f const& r=mesh->vertices[i];
+
+        // Resize the neighbor array in advance.
+        mesh->neighbors[i].setSize(neighbors);
+
+        // "n" is the current neighbor index, "u" points to the first neighbor.
+        int n=0;
+        Vec3f u;
+
+        for (int k=0;k<mesh->vertices.getSize();++k) {
+            // Get the vector from the reference to the (possible) neighbor.
+            Vec3f v=mesh->vertices[k]-r;
+
+            if (i==k || !meta::OpCmpEqual::evaluate(static_cast<float>(v.length()),distance)) {
+                // Skip measuring the distance to itself or if it does not equal
+                // the required edge length.
+                continue;
+            }
+
+            if (n==0) {
+                // Save the first neighbor found.
+                u=v;
+            }
+            else {
+                // Project the neighbors onto the plane "r" is the normal for.
+                Vec3f up=u-u.orthoProjection(r);
+                Vec3f vp=v-v.orthoProjection(r);
+
+                // Get the oriented angle between the neighbors in the plane.
+                double oa=up.orientedAngle(vp,r)*Constd::RAD_TO_DEG();
+                n=roundToEven(oa/(360.0/neighbors));
+            }
+
+            // Store the neighbor's vertex index at the calculated position.
+            mesh->neighbors[i][n++]=k;
+        }
+    }
 }
 
 } // namespace model
