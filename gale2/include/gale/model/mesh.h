@@ -70,6 +70,7 @@ struct Mesh
 
         Mesh& mesh;
         IndexArray triangles;
+        IndexArray quads;
     };
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.

@@ -102,25 +102,8 @@ Mesh* Mesh::Factory::Hexahedron()
     // valences, define the neighborhood dynamically.
     Mesh* m=new Mesh(vertices);
 
-    // Define neighbors in counter-clockwise ordering on the surface, i.e. in
-    // mathematically positive direction of rotation for the implied surface.
-    m->neighbors[0].setSize(5);
-    m->neighbors[0]=1,2,3,5,4;
-    m->neighbors[1].setSize(4);
-    m->neighbors[1]=0,4,7,2;
-    m->neighbors[2].setSize(5);
-    m->neighbors[2]=0,1,7,6,3;
-    m->neighbors[3].setSize(4);
-    m->neighbors[3]=0,2,6,5;
-
-    m->neighbors[4].setSize(5);
-    m->neighbors[4]=0,5,6,7,1;
-    m->neighbors[5].setSize(4);
-    m->neighbors[5]=0,3,6,4;
-    m->neighbors[6].setSize(5);
-    m->neighbors[6]=2,7,4,5,3;
-    m->neighbors[7].setSize(4);
-    m->neighbors[7]=1,4,6,2;
+    // Make all vertices neighbors whose distance matches the required edge length.
+    populateNeighborhood(m,2*a,3);
 
     return m;
 }

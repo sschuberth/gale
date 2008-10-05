@@ -29,9 +29,20 @@ void Mesh::Renderer::compile()
                 continue;
             }
 
-            triangles.insert(vi);
-            triangles.insert(ai);
-            triangles.insert(bi);
+            IndexArray* prim=&triangles;
+
+            // Check whether this face is a triangle or quad.
+            int qi=mesh.prevTo(vi,ai);
+            if (qi!=bi) {
+                prim=&quads;
+            }
+
+            prim->insert(vi);
+            prim->insert(ai);
+            if (qi!=bi) {
+                prim->insert(qi);
+            }
+            prim->insert(bi);
         }
     }
 }
@@ -39,8 +50,11 @@ void Mesh::Renderer::compile()
 void Mesh::Renderer::render()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
+
     glVertexPointer(3,GL_FLOAT,0,mesh.vertices);
+
     glDrawElements(GL_TRIANGLES,triangles.getSize(),GL_UNSIGNED_INT,triangles);
+    glDrawElements(GL_QUADS,quads.getSize(),GL_UNSIGNED_INT,quads);
 }
 
 } // namespace model
