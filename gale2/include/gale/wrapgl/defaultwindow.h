@@ -119,7 +119,7 @@ class DefaultWindow:public RenderWindow
             }
 
             if (event&ME_WHEEL_SCROLL) {
-                m_camera.zoom(static_cast<float>(-wheel)/50000);
+                m_camera.approach(static_cast<float>(-wheel)/50000);
             }
 
             // Rotate the camera.

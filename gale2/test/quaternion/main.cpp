@@ -242,7 +242,7 @@ class TestWindow:public DefaultWindow
             }
 
             if (event&ME_BUTTON_RIGHT) {
-                m_camera.zoom(mouse_diff_y*Constf::DEG_TO_RAD());
+                m_camera.approach(mouse_diff_y*Constf::DEG_TO_RAD());
             }
 
             repaint();

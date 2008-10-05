@@ -202,7 +202,7 @@ class Camera
 
     /// Moves the camera backward (for a positive \a distance) or forward along
     /// its z-axis.
-    void zoom(float const distance) {
+    void approach(float const distance) {
         math::HMat4f::Vec& position=m_modelview.getPositionVector();
         math::HMat4f::Vec const& backward=m_modelview.getBackwardVector();
         position+=backward*distance;
