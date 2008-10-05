@@ -374,7 +374,7 @@ void test_vector()
     cout << "Check angle related methods ..."
          << endl;
     double axy1=Vec3i::X().angle(Vec3i::Y());
-    double axy2=Vec3i::X().accurateAngle(Vec3i::Y());
+    double axy2=Vec3i::X().orientedAngle(Vec3i::Y(),Vec3i::Z());
     assert(OpCmpEqual::evaluate(axy1,axy2));
 
     cout << "Check getting an orthogonal vector ..."
