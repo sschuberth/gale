@@ -21,21 +21,12 @@ Mesh* Mesh::Factory::Tetrahedron()
         Vec3f(-a,+a,-a)
     };
 
-    // Define neighbors in counter-clockwise ordering on the surface, i.e. in
-    // mathematically positive direction of rotation for the implied surface.
-    static unsigned int const neighbors[][3]={
-        {1,2,3},
-        {0,3,2},
-        {0,1,3},
-        {0,2,1}
-    };
-
     // Create a mesh from the static arrays.
     Mesh* m=new Mesh(vertices);
 
-    for (int i=0;i<G_ARRAY_LENGTH(vertices);++i) {
-        m->neighbors[i].insert(neighbors[i]);
-    }
+    // Make all vertices neighbors whose distance matches the required edge length.
+    static float const e=::sqrt(8*a*a);
+    populateNeighborhood(m,e,3);
 
     return m;
 }
@@ -58,23 +49,12 @@ Mesh* Mesh::Factory::Octahedron()
         Vec3f(-b, 0,+b)
     };
 
-    // Define neighbors in counter-clockwise ordering on the surface, i.e. in
-    // mathematically positive direction of rotation for the implied surface.
-    static unsigned int const neighbors[][4]={
-        {2,3,4,5},
-        {2,5,4,3},
-        {3,0,5,1},
-        {2,1,4,0},
-        {3,1,5,0},
-        {2,0,4,1}
-    };
-
     // Create a mesh from the static arrays.
     Mesh* m=new Mesh(vertices);
 
-    for (int i=0;i<G_ARRAY_LENGTH(vertices);++i) {
-        m->neighbors[i].insert(neighbors[i]);
-    }
+    // Make all vertices neighbors whose distance matches the required edge length.
+    static float const e=::sqrt(a*a+2*b*b);
+    populateNeighborhood(m,e,4);
 
     return m;
 }
@@ -103,7 +83,8 @@ Mesh* Mesh::Factory::Hexahedron()
     Mesh* m=new Mesh(vertices);
 
     // Make all vertices neighbors whose distance matches the required edge length.
-    populateNeighborhood(m,2*a,3);
+    static float const e=2*a;
+    populateNeighborhood(m,e,3);
 
     return m;
 }
