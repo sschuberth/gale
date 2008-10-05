@@ -47,9 +47,6 @@ namespace math {
 template<typename T>
 struct ColorModel
 {
-    /// Definition for external access to the data type.
-    typedef T Type;
-
     /// Returns the minimum intensity value allowed for a color channel.
     static T MIN_INTENSITY() {
         return Numerics<T>::MIN();
