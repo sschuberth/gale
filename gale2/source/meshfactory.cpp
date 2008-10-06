@@ -155,14 +155,14 @@ Mesh* Mesh::Factory::Dodecahedron()
     return m;
 }
 
-void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int neighbors)
+void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int valence)
 {
     for (int i=0;i<mesh->vertices.getSize();++i) {
         // Get the reference vector, i.e. to one to determine the neighborhood of.
         Vec3f const& r=mesh->vertices[i];
 
         // Resize the neighbor array in advance.
-        mesh->neighbors[i].setSize(neighbors);
+        mesh->neighbors[i].setSize(valence);
 
         // "n" is the current neighbor index, "u" points to the first neighbor.
         int n=0;
@@ -189,7 +189,7 @@ void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int neighbors
 
                 // Get the oriented angle between the neighbors in the plane.
                 double oa=up.orientedAngle(vp,r)*Constd::RAD_TO_DEG();
-                n=roundToEven(oa/(360.0/neighbors));
+                n=roundToEven(oa/(360.0/valence));
             }
 
             // Store the neighbor's vertex index at the calculated position.

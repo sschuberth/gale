@@ -40,7 +40,7 @@ struct Mesh
 
       protected:
 
-        static void populateNeighborhood(Mesh* mesh,float distance,int neighbors);
+        static void populateNeighborhood(Mesh* mesh,float distance,int valence);
     };
 
     class Subdivider
