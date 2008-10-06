@@ -150,18 +150,35 @@ struct OpCmpGreaterEqual
     }
 };
 
-/// Boolean "equal" comparison operator.
+/// Boolean absolute "equal" comparison operator.
 struct OpCmpEqual
 {
-    /// Returns whether \a a equals \a b with regard to a tolerance depending on the
-    /// precision of data type \a T.
+    /// Returns whether \a a equals \a b with regard to an absolute tolerance
+    /// depending on the precision of data type \a T.
     template<typename T>
     static G_INLINE bool evaluate(
       T const& a,T const& b,
       T const& tolerance=math::Numerics<T>::ZERO_TOLERANCE())
     {
-        // Note that epsilon may be 0 for integral types!
+        // Note that the tolerance may be 0 for integral types!
         return math::abs(b-a)<=tolerance;
+    }
+};
+
+/// Boolean absolute and relative "equal" comparison operator, see
+/// <http://realtimecollisiondetection.net/blog/?p=89>.
+struct OpCmpEqualRel
+{
+    /// Returns whether \a a equals \a b with regard to an absolute and relative
+    /// tolerance depending on the precision of data type \a T.
+    template<typename T>
+    static G_INLINE bool evaluate(
+      T const& a,T const& b,
+      T const& tol_abs=math::Numerics<T>::ZERO_TOLERANCE(),
+      T const& tol_rel=math::Numerics<T>::ZERO_TOLERANCE())
+    {
+        // Note that the tolerance may be 0 for integral types!
+        return math::abs(b-a)<=math::max(tol_abs,tol_rel*math::max(math::abs(a),math::abs(b)));
     }
 };
 
