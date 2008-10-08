@@ -52,6 +52,28 @@ int Mesh::prevTo(int xi,int vi) const
     return -1;
 }
 
+int Mesh::orbit(int ai,int bi,IndexArray& polygon)
+{
+    polygon.clear();
+    polygon.insert(ai);
+
+    // Add the vertex immediately following ai in the neighborhood of bi until
+    // we return to the starting vertex.
+    while (true) {
+        polygon.insert(bi);
+
+        int ci=prevTo(ai,bi);
+        if (ci==polygon[0]) {
+            break;
+        }
+
+        ai=bi;
+        bi=ci;
+    }
+
+    return polygon.getSize();
+}
+
 int Mesh::insert(int ai,int bi,Vec3f const& x)
 {
     // Add a new vertex at index xi.

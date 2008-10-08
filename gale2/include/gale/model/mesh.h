@@ -92,6 +92,10 @@ struct Mesh
     /// \a vi, both given as indices into the vertex array.
     int prevTo(int xi,int vi) const;
 
+    /// Given an oriented edge from \a ai to \a bi, returns the number of
+    /// vertices and their indices in \a polygon.
+    int orbit(int ai,int bi,IndexArray& polygon);
+
     /// Inserts a new vertex \a x on the edge between \a ai and \a bi and
     /// returns its index in the vertex array.
     int insert(int ai,int bi,math::Vec3f const& x);
