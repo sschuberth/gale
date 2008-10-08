@@ -151,7 +151,14 @@ Mesh* Mesh::Factory::Dodecahedron()
         Vec3f(-a,+c, 0)
     };
 
+    // Create a mesh from the static vertex array. Instead of hard-coding the
+    // neighborhood, do a brute-force search for the correct edge length.
     Mesh* m=new Mesh(vertices);
+
+    // Make all vertices neighbors whose distance matches the required edge length.
+    static float const e=2*c;
+    populateNeighborhood(m,e,3);
+
     return m;
 }
 

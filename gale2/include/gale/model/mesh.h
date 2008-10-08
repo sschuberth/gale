@@ -17,7 +17,7 @@ struct Mesh
 {
     typedef global::DynamicArray<math::Vec3f> VertexArray;
     typedef global::DynamicArray<unsigned int> IndexArray;
-    typedef global::DynamicArray<IndexArray> NeighborArray;
+    typedef global::DynamicArray<IndexArray> IndexTable;
 
     class Factory
     {
@@ -60,17 +60,24 @@ struct Mesh
         Mesh& mesh;
     };
 
-    struct Renderer
+    class Renderer
     {
+      public:
+
         Renderer(Mesh& mesh)
         :   mesh(mesh) {}
 
         void compile();
         void render();
 
+      protected:
+
         Mesh& mesh;
+
         IndexArray triangles;
         IndexArray quads;
+
+        IndexTable polygons;
     };
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.
@@ -100,8 +107,8 @@ struct Mesh
     /// returns its index in the vertex array.
     int insert(int ai,int bi,math::Vec3f const& x);
 
-    VertexArray vertices;    ///< Array of vertices in the mesh.
-    NeighborArray neighbors; ///< Array of arrays of neighboring vertex indices.
+    VertexArray vertices; ///< Array of vertices in the mesh.
+    IndexTable neighbors; ///< Array of arrays of neighboring vertex indices.
 };
 
 } // namespace model
