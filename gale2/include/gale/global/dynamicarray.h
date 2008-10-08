@@ -248,6 +248,22 @@ class DynamicArray
         m_data[position]=item;
     }
 
+    /// Inserts a dynamic \a array at the given \a position into the dynamic array.
+    /// If \a position is -1, the item gets appended at the end of the array.
+    void insert(DynamicArray const& array,int position=-1) {
+        if (position==-1 || position>m_size) {
+            position=m_size;
+        }
+
+        // Adjust the size for a new object.
+        setSize(m_size+array.m_size);
+
+        // Move insetted items to create a gap.
+        memmove(&m_data[position+array.m_size],&m_data[position],(m_size-position-array.m_size)*sizeof(T));
+
+        memcpy(&m_data[position],array,array.m_size*sizeof(T));
+    }
+
     /// Inserts a static \a array at the given \a position into the dynamic array.
     /// If \a position is -1, the item gets appended at the end of the array.
     template<size_t size>
