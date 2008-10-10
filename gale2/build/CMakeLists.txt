@@ -33,11 +33,13 @@ FOREACH(header ${headers})
     # Check if there is a source file for this header file, and add it to both
     # the list of files and the group if it exists.
     GET_FILENAME_COMPONENT(name ${header} NAME_WE)
-    GET_FILENAME_COMPONENT(source "${source_root}/${name}.cpp" ABSOLUTE)
-    IF(EXISTS ${source})
-        LIST(APPEND files ${source})
-        SOURCE_GROUP(${group} FILES ${source})
-    ENDIF(EXISTS ${source})
+    FILE(GLOB_RECURSE sources "${source_root}/${name}.cpp" "${source_root}/${name}_*.cpp")
+    FOREACH(source ${sources})
+        IF(EXISTS ${source})
+            LIST(APPEND files ${source})
+            SOURCE_GROUP(${group} FILES ${source})
+        ENDIF(EXISTS ${source})
+    ENDFOREACH(source ${sources})
 ENDFOREACH(header ${headers})
 
 # Add OpenGL extension initialization code to the project.
