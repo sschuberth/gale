@@ -11,7 +11,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow("test_color")
+    :   DefaultWindow("test_mesh")
     {
         //m_mesh=Mesh::Factory::Tetrahedron();
         //m_mesh=Mesh::Factory::Octahedron();
