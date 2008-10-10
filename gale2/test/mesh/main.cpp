@@ -32,6 +32,7 @@ class TestWindow:public DefaultWindow
     void onResize(int width,int height) {
         m_camera.setScreenSpaceDimensions(width,height);
         m_camera.setProjection(Mat4d::Factory::PerspectiveProjection(width,height));
+        repaint();
     }
 
     void onPaint() {
@@ -69,7 +70,7 @@ class TestWindow:public DefaultWindow
             }
 
             if (event&ME_BUTTON_RIGHT) {
-                m_camera.zoom(mouse_diff_y*Constf::DEG_TO_RAD());
+                m_camera.approach(mouse_diff_y*Constf::DEG_TO_RAD());
             }
 
             repaint();
