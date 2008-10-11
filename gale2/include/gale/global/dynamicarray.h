@@ -233,8 +233,9 @@ class DynamicArray
     }
 
     /// Inserts an \a item at the given \a position into the array. If \a position
-    /// is -1, the item gets appended at the end of the array.
-    void insert(T const& item,int position=-1) {
+    /// is -1, the item gets appended at the end of the array. Returns the first
+    /// index of the newly added item.
+    int insert(T const& item,int position=-1) {
         if (position==-1 || position>m_size) {
             position=m_size;
         }
@@ -246,11 +247,14 @@ class DynamicArray
         memmove(&m_data[position+1],&m_data[position],(m_size-position-1)*sizeof(T));
 
         m_data[position]=item;
+
+        return position;
     }
 
     /// Inserts a dynamic \a array at the given \a position into the dynamic array.
     /// If \a position is -1, the item gets appended at the end of the array.
-    void insert(DynamicArray const& array,int position=-1) {
+    /// Returns the first index of the newly added array.
+    int insert(DynamicArray const& array,int position=-1) {
         if (position==-1 || position>m_size) {
             position=m_size;
         }
@@ -262,12 +266,15 @@ class DynamicArray
         memmove(&m_data[position+array.m_size],&m_data[position],(m_size-position-array.m_size)*sizeof(T));
 
         memcpy(&m_data[position],array,array.m_size*sizeof(T));
+
+        return position;
     }
 
     /// Inserts a static \a array at the given \a position into the dynamic array.
     /// If \a position is -1, the item gets appended at the end of the array.
+    /// Returns the first index of the newly added array.
     template<size_t size>
-    void insert(T const (&array)[size],int position=-1) {
+    int insert(T const (&array)[size],int position=-1) {
         if (position==-1 || position>m_size) {
             position=m_size;
         }
@@ -279,6 +286,8 @@ class DynamicArray
         memmove(&m_data[position+size],&m_data[position],(m_size-position-size)*sizeof(T));
 
         memcpy(&m_data[position],array,size*sizeof(T));
+
+        return position;
     }
 
     /// Removes \a count items starting at \a begin from the array. If \a begin
