@@ -40,15 +40,15 @@ void Mesh::Renderer::compile()
     quads.clear();
     polygons.clear();
 
-    for (int vi=0;vi<mesh.vertices.getSize();++vi) {
-        IndexArray const& vn=mesh.neighbors[vi];
-        Vec3f const& v=mesh.vertices[vi];
+    for (int vi=0;vi<mesh->vertices.getSize();++vi) {
+        IndexArray const& vn=mesh->neighbors[vi];
+        Vec3f const& v=mesh->vertices[vi];
 
         for (int n=0;n<vn.getSize();++n) {
             // Get the orbit vertices starting with the edge from vi to its
             // currently selected neighbor.
             IndexArray polygon;
-            int o=mesh.orbit(vi,vn[n],polygon);
+            int o=mesh->orbit(vi,vn[n],polygon);
             if (o<3 || o>5) {
                 // Only triangle to pentagonal faces are supported right now.
                 continue;
@@ -57,8 +57,8 @@ void Mesh::Renderer::compile()
             // Make sure to walk each face only once, i.e. rule out permutations
             // of face indices. Use the address in memory to define a relation
             // on the universe of vertices.
-            Vec3f const& a=mesh.vertices[polygon[1]];
-            Vec3f const& b=mesh.vertices[polygon[2]];
+            Vec3f const& a=mesh->vertices[polygon[1]];
+            Vec3f const& b=mesh->vertices[polygon[2]];
             if (&v<&a || &v<&b) {
                 continue;
             }
@@ -68,7 +68,7 @@ void Mesh::Renderer::compile()
             }
             else {
                 // More than 3 vertices require another check.
-                Vec3f const& c=mesh.vertices[polygon[3]];
+                Vec3f const& c=mesh->vertices[polygon[3]];
                 if (&v<&c) {
                     continue;
                 }
@@ -78,7 +78,7 @@ void Mesh::Renderer::compile()
                 }
                 else {
                     // More than 4 vertices require another check.
-                    Vec3f const& d=mesh.vertices[polygon[4]];
+                    Vec3f const& d=mesh->vertices[polygon[4]];
                     if (&v<&d) {
                         continue;
                     }
@@ -94,7 +94,7 @@ void Mesh::Renderer::compile()
 void Mesh::Renderer::render()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3,GL_FLOAT,0,mesh.vertices);
+    glVertexPointer(3,GL_FLOAT,0,mesh->vertices);
 
     glDrawElements(GL_TRIANGLES,triangles.getSize(),GL_UNSIGNED_INT,triangles);
     glDrawElements(GL_QUADS,quads.getSize(),GL_UNSIGNED_INT,quads);

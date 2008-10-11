@@ -77,7 +77,7 @@ int Mesh::prevTo(int xi,int vi) const
     return -1;
 }
 
-int Mesh::orbit(int ai,int bi,IndexArray& polygon)
+int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
 {
     polygon.clear();
     polygon.insert(ai);

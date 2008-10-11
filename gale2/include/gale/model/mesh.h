@@ -135,7 +135,7 @@ struct Mesh
       public:
 
         /// Constructor that simply stores a reference to the mesh to render.
-        Renderer(Mesh& mesh)
+        Renderer(Mesh* const& mesh)
         :   mesh(mesh) {}
 
         /// Generates the primitive index arrays from the mesh data structure.
@@ -146,7 +146,7 @@ struct Mesh
 
       protected:
 
-        Mesh& mesh; ///< Reference to the mesh to render.
+        Mesh* const& mesh; ///< Reference to the mesh to render.
 
         IndexArray triangles; ///< Array of vertex indices describing triangles.
         IndexArray quads; ///< Array of vertex indices describing quadrilaterals.
@@ -175,7 +175,7 @@ struct Mesh
 
     /// Given an oriented edge from \a ai to \a bi, returns the number of
     /// vertices and their indices in \a polygon.
-    int orbit(int ai,int bi,IndexArray& polygon);
+    int orbit(int ai,int bi,IndexArray& polygon) const;
 
     /// Inserts a new vertex \a x on the edge between \a ai and \a bi and
     /// returns its index in the vertex array.
