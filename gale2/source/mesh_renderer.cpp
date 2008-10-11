@@ -35,6 +35,8 @@ namespace model {
 
 void Mesh::Renderer::compile()
 {
+    assert(mesh!=NULL);
+
     // Clear all indices as they will be rebuilt now.
     triangles.clear();
     quads.clear();
@@ -93,6 +95,8 @@ void Mesh::Renderer::compile()
 
 void Mesh::Renderer::render()
 {
+    assert(mesh!=NULL);
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3,GL_FLOAT,0,mesh->vertices);
 
