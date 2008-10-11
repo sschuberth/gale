@@ -33,48 +33,38 @@ namespace model {
 
 int Mesh::nextTo(int xi,int vi,int steps) const
 {
-    IndexArray const& vn=neighbors[vi];
-    unsigned int const* vnp=&vn[0];
-
-    // Prepare for a trick to compare vertices by their index in the vertex array.
-    Vec3f const* xp=&vertices[0]+xi;
-
     // Search v's neighborhood for x, and return x' successor.
-    for (int n=0;n<vn.getSize();++n) {
-        if (&vertices[*vnp++]==xp) {
-            n+=steps;
-            while (n>=vn.getSize()) {
-                // Wrap in the neighborhood.
-                n-=vn.getSize();
-            }
-            return vn[n];
+    IndexArray const& vn=neighbors[vi];
+    int n=vn.find(xi);
+
+    if (n>=0) {
+        n+=steps;
+        while (n>=vn.getSize()) {
+            // Wrap in the neighborhood.
+            n-=vn.getSize();
         }
+        n=vn[n];
     }
 
-    return -1;
+    return n;
 }
 
 int Mesh::prevTo(int xi,int vi,int steps) const
 {
-    IndexArray const& vn=neighbors[vi];
-    unsigned int const* vnp=&vn[0];
-
-    // Prepare for a trick to compare vertices by their index in the vertex array.
-    Vec3f const* xp=&vertices[0]+xi;
-
     // Search v's neighborhood for x, and return x' predecessor.
-    for (int n=0;n<vn.getSize();++n) {
-        if (&vertices[*vnp++]==xp) {
-            n-=steps;
-            while (n<0) {
-                // Wrap in the neighborhood.
-                n+=vn.getSize();
-            }
-            return vn[n];
+    IndexArray const& vn=neighbors[vi];
+    int n=vn.find(xi);
+
+    if (n>=0) {
+        n-=steps;
+        while (n<0) {
+            // Wrap in the neighborhood.
+            n+=vn.getSize();
         }
+        n=vn[n];
     }
 
-    return -1;
+    return n;
 }
 
 int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
@@ -102,34 +92,48 @@ int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
 int Mesh::insert(int ai,int bi,Vec3f const& x)
 {
     // Add a new vertex at index xi.
-    int xi=vertices.getSize();
-    vertices.insert(x);
+    int xi=vertices.insert(x);
 
     unsigned int xn[]={ai,bi};
     neighbors.insert(xn);
 
     int n;
-    unsigned int* np;
 
     // In the neighborhood of ai, replace bi with xi.
     IndexArray& an=neighbors[ai];
-    for (n=0,np=an.data();n<an.getSize();++n,++np) {
-        if (*np==bi) {
-            *np=xi;
-            break;
-        }
+    n=an.find(bi);
+    if (n>=0) {
+        an[n]=xi;
     }
 
     // In the neighborhood of bi, replace ai with xi.
     IndexArray& bn=neighbors[bi];
-    for (n=0,np=bn.data();n<bn.getSize();++n,++np) {
-        if (*np==ai) {
-            *np=xi;
-            break;
-        }
+    n=bn.find(ai);
+    if (n>=0) {
+        bn[n]=xi;
     }
 
     return xi;
+}
+
+void Mesh::splice(int ai,int xi,int vi,bool after)
+{
+    // Insert ai after or before xi in vi's neighborhood.
+    IndexArray& vn=neighbors[vi];
+    int n=vn.find(xi);
+    if (n>=0) {
+        vn.insert(ai,n+int(after));
+    }
+}
+
+void Mesh::erase(int xi,int vi)
+{
+    // Remove xi from vi's neighborhood.
+    IndexArray& vn=neighbors[vi];
+    int n=vn.find(xi);
+    if (n>=0) {
+        vn.remove(n);
+    }
 }
 
 } // namespace model

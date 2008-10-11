@@ -169,6 +169,11 @@ struct Mesh
         neighbors.setSize(size);
     }
 
+    /**
+     * \name Selection operations
+     */
+    //@{
+
     /// Returns the index of the vertex following \a xi in the neighborhood of
     /// \a vi, both given as indices into the vertex array. Optionally, this is
     /// repeated the given number of \a steps.
@@ -183,9 +188,24 @@ struct Mesh
     /// vertices and their indices in \a polygon.
     int orbit(int ai,int bi,IndexArray& polygon) const;
 
+    //@}
+
+    /**
+     * \name Editing operations
+     */
+    //@{
+
     /// Inserts a new vertex \a x on the edge between \a ai and \a bi and
     /// returns its index in the vertex array.
     int insert(int ai,int bi,math::Vec3f const& x);
+
+    /// Inserts \a ai after or before \a xi in the neighborhood of \a vi.
+    void splice(int ai,int xi,int vi,bool after=true);
+
+    /// Removes \a xi from the neighborhood of \a vi.
+    void erase(int xi,int vi);
+
+    //@}
 
     VertexArray vertices; ///< Array of vertices in the mesh.
     IndexTable neighbors; ///< Array of arrays of neighboring vertex indices.
