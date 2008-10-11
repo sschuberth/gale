@@ -1,62 +1,11 @@
-#include <gale/math/random.h>
-#include <gale/system/timer.h>
 #include <gale/wrapgl/defaultwindow.h>
 
-void drawCube(float edge) {
-    edge/=2;
-
-    for (int i=0;i<4;++i) {
-        glPushMatrix();
-        glRotatef(i*90.0f,0.0f,1.0f,0.0f);
-        glTranslatef(0.0f,0.0f,edge);
-
-        glBegin(GL_QUADS);
-            glTexCoord2f(1.0f,0.0f);
-            glVertex3f(+edge,+edge,0.0f);  // Upper right vertex.
-            glTexCoord2f(0.0f,0.0f);
-            glVertex3f(-edge,+edge,0.0f);  // Upper left vertex.
-            glTexCoord2f(0.0f,1.0f);
-            glVertex3f(-edge,-edge,0.0f);  // Lower left vertex.
-            glTexCoord2f(1.0f,1.0f);
-            glVertex3f(+edge,-edge,0.0f);  // Lower right vertex.
-        glEnd();
-
-        glPopMatrix();
-    }
-
-    glPushMatrix();
-    glRotatef(90.0f,1.0f,0.0f,0.0f);
-    glTranslatef(0.0f,0.0f,edge);
-
-    glBegin(GL_QUADS);
-        glTexCoord2f(1.0f,0.0f);
-        glVertex3f(+edge,+edge,0.0f);  // Upper right vertex.
-        glTexCoord2f(0.0f,0.0f);
-        glVertex3f(-edge,+edge,0.0f);  // Upper left vertex.
-        glTexCoord2f(0.0f,1.0f);
-        glVertex3f(-edge,-edge,0.0f);  // Lower left vertex.
-        glTexCoord2f(1.0f,1.0f);
-        glVertex3f(+edge,-edge,0.0f);  // Lower right vertex.
-    glEnd();
-
-    glPopMatrix();
-
-    glRotatef(-90.0f,1.0f,0.0f,0.0f);
-    glTranslatef(0.0f,0.0f,edge);
-
-    glBegin(GL_QUADS);
-        glTexCoord2f(1.0f,0.0f);
-        glVertex3f(+edge,+edge,0.0f);  // Upper right vertex.
-        glTexCoord2f(0.0f,0.0f);
-        glVertex3f(-edge,+edge,0.0f);  // Upper left vertex.
-        glTexCoord2f(0.0f,1.0f);
-        glVertex3f(-edge,-edge,0.0f);  // Lower left vertex.
-        glTexCoord2f(1.0f,1.0f);
-        glVertex3f(+edge,-edge,0.0f);  // Lower right vertex.
-    glEnd();
-}
+#include <gale/math/random.h>
+#include <gale/model/mesh.h>
+#include <gale/system/timer.h>
 
 using namespace gale::math;
+using namespace gale::model;
 using namespace gale::system;
 using namespace gale::wrapgl;
 
@@ -69,11 +18,16 @@ class TestWindow:public DefaultWindow
 
     TestWindow()
     :   DefaultWindow("test_slerp",800,600)
+    ,   m_renderer(m_cube)
     ,   m_pause(false)
     ,   m_cubic(true)
     {
         // Move the camera back to be able to see objects at the origin.
-        m_camera.setPosition(Vec3f(0,0,20));
+        m_camera.approach(20);
+
+        // Create a cube mesh and prepare it for rendering.
+        m_cube=Mesh::Factory::Hexahedron();
+        m_renderer.compile();
 
         // Use spherical-linear interpolation by default.
         m_interpolator=&slerp;
@@ -160,7 +114,7 @@ class TestWindow:public DefaultWindow
             m.setPositionVector(Vec3f(CATHETUS*(1.0f-((i+1)&2)),CATHETUS*(1.0f-(i&2)),0));
             glPushMatrix();
             glMultMatrixf(m);
-            drawCube(1.0);
+            m_renderer.render();
             glPopMatrix();
         }
 
@@ -171,7 +125,7 @@ class TestWindow:public DefaultWindow
         m.setPositionVector(m_p);
         glPushMatrix();
         glMultMatrixf(m);
-        drawCube(1.0);
+        m_renderer.render();
         glPopMatrix();
     }
 
@@ -254,6 +208,9 @@ class TestWindow:public DefaultWindow
     }
 
   private:
+
+    Mesh* m_cube;
+    Mesh::Renderer m_renderer;
 
     // Use a member function pointer to easily switch between the interpolation methods.
     Quatf::Interpolator m_interpolator;
