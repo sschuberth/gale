@@ -1,3 +1,28 @@
+/*                                     __
+ *                      .-----..---.-.|  |.-----.
+ *                      |  _  ||  _  ||  ||  -__|
+ *                      |___  ||___._||__||_____|
+ * This file is part of |_____| the Graphics Abstraction Layer & Engine,
+ * see the project page at <http://developer.berlios.de/projects/gale/>.
+ *
+ * Copyright (C) 2005-2008  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
 #include "gale/model/mesh.h"
 
 using namespace gale::math;
@@ -171,11 +196,11 @@ void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int valence)
         // Resize the neighbor array in advance.
         mesh->neighbors[i].setSize(valence);
 
-        // "n" is the current neighbor index, "u" points to the first neighbor.
-        int n=0;
-        Vec3f u;
+        int c=0; // The current valence count.
+        int n=0; // The current neighbor index.
+        Vec3f u; // Copy of the first neighbor vertex.
 
-        for (int k=0;k<mesh->vertices.getSize();++k) {
+        for (int k=0;k<mesh->vertices.getSize(),c<valence;++k) {
             // Get the vector from the reference to the (possible) neighbor.
             Vec3f v=mesh->vertices[k]-r;
 
@@ -201,6 +226,7 @@ void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int valence)
 
             // Store the neighbor's vertex index at the calculated position.
             mesh->neighbors[i][n++]=k;
+            ++c;
         }
     }
 }
