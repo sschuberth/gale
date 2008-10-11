@@ -31,7 +31,7 @@ namespace gale {
 
 namespace model {
 
-int Mesh::nextTo(int xi,int vi) const
+int Mesh::nextTo(int xi,int vi,int steps) const
 {
     IndexArray const& vn=neighbors[vi];
     unsigned int const* vnp=&vn[0];
@@ -42,8 +42,8 @@ int Mesh::nextTo(int xi,int vi) const
     // Search v's neighborhood for x, and return x' successor.
     for (int n=0;n<vn.getSize();++n) {
         if (&vertices[*vnp++]==xp) {
-            ++n;
-            if (n>=vn.getSize()) {
+            n+=steps;
+            while (n>=vn.getSize()) {
                 // Wrap in the neighborhood.
                 n-=vn.getSize();
             }
@@ -54,7 +54,7 @@ int Mesh::nextTo(int xi,int vi) const
     return -1;
 }
 
-int Mesh::prevTo(int xi,int vi) const
+int Mesh::prevTo(int xi,int vi,int steps) const
 {
     IndexArray const& vn=neighbors[vi];
     unsigned int const* vnp=&vn[0];
@@ -65,8 +65,8 @@ int Mesh::prevTo(int xi,int vi) const
     // Search v's neighborhood for x, and return x' predecessor.
     for (int n=0;n<vn.getSize();++n) {
         if (&vertices[*vnp++]==xp) {
-            --n;
-            if (n<0) {
+            n-=steps;
+            while (n<0) {
                 // Wrap in the neighborhood.
                 n+=vn.getSize();
             }

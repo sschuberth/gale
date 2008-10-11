@@ -66,6 +66,46 @@ void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps)
     }
 }
 
+void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
+{
+    while (steps-->0) {
+        Mesh orig=mesh;
+
+        // Store the index of the first new vertex.
+        int x0i=orig.vertices.getSize();
+
+        // Loop over all vertices in the base mesh.
+        for (int vi=0;vi<x0i;++vi) {
+            IndexArray const& vn=orig.neighbors[vi];
+            Vec3f const& v=orig.vertices[vi];
+
+            // Loop over v's neighborhood.
+            for (int n=0;n<vn.getSize();++n) {
+                int ui=vn[n];
+
+                // Be sure to walk each pair of vertices, i.e. edge, only once.
+                // Use the address in memory to define a relation on the
+                // universe of vertices.
+                Vec3f const& u=orig.vertices[ui];
+                if (&u<&v) {
+                    continue;
+                }
+
+                Vec3f x = v*0.5f + u*0.5f
+                        + orig.vertices[orig.nextTo(ui,vi)]   * 0.125f  + orig.vertices[orig.prevTo(ui,vi)]   * 0.125f
+                        - orig.vertices[orig.nextTo(ui,vi,2)] * 0.0625f - orig.vertices[orig.prevTo(ui,vi,2)] * 0.0625f
+                        - orig.vertices[orig.nextTo(vi,ui,2)] * 0.0625f - orig.vertices[orig.prevTo(vi,ui,2)] * 0.0625f;
+
+                // Add a new vertex as the arithmetic average of its two neighbors.
+                mesh.insert(ui,vi,x);
+            }
+        }
+
+        orig=mesh;
+        assignNeighbors(orig,mesh,x0i);
+    }
+}
+
 void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
 {
     while (steps-->0) {

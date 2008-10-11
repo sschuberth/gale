@@ -102,8 +102,12 @@ struct Mesh
          */
         //@{
 
-        /// Divides the faces of a triangular mesh into further triangles.
+        /// Divides the triangular faces of a mesh into further triangles.
         static void Polyhedral(Mesh& mesh,int steps=1);
+
+        /// Divides the triangular faces of a mesh as described by Dyn et al. in
+        /// <http://www.math.tau.ac.il/~niradyn/papers/butterfly.pdf>.
+        static void Butterfly(Mesh& mesh,int steps=1);
 
         //@}
 
@@ -114,7 +118,7 @@ struct Mesh
          */
         //@{
 
-        /// Divides the faces of a triangular mesh as described by Charles
+        /// Divides the triangular faces of a mesh as described by Charles
         /// Teorell Loop in <http://research.microsoft.com/~cloop/thesis.pdf>.
         static void Loop(Mesh& mesh,int steps=1,bool move=true);
 
@@ -166,12 +170,14 @@ struct Mesh
     }
 
     /// Returns the index of the vertex following \a xi in the neighborhood of
-    /// \a vi, both given as indices into the vertex array.
-    int nextTo(int xi,int vi) const;
+    /// \a vi, both given as indices into the vertex array. Optionally, this is
+    /// repeated the given number of \a steps.
+    int nextTo(int xi,int vi,int steps=1) const;
 
     /// Returns the index of the vertex preceding \a xi in the neighborhood of
-    /// \a vi, both given as indices into the vertex array.
-    int prevTo(int xi,int vi) const;
+    /// \a vi, both given as indices into the vertex array. Optionally, this is
+    /// repeated the given number of \a steps.
+    int prevTo(int xi,int vi,int steps=1) const;
 
     /// Given an oriented edge from \a ai to \a bi, returns the number of
     /// vertices and their indices in \a polygon.
