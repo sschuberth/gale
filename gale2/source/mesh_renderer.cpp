@@ -49,13 +49,17 @@ void Mesh::Renderer::compile()
             // currently selected neighbor.
             IndexArray polygon;
             int o=mesh.orbit(vi,vn[n],polygon);
+            if (o<3 || o>5) {
+                // Only triangle to pentagonal faces are supported right now.
+                continue;
+            }
 
             // Make sure to walk each face only once, i.e. rule out permutations
             // of face indices. Use the address in memory to define a relation
             // on the universe of vertices.
             Vec3f const& a=mesh.vertices[polygon[1]];
             Vec3f const& b=mesh.vertices[polygon[2]];
-            if (o<3 || &v<&a || &v<&b) {
+            if (&v<&a || &v<&b) {
                 continue;
             }
 
@@ -75,7 +79,7 @@ void Mesh::Renderer::compile()
                 else {
                     // More than 4 vertices require another check.
                     Vec3f const& d=mesh.vertices[polygon[4]];
-                    if (o>5 || &v<&d) {
+                    if (&v<&d) {
                         continue;
                     }
 
