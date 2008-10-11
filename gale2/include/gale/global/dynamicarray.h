@@ -317,6 +317,35 @@ class DynamicArray
     //@}
 
     /**
+     * \name Find methods
+     */
+    //@{
+
+    /// Returns the first array index of \a item, or -1 if it cannot be found.
+    int find(T const& item) const {
+        T* ptr=m_data;
+        for (int i=0;i<m_size;++i) {
+            if (*ptr++==item) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /// Returns the last array index of \a item, or -1 if it cannot be found.
+    int findRev(T const& item) const {
+        T* ptr=m_data+m_size;
+        for (int i=m_size;--i>=0;) {
+            if (*--ptr==item) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //@}
+
+    /**
      * \name Sorted array methods
      */
     //@{
