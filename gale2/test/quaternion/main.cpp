@@ -87,12 +87,6 @@ class TestWindow:public DefaultWindow
         return true;
     }
 
-    void onTimeout() {
-        // We will never be idle if the queue is filled with mouse and paint
-        // events, so make sure we get an animation anyways.
-        onIdle();
-    }
-
     void onResize(int width,int height) {
         m_camera.setScreenSpaceDimensions(width,height);
         m_camera.setProjection(Mat4d::Factory::PerspectiveProjection(width,height));
