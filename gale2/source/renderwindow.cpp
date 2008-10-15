@@ -117,38 +117,44 @@ void RenderWindow::processEvents()
 {
     MSG msg;
 
-    do {
-        // Idle once in the beginning to initialize and then if there are no
-        // messages to process.
-        if (onIdle()) {
-            repaint();
-        }
-        else {
-            // Relinquish the rest of the time slice.
-            Sleep(0);
-        }
-
-        // Dispatch all messages in the queue.
-        while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
+    while (true) {
+        // We need to use the non-blocking PeekMessage() here which causes high
+        // CPU usage instead of the blocking GetMessage() because we want to be
+        // able to do something during idle time.
+        if (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
+            if (msg.message==WM_QUIT) {
+                // Do not dispatch the quit message.
+                break;
+            }
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-    } while (msg.message!=WM_QUIT);
+        else {
+            // Idle if there are no messages to process.
+            if (onIdle()) {
+                repaint();
+            }
+            else {
+                // Relinquish the rest of the time slice.
+                Sleep(0);
+            }
+        }
+
+        // If there is a timeout set ...
+        if (m_timeout>0) {
+            double elapsed;
+            m_timer.elapsed(elapsed);
+            // ... and the timeout elapsed, call the event handler.
+            if (elapsed>=m_timeout) {
+                onTimeout();
+                m_timer.reset();
+            }
+        }
+    }
 }
 
 LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
-    // If there is a timeout set ...
-    if (m_timeout>0) {
-        double elapsed;
-        m_timer.elapsed(elapsed);
-        // ... and the timeout elapsed, call the event handler.
-        if (elapsed>=m_timeout) {
-            onTimeout();
-            m_timer.reset();
-        }
-    }
-
     switch (uMsg) {
         // This is sent to a window after its size has changed.
         case WM_SIZE: {
