@@ -116,7 +116,7 @@ else {
         <tr>
             <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
             <td style="background-color: #d3e0e7; padding: 10px">
-                Enter the URL to OpenGL extension specification text file
+                Enter the URL to an OpenGL extension specification text file
                 (see e.g. <a href="http://www.opengl.org/registry/">http://www.opengl.org/registry/</a>):
                 <form action="parse.php">
                     <p style="white-space: nowrap">
