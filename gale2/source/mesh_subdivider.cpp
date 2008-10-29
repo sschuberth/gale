@@ -47,11 +47,11 @@ void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps)
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int ui=vn[n];
+                Vec3f const& u=orig.vertices[ui];
 
                 // Be sure to walk each pair of vertices, i.e. edge, only once.
                 // Use the address in memory to define a relation on the
                 // universe of vertices.
-                Vec3f const& u=orig.vertices[ui];
                 if (&u<&v) {
                     continue;
                 }
@@ -82,11 +82,11 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int ui=vn[n];
+                Vec3f const& u=orig.vertices[ui];
 
                 // Be sure to walk each pair of vertices, i.e. edge, only once.
                 // Use the address in memory to define a relation on the
                 // universe of vertices.
-                Vec3f const& u=orig.vertices[ui];
                 if (&u<&v) {
                     continue;
                 }
@@ -127,8 +127,8 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int ui=vn[n];
-
                 Vec3f const& u=orig.vertices[ui];
+
                 q+=u;
 
                 // Be sure to walk each pair of vertices, i.e. edge, only once.
@@ -150,12 +150,96 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
                 // Modify the existing vertex as calculated from the weighted q
                 // vertex.
                 q/=static_cast<float>(valence);
-                mesh.vertices[vi]=lerp(q,mesh.vertices[vi],weight);
+                mesh.vertices[vi]=lerp(q,v,weight);
             }
         }
 
         orig=mesh;
         assignNeighbors(orig,mesh,x0i);
+    }
+}
+
+void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool move)
+{
+    while (steps-->0) {
+        Mesh orig=mesh;
+
+        // Store the index of the first new vertex.
+        int x0i=orig.vertices.getSize();
+
+        // Loop over all vertices in the base mesh.
+        for (int vi=0;vi<x0i;++vi) {
+            IndexArray const& vn=orig.neighbors[vi];
+            Vec3f const& v=orig.vertices[vi];
+
+            int valence=vn.getSize();
+            float weight=(4.0f-2.0f*::cos(2.0f*Constf::PI()/valence))/9.0f;
+
+            if (move) {
+                mesh.vertices[vi]*=1.0f-weight;
+            }
+
+            // Loop over v's neighborhood.
+            for (int n=0;n<vn.getSize();++n) {
+                int ui=vn[n];
+                Vec3f const& u=orig.vertices[ui];
+
+                if (move) {
+                    mesh.vertices[vi]+=u*(weight/valence);
+                }
+
+                int ti=orig.nextTo(ui,vi);
+                Vec3f const& t=orig.vertices[ti];
+
+                // Be sure to walk each pair of vertices, i.e. edge, only once.
+                // Use the address in memory to define a relation on the
+                // universe of vertices.
+                if (&u<&v || &t<&v) {
+                    continue;
+                }
+
+                // Insert a new vertex at the face center.
+                Vec3f c=(v+u+t)/3.0f;
+                int ci=mesh.vertices.insert(c);
+
+                // Connect the new vertex to the face vertices.
+                unsigned int cn[]={vi,ui,ti};
+                mesh.neighbors.insert(cn);
+
+                mesh.splice(ci,ui,vi);
+                mesh.splice(ci,ti,ui);
+                mesh.splice(ci,vi,ti);
+            }
+        }
+
+        // Loop over all vertices in the base mesh.
+        for (int vi=0;vi<x0i;++vi) {
+            IndexArray const& vn=orig.neighbors[vi];
+            Vec3f const& v=orig.vertices[vi];
+
+            // Loop over v's neighborhood.
+            for (int n=0;n<vn.getSize();++n) {
+                int ui=vn[n];
+                Vec3f const& u=orig.vertices[ui];
+
+                // Be sure to walk each pair of vertices, i.e. edge, only once.
+                // Use the address in memory to define a relation on the
+                // universe of vertices.
+                if (&u<&v) {
+                    continue;
+                }
+
+                // Flip the base mesh's edges in the subdivided mesh.
+                int ai=mesh.nextTo(ui,vi);
+                int bi=mesh.prevTo(ui,vi);
+
+                mesh.splice(ai,ui,bi);
+                mesh.splice(bi,vi,ai);
+
+                mesh.erase(ui,vi);
+                mesh.erase(vi,ui);
+            }
+        }
     }
 }
 

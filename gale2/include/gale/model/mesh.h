@@ -122,6 +122,10 @@ struct Mesh
         /// Teorell Loop in <http://research.microsoft.com/~cloop/thesis.pdf>.
         static void Loop(Mesh& mesh,int steps=1,bool move=true);
 
+        /// Divides the triangular faces of a mesh as described by Leif Kobbelt
+        /// in <http://www.graphics.rwth-aachen.de/uploads/media/sqrt3.pdf>.
+        static void Sqrt3(Mesh& mesh,int steps=1,bool move=true);
+
         //@}
 
       protected:
