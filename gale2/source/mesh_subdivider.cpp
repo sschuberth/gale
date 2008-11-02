@@ -31,6 +31,10 @@ namespace gale {
 
 namespace model {
 
+/*
+ * Interpolating subdivision schemes
+ */
+
 void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps)
 {
     while (steps-->0) {
@@ -106,6 +110,10 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
     }
 }
 
+/*
+ * Approximating subdivision schemes
+ */
+
 void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
 {
     while (steps-->0) {
@@ -119,8 +127,14 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
             IndexArray const& vn=orig.neighbors[vi];
             Vec3f const& v=orig.vertices[vi];
 
-            int valence=vn.getSize();
-            double weight=::pow(0.375+0.25*::cos(2.0*Constd::PI()/valence),2.0)+0.375;
+            // Only calculate these if needed.
+            int valence;
+            double weight;
+
+            if (move) {
+                valence=vn.getSize();
+                weight=::pow(0.375+0.25*::cos(2.0*Constd::PI()/valence),2.0)+0.375;
+            }
 
             Vec3f q=Vec3f::ZERO();
 
@@ -172,10 +186,13 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool move)
             IndexArray const& vn=orig.neighbors[vi];
             Vec3f const& v=orig.vertices[vi];
 
-            int valence=vn.getSize();
-            float weight=(4.0f-2.0f*::cos(2.0f*Constf::PI()/valence))/9.0f;
+            // Only calculate these if needed.
+            int valence;
+            float weight;
 
             if (move) {
+                valence=vn.getSize();
+                weight=(4.0f-2.0f*::cos(2.0f*Constf::PI()/valence))/9.0f;
                 mesh.vertices[vi]*=1.0f-weight;
             }
 
@@ -198,7 +215,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool move)
                     continue;
                 }
 
-                // Insert a new vertex at the face center.
+                // Insert a new vertex at the base mesh's face center.
                 Vec3f c=(v+u+t)/3.0f;
                 int ci=mesh.vertices.insert(c);
 
@@ -242,6 +259,122 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool move)
         }
     }
 }
+
+void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps,bool move)
+{
+    while (steps-->0) {
+        Mesh orig=mesh;
+
+        // Store the index of the first new vertex.
+        int x0i=orig.vertices.getSize();
+
+        // Loop over all vertices in the base mesh.
+        for (int vi=0;vi<x0i;++vi) {
+            IndexArray const& vn=orig.neighbors[vi];
+            Vec3f const& v=orig.vertices[vi];
+
+            // Only calculate these if needed.
+            int valence;
+            float beta;
+            float gamma;
+
+            if (move) {
+                valence=vn.getSize();
+                beta=3.0f/(2.0f*valence);
+                gamma=1.0f/(4.0f*valence);
+
+                mesh.vertices[vi]*=1.0f-beta-gamma;
+
+                beta/=valence;
+                gamma/=valence;
+            }
+
+            // Loop over v's neighborhood.
+            for (int n=0;n<vn.getSize();++n) {
+                int pi=vn[n];
+                Vec3f const& p=orig.vertices[pi];
+
+                // Set the new position of existing vertices.
+                if (move) {
+                    mesh.vertices[vi]+=p*beta;
+                    mesh.vertices[vi]+=orig.vertices[orig.nextTo(vi,pi)]*gamma;
+                }
+
+                // Be sure to walk each pair of vertices, i.e. edge, only once.
+                // Use the address in memory to define a relation on the
+                // universe of vertices.
+                if (&v<&p) {
+                    continue;
+                }
+
+                // Insert a new vertex on each base mesh's edge.
+                Vec3f const& a=orig.vertices[orig.nextTo(pi,vi)];
+                Vec3f const& b=orig.vertices[orig.prevTo(pi,vi)];
+                Vec3f const& c=orig.vertices[orig.nextTo(vi,pi)];
+                Vec3f const& d=orig.vertices[orig.prevTo(vi,pi)];
+
+                mesh.insert(vi,pi,(v+p)*0.375f+(a+b+c+d)*0.0625f);
+            }
+        }
+
+        // To calculate the face center vertices the base mesh's vertices are
+        // needed, but the current mesh's neighborhood is needed to connect them
+        // to the edge vertices, so just copy the neighborhood here.
+        orig.neighbors=mesh.neighbors;
+
+        // Loop over all vertices in the base mesh.
+        for (int vi=0;vi<x0i;++vi) {
+            IndexArray const& vn=orig.neighbors[vi];
+            Vec3f const& v=orig.vertices[vi];
+
+            // Loop over v's neighborhood.
+            for (int n=0;n<vn.getSize();++n) {
+                int pi=vn[n];
+
+                // Find the vertices that complete the quadrilaterals, but since
+                // these paths can fit on the mesh in several ways, test to make
+                // sure that the paths terminate at the correct vertices.
+
+                int xi=orig.prevTo(pi,vi);
+                int ai=orig.prevTo(vi,xi);
+                Vec3f const& a=orig.vertices[ai];
+                if (&v<&a) {
+                    continue;
+                }
+
+                int yi=orig.prevTo(xi,ai);
+                int bi=orig.prevTo(ai,yi);
+                Vec3f const& b=orig.vertices[bi];
+                if (&v<&b) {
+                    continue;
+                }
+
+                int zi=orig.prevTo(yi,bi);
+                int ci=orig.prevTo(bi,zi);
+                Vec3f const& c=orig.vertices[ci];
+                if (&v<&c) {
+                    continue;
+                }
+
+                // Insert a new vertex at the base mesh's face center.
+                int ui=mesh.vertices.insert((v+a+b+c)*0.25f);
+
+                // Connect the new vertex to the face vertices.
+                unsigned int un[]={pi,xi,yi,zi};
+                mesh.neighbors.insert(un);
+
+                mesh.splice(ui,ai,xi);
+                mesh.splice(ui,bi,yi);
+                mesh.splice(ui,ci,zi);
+                mesh.splice(ui,vi,pi);
+            }
+        }
+    }
+}
+
+/*
+ * Helper methods
+ */
 
 void Mesh::Subdivider::assignNeighbors(Mesh const& orig,Mesh& mesh,int x0i)
 {

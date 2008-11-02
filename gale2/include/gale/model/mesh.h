@@ -90,7 +90,8 @@ struct Mesh
         static void populateNeighborhood(Mesh* mesh,float distance,int valence);
     };
 
-    /// Inner class to subdivide meshes using different algorithms.
+    /// Inner class to subdivide meshes using different algorithms, for an
+    /// overview see <http://en.wikipedia.org/wiki/Subdivision_surface>.
     class Subdivider
     {
       public:
@@ -125,6 +126,10 @@ struct Mesh
         /// Divides the triangular faces of a mesh as described by Leif Kobbelt
         /// in <http://www.graphics.rwth-aachen.de/uploads/media/sqrt3.pdf>.
         static void Sqrt3(Mesh& mesh,int steps=1,bool move=true);
+
+        /// Divides the quadrangular faces of a mesh as described by Edwin Catmull
+        /// and Jim Clark in <http://www.idi.ntnu.no/~fredrior/files/Catmull-Clark%201978%20Recursively%20generated%20surfaces.pdf>.
+        static void CatmullClark(Mesh& mesh,int steps=1,bool move=true);
 
         //@}
 
