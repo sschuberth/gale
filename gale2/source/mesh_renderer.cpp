@@ -38,6 +38,7 @@ void Mesh::Renderer::compile()
     assert(mesh!=NULL);
 
     // Clear all indices as they will be rebuilt now.
+    points.clear();
     triangles.clear();
     quads.clear();
     polygons.clear();
