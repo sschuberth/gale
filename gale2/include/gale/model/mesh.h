@@ -96,6 +96,9 @@ struct Mesh
     {
       public:
 
+        /// Function pointer type definition for subdivision schemes.
+        typedef void (*Scheme)(Mesh& mesh,int steps);
+
         /**
          * \name Interpolating schemes
          * This type of subdivision does not modify the vertices of the base
@@ -121,11 +124,23 @@ struct Mesh
 
         /// Divides the triangular faces of a mesh as described by C. T. Loop in
         /// <http://research.microsoft.com/~cloop/thesis.pdf>.
-        static void Loop(Mesh& mesh,int steps=1,bool move=true);
+        static void Loop(Mesh& mesh,int steps,bool move);
+
+        /// Convenience wrapper for use with a function pointer that calls
+        /// Loop() with \a move set to \c true.
+        static void Loop(Mesh& mesh,int steps=1) {
+            Loop(mesh,steps,true);
+        }
 
         /// Divides the triangular faces of a mesh as described by L. Kobbelt in
         /// <http://www.graphics.rwth-aachen.de/uploads/media/sqrt3.pdf>.
-        static void Sqrt3(Mesh& mesh,int steps=1,bool move=true);
+        static void Sqrt3(Mesh& mesh,int steps,bool move);
+
+        /// Convenience wrapper for use with a function pointer that calls
+        /// Sqrt3() with \a move set to \c true.
+        static void Sqrt3(Mesh& mesh,int steps=1) {
+            Sqrt3(mesh,steps,true);
+        }
 
         /// Divides the quadrangular faces of a mesh as described by E. Catmull
         /// and J. Clark in <http://www.idi.ntnu.no/~fredrior/files/Catmull-Clark%201978%20Recursively%20generated%20surfaces.pdf>.
