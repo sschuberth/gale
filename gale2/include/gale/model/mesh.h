@@ -159,10 +159,11 @@ struct Mesh
 
       protected:
 
-        Mesh* const& mesh; ///< Reference to the mesh to render.
+        Mesh* const& mesh;    ///< Reference to the mesh to render.
 
+        IndexArray points;    ///< Array of vertex indices describing points.
         IndexArray triangles; ///< Array of vertex indices describing triangles.
-        IndexArray quads; ///< Array of vertex indices describing quadrilaterals.
+        IndexArray quads;     ///< Array of vertex indices describing quadrilaterals.
 
         IndexTable polygons;  ///< Table of vertex indices describing polygons.
     };

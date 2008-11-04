@@ -46,6 +46,12 @@ void Mesh::Renderer::compile()
         IndexArray const& vn=mesh->neighbors[vi];
         Vec3f const& v=mesh->vertices[vi];
 
+        if (vn.getSize()==0) {
+            // This is just a single point with an empty neighborhood.
+            points.insert(vi);
+            continue;
+        }
+
         for (int n=0;n<vn.getSize();++n) {
             // Get the orbit vertices starting with the edge from vi to its
             // currently selected neighbor.
@@ -100,6 +106,7 @@ void Mesh::Renderer::render()
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3,GL_FLOAT,0,mesh->vertices);
 
+    glDrawElements(GL_POINTS,points.getSize(),GL_UNSIGNED_INT,points);
     glDrawElements(GL_TRIANGLES,triangles.getSize(),GL_UNSIGNED_INT,triangles);
     glDrawElements(GL_QUADS,quads.getSize(),GL_UNSIGNED_INT,quads);
 
