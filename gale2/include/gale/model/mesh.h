@@ -119,17 +119,21 @@ struct Mesh
          */
         //@{
 
-        /// Divides the triangular faces of a mesh as described by Charles
-        /// Teorell Loop in <http://research.microsoft.com/~cloop/thesis.pdf>.
+        /// Divides the triangular faces of a mesh as described by C. T. Loop in
+        /// <http://research.microsoft.com/~cloop/thesis.pdf>.
         static void Loop(Mesh& mesh,int steps=1,bool move=true);
 
-        /// Divides the triangular faces of a mesh as described by Leif Kobbelt
-        /// in <http://www.graphics.rwth-aachen.de/uploads/media/sqrt3.pdf>.
+        /// Divides the triangular faces of a mesh as described by L. Kobbelt in
+        /// <http://www.graphics.rwth-aachen.de/uploads/media/sqrt3.pdf>.
         static void Sqrt3(Mesh& mesh,int steps=1,bool move=true);
 
-        /// Divides the quadrangular faces of a mesh as described by Edwin Catmull
-        /// and Jim Clark in <http://www.idi.ntnu.no/~fredrior/files/Catmull-Clark%201978%20Recursively%20generated%20surfaces.pdf>.
-        static void CatmullClark(Mesh& mesh,int steps=1,bool move=true);
+        /// Divides the quadrangular faces of a mesh as described by E. Catmull
+        /// and J. Clark in <http://www.idi.ntnu.no/~fredrior/files/Catmull-Clark%201978%20Recursively%20generated%20surfaces.pdf>.
+        static void CatmullClark(Mesh& mesh,int steps=1);
+
+        /// Divides the faces of a mesh as described by D. Doo and M. Sabin in
+        /// <http://www.idi.ntnu.no/~fredrior/files/Doo-Sabin%201978%20Recursive%20division.pdf>.
+        static void DooSabin(Mesh& mesh,int steps=1);
 
         //@}
 

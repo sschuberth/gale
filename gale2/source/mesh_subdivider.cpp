@@ -133,7 +133,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
 
             if (move) {
                 valence=vn.getSize();
-                weight=::pow(0.375+0.25*::cos(2.0*Constd::PI()/valence),2.0)+0.375;
+                weight=::pow(0.375 + 0.25*::cos(2.0*Constd::PI()/valence),2.0) + 0.375;
             }
 
             Vec3f q=Vec3f::ZERO();
@@ -161,9 +161,9 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
             }
 
             if (move) {
-                // Modify the existing vertex as calculated from the weighted q
-                // vertex.
                 q/=static_cast<float>(valence);
+
+                // Move the existing vertices.
                 mesh.vertices[vi]=lerp(q,v,weight);
             }
         }
@@ -192,7 +192,9 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool move)
 
             if (move) {
                 valence=vn.getSize();
-                weight=(4.0f-2.0f*::cos(2.0f*Constf::PI()/valence))/9.0f;
+                weight=(4.0f - 2.0f*::cos(2.0f*Constf::PI()/valence)) / 9.0f;
+
+                // Move the existing vertices.
                 mesh.vertices[vi]*=1.0f-weight;
             }
 
@@ -202,6 +204,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool move)
                 Vec3f const& u=orig.vertices[ui];
 
                 if (move) {
+                    // Move the existing vertices.
                     mesh.vertices[vi]+=u*(weight/valence);
                 }
 
@@ -260,7 +263,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool move)
     }
 }
 
-void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps,bool move)
+void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
 {
     while (steps-->0) {
         Mesh orig=mesh;
@@ -273,32 +276,24 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps,bool move)
             IndexArray const& vn=orig.neighbors[vi];
             Vec3f const& v=orig.vertices[vi];
 
-            // Only calculate these if needed.
-            int valence;
-            float beta;
-            float gamma;
+            int valence=vn.getSize();
+            float beta=3.0f/(2.0f*valence);
+            float gamma=1.0f/(4.0f*valence);
 
-            if (move) {
-                valence=vn.getSize();
-                beta=3.0f/(2.0f*valence);
-                gamma=1.0f/(4.0f*valence);
+            // Move the existing vertices.
+            mesh.vertices[vi]*=1.0f-beta-gamma;
 
-                mesh.vertices[vi]*=1.0f-beta-gamma;
-
-                beta/=valence;
-                gamma/=valence;
-            }
+            beta/=valence;
+            gamma/=valence;
 
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int pi=vn[n];
                 Vec3f const& p=orig.vertices[pi];
 
-                // Set the new position of existing vertices.
-                if (move) {
-                    mesh.vertices[vi]+=p*beta;
-                    mesh.vertices[vi]+=orig.vertices[orig.nextTo(vi,pi)]*gamma;
-                }
+                // Move the existing vertices.
+                mesh.vertices[vi]+=p*beta;
+                mesh.vertices[vi]+=orig.vertices[orig.nextTo(vi,pi)]*gamma;
 
                 // Be sure to walk each pair of vertices, i.e. edge, only once.
                 // Use the address in memory to define a relation on the
@@ -313,7 +308,7 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps,bool move)
                 Vec3f const& c=orig.vertices[orig.nextTo(vi,pi)];
                 Vec3f const& d=orig.vertices[orig.prevTo(vi,pi)];
 
-                mesh.insert(vi,pi,(v+p)*0.375f+(a+b+c+d)*0.0625f);
+                mesh.insert(vi,pi,(v+p)*0.375f + (a+b+c+d)*0.0625f);
             }
         }
 
@@ -369,6 +364,84 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps,bool move)
                 mesh.splice(ui,vi,pi);
             }
         }
+    }
+}
+
+void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
+{
+    while (steps-->0) {
+        Mesh orig=mesh;
+
+        // Store the index of the first new vertex.
+        int x0i=orig.vertices.getSize();
+
+        // Loop over all vertices in the base mesh.
+        for (int vi=0;vi<x0i;++vi) {
+            IndexArray const& vn=orig.neighbors[vi];
+            Vec3f const& v=orig.vertices[vi];
+
+            // Loop over v's neighborhood.
+            for (int n=0;n<vn.getSize();++n) {
+                int pi=vn[n];
+                Vec3f const& p=orig.vertices[pi];
+
+                IndexArray polygon;
+                int o=orig.orbit(vi,pi,polygon);
+
+                Vec3f t;
+
+                // The orbit is a quadrilateral.
+                if (o==4) {
+                    Vec3f const& q=orig.vertices[polygon[3]];
+                    Vec3f const& r=orig.vertices[polygon[2]];
+                    t=v*0.5625f + p*0.1875f + q*0.1875f + r*0.0625f;
+                }
+                // The orbit is an arbitrary polygon.
+                else {
+                    t=v*(0.25f + 1.25f/o);
+
+                    int i=0;
+                    while (++i<o) {
+                        Vec3f const& a=orig.vertices[polygon[i]];
+                        t+=a*((3.0f + 2.0f*::cos(2.0f*Constf::PI()*static_cast<float>(i)/o))/(4.0f*o));
+                    }
+                }
+
+                // Add the new vertex ...
+                int ti=mesh.vertices.insert(t);
+
+                // ... and connect it to the mesh so it can be reached below.
+                mesh.splice(ti,pi,vi);
+            }
+        }
+
+        // Loop over all vertices in the base mesh.
+        for (int vi=0;vi<x0i;++vi) {
+            IndexArray const& vn=orig.neighbors[vi];
+
+            // Loop over v's neighborhood.
+            for (int n=0;n<vn.getSize();++n) {
+                int pi=vn[n];
+
+                // Get the index to the newly inserted vertex.
+                int ti=mesh.nextTo(pi,vi);
+
+                // Prepare that the base mesh's vertices will be deleted and
+                // reduce the indices by the base mesh vertex count.
+                unsigned int tn[]={
+                    mesh.prevTo(vi,pi)                 - x0i,
+                    mesh.nextTo(vi,mesh.nextTo(ti,vi)) - x0i,
+                    mesh.nextTo(mesh.nextTo(ti,vi),vi) - x0i,
+                    mesh.prevTo(pi,vi)                 - x0i
+                };
+
+                mesh.neighbors.insert(tn);
+            }
+        }
+
+        // Delete all base mesh vertices and their neighborhoods.
+        mesh.vertices.remove(0,x0i);
+        mesh.neighbors.remove(0,x0i);
     }
 }
 
