@@ -43,12 +43,18 @@ RenderSurface::ContextHandle RenderSurface::s_handle;
 LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
     // Using a dynamic_cast here would be safer, but that requires RTTI support.
-    RenderSurface *_this=reinterpret_cast<RenderSurface*>(GetWindowLong(hWnd,GWLP_USERDATA));
+    size_t ptr=static_cast<size_t>(GetWindowLongPtr(hWnd,GWLP_USERDATA));
+    RenderSurface *_this=reinterpret_cast<RenderSurface*>(ptr);
 
     if (uMsg==WM_CREATE) {
         LPVOID params=reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;
         _this=static_cast<RenderSurface*>(params);
-        SetWindowLongA(hWnd,GWLP_USERDATA,(LONG)_this);
+        ptr=reinterpret_cast<size_t>(_this);
+#ifdef G_ARCH_X86_64
+        SetWindowLongPtr(hWnd,GWLP_USERDATA,(LONG_PTR)ptr);
+#else
+        SetWindowLongPtr(hWnd,GWLP_USERDATA,(LONG)ptr);
+#endif
     }
 
     if (_this==NULL) {
