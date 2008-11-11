@@ -117,7 +117,7 @@ void RenderWindow::processEvents()
 {
     MSG msg;
 
-    while (true) {
+    for (;;) {
         // We need to use the non-blocking PeekMessage() here which causes high
         // CPU usage instead of the blocking GetMessage() because we want to be
         // able to do something during idle time.

@@ -74,7 +74,7 @@ int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
 
     // Add the vertex immediately following ai in the neighborhood of bi until
     // we return to the starting vertex.
-    while (true) {
+    for (;;) {
         polygon.insert(bi);
 
         int ci=prevTo(ai,bi);
