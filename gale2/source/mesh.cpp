@@ -78,7 +78,7 @@ int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
         polygon.insert(bi);
 
         int ci=prevTo(ai,bi);
-        if (ci==polygon[0]) {
+        if (ci<0 || static_cast<unsigned int>(ci)==polygon[0]) {
             break;
         }
 
