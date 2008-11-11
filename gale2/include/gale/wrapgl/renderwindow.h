@@ -102,8 +102,13 @@ class RenderWindow:public system::RenderSurface
     /// Event handler that gets called when the timeout value has been reached.
     virtual void onTimeout() {}
 
+// Warning C4100: Unreferenced formal parameter.
+#pragma warning(disable:4100)
+
     /// Event handler that gets called after a window has changed its size.
     virtual void onResize(int width,int height) {}
+
+#pragma warning(default:4100)
 
     /// Event handler that gets called when a window portion should be painted.
     virtual void onPaint() {}
