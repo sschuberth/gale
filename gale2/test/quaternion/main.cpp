@@ -17,7 +17,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow("test_slerp",800,600)
+    :   DefaultWindow(_T("test_slerp"),800,600)
     ,   m_renderer(m_cube)
     ,   m_pause(false)
     ,   m_cubic(true)

@@ -13,7 +13,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow("test_mesh")
+    :   DefaultWindow(_T("test_mesh"))
     ,   m_mesh(Mesh::Factory::Tetrahedron())
     ,   m_scheme(Mesh::Subdivider::Polyhedral)
     ,   m_step(0)
