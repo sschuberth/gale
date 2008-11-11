@@ -71,7 +71,7 @@ class Camera
     /// render \a surface. By default, its screen space is the current viewport
     /// and no transformation is set to the modelview matrix.
     Camera(system::RenderSurface const& surface)
-    :   m_surface(surface)
+    :   m_surface(&surface)
     ,   m_screen_changed(false)
     {
         // Initialize the camera screen space to the current OpenGL viewport.
@@ -249,7 +249,7 @@ class Camera
 
     static Camera* s_current; ///< Common pointer to the last applied camera.
 
-    system::RenderSurface const& m_surface; ///< The surface that the camera is attached to.
+    system::RenderSurface const* m_surface; ///< The surface that the camera is attached to.
 
     ScreenSpace m_screen;  ///< The camera's current screen space.
     bool m_screen_changed; ///< Marks whether the screen space needs to be applied.

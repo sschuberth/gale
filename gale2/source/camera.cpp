@@ -41,7 +41,7 @@ void Camera::apply(bool const force)
     if (camera_changed || m_screen_changed) {
         // Get the window's client area size.
         RECT rect;
-        G_ASSERT_CALL(GetClientRect(m_surface.windowHandle(),&rect));
+        G_ASSERT_CALL(GetClientRect(m_surface->windowHandle(),&rect));
 
         // If the desired screen space is smaller than the window, we need to
         // enable scissoring to avoid glClear to affect the whole window plane.

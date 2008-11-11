@@ -17,11 +17,10 @@ class TestWindow:public DefaultWindow
     ,   m_mesh(Mesh::Factory::Tetrahedron())
     ,   m_scheme(Mesh::Subdivider::Polyhedral)
     ,   m_step(0)
-    ,   m_renderer(m_mesh)
     {
         m_camera.approach(5);
 
-        m_renderer.compile();
+        m_renderer.compile(m_mesh);
 
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         glEnable(GL_CULL_FACE);
@@ -167,7 +166,7 @@ class TestWindow:public DefaultWindow
 
         if (key>='1' && key<='5') {
             m_scheme(*m_mesh,m_step);
-            m_renderer.compile();
+            m_renderer.compile(m_mesh);
             repaint();
 
             last_mesh_key=key;

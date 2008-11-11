@@ -166,25 +166,25 @@ struct Mesh
     {
       public:
 
-        /// Constructor that simply stores a reference to the mesh to render.
-        Renderer(Mesh* const& mesh)
-        :   mesh(mesh) {}
+        /// Constructor that simply initializes the mesh to render to NULL.
+        Renderer()
+        :   m_mesh(NULL) {}
 
         /// Generates the primitive index arrays from the mesh data structure.
-        void compile();
+        void compile(Mesh const* mesh);
 
         /// Renders the mesh primitives using OpenGL.
         void render();
 
       protected:
 
-        Mesh* const& mesh;    ///< Reference to the mesh to render.
+        Mesh const* m_mesh;     ///< Reference to the mesh to render.
 
-        IndexArray points;    ///< Array of vertex indices describing points.
-        IndexArray triangles; ///< Array of vertex indices describing triangles.
-        IndexArray quads;     ///< Array of vertex indices describing quadrilaterals.
+        IndexArray m_points;    ///< Array of vertex indices describing points.
+        IndexArray m_triangles; ///< Array of vertex indices describing triangles.
+        IndexArray m_quads;     ///< Array of vertex indices describing quadrilaterals.
 
-        IndexTable polygons;  ///< Table of vertex indices describing polygons.
+        IndexTable m_polygons;  ///< Table of vertex indices describing polygons.
     };
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.

@@ -33,23 +33,25 @@ namespace gale {
 
 namespace model {
 
-void Mesh::Renderer::compile()
+void Mesh::Renderer::compile(Mesh const* mesh)
 {
-    assert(mesh!=NULL);
+    if (!(m_mesh=mesh)) {
+        return;
+    }
 
     // Clear all indices as they will be rebuilt now.
-    points.clear();
-    triangles.clear();
-    quads.clear();
-    polygons.clear();
+    m_points.clear();
+    m_triangles.clear();
+    m_quads.clear();
+    m_polygons.clear();
 
-    for (int vi=0;vi<mesh->vertices.getSize();++vi) {
-        IndexArray const& vn=mesh->neighbors[vi];
-        Vec3f const& v=mesh->vertices[vi];
+    for (int vi=0;vi<m_mesh->vertices.getSize();++vi) {
+        IndexArray const& vn=m_mesh->neighbors[vi];
+        Vec3f const& v=m_mesh->vertices[vi];
 
         if (vn.getSize()==0) {
             // This is just a single point with an empty neighborhood.
-            points.insert(vi);
+            m_points.insert(vi);
             continue;
         }
 
@@ -57,7 +59,7 @@ void Mesh::Renderer::compile()
             // Get the orbit vertices starting with the edge from vi to its
             // currently selected neighbor.
             IndexArray polygon;
-            int o=mesh->orbit(vi,vn[n],polygon);
+            int o=m_mesh->orbit(vi,vn[n],polygon);
             if (o<3 || o>5) {
                 // Only triangle to pentagonal faces are supported right now.
                 continue;
@@ -66,34 +68,34 @@ void Mesh::Renderer::compile()
             // Make sure to walk each face only once, i.e. rule out permutations
             // of face indices. Use the address in memory to define a relation
             // on the universe of vertices.
-            Vec3f const& a=mesh->vertices[polygon[1]];
-            Vec3f const& b=mesh->vertices[polygon[2]];
+            Vec3f const& a=m_mesh->vertices[polygon[1]];
+            Vec3f const& b=m_mesh->vertices[polygon[2]];
             if (&v<&a || &v<&b) {
                 continue;
             }
 
             if (o==3) {
-                triangles.insert(polygon);
+                m_triangles.insert(polygon);
             }
             else {
                 // More than 3 vertices require another check.
-                Vec3f const& c=mesh->vertices[polygon[3]];
+                Vec3f const& c=m_mesh->vertices[polygon[3]];
                 if (&v<&c) {
                     continue;
                 }
 
                 if (o==4) {
-                    quads.insert(polygon);
+                    m_quads.insert(polygon);
                 }
                 else {
                     // More than 4 vertices require another check.
-                    Vec3f const& d=mesh->vertices[polygon[4]];
+                    Vec3f const& d=m_mesh->vertices[polygon[4]];
                     if (&v<&d) {
                         continue;
                     }
 
                     // Note: For more than 5 vertices more checks are needed.
-                    polygons.insert(polygon);
+                    m_polygons.insert(polygon);
                 }
             }
         }
@@ -102,17 +104,19 @@ void Mesh::Renderer::compile()
 
 void Mesh::Renderer::render()
 {
-    assert(mesh!=NULL);
+    if (!m_mesh) {
+        return;
+    }
 
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3,GL_FLOAT,0,mesh->vertices);
+    glVertexPointer(3,GL_FLOAT,0,m_mesh->vertices);
 
-    glDrawElements(GL_POINTS,points.getSize(),GL_UNSIGNED_INT,points);
-    glDrawElements(GL_TRIANGLES,triangles.getSize(),GL_UNSIGNED_INT,triangles);
-    glDrawElements(GL_QUADS,quads.getSize(),GL_UNSIGNED_INT,quads);
+    glDrawElements(GL_POINTS,m_points.getSize(),GL_UNSIGNED_INT,m_points);
+    glDrawElements(GL_TRIANGLES,m_triangles.getSize(),GL_UNSIGNED_INT,m_triangles);
+    glDrawElements(GL_QUADS,m_quads.getSize(),GL_UNSIGNED_INT,m_quads);
 
-    for (int i=0;i<polygons.getSize();++i) {
-        glDrawElements(GL_POLYGON,polygons[i].getSize(),GL_UNSIGNED_INT,polygons[i]);
+    for (int i=0;i<m_polygons.getSize();++i) {
+        glDrawElements(GL_POLYGON,m_polygons[i].getSize(),GL_UNSIGNED_INT,m_polygons[i]);
     }
 }
 
