@@ -321,7 +321,7 @@ class TupleBase<4,float,C>
 
     //@}
 
-#endif
+#endif // GALE_TINY
 
   protected:
 
