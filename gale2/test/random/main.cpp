@@ -18,7 +18,8 @@ using namespace gale::math;
 using namespace gale::system;
 using namespace std;
 
-int main(int argc,char *argv[]) {
+int main()
+{
     RandomEcuyerf r;
 
     Timer timer;
