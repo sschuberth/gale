@@ -18,7 +18,6 @@ class TestWindow:public DefaultWindow
 
     TestWindow()
     :   DefaultWindow(_T("test_slerp"),800,600)
-    ,   m_renderer(m_cube)
     ,   m_pause(false)
     ,   m_cubic(true)
     {
@@ -27,7 +26,7 @@ class TestWindow:public DefaultWindow
 
         // Create a cube mesh and prepare it for rendering.
         m_cube=Mesh::Factory::Hexahedron();
-        m_renderer.compile();
+        m_renderer.compile(m_cube);
 
         // Use spherical-linear interpolation by default.
         m_interpolator=&slerp;
