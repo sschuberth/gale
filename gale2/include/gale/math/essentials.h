@@ -41,10 +41,11 @@
 #include <float.h>
 #include <limits.h>
 
-#include <intrin.h>
 #include <stdlib.h>
 
 #ifdef G_COMP_MSVC
+    #include <intrin.h>
+
     #pragma intrinsic(_BitScanForward)
     #pragma intrinsic(_BitScanReverse)
 #endif
