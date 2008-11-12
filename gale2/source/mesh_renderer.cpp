@@ -35,7 +35,8 @@ namespace model {
 
 void Mesh::Renderer::compile(Mesh const* mesh)
 {
-    if (!(m_mesh=mesh)) {
+    m_mesh=mesh;
+    if (!m_mesh) {
         return;
     }
 

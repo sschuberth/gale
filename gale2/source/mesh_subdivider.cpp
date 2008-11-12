@@ -127,14 +127,9 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
             IndexArray const& vn=orig.neighbors[vi];
             Vec3f const& v=orig.vertices[vi];
 
-            // Only calculate these if needed.
-            int valence;
-            double weight;
-
-            if (move) {
-                valence=vn.getSize();
-                weight=::pow(0.375 + 0.25*::cos(2.0*Constd::PI()/valence),2.0) + 0.375;
-            }
+            // Calculate variables for moving the existing vertices.
+            int valence=vn.getSize();
+            double weight=::pow(0.375 + 0.25*::cos(2.0*Constd::PI()/valence),2.0) + 0.375;
 
             Vec3f q=Vec3f::ZERO();
 
@@ -186,14 +181,11 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool move)
             IndexArray const& vn=orig.neighbors[vi];
             Vec3f const& v=orig.vertices[vi];
 
-            // Only calculate these if needed.
-            int valence;
-            float weight;
+            // Calculate variables for moving the existing vertices.
+            int valence=vn.getSize();
+            float weight=(4.0f - 2.0f*::cos(2.0f*Constf::PI()/valence)) / 9.0f;
 
             if (move) {
-                valence=vn.getSize();
-                weight=(4.0f - 2.0f*::cos(2.0f*Constf::PI()/valence)) / 9.0f;
-
                 // Move the existing vertices.
                 mesh.vertices[vi]*=1.0f-weight;
             }
