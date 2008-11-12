@@ -375,7 +375,7 @@ function writeInitializationCode($extension) {
     fwrite($handle,'GLboolean '.$extension."_init(void)\n{\n");
     fwrite($handle,"    $extension=GL_TRUE;\n\n");
 
-    fwrite($handle,'#define '.GLEX_PREFIX."PROC(t,n,a) $extension&=((*((void**)&".GLEX_PREFIX."##n)=(void*)wglGetProcAddress(#n))!=0)\n");
+    fwrite($handle,'#define '.GLEX_PREFIX."PROC(t,n,a) $extension&=((*((PROC*)&".GLEX_PREFIX."##n)=wglGetProcAddress(#n))!=0)\n");
     fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
     fwrite($handle,'#undef '.GLEX_PREFIX."PROC\n\n");
 
