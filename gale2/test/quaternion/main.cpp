@@ -48,8 +48,8 @@ class TestWindow:public DefaultWindow
         glEnable(GL_CULL_FACE);
         glPolygonMode(GL_FRONT,GL_LINE);
 
-        // Try to get 25 FPS even when events need to be processed.
-        setTimeout(1.0/25.0);
+        // Initialize the animation variables.
+        onIdle();
     }
 
     ~TestWindow() {
