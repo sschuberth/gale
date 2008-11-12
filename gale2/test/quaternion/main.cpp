@@ -52,6 +52,10 @@ class TestWindow:public DefaultWindow
         setTimeout(1.0/25.0);
     }
 
+    ~TestWindow() {
+        delete m_cube;
+    }
+
     bool onIdle() {
         if (m_pause) {
             m_timer.reset();
@@ -230,10 +234,13 @@ class TestWindow:public DefaultWindow
 
 int main()
 {
-    TestWindow window;
+    // Make sure the window is destroyed before dumping memory leaks.
+    {
+        TestWindow window;
 
-    ShowWindow(window.windowHandle(),SW_SHOW);
-    window.processEvents();
+        ShowWindow(window.windowHandle(),SW_SHOW);
+        window.processEvents();
+    }
 
 #ifndef NDEBUG
     _CrtDumpMemoryLeaks();
