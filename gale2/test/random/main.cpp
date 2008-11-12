@@ -30,7 +30,7 @@ int main()
     timer.start();
     int i;
     for (i=N;i>=0;--i) {
-        unsigned int n=r.random();
+        r.random();
     }
     double s;
     timer.stop(s);
@@ -65,7 +65,7 @@ int main()
 
     timer.start();
     for (i=N;i>=0;--i) {
-        unsigned int r=rand();
+        rand();
     }
     timer.stop(s);
 

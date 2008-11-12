@@ -174,6 +174,8 @@ class TestWindow:public DefaultWindow
     }
 
     void onMouseEvent(int x,int y,int wheel,int event) {
+        UNREFERENCED_PARAMETER(wheel);
+
         static int mouse_prev_x=0,mouse_prev_y=0;
 
         // This is positive if the mouse cursor was moved to the right.

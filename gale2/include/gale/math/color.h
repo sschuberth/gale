@@ -591,9 +591,16 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// Returns the color's inverse (the alpha channel is omitted, if present).
     Color inverse() {
         Color tmp=WHITE()-(*this);
+
+// Warning C4127: Conditional expression is constant.
+#pragma warning(disable:4127)
+
         if (N==4) {
             tmp.setA(getA());
         }
+
+#pragma warning(default:4127)
+
         return tmp;
     }
 
