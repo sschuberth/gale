@@ -171,6 +171,9 @@ class TestWindow:public DefaultWindow
 
             last_mesh_key=key;
         }
+        else {
+            DefaultWindow::onKeyEvent(key);
+        }
     }
 
     void onMouseEvent(int x,int y,int wheel,int event) {
