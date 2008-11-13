@@ -94,7 +94,7 @@ class DefaultWindow:public RenderWindow
     /// Captures the Escape key to quit the application.
     virtual void onKeyEvent(char key) {
         if (key==VK_ESCAPE) {
-            exit(0);
+            ExitProcess(0);
         }
     }
 
@@ -205,8 +205,14 @@ class DefaultWindow:public RenderWindow
             case WM_SYSCOMMAND: {
                 if (wParam==ID_ABOUT_DLG) {
                     TCHAR buffer[512];
-                    _stprintf_s(buffer,_T("Vendor: %s\nRenderer: %s\nVersion: %s"),glGetString(GL_VENDOR),glGetString(GL_RENDERER),glGetString(GL_VERSION));
-                    MessageBox(windowHandle(),buffer,_T("About"),MB_OK);
+                    wsprintf(
+                        buffer,
+                        _T("Vendor: %s\nRenderer: %s\nVersion: %s"),
+                        glGetString(GL_VENDOR),
+                        glGetString(GL_RENDERER),
+                        glGetString(GL_VERSION)
+                    );
+                    MessageBox(windowHandle(),buffer,_T("About OpenGL"),MB_OK);
                     break;
                 }
                 // No break here!
