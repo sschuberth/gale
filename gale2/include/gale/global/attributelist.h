@@ -37,9 +37,6 @@ namespace gale {
 
 namespace global {
 
-// Make sure data members are tightly packed.
-#pragma pack(push,1)
-
 /**
  * Zero terminated list of type / value pairs that is used to pass attributes to
  * several API calls.
@@ -147,8 +144,6 @@ class AttributeList
     int m_size; ///< Current size of the list, i.e. the index of the terminating zero.
     T m_attributes[N]; ///< Tightly packed array of type / value pairs.
 };
-
-#pragma pack(pop)
 
 /**
  * \name Type definitions as required to describe pixel format attributes

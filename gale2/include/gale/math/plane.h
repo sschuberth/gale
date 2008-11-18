@@ -37,6 +37,9 @@ namespace gale {
 
 namespace math {
 
+// Make sure data members are tightly packed.
+#pragma pack(push,1)
+
 /**
  * Plane class implementation based on the equation required by glClipPlane():
  *
@@ -154,6 +157,8 @@ class Plane
     Vec3d m_normal;    ///< The plane's normal vector (A, B, C in the formula).
     double m_distance; ///< Negative distance to the origin (D in the formula).
 };
+
+#pragma pack(pop)
 
 } // namespace math
 

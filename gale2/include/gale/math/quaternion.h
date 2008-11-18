@@ -37,6 +37,9 @@ namespace gale {
 
 namespace math {
 
+// Make sure data members are tightly packed.
+#pragma pack(push,1)
+
 /**
  * Quaternion implementation based on a scalar for the real number part and a
  * vector for the imaginary number part. It has common linear algebra and math
@@ -592,6 +595,8 @@ class Quaternion
     T real;   ///< Real number part of the quaternion.
     Vec imag; ///< Imaginary number parts of the quaternion.
 };
+
+#pragma pack(pop)
 
 /**
  * \name Convenience type definitions
