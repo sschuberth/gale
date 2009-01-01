@@ -33,6 +33,7 @@
 
 #include "renderwindow.h"
 #include "camera.h"
+#include "helpers.h"
 
 namespace gale {
 
@@ -81,7 +82,7 @@ class DefaultWindow:public RenderWindow
     /// Creates a window with reasonable defaults set.
     DefaultWindow(LPCTSTR title,int client_width=500,int client_height=500)
     :   RenderWindow(client_width,client_height,PixelAttributes(),title)
-    ,   m_camera(*this)
+    ,   m_camera(this)
     {
         // Add an "About" entry to the system menu.
         HMENU menu=GetSystemMenu(windowHandle(),FALSE);
@@ -90,6 +91,16 @@ class DefaultWindow:public RenderWindow
             AppendMenu(menu,MF_STRING,ID_ABOUT_DLG,_T("&About ..."));
         }
     }
+
+    /// Override the default paint event handler to draw a logo.
+    void onPaint() {
+        onRender();
+        drawLogo();
+    }
+
+    /// Applications that wish to benefit from some extra stuff being
+    /// automatically rendered should override this method instead of onPaint().
+    virtual void onRender() {}
 
     /// Captures the Escape key to quit the application.
     virtual void onKeyEvent(char key) {

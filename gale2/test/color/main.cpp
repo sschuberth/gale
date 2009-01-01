@@ -46,7 +46,7 @@ class TestWindow:public DefaultWindow
         repaint();
     }
 
-    void onPaint() {
+    void onRender() {
         unsigned int const QUADS_X=256;
         unsigned int const QUADS_Y=256;
 

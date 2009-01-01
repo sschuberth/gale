@@ -46,7 +46,7 @@ class TestWindow:public DefaultWindow
 
         // Set some OpenGL states.
         glEnable(GL_CULL_FACE);
-        glPolygonMode(GL_FRONT,GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
         // Initialize the animation variables.
         onIdle();
@@ -96,7 +96,7 @@ class TestWindow:public DefaultWindow
         repaint();
     }
 
-    void onPaint() {
+    void onRender() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         m_camera.apply();
