@@ -39,23 +39,24 @@ void Camera::apply(bool const force)
     bool camera_changed=(s_current!=this) || force;
 
     if (camera_changed || m_screen_changed) {
-        // Get the window's client area size.
-        RECT rect;
-        G_ASSERT_CALL(GetClientRect(m_surface->windowHandle(),&rect));
+        if (m_surface) {
+            // Get the render surface's dimensions.
+            system::RenderSurface::Dimensions d=m_surface->dimensions();
 
-        // If the desired screen space is smaller than the window, we need to
-        // enable scissoring to avoid glClear to affect the whole window plane.
-        if (m_screen.x>0 || (m_screen.x<0 && m_screen.width<rect.right-m_screen.x)
-         || m_screen.y>0 || (m_screen.y<0 && m_screen.height<rect.bottom-m_screen.y)) {
-            glScissor(m_screen.x,m_screen.y,m_screen.width,m_screen.height);
+            // If the desired screen space is smaller than the dimensions, we need
+            // to enable scissoring to avoid glClear to affect the whole surface.
+            if (m_screen.x>0 || (m_screen.x<=0 && m_screen.width<d.width-m_screen.x)
+             || m_screen.y>0 || (m_screen.y<=0 && m_screen.height<d.height-m_screen.y)) {
+                glScissor(m_screen.x,m_screen.y,m_screen.width,m_screen.height);
+                G_ASSERT_OPENGL
+
+                glEnable(GL_SCISSOR_TEST);
+            }
+            else {
+                glDisable(GL_SCISSOR_TEST);
+            }
             G_ASSERT_OPENGL
-
-            glEnable(GL_SCISSOR_TEST);
         }
-        else {
-            glDisable(GL_SCISSOR_TEST);
-        }
-        G_ASSERT_OPENGL
 
         // Set the viewport OpenGL should render to.
         glViewport(m_screen.x,m_screen.y,m_screen.width,m_screen.height);

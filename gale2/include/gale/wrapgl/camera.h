@@ -64,11 +64,17 @@ class Camera
         GLsizei height; ///< Height of the screen space.
     };
 
+    /// Returns a pointer to the camera instance that was applied last, or NULL
+    /// if no camera has been applied yet.
+    static Camera* getAppliedCamera() {
+        return s_current;
+    }
+
     /// Constructor that initializes a perspective camera attached to the given
     /// render \a surface. By default, its screen space is the current viewport
     /// and no transformation is set to the modelview matrix.
-    Camera(system::RenderSurface const& surface)
-    :   m_surface(&surface)
+    Camera(system::RenderSurface const* surface=NULL)
+    :   m_surface(surface)
     ,   m_screen_changed(false)
     {
         // Initialize the camera screen space to the current OpenGL viewport.
