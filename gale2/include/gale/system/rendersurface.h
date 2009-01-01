@@ -107,7 +107,7 @@ class RenderSurface
     /// Returns the width and height of this render surface.
     Dimensions dimensions() const {
         RECT rect;
-        GetClientRect(windowHandle(),&rect);
+        G_ASSERT_CALL(GetClientRect(windowHandle(),&rect));
         return Dimensions(rect.right,rect.bottom);
     }
 
