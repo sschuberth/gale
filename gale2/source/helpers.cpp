@@ -1,3 +1,4 @@
+#include "gale/math/color.h"
 #include "gale/model/mesh.h"
 #include "gale/wrapgl/camera.h"
 
@@ -70,8 +71,14 @@ void drawLogo()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
+    glPushAttrib(GL_POLYGON_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+
     glPushAttrib(GL_ENABLE_BIT);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_LINE_SMOOTH);
+
+    glColor3fv(math::Col3f::WHITE());
 
     // Render the cubes.
     model::Mesh::Renderer renderer;
@@ -79,20 +86,16 @@ void drawLogo()
 
     renderer.compile(cube);
 
-    glPushMatrix();
     glTranslatef(1,0,0);
     renderer.render();
-    glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(0,1,0);
+    glTranslatef(-1,1,0);
     renderer.render();
-    glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(0,0,1);
+    glTranslatef(0,-1,1);
     renderer.render();
-    glPopMatrix();
+
+    glTranslatef(0,0,-1);
 
     delete cube;
 
@@ -122,6 +125,7 @@ void drawLogo()
 
     glEnd();
 
+    glPopAttrib();
     glPopAttrib();
     glPopAttrib();
 
