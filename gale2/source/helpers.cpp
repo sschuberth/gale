@@ -66,68 +66,87 @@ void drawLogo()
 
     camera_logo.apply();
 
-    // Render the logo.
-    glPushAttrib(GL_COLOR_BUFFER_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    // Prepare a display list to speed up running draw calls.
+    static GLuint list=0;
 
-    glPushAttrib(GL_POLYGON_BIT);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    if (list>0) {
+        glCallList(list);
+        G_ASSERT_OPENGL
+    }
+    else {
+        list=glGenLists(1);
+        G_ASSERT_OPENGL
 
-    glPushAttrib(GL_ENABLE_BIT);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_LINE_SMOOTH);
+        glNewList(list,GL_COMPILE_AND_EXECUTE);
+        G_ASSERT_OPENGL
 
-    glColor3fv(math::Col3f::WHITE());
+        // Render the logo.
+        glPushAttrib(GL_COLOR_BUFFER_BIT);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-    // Render the cubes.
-    model::Mesh::Renderer renderer;
-    model::Mesh* cube=model::Mesh::Factory::Hexahedron();
+        glPushAttrib(GL_POLYGON_BIT);
+        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
-    renderer.compile(cube);
+        glPushAttrib(GL_ENABLE_BIT);
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_LINE_SMOOTH);
 
-    glTranslatef(1,0,0);
-    renderer.render();
+        glColor3fv(math::Col3f::WHITE());
 
-    glTranslatef(-1,1,0);
-    renderer.render();
+        // Render the cubes.
+        model::Mesh::Renderer renderer;
+        model::Mesh* cube=model::Mesh::Factory::Hexahedron();
 
-    glTranslatef(0,-1,1);
-    renderer.render();
+        renderer.compile(cube);
 
-    glTranslatef(0,0,-1);
+        glTranslatef(1,0,0);
+        renderer.render();
 
-    delete cube;
+        glTranslatef(-1,1,0);
+        renderer.render();
 
-    // Render the frame.
-    float scale_corner=1.9f,scale_length=1.5f;
-    math::Vec3f r(scale_corner,0,0),t(0,scale_corner,0),l(0,0,scale_corner),n;
+        glTranslatef(0,-1,1);
+        renderer.render();
 
-    glBegin(GL_LINE_LOOP);
+        glTranslatef(0,0,-1);
 
-    glVertex3fv(r);
+        delete cube;
 
-    n=(~((t-r)^normal))*scale_length;
-    glVertex3fv(n+r);
-    glVertex3fv(n+t);
+        // Render the frame.
+        float scale_corner=1.8f,scale_length=1.5f;
+        math::Vec3f r(scale_corner,0,0),t(0,scale_corner,0),l(0,0,scale_corner),n;
 
-    glVertex3fv(t);
+        glBegin(GL_LINE_LOOP);
 
-    n=(~((l-t)^normal))*scale_length;
-    glVertex3fv(n+t);
-    glVertex3fv(n+l);
+        glVertex3fv(r);
 
-    glVertex3fv(l);
+        n=(~((t-r)^normal))*scale_length;
+        glVertex3fv(n+r);
+        glVertex3fv(n+t);
 
-    n=(~((r-l)^normal))*scale_length;
-    glVertex3fv(n+l);
-    glVertex3fv(n+r);
+        glVertex3fv(t);
 
-    glEnd();
+        n=(~((l-t)^normal))*scale_length;
+        glVertex3fv(n+t);
+        glVertex3fv(n+l);
 
-    glPopAttrib();
-    glPopAttrib();
-    glPopAttrib();
+        glVertex3fv(l);
+
+        n=(~((r-l)^normal))*scale_length;
+        glVertex3fv(n+l);
+        glVertex3fv(n+r);
+
+        glEnd();
+
+        glPopAttrib();
+        glPopAttrib();
+        glPopAttrib();
+
+        // Complete the display list.
+        glEndList();
+        G_ASSERT_OPENGL
+    }
 
     if (camera_orig) {
         camera_orig->apply();
