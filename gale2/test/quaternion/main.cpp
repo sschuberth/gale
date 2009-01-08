@@ -63,7 +63,7 @@ class TestWindow:public DefaultWindow
         }
 
         static double t=0.0;
-        int i=roundToZero(static_cast<float>(t));
+        int i=static_cast<int>(roundToZero(t));
 
         if (m_cubic) {
             m_k=squad(m_kf[i],m_kf[(i+1)&3],t-i,m_kt[i],m_kt[(i+1)&3],m_interpolator);
