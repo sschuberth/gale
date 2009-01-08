@@ -367,13 +367,19 @@ inline T sgn(T const x)
 /// Rounds the 32-bit floating point value \a f to the nearest integer (to the
 /// even one in case of ambiguity). This is the default rounding mode on x86
 /// platforms, so the floating-point control word is not modified.
-inline int roundToEven(float const f)
+inline long long roundToEven(float const f)
 {
-#ifdef GALE_SSE
+#ifdef G_ARCH_X86_64
 
-    return _mm_cvtss_si32(_mm_load_ss(&f));
+    return _mm_cvtss_si64x(_mm_load_ss(&f));
 
-#elif defined(G_COMP_GNUC)
+#else
+
+  #ifdef GALE_SSE
+
+    return static_cast<long long>(_mm_cvtss_si32(_mm_load_ss(&f)));
+
+  #elif defined(G_COMP_GNUC)
 
     int i;
     __asm__(
@@ -382,9 +388,9 @@ inline int roundToEven(float const f)
         : "t" (f)       /* Input   */
         :               /* Clobber */
     );
-    return i;
+    return static_cast<long long>(i);
 
-#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
+  #elif defined(G_COMP_MSVC)
 
     // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     int i;
@@ -392,25 +398,35 @@ inline int roundToEven(float const f)
         fld f
         fistp i
     }
-    return i;
+    return static_cast<long long>(i);
 
-#else // GALE_SSE
+  #else // GALE_SSE
 
-    return static_cast<int>(f+0.5f);
+    // Do not offer a C++ fallback for "round to even" as it cannot be nicely
+    // implemented.
+    #error Unsupported compiler.
 
-#endif // GALE_SSE
+  #endif // GALE_SSE
+
+#endif // G_ARCH_X86_64
 }
 
 /// Rounds the 64-bit floating point value \a d to the nearest integer (to the
 /// even one in case of ambiguity). This is the default rounding mode on x86
 /// platforms, so the floating-point control word is not modified.
-inline int roundToEven(double const d)
+inline long long roundToEven(double const d)
 {
-#ifdef GALE_SSE2
+#ifdef G_ARCH_X86_64
 
-    return _mm_cvtsd_si32(_mm_load_sd(&d));
+    return _mm_cvtsd_si64x(_mm_load_sd(&d));
 
-#elif defined(G_COMP_GNUC)
+#else
+
+  #ifdef GALE_SSE2
+
+    return static_cast<long long>(_mm_cvtsd_si32(_mm_load_sd(&d)));
+
+  #elif defined(G_COMP_GNUC)
 
     int i;
     __asm__(
@@ -419,9 +435,9 @@ inline int roundToEven(double const d)
         : "t" (d)       /* Input   */
         :               /* Clobber */
     );
-    return i;
+    return static_cast<long long>(i);
 
-#elif defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
+  #elif defined(G_COMP_MSVC)
 
     // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     int i;
@@ -429,21 +445,29 @@ inline int roundToEven(double const d)
         fld d
         fistp i
     }
-    return i;
+    return static_cast<long long>(i);
 
-#else // GALE_SSE2
+  #else // GALE_SSE2
 
-    return static_cast<int>(d+0.5);
+    // Do not offer a C++ fallback for "round to even" as it cannot be nicely
+    // implemented.
+    #error Unsupported compiler.
 
-#endif // GALE_SSE2
+  #endif // GALE_SSE2
+
+#endif // G_ARCH_X86_64
 }
 
 /// Rounds the 32-bit floating point value \a f to the nearest integer towards
 /// zero (truncating the number). This is the default ANSI C rounding mode; use
 /// this method instead of a cast to an integer as it is faster.
-inline int roundToZero(float const f)
+inline long long roundToZero(float const f)
 {
-#if defined(GALE_SSE3) && G_COMP_GNUC
+#ifdef G_ARCH_X86_64
+
+    return _mm_cvttss_si64x(_mm_load_ss(&f));
+
+#elif defined(GALE_SSE3) && defined(G_COMP_GNUC)
 
     int i;
     __asm__(
@@ -452,9 +476,9 @@ inline int roundToZero(float const f)
         : "t" (f)       /* Input   */
         :               /* Clobber */
     );
-    return i;
+    return static_cast<long long>(i);
 
-#elif defined(GALE_SSE3) && defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
+#elif defined(GALE_SSE3) && defined(G_COMP_MSVC)
 
     // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     int i;
@@ -462,15 +486,15 @@ inline int roundToZero(float const f)
         fld f
         fisttp i
     }
-    return i;
+    return static_cast<long long>(i);
 
 #elif defined(GALE_SSE2)
 
-    return _mm_cvttss_si32(_mm_load_ss(&f));
+    return static_cast<long long>(_mm_cvttss_si32(_mm_load_ss(&f)));
 
 #else
 
-    return static_cast<int>(f);
+    return static_cast<long long>(f);
 
 #endif
 }
@@ -478,9 +502,13 @@ inline int roundToZero(float const f)
 /// Rounds the 64-bit floating point value \a d to the nearest integer towards
 /// zero (truncating the number). This is the default ANSI C rounding mode; use
 /// this method instead of a cast to an integer as it is faster.
-inline int roundToZero(double const d)
+inline long long roundToZero(double const d)
 {
-#if defined(GALE_SSE3) && defined(G_COMP_GNUC)
+#ifdef G_ARCH_X86_64
+
+    return _mm_cvttsd_si64x(_mm_load_sd(&d));
+
+#elif defined(GALE_SSE3) && defined(G_COMP_GNUC)
 
     int i;
     __asm__(
@@ -489,9 +517,9 @@ inline int roundToZero(double const d)
         : "t" (d)       /* Input   */
         :               /* Clobber */
     );
-    return i;
+    return static_cast<long long>(i);
 
-#elif defined(GALE_SSE3) && defined(G_COMP_MSVC) && !defined(G_ARCH_X86_64)
+#elif defined(GALE_SSE3) && defined(G_COMP_MSVC)
 
     // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     int i;
@@ -499,15 +527,15 @@ inline int roundToZero(double const d)
         fld d
         fisttp i
     }
-    return i;
+    return static_cast<long long>(i);
 
 #elif defined(GALE_SSE2)
 
-    return _mm_cvttsd_si32(_mm_load_sd(&d));
+    return static_cast<long long>(_mm_cvttsd_si32(_mm_load_sd(&d)));
 
 #else
 
-    return static_cast<int>(d);
+    return static_cast<long long>(d);
 
 #endif
 }
