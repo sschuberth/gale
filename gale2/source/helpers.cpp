@@ -49,8 +49,6 @@ void popOrtho2D()
 
 void drawLogo()
 {
-    Camera* camera_orig=Camera::getAppliedCamera();
-
     // Apply the required camera settings.
     Camera camera_logo;
 
@@ -91,6 +89,7 @@ void drawLogo()
         glPushAttrib(GL_ENABLE_BIT);
         glEnable(GL_CULL_FACE);
         glEnable(GL_LINE_SMOOTH);
+        glDisable(GL_LIGHTING);
 
         glColor3fv(math::Col3f::WHITE());
 
@@ -146,10 +145,6 @@ void drawLogo()
         // Complete the display list.
         glEndList();
         G_ASSERT_OPENGL
-    }
-
-    if (camera_orig) {
-        camera_orig->apply();
     }
 }
 
