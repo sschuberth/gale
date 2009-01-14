@@ -193,13 +193,13 @@ Mesh* Mesh::Factory::Normals(Renderer const& renderer,float scale)
         return NULL;
     }
 
-    // Copy the vertices to the normal mesh.
-    Mesh* m=new Mesh(renderer.m_mesh->vertices);
-    int n=m->vertices.getSize();
+    int n=renderer.m_mesh->vertices.getSize();
 
     // Double the vertices and neighbors for the lines' endpoints.
-    m->vertices.setSize(n*2);
-    m->neighbors.setSize(n*2);
+    Mesh* m=new Mesh(n*2);
+
+    // Copy the vertices to the normal mesh.
+    memcpy(m->vertices,renderer.m_mesh->vertices,n*sizeof(VectorArray::Type));
 
     for (int i=0,k=n;i<n;++i,++k) {
         // Calculate the endpoints by pointing from the vertex into the normal direction.
