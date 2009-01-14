@@ -136,30 +136,50 @@ class TestWindow:public DefaultWindow
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Tetrahedron();
                 puts("Tetrahedron mesh.");
+                if (last_scheme_key=='c') {
+                    puts("Current subdivision scheme not supported on this mesh, resetting.");
+                    m_step=0;
+                }
                 break;
             }
             case '2': {
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Octahedron();
                 puts("Octahedron mesh.");
+                if (last_scheme_key=='c') {
+                    puts("Current subdivision scheme not supported on this mesh, resetting.");
+                    m_step=0;
+                }
                 break;
             }
             case '3': {
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Hexahedron();
                 puts("Hexahedron mesh.");
+                if (last_scheme_key=='p' || last_scheme_key=='b' || last_scheme_key=='l' || last_scheme_key=='s') {
+                    puts("Current subdivision scheme not supported on this mesh, resetting.");
+                    m_step=0;
+                }
                 break;
             }
             case '4': {
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Icosahedron();
                 puts("Icosahedron mesh.");
+                if (last_scheme_key=='c') {
+                    puts("Current subdivision scheme not supported on this mesh, resetting.");
+                    m_step=0;
+                }
                 break;
             }
             case '5': {
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Dodecahedron();
                 puts("Dodecahedron mesh.");
+                if (last_scheme_key=='p' || last_scheme_key=='b' || last_scheme_key=='l' || last_scheme_key=='s' || last_scheme_key=='c') {
+                    puts("Current subdivision scheme not supported on this mesh, resetting.");
+                    m_step=0;
+                }
                 break;
             }
         }
