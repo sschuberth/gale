@@ -40,14 +40,17 @@ namespace model {
  */
 struct Mesh
 {
-    /// Array of vertices as usable by OpenGL.
-    typedef global::DynamicArray<math::Vec3f> VertexArray;
+    /// Array of vectors as usable by OpenGL to specify vertices.
+    typedef global::DynamicArray<math::Vec3f> VectorArray;
 
     /// Array of vertex indices as usable by OpenGL.
     typedef global::DynamicArray<unsigned int> IndexArray;
 
     /// Array of arrays to store vertex neighbors or polygon indices.
     typedef global::DynamicArray<IndexArray> IndexTable;
+
+    /// Forward declaration for use by inner classes.
+    class Renderer;
 
     /// Inner factory class to create some predefined meshes.
     class Factory
@@ -82,6 +85,11 @@ struct Mesh
         static Mesh* Dodecahedron();
 
         //@}
+
+        /// Generates a mesh consisting of lines only that represent the
+        /// compiled mesh's vertex normals stored in the \a renderer, optionally
+        /// with the given \a scale applied.
+        static Mesh* Normals(Renderer const& renderer,float scale=1.0f);
 
       protected:
 
@@ -164,13 +172,16 @@ struct Mesh
     /// Inner class to prepare / render meshes for / using OpenGL.
     class Renderer
     {
+        friend class Factory;
+
       public:
 
         /// Constructor that simply initializes the mesh to render to NULL.
         Renderer()
         :   m_mesh(NULL) {}
 
-        /// Generates the primitive index arrays from the mesh data structure.
+        /// Generates the primitive index arrays from the mesh data structure
+        /// and calculates vertex normals from averaged face normals.
         void compile(Mesh const* mesh);
 
         /// Renders the mesh primitives using OpenGL.
@@ -181,17 +192,26 @@ struct Mesh
         Mesh const* m_mesh;     ///< Reference to the mesh to render.
 
         IndexArray m_points;    ///< Array of vertex indices describing points.
+        IndexArray m_lines;     ///< Array of vertex indices describing lines.
         IndexArray m_triangles; ///< Array of vertex indices describing triangles.
         IndexArray m_quads;     ///< Array of vertex indices describing quadrilaterals.
 
         IndexTable m_polygons;  ///< Table of vertex indices describing polygons.
+
+        VectorArray m_normals;  ///< Array of vertex normals.
     };
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.
     Mesh(int num_vertices=0)
     :   vertices(num_vertices),neighbors(num_vertices) {}
 
-    /// Creates a mesh, copying the vertices from the static \a vertex_array.
+    /// Creates a mesh, copying the vertices from the given dynamic \a vertex_array.
+    Mesh(VectorArray const& vertex_array) {
+        vertices.insert(vertex_array);
+        neighbors.setSize(vertex_array.getSize());
+    }
+
+    /// Creates a mesh, copying the vertices from the given static \a vertex_array.
     template<size_t size>
     Mesh(math::Vec3f const (&vertex_array)[size]) {
         vertices.insert(vertex_array);
@@ -236,7 +256,7 @@ struct Mesh
 
     //@}
 
-    VertexArray vertices; ///< Array of vertices in the mesh.
+    VectorArray vertices; ///< Array of vertex positions.
     IndexTable neighbors; ///< Array of arrays of neighboring vertex indices.
 };
 

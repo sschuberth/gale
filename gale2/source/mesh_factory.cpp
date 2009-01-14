@@ -187,6 +187,34 @@ Mesh* Mesh::Factory::Dodecahedron()
     return m;
 }
 
+Mesh* Mesh::Factory::Normals(Renderer const& renderer,float scale)
+{
+    if (!renderer.m_mesh) {
+        return NULL;
+    }
+
+    // Copy the vertices to the normal mesh.
+    Mesh* m=new Mesh(renderer.m_mesh->vertices);
+    int n=m->vertices.getSize();
+
+    // Double the vertices and neighbors for the lines' endpoints.
+    m->vertices.setSize(n*2);
+    m->neighbors.setSize(n*2);
+
+    for (int i=0,k=n;i<n;++i,++k) {
+        // Calculate the endpoints by pointing from the vertex into the normal direction.
+        m->vertices[k]=m->vertices[i]+renderer.m_normals[i]*scale;
+
+        // Set the start- and endpoints to be their respective neighbors.
+        m->neighbors[i].setSize(1);
+        m->neighbors[i]=k;
+        m->neighbors[k].setSize(1);
+        m->neighbors[k]=i;
+    }
+
+    return m;
+}
+
 void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int valence)
 {
     for (int i=0;i<mesh->vertices.getSize();++i) {
