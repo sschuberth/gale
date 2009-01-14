@@ -1,5 +1,6 @@
 #include <gale/wrapgl/defaultwindow.h>
 
+#include <gale/math/color.h>
 #include <gale/model/mesh.h>
 
 #include <stdio.h>
@@ -22,12 +23,18 @@ class TestWindow:public DefaultWindow
 
         m_renderer.compile(m_mesh);
 
+        m_mesh_normals=Mesh::Factory::Normals(m_renderer,0.2f);
+        m_renderer_normals.compile(m_mesh_normals);
+
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         glEnable(GL_CULL_FACE);
+
+        glEnable(GL_LIGHT0);
     }
 
     ~TestWindow() {
         delete m_mesh;
+        delete m_mesh_normals;
     }
 
     void onResize(int width,int height) {
@@ -40,7 +47,15 @@ class TestWindow:public DefaultWindow
         glClear(GL_COLOR_BUFFER_BIT);
 
         m_camera.apply();
+        glLightfv(GL_LIGHT0,GL_POSITION,m_camera.getPosition());
+
+        glEnable(GL_LIGHTING);
+        glColor3fv(Col3f::WHITE());
         m_renderer.render();
+
+        glDisable(GL_LIGHTING);
+        glColor3fv(Col3f::RED());
+        m_renderer_normals.render();
     }
 
     void onKeyEvent(char key) {
@@ -136,7 +151,7 @@ class TestWindow:public DefaultWindow
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Tetrahedron();
                 puts("Tetrahedron mesh.");
-                if (last_scheme_key=='c') {
+                if (m_step>0 && last_scheme_key=='c') {
                     puts("Current subdivision scheme not supported on this mesh, resetting.");
                     m_step=0;
                 }
@@ -146,7 +161,7 @@ class TestWindow:public DefaultWindow
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Octahedron();
                 puts("Octahedron mesh.");
-                if (last_scheme_key=='c') {
+                if (m_step>0 && last_scheme_key=='c') {
                     puts("Current subdivision scheme not supported on this mesh, resetting.");
                     m_step=0;
                 }
@@ -156,7 +171,7 @@ class TestWindow:public DefaultWindow
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Hexahedron();
                 puts("Hexahedron mesh.");
-                if (last_scheme_key=='p' || last_scheme_key=='b' || last_scheme_key=='l' || last_scheme_key=='s') {
+                if (m_step>0 && (last_scheme_key=='p' || last_scheme_key=='b' || last_scheme_key=='l' || last_scheme_key=='s')) {
                     puts("Current subdivision scheme not supported on this mesh, resetting.");
                     m_step=0;
                 }
@@ -166,7 +181,7 @@ class TestWindow:public DefaultWindow
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Icosahedron();
                 puts("Icosahedron mesh.");
-                if (last_scheme_key=='c') {
+                if (m_step>0 && last_scheme_key=='c') {
                     puts("Current subdivision scheme not supported on this mesh, resetting.");
                     m_step=0;
                 }
@@ -176,7 +191,7 @@ class TestWindow:public DefaultWindow
                 delete m_mesh;
                 m_mesh=Mesh::Factory::Dodecahedron();
                 puts("Dodecahedron mesh.");
-                if (last_scheme_key=='p' || last_scheme_key=='b' || last_scheme_key=='l' || last_scheme_key=='s' || last_scheme_key=='c') {
+                if (m_step>0 && (last_scheme_key=='p' || last_scheme_key=='b' || last_scheme_key=='l' || last_scheme_key=='s' || last_scheme_key=='c')) {
                     puts("Current subdivision scheme not supported on this mesh, resetting.");
                     m_step=0;
                 }
@@ -187,6 +202,11 @@ class TestWindow:public DefaultWindow
         if (key>='1' && key<='5') {
             m_scheme(*m_mesh,m_step);
             m_renderer.compile(m_mesh);
+
+            delete m_mesh_normals;
+            m_mesh_normals=Mesh::Factory::Normals(m_renderer,0.2f);
+            m_renderer_normals.compile(m_mesh_normals);
+
             repaint();
 
             last_mesh_key=key;
@@ -234,11 +254,13 @@ class TestWindow:public DefaultWindow
   private:
 
     Mesh* m_mesh;
+    Mesh* m_mesh_normals;
 
     Mesh::Subdivider::Scheme m_scheme;
     int m_step;
 
     Mesh::Renderer m_renderer;
+    Mesh::Renderer m_renderer_normals;
 };
 
 // Enable memory leak detection, see:
