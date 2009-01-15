@@ -86,10 +86,29 @@ struct Mesh
 
         //@}
 
+        /// Returns a torus with outer radius \a r1 and inner radius \a r2. The
+        /// outer and inner circles are divided into \a r1_segs and \a r2_segs
+        /// segments respectively.
+        static Mesh* Torus(double r1,double r2,int r1_segs,int r2_segs);
+
+        /**
+         * \name Helper and debug meshes
+         * Factory methods to create meshes that are not particularly useful
+         * on their own, but are used by other factory methods or for debugging.
+         */
+        //@{
+
+        /// Generates a mesh by extruding the line loop defined by \a profile
+        /// along the given \a path. If \a close is \c true, the end of the path
+        /// is connected to its beginning, else cut faces are created.
+        static Mesh* Extrude(VectorArray const& path,VectorArray const& profile,bool closed=true);
+
         /// Generates a mesh consisting of lines only that represent the
         /// compiled mesh's vertex normals stored in the \a renderer, optionally
         /// with the given \a scale applied.
         static Mesh* Normals(Renderer const& renderer,float scale=1.0f);
+
+        //@}
 
       protected:
 

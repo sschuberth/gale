@@ -25,6 +25,8 @@
 
 #include "gale/model/mesh.h"
 
+#include "gale/math/hmatrix4.h"
+
 using namespace gale::math;
 
 namespace gale {
@@ -183,6 +185,102 @@ Mesh* Mesh::Factory::Dodecahedron()
     // Make all vertices neighbors whose distance matches the required edge length.
     static float const e=2*c;
     populateNeighborhood(m,e,3);
+
+    return m;
+}
+
+Mesh* Mesh::Factory::Torus(double r1,double r2,int r1_segs,int r2_segs)
+{
+    VectorArray path(r1_segs);
+    VectorArray profile(r2_segs);
+
+    float a,d;
+    int r;
+
+    // Calculate points on the outer path.
+    a=0;
+    d=2*Constf::PI()/r1_segs;
+    for (r=0;r<r1_segs;++r) {
+        path[r]=Vec3d(::cos(a)*r1,::sin(a)*r1,0);
+        a+=d;
+    }
+
+    // Calculate points on the inner profile.
+    a=0;
+    d=2*Constf::PI()/r2_segs;
+    for (r=0;r<r2_segs;++r) {
+        profile[r]=Vec3d(::cos(a)*r2,::sin(a)*r2,0);
+        a+=d;
+    }
+
+    return Extrude(path,profile);
+}
+
+Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,bool closed)
+{
+    if (path.getSize()<2 || profile.getSize()<3) {
+        return NULL;
+    }
+
+    Mesh* m=new Mesh(path.getSize()*profile.getSize());
+
+    // Pointers to the first and last vectors (Alpha and Omega :-) in the path.
+    Vec3f const* const pA=&path[0];
+    Vec3f const* const pO=&path[path.getSize()-1];
+
+    // Pointer to the currently considered center vector in the path.
+    Vec3f const* p=pA;
+
+    // Index of the vertex currently being calculated.
+    int vi=0;
+
+    for (int i=0,pi=0;i<path.getSize();++i,pi+=profile.getSize()) {
+        // Pointer to p's predecessor along the path.
+        Vec3f const* a=(p==pA)?(closed?pO:p):p-1;
+
+        // Pointer to p's successor along the path.
+        Vec3f const* b=(p==pO)?(closed?pA:p):p+1;
+
+        // Calculate the Frenet frame in p.
+        Vec3f tangent=~(*b-*a);
+        Vec3f binormal=~(tangent^(*a+*b));
+        Vec3f normal=binormal^tangent;
+
+        HMat4f frenet(binormal,normal,tangent,*p);
+
+        for (int k=0;k<profile.getSize();++k) {
+            // Transform the profile along the path.
+            m->vertices[vi]=frenet*profile[k];
+
+            // Connect the neighbors.
+            IndexArray& vn=m->neighbors[vi];
+            vn.setSize(6);
+
+#define WRAP_I(x) wrap(x,m->vertices.getSize())
+#define WRAP_K(x) wrap(x,profile.getSize())
+
+            int piwk;
+
+            piwk=pi+WRAP_K(k-1);
+            vn[0]=piwk;
+
+            vn[1]=WRAP_I(piwk+profile.getSize());
+            vn[2]=WRAP_I(vi+profile.getSize());
+
+            piwk=pi+WRAP_K(k+1);
+            vn[3]=piwk;
+
+            vn[4]=WRAP_I(piwk-profile.getSize());
+            vn[5]=WRAP_I(vi-profile.getSize());
+
+#undef WRAP_K
+#undef WRAP_I
+
+            ++vi;
+        }
+
+        ++p;
+    }
 
     return m;
 }
