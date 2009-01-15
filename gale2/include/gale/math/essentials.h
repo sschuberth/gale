@@ -281,21 +281,34 @@ inline T clampSafe(T const x,T const a,T const b)
     return (a<=b)?clamp(x,a,b):clamp(x,b,a);
 }
 
-/// Wraps \a x to range [\a a,\a b[, where \a a <= \a b.
+/// Wraps \a x to [0,\a range[.
 template<typename T>
-inline T wrap(T x,T const a,T const b)
+inline T wrap(T x,T const range)
 {
-    T const range=b-a;
-    while (x<a) {
+    if (x<0) {
         x+=range;
     }
-    while (x>=b) {
+    else if (x>=range) {
         x-=range;
     }
     return x;
 }
 
-/// Wraps \a x to range [\a a,\a b[ or range [\a b,\a a[.
+/// Wraps \a x to range [\a a,\a b], where \a a <= \a b.
+template<typename T>
+inline T wrap(T x,T const a,T const b)
+{
+    T const range=b-a+1;
+    while (x<a) {
+        x+=range;
+    }
+    while (x>b) {
+        x-=range;
+    }
+    return x;
+}
+
+/// Wraps \a x to range [\a a,\a b] or range [\a b,\a a].
 template<typename T>
 inline T wrapSafe(T x,T const a,T const b)
 {
