@@ -201,6 +201,7 @@ class TestWindow:public DefaultWindow
 
         if (key>='1' && key<='5') {
             m_scheme(*m_mesh,m_step);
+            printf("Mesh is%sconsistent.\n",m_mesh->isConsistent()<0?" ":" not ");
             m_renderer.compile(m_mesh);
 
             delete m_mesh_normals;

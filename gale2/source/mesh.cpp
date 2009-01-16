@@ -136,6 +136,18 @@ void Mesh::erase(int xi,int vi)
     }
 }
 
+int Mesh::isConsistent() const {
+    for (int vi=0;vi<vertices.getSize();++vi) {
+        IndexArray const& vn=neighbors[vi];
+        for (int ni=0;ni<vn.getSize();++ni) {
+            if (neighbors[vn[ni]].find(vi)==-1) {
+                return vi;
+            }
+        }
+    }
+    return -1;
+}
+
 } // namespace model
 
 } // namespace gale

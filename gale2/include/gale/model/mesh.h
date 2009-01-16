@@ -275,6 +275,10 @@ struct Mesh
 
     //@}
 
+    /// Performs a simple brute-force check of the neighborhood information.
+    /// Returns -1 on success or the vertex index causing the error.
+    int isConsistent() const;
+
     VectorArray vertices; ///< Array of vertex positions.
     IndexTable neighbors; ///< Array of arrays of neighboring vertex indices.
 };
