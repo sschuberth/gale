@@ -213,7 +213,7 @@ Mesh* Mesh::Factory::Torus(double r1,double r2,int r1_segs,int r2_segs)
         a+=d;
     }
 
-    return Extrude(path,profile);
+    return Extrude(path,profile,false);
 }
 
 Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,bool closed)
@@ -222,7 +222,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
         return NULL;
     }
 
-    Mesh* m=new Mesh(path.getSize()*profile.getSize());
+    Mesh* m=new Mesh(static_cast<int>(!closed)*2+path.getSize()*profile.getSize());
 
     // Pointers to the first and last vectors (Alpha and Omega :-) in the path.
     Vec3f const* const pA=&path[0];
@@ -234,7 +234,31 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
     // Index of the vertex currently being calculated.
     int vi=0;
 
-    for (int i=0,pi=0;i<path.getSize();++i,pi+=profile.getSize()) {
+    if (!closed) {
+        // Add the first path vertex as the center of the start cut face.
+        m->vertices[vi]=*pA;
+
+        // All vertices of the start cut face are its neighbors.
+        IndexArray& nA=m->neighbors[vi];
+        nA.setSize(profile.getSize());
+        for (int i=0;i<nA.getSize();++i) {
+            nA[i]=2+i;
+        }
+        ++vi;
+
+        // Add the first path vertex as the center of the end cut face.
+        m->vertices[vi]=*pO;
+
+        // All vertices of the end cut face are its neighbors.
+        IndexArray& nO=m->neighbors[vi];
+        nO.setSize(profile.getSize());
+        for (int i=0;i<nO.getSize();++i) {
+            nO[i]=m->vertices.getSize()-1-i;
+        }
+        ++vi;
+    }
+
+    for (int pi=vi;vi<m->vertices.getSize();pi+=profile.getSize()) {
         // Pointer to p's predecessor along the path.
         Vec3f const* a=(p==pA)?(closed?pO:p):p-1;
 
@@ -264,14 +288,26 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
             piwk=pi+WRAP_K(k-1);
             vn[0]=piwk;
 
-            vn[1]=WRAP_I(piwk+profile.getSize());
-            vn[2]=WRAP_I(vi+profile.getSize());
+            if (!closed && p==pO) {
+                // Connect the end cut face vertices to the last path vertex.
+                vn[1]=vn[2]=1;
+            }
+            else {
+                vn[1]=WRAP_I(piwk+profile.getSize());
+                vn[2]=WRAP_I(vi+profile.getSize());
+            }
 
             piwk=pi+WRAP_K(k+1);
             vn[3]=piwk;
 
-            vn[4]=WRAP_I(piwk-profile.getSize());
-            vn[5]=WRAP_I(vi-profile.getSize());
+            if (!closed && p==pA) {
+                // Connect the start cut face vertices to the first path vertex.
+                vn[4]=vn[5]=0;
+            }
+            else {
+                vn[4]=WRAP_I(piwk-profile.getSize());
+                vn[5]=WRAP_I(vi-profile.getSize());
+            }
 
 #undef WRAP_K
 #undef WRAP_I
