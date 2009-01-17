@@ -283,30 +283,32 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
 #define WRAP_I(x) wrap(x,m->vertices.getSize())
 #define WRAP_K(x) wrap(x,profile.getSize())
 
-            int piwk;
+            int piwk,n=0;
 
             piwk=pi+WRAP_K(k-1);
-            vn[0]=piwk;
+            vn[n++]=piwk;
 
             if (!closed && p==pO) {
                 // Connect the end cut face vertices to the last path vertex.
-                vn[1]=vn[2]=1;
+                vn[n++]=1;
+                vn.setSize(5);
             }
             else {
-                vn[1]=WRAP_I(piwk+profile.getSize());
-                vn[2]=WRAP_I(vi+profile.getSize());
+                vn[n++]=WRAP_I(piwk+profile.getSize());
+                vn[n++]=WRAP_I(vi+profile.getSize());
             }
 
             piwk=pi+WRAP_K(k+1);
-            vn[3]=piwk;
+            vn[n++]=piwk;
 
             if (!closed && p==pA) {
                 // Connect the start cut face vertices to the first path vertex.
-                vn[4]=vn[5]=0;
+                vn[n++]=0;
+                vn.setSize(5);
             }
             else {
-                vn[4]=WRAP_I(piwk-profile.getSize());
-                vn[5]=WRAP_I(vi-profile.getSize());
+                vn[n++]=WRAP_I(piwk-profile.getSize());
+                vn[n++]=WRAP_I(vi-profile.getSize());
             }
 
 #undef WRAP_K
