@@ -189,31 +189,66 @@ Mesh* Mesh::Factory::Dodecahedron()
     return m;
 }
 
-Mesh* Mesh::Factory::Torus(double r1,double r2,int r1_segs,int r2_segs)
+Mesh* Mesh::Factory::Torus(float r1,float r2,int r1_segs,int r2_segs)
 {
     VectorArray path(r1_segs);
     VectorArray profile(r2_segs);
 
     float a,d;
-    int r;
+    int i;
 
     // Calculate points on the outer path.
     a=0;
     d=2*Constf::PI()/r1_segs;
-    for (r=0;r<r1_segs;++r) {
-        path[r]=Vec3d(::cos(a)*r1,::sin(a)*r1,0);
+    for (i=0;i<r1_segs;++i) {
+        path[i]=Vec3f(::cos(a)*r1,::sin(a)*r1,0);
         a+=d;
     }
 
     // Calculate points on the inner profile.
     a=0;
     d=2*Constf::PI()/r2_segs;
-    for (r=0;r<r2_segs;++r) {
-        profile[r]=Vec3d(::cos(a)*r2,::sin(a)*r2,0);
+    for (i=0;i<r2_segs;++i) {
+        profile[i]=Vec3f(::cos(a)*r2,::sin(a)*r2,0);
         a+=d;
     }
 
-    return Extrude(path,profile,false);
+    return Extrude(path,profile);
+}
+
+Mesh* Mesh::Factory::TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w,float h,int p,int q)
+{
+    VectorArray path(r1_segs);
+    VectorArray profile(r2_segs);
+
+    int i;
+
+    // Calculate points on the outer path.
+    for (i=0;i<r1_segs;++i) {
+        float angle=2*Constf::PI()/r1_segs*i;
+
+        // Calculate the cylindrical coordinates.
+        float theta=angle*p;
+        float r=r1+w*::cos(theta);
+        float z=h*::sin(theta);
+
+        // Convert to cartesian coordinates.
+        float phi=angle*q;
+        float x=r*::cos(phi);
+        float y=r*::sin(phi);
+
+        path[i]=Vec3f(x,y,z);
+    }
+
+    // Calculate points on the inner profile.
+    float a=0;
+    float d=2*Constf::PI()/r2_segs;
+    for (i=0;i<r2_segs;++i) {
+        profile[i]=Vec3f(::cos(a)*r2,::sin(a)*r2,0);
+        a+=d;
+    }
+
+    return Extrude(path,profile);
 }
 
 Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,bool closed)

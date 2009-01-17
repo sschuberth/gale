@@ -89,7 +89,15 @@ struct Mesh
         /// Returns a torus with outer radius \a r1 and inner radius \a r2. The
         /// outer and inner circles are divided into \a r1_segs and \a r2_segs
         /// segments respectively.
-        static Mesh* Torus(double r1,double r2,int r1_segs,int r2_segs);
+        static Mesh* Torus(float r1,float r2,int r1_segs,int r2_segs);
+
+        /// Returns a torus knot with outer radius \a r1 and inner radius \a r2.
+        /// The outer and inner circles are consist of \a r1_segs and \a r2_segs
+        /// segments respectively. \a w and \a h specify the width and height of
+        /// the whole knot, which is obtained by looping through the hole \a p
+        /// times with \q revolutions before joining its ends, where \a p and
+        /// \a q have to be relatively prime.
+        static Mesh* TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w,float h,int p,int q);
 
         /**
          * \name Helper and debug meshes
