@@ -21,6 +21,11 @@ class TestWindow:public DefaultWindow
     {
         m_camera.approach(5);
 
+        int error=m_mesh->isConsistent();
+        if (error>=0) {
+            printf("Mesh is inconsistent at vertex %d.\n",error);
+        }
+
         m_renderer.compile(m_mesh);
 
         m_mesh_normals=Mesh::Factory::Normals(m_renderer,0.2f);
@@ -28,6 +33,7 @@ class TestWindow:public DefaultWindow
 
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
 
         glEnable(GL_LIGHT0);
     }
@@ -44,7 +50,7 @@ class TestWindow:public DefaultWindow
     }
 
     void onRender() {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
         m_camera.apply();
         glLightfv(GL_LIGHT0,GL_POSITION,m_camera.getPosition());
@@ -201,7 +207,10 @@ class TestWindow:public DefaultWindow
 
         if (key>='1' && key<='5') {
             m_scheme(*m_mesh,m_step);
-            printf("Mesh is%sconsistent.\n",m_mesh->isConsistent()<0?" ":" not ");
+            int error=m_mesh->isConsistent();
+            if (error>=0) {
+                printf("Mesh is inconsistent at vertex %d.\n",error);
+            }
             m_renderer.compile(m_mesh);
 
             delete m_mesh_normals;
