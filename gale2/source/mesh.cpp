@@ -140,11 +140,20 @@ int Mesh::isConsistent() const {
     for (int vi=0;vi<vertices.getSize();++vi) {
         IndexArray const& vn=neighbors[vi];
         for (int ni=0;ni<vn.getSize();++ni) {
+            // Search for duplicates in the neighbor list.
+            for (int di=0;di<ni;++di) {
+                if (vn[di]==vn[ni]) {
+                    return vi;
+                }
+            }
+
+            // Check if neighbors are really neighbors of each other.
             if (neighbors[vn[ni]].find(vi)==-1) {
                 return vi;
             }
         }
     }
+
     return -1;
 }
 
