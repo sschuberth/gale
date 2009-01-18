@@ -92,6 +92,7 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
     G_ASSERT_CALL(wglChoosePixelFormatARB(m_handle.device,attr,NULL,1,&format,&count));
     assert(count>0);
 
+    // Setting the pixel format is only allowed only per window!
     G_ASSERT_CALL(SetPixelFormat(m_handle.device,format,NULL));
 
     // Try to initialize an extension required to create an OpenGL 3.0 compatible

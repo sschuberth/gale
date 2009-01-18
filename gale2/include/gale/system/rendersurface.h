@@ -39,7 +39,9 @@ namespace system {
 
 /**
  * This class serves as a base for everything that requires a render surface,
- * e.g. on-screen windows or off-screen buffers to render to using OpenGL.
+ * e.g. on-screen windows or off-screen buffers to render to using OpenGL. It
+ * creates a dummy render surface that is used to initialize OpenGL extension
+ * to create more powerful render surfaces later.
  */
 
 // TODO: Add Linux implementation.
@@ -49,17 +51,17 @@ class RenderSurface
 {
   public:
 
-    /// Type definition for a window handle that belongs to the render surface.
+    /// Type definition for a window handle the render surface belongs to.
     typedef HWND WindowHandle;
 
-    /// Type definition for a context handle that identifies a render surface.
+    /// A context handle uniquely identifies a render surface.
     struct ContextHandle {
         /// Constructor to simplify handle initialization.
         ContextHandle(HDC device=NULL,HGLRC render=NULL)
         :   device(device),render(render) {}
 
-        HDC device;   ///< Handle to the Windows device context.
-        HGLRC render; ///< Handle to the Windows render context.
+        HDC device;   ///< Handle to the device context.
+        HGLRC render; ///< Handle to the render context.
     };
 
     /// Simple structure to hold the dimensions of a render surface.
@@ -72,12 +74,12 @@ class RenderSurface
         int height; ///< Height of the render surface.
     };
 
-    /// Returns the active render context for the current thread.
+    /// Returns the active context for the current thread.
     static ContextHandle getCurrentContext() {
         return ContextHandle(wglGetCurrentDC(),wglGetCurrentContext());
     }
 
-    /// Sets the active render context for the current thread.
+    /// Sets the active context for the current thread.
     static bool setCurrentContext(ContextHandle const& handle) {
         return wglMakeCurrent(handle.device,handle.render)!=FALSE;
     }
@@ -99,7 +101,7 @@ class RenderSurface
         return s_handle;
     }
 
-    /// Sets this to be the active render context for the current thread.
+    /// Sets this to be the active context for the current thread.
     bool setCurrentContext() {
         return setCurrentContext(contextHandle());
     }
@@ -128,8 +130,8 @@ class RenderSurface
     /// Forwards window messages to the window specific message handler.
     static LRESULT CALLBACK WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
 
-    static WindowHandle s_window;  ///< Handle to the hidden window.
-    static ContextHandle s_handle; ///< Handle to the render context.
+    static WindowHandle s_window;  ///< Handle to the window owning the context.
+    static ContextHandle s_handle; ///< Handle to the context.
 };
 
 #endif // G_OS_WINDOWS

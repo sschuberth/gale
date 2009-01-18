@@ -115,6 +115,7 @@ RenderSurface::RenderSurface()
     int format=ChoosePixelFormat(s_handle.device,&pfd);
     assert(format!=0);
 
+    // Setting the pixel format is only allowed only per window!
     G_ASSERT_CALL(SetPixelFormat(s_handle.device,format,&pfd));
 
     // Create and activate a rendering context.
