@@ -95,7 +95,7 @@ struct Mesh
         /// The outer and inner circles are consist of \a r1_segs and \a r2_segs
         /// segments respectively. \a w and \a h specify the width and height of
         /// the whole knot, which is obtained by looping through the hole \a p
-        /// times with \q revolutions before joining its ends, where \a p and
+        /// times with \a q revolutions before joining its ends, where \a p and
         /// \a q have to be relatively prime.
         static Mesh* TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w,float h,int p,int q);
 
