@@ -92,13 +92,19 @@ class DefaultWindow:public RenderWindow
         }
     }
 
+    void onResize(int width,int height) {
+        m_camera.setScreenSpaceDimensions(width,height);
+        m_camera.setProjection(math::Mat4d::Factory::PerspectiveProjection(width,height));
+        repaint();
+    }
+
     /// Override the default paint event handler to draw a logo.
     void onPaint() {
         onRender();
         drawLogo();
     }
 
-    /// Applications that wish to benefit from some extra stuff being
+    /// Applications that wish to benefit from extra stuff (like logos) being
     /// automatically rendered should override this method instead of onPaint().
     virtual void onRender() {}
 

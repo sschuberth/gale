@@ -43,12 +43,6 @@ class TestWindow:public DefaultWindow
         delete m_mesh_normals;
     }
 
-    void onResize(int width,int height) {
-        m_camera.setScreenSpaceDimensions(width,height);
-        m_camera.setProjection(Mat4d::Factory::PerspectiveProjection(width,height));
-        repaint();
-    }
-
     void onRender() {
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
