@@ -209,7 +209,7 @@ class RandomBase
 
     /// Returns a random quaternion.
     Quaternion<T> randomQuat() {
-        return Quaternion<T>(randomVec3(),random0ExclN(T(2*M_PI)));
+        return Quaternion<T>(randomVec3(),random0ExclN(2*Constants<T>::PI()));
     }
 
     //@}

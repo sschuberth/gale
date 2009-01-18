@@ -110,7 +110,7 @@ class Matrix4
         static Matrix4 PerspectiveProjection(
           int const view_width,
           int const view_height,
-          double const fov=M_PI*0.25,
+          double const fov=Constd::PI()*0.25,
           double const clip_near=0.001,
           double const clip_far=1000.0)
         {
