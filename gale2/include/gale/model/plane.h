@@ -31,11 +31,11 @@
  * Linear algebra plane routines
  */
 
-#include "vector.h"
+#include "../math/vector.h"
 
 namespace gale {
 
-namespace math {
+namespace model {
 
 // Make sure data members are tightly packed.
 #pragma pack(push,1)
@@ -71,13 +71,11 @@ class Plane
     //@{
 
     /// Constructs a plane from a \a normal and a \a distance to the origin.
-    template<typename T>
-    Plane(Vector<3,T> const& normal,T distance)
+    Plane(math::Vec3d const& normal=-math::Vec3d::Z(),double distance=0)
     :   m_normal(~normal),m_distance(-distance) {}
 
     /// Constructs a plane from three vectors \a a, \a b and \a c on that plane.
-    template<typename T>
-    Plane(Vector<3,T> const& a,Vector<3,T> const& b,Vector<3,T> const& c) {
+    Plane(math::Vec3d const& a,math::Vec3d const& b,math::Vec3d const& c) {
         m_normal=~((b-a)^(c-a));
         m_distance=-a.dot(m_normal);
     }
@@ -119,12 +117,12 @@ class Plane
     //@{
 
     /// Returns the plane's normal vector.
-    Vec3d const& getNormal() const {
+    math::Vec3d const& getNormal() const {
         return m_normal;
     }
 
     /// Sets the plane's \a normal vector.
-    void setNormal(Vec3d const& normal) {
+    void setNormal(math::Vec3d const& normal) {
         m_normal=~normal;
     }
 
@@ -146,7 +144,7 @@ class Plane
     //@{
 
     /// Returns the distance of \a v to the plane along the normal vector.
-    double distanceTo(Vec3d const& v) const {
+    double distanceTo(math::Vec3d const& v) const {
         return (v%m_normal)+m_distance;
     }
 
@@ -154,13 +152,13 @@ class Plane
 
   protected:
 
-    Vec3d m_normal;    ///< The plane's normal vector (A, B, C in the formula).
-    double m_distance; ///< Negative distance to the origin (D in the formula).
+    math::Vec3d m_normal; ///< The plane's normal vector (A, B, C in the formula).
+    double m_distance;    ///< Negative distance to the origin (D in the formula).
 };
 
 #pragma pack(pop)
 
-} // namespace math
+} // namespace model
 
 } // namespace gale
 

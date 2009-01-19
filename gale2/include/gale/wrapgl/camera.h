@@ -105,15 +105,27 @@ class Camera
         m_screen_changed=true;
     }
 
-    /// Returns the current modelview transformation matrix.
+    /// Returns whether the screen space has changed since the camera was last
+    /// applied.
+    bool hasScreenSpaceChanged() const {
+        return m_screen_changed;
+    }
+
+    /// Returns the current modelview transformation.
     math::HMat4f const& getModelview() const {
         return m_modelview;
     }
 
-    /// Sets the modelview transformation matrix.
+    /// Sets the modelview transformation.
     void setModelview(math::HMat4f const& modelview) {
         m_modelview=modelview;
         m_modelview_changed=true;
+    }
+
+    /// Returns whether the modelview transformation has changed since the
+    /// camera was last applied.
+    bool hasModelviewChanged() const {
+        return m_modelview_changed;
     }
 
     /// Returns the current projection matrix.
@@ -125,6 +137,12 @@ class Camera
     void setProjection(math::Mat4d const& projection) {
         m_projection=projection;
         m_projection_changed=true;
+    }
+
+    /// Returns whether the projection matrix has changed since the camera was
+    /// last applied.
+    bool hasProjectionChanged() const {
+        return m_projection_changed;
     }
 
     /// Activates the camera by applying all its settings to the current render
@@ -257,7 +275,7 @@ class Camera
     ScreenSpace m_screen;  ///< The camera's current screen space.
     bool m_screen_changed; ///< Marks whether the screen space needs to be applied.
 
-    math::HMat4f m_modelview; ///< Modelview transformation matrix of the camera.
+    math::HMat4f m_modelview; ///< Modelview transformation of the camera.
     bool m_modelview_changed; ///< Marks whether the modelview needs to be applied.
 
     math::Mat4d m_projection;  ///< Projection matrix of the camera.
