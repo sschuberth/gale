@@ -26,6 +26,11 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
+/**
+ * \file
+ * Pseudo Random Number Generators (PRNG)
+ */
+
 #ifndef GALE_TINY
     #include <time.h>
 #endif
@@ -34,11 +39,6 @@
 #include "quaternion.h"
 
 #include "../global/types.h"
-
-/**
- * \file
- * Pseudo Random Number Generators (PRNG)
- */
 
 namespace gale {
 

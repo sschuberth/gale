@@ -26,12 +26,12 @@
 #ifndef ESSENTIALS_H
 #define ESSENTIALS_H
 
-#include "../global/defines.h"
-
 /**
  * \file
  * Optimized essential mathematical functions
  */
+
+#include "../global/defines.h"
 
 #ifndef _USE_MATH_DEFINES
     #define _USE_MATH_DEFINES

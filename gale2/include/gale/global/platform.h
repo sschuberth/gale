@@ -26,12 +26,12 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
-#include "defines.h"
-
 /**
  * \file
  * Basic platform specific includes
  */
+
+#include "defines.h"
 
 #ifdef G_OS_LINUX
     #include <sys/times.h>
