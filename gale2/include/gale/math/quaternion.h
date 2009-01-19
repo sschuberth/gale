@@ -5,7 +5,7 @@
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
  * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
- * Copyright (C) 2005-2008  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
+ * Copyright (C) 2005-2009  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -434,7 +434,7 @@ class Quaternion
         return Quaternion(0,Vec::ZERO());
     }
 
-    /// Performs a cubic Bézier interpolation between the quaternions \a q and
+    /// Performs a cubic Bzier interpolation between the quaternions \a q and
     /// \a r based on a scalar \a s within the quadrilateral defined
     /// together with the "tangent" quaternions \a a and \a b (the curve touches
     /// the midpoint of the "line" from \a a to \a b when \a s = 0.5).
