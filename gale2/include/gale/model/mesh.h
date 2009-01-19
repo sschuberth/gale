@@ -26,9 +26,8 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "../math/vector.h"
-
 #include "../global/dynamicarray.h"
+#include "../math/vector.h"
 
 namespace gale {
 

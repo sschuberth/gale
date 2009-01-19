@@ -31,9 +31,9 @@
  * An implementation for camera transformation and navigation
  */
 
-#include "../system/rendersurface.h"
-#include "../math/quaternion.h"
 #include "../math/matrix4.h"
+#include "../math/quaternion.h"
+#include "../wrapgl/rendersurface.h"
 
 namespace gale {
 
@@ -73,7 +73,7 @@ class Camera
     /// Constructor that initializes a perspective camera attached to the given
     /// render \a surface. By default, its screen space is the current viewport
     /// and no transformation is set to the modelview matrix.
-    Camera(system::RenderSurface const* surface=NULL)
+    Camera(RenderSurface const* surface=NULL)
     :   m_surface(surface)
     ,   m_screen_changed(false)
     {
@@ -252,7 +252,7 @@ class Camera
 
     static Camera* s_current; ///< Common pointer to the last applied camera.
 
-    system::RenderSurface const* m_surface; ///< The surface that the camera is attached to.
+    RenderSurface const* m_surface; ///< The surface that the camera is attached to.
 
     ScreenSpace m_screen;  ///< The camera's current screen space.
     bool m_screen_changed; ///< Marks whether the screen space needs to be applied.

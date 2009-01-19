@@ -31,8 +31,9 @@
  * A render window implementation
  */
 
+#include "rendersurface.h"
+
 #include "../global/attributelist.h"
-#include "../system/rendersurface.h"
 #include "../system/timer.h"
 
 namespace gale {
@@ -51,7 +52,7 @@ namespace wrapgl {
 #include "GLEX_WGL_ARB_pixel_format.h"
 #include "GLEX_ARB_color_buffer_float.h"
 
-class RenderWindow:public system::RenderSurface
+class RenderWindow:public RenderSurface
 {
   public:
 

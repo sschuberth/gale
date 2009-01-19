@@ -41,7 +41,7 @@ void Camera::apply(bool const force)
     if (camera_changed || m_screen_changed) {
         if (m_surface) {
             // Get the render surface's dimensions.
-            system::RenderSurface::Dimensions d=m_surface->dimensions();
+            RenderSurface::Dimensions d=m_surface->dimensions();
 
             // If the desired screen space is smaller than the dimensions, we need
             // to enable scissoring to avoid glClear to affect the whole surface.

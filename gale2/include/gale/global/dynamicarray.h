@@ -31,6 +31,7 @@
  * A dynamic array implementation to store arbitrary objects
  */
 
+#include "../math/essentials.h"
 #include "../meta/tools.h"
 
 namespace gale {

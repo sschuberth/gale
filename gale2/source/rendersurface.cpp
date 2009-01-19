@@ -23,13 +23,13 @@
  *
  */
 
-#include "gale/system/rendersurface.h"
+#include "gale/wrapgl/rendersurface.h"
 
 #include "gale/global/defines.h"
 
 namespace gale {
 
-namespace system {
+namespace wrapgl {
 
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
@@ -167,6 +167,6 @@ LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 
 #endif // G_OS_WINDOWS
 
-} // namespace system
+} // namespace wrapgl
 
 } // namespace gale

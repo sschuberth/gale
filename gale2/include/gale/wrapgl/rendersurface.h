@@ -35,7 +35,7 @@
 
 namespace gale {
 
-namespace system {
+namespace wrapgl {
 
 /**
  * This class serves as a base for everything that requires a render surface,
@@ -136,7 +136,7 @@ class RenderSurface
 
 #endif // G_OS_WINDOWS
 
-} // namespace system
+} // namespace wrapgl
 
 } // namespace gale
 
