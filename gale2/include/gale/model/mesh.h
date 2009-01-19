@@ -26,6 +26,11 @@
 #ifndef MESH_H
 #define MESH_H
 
+/**
+ * \file
+ * Mesh management related classes
+ */
+
 #include "../global/dynamicarray.h"
 #include "../math/vector.h"
 

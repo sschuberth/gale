@@ -26,6 +26,11 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
+/**
+ * \file
+ * Collection of miscellaneous OpenGL helper functions
+ */
+
 namespace gale {
 
 namespace wrapgl {

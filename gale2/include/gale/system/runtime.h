@@ -26,6 +26,11 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
+/**
+ * \file
+ * Minimal replacements for C runtime functions
+ */
+
 #ifdef GALE_TINY
 
 /// Minimal "new" operator implementation.
