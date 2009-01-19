@@ -1,6 +1,5 @@
-#include <gale/wrapgl/defaultwindow.h>
-
 #include <gale/math/color.h>
+#include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/renderer.h>
 
 #include <stdio.h>
@@ -21,7 +20,7 @@ class TestWindow:public DefaultWindow
     {
         m_camera.approach(5);
 
-        int error=m_mesh->isConsistent();
+        int error=m_mesh->check();
         if (error>=0) {
             printf("Mesh is inconsistent at vertex %d.\n",error);
         }
@@ -200,7 +199,7 @@ class TestWindow:public DefaultWindow
 
         if (key>='1' && key<='5') {
             m_scheme(*m_mesh,m_step);
-            int error=m_mesh->isConsistent();
+            int error=m_mesh->check();
             if (error>=0) {
                 printf("Mesh is inconsistent at vertex %d.\n",error);
             }

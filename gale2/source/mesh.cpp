@@ -136,7 +136,7 @@ void Mesh::erase(int xi,int vi)
     }
 }
 
-int Mesh::isConsistent() const {
+int Mesh::check() const {
     for (int vi=0;vi<vertices.getSize();++vi) {
         IndexArray const& vn=neighbors[vi];
         for (int ni=0;ni<vn.getSize();++ni) {
