@@ -25,15 +25,13 @@
 
 #include "gale/model/mesh.h"
 
-#include "gale/global/platform.h"
-
 using namespace gale::math;
 
 namespace gale {
 
 namespace model {
 
-void Mesh::Renderer::compile(Mesh const* mesh)
+void Mesh::Preparer::compile(Mesh const* mesh)
 {
     m_mesh=mesh;
     if (!m_mesh) {
@@ -41,14 +39,14 @@ void Mesh::Renderer::compile(Mesh const* mesh)
     }
 
     // Clear all indices as they will be rebuilt now.
-    m_points.clear();
-    m_lines.clear();
-    m_triangles.clear();
-    m_quads.clear();
-    m_polygons.clear();
+    points.clear();
+    lines.clear();
+    triangles.clear();
+    quads.clear();
+    polygons.clear();
 
-    m_normals.setSize(m_mesh->vertices.getSize());
-    memset(m_normals,0,m_normals.getSize()*sizeof(VectorArray::Type));
+    normals.setSize(m_mesh->vertices.getSize());
+    memset(normals,0,normals.getSize()*sizeof(VectorArray::Type));
 
     for (int vi=0;vi<m_mesh->vertices.getSize();++vi) {
         IndexArray const& vn=m_mesh->neighbors[vi];
@@ -56,14 +54,14 @@ void Mesh::Renderer::compile(Mesh const* mesh)
 
         if (vn.getSize()==0) {
             // This is just a point with an empty neighborhood.
-            m_points.insert(vi);
+            points.insert(vi);
             continue;
         }
 
         if (vn.getSize()==1) {
             // This is just a line with a single neighbor.
-            m_lines.insert(vi);
-            m_lines.insert(vn[0]);
+            lines.insert(vi);
+            lines.insert(vn[0]);
             continue;
         }
 
@@ -94,12 +92,12 @@ void Mesh::Renderer::compile(Mesh const* mesh)
             Vec3f normal=(a-v)^(b-v);
 
             if (o==3) {
-                m_triangles.insert(polygon);
+                triangles.insert(polygon);
 
                 // Accumulate the "normal" for all face vertices.
-                m_normals[polygon[0]]+=normal;
-                m_normals[polygon[1]]+=normal;
-                m_normals[polygon[2]]+=normal;
+                normals[polygon[0]]+=normal;
+                normals[polygon[1]]+=normal;
+                normals[polygon[2]]+=normal;
             }
             else {
                 // More than 3 vertices require another check.
@@ -109,13 +107,13 @@ void Mesh::Renderer::compile(Mesh const* mesh)
                 }
 
                 if (o==4) {
-                    m_quads.insert(polygon);
+                    quads.insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    m_normals[polygon[0]]+=normal;
-                    m_normals[polygon[1]]+=normal;
-                    m_normals[polygon[2]]+=normal;
-                    m_normals[polygon[3]]+=normal;
+                    normals[polygon[0]]+=normal;
+                    normals[polygon[1]]+=normal;
+                    normals[polygon[2]]+=normal;
+                    normals[polygon[3]]+=normal;
                 }
                 else {
                     // More than 4 vertices require another check.
@@ -125,47 +123,22 @@ void Mesh::Renderer::compile(Mesh const* mesh)
                     }
 
                     // Note: For more than 5 vertices more checks are needed.
-                    m_polygons.insert(polygon);
+                    polygons.insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    m_normals[polygon[0]]+=normal;
-                    m_normals[polygon[1]]+=normal;
-                    m_normals[polygon[2]]+=normal;
-                    m_normals[polygon[3]]+=normal;
-                    m_normals[polygon[4]]+=normal;
+                    normals[polygon[0]]+=normal;
+                    normals[polygon[1]]+=normal;
+                    normals[polygon[2]]+=normal;
+                    normals[polygon[3]]+=normal;
+                    normals[polygon[4]]+=normal;
                 }
             }
         }
     }
 
     // Normalize the accumulated face "normals".
-    for (int i=0;i<m_normals.getSize();++i) {
-        m_normals[i].normalize();
-    }
-}
-
-void Mesh::Renderer::render()
-{
-    if (!m_mesh) {
-        return;
-    }
-
-    // Set-up the arrays to be indexed.
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3,GL_FLOAT,0,m_mesh->vertices);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_FLOAT,0,m_normals);
-
-    // Render the different indexed primitives, if any.
-    glDrawElements(GL_POINTS,m_points.getSize(),GL_UNSIGNED_INT,m_points);
-    glDrawElements(GL_LINES,m_lines.getSize(),GL_UNSIGNED_INT,m_lines);
-    glDrawElements(GL_TRIANGLES,m_triangles.getSize(),GL_UNSIGNED_INT,m_triangles);
-    glDrawElements(GL_QUADS,m_quads.getSize(),GL_UNSIGNED_INT,m_quads);
-
-    // As polygons do not have a fixed number of vertices, each one has its own
-    // index array instead of a single array for all the primitive's vertices.
-    for (int i=0;i<m_polygons.getSize();++i) {
-        glDrawElements(GL_POLYGON,m_polygons[i].getSize(),GL_UNSIGNED_INT,m_polygons[i]);
+    for (int i=0;i<normals.getSize();++i) {
+        normals[i].normalize();
     }
 }
 

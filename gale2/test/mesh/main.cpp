@@ -1,7 +1,7 @@
 #include <gale/wrapgl/defaultwindow.h>
 
 #include <gale/math/color.h>
-#include <gale/model/mesh.h>
+#include <gale/wrapgl/renderer.h>
 
 #include <stdio.h>
 
@@ -25,11 +25,10 @@ class TestWindow:public DefaultWindow
         if (error>=0) {
             printf("Mesh is inconsistent at vertex %d.\n",error);
         }
+        m_mesh_prep.compile(m_mesh);
 
-        m_renderer.compile(m_mesh);
-
-        m_mesh_normals=Mesh::Factory::Normals(m_renderer,0.2f);
-        m_renderer_normals.compile(m_mesh_normals);
+        m_mesh_normals=Mesh::Factory::Normals(m_mesh_prep,0.2f);
+        m_normals_prep.compile(m_mesh_normals);
 
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         glEnable(GL_CULL_FACE);
@@ -51,11 +50,11 @@ class TestWindow:public DefaultWindow
 
         glEnable(GL_LIGHTING);
         glColor3fv(Col3f::WHITE());
-        m_renderer.render();
+        Renderer::draw(m_mesh_prep);
 
         glDisable(GL_LIGHTING);
         glColor3fv(Col3f::RED());
-        m_renderer_normals.render();
+        Renderer::draw(m_normals_prep);
     }
 
     void onKeyEvent(char key) {
@@ -205,11 +204,11 @@ class TestWindow:public DefaultWindow
             if (error>=0) {
                 printf("Mesh is inconsistent at vertex %d.\n",error);
             }
-            m_renderer.compile(m_mesh);
+            m_mesh_prep.compile(m_mesh);
 
             delete m_mesh_normals;
-            m_mesh_normals=Mesh::Factory::Normals(m_renderer,0.2f);
-            m_renderer_normals.compile(m_mesh_normals);
+            m_mesh_normals=Mesh::Factory::Normals(m_mesh_prep,0.2f);
+            m_normals_prep.compile(m_mesh_normals);
 
             repaint();
 
@@ -263,8 +262,8 @@ class TestWindow:public DefaultWindow
     Mesh::Subdivider::Scheme m_scheme;
     int m_step;
 
-    Mesh::Renderer m_renderer;
-    Mesh::Renderer m_renderer_normals;
+    Mesh::Preparer m_mesh_prep;
+    Mesh::Preparer m_normals_prep;
 };
 
 // Enable memory leak detection, see:

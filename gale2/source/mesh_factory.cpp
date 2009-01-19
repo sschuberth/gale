@@ -358,23 +358,23 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
     return m;
 }
 
-Mesh* Mesh::Factory::Normals(Renderer const& renderer,float scale)
+Mesh* Mesh::Factory::Normals(Preparer const& geom,float scale)
 {
-    if (!renderer.m_mesh) {
+    if (!geom.getCompiledMesh()) {
         return NULL;
     }
 
-    int n=renderer.m_mesh->vertices.getSize();
+    int n=geom.getCompiledMesh()->vertices.getSize();
 
     // Double the vertices and neighbors for the lines' endpoints.
     Mesh* m=new Mesh(n*2);
 
     // Copy the vertices to the normal mesh.
-    memcpy(m->vertices,renderer.m_mesh->vertices,n*sizeof(VectorArray::Type));
+    memcpy(m->vertices,geom.getCompiledMesh()->vertices,n*sizeof(VectorArray::Type));
 
     for (int i=0,k=n;i<n;++i,++k) {
         // Calculate the endpoints by pointing from the vertex into the normal direction.
-        m->vertices[k]=m->vertices[i]+renderer.m_normals[i]*scale;
+        m->vertices[k]=m->vertices[i]+geom.normals[i]*scale;
 
         // Set the start- and endpoints to be their respective neighbors.
         m->neighbors[i].setSize(1);

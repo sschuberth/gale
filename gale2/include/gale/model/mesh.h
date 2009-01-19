@@ -49,7 +49,7 @@ struct Mesh
     typedef global::DynamicArray<IndexArray> IndexTable;
 
     /// Forward declaration for use by inner classes.
-    class Renderer;
+    class Preparer;
 
     /// Inner factory class to create some predefined meshes.
     class Factory
@@ -113,7 +113,7 @@ struct Mesh
         /// Generates a mesh consisting of lines only that represent the
         /// compiled mesh's vertex normals stored in the \a renderer, optionally
         /// with the given \a scale applied.
-        static Mesh* Normals(Renderer const& renderer,float scale=1.0f);
+        static Mesh* Normals(Preparer const& geom,float scale=1.0f);
 
         //@}
 
@@ -195,36 +195,36 @@ struct Mesh
         static void assignNeighbors(Mesh const& orig,Mesh& mesh,int x0i);
     };
 
-    /// Inner class to render a mesh using OpenGL.
-    class Renderer
+    /// Inner class to prepare a mesh for rendering.
+    class Preparer
     {
-        friend class Factory;
-
       public:
 
         /// Constructor that simply initializes the mesh to render to NULL.
-        Renderer()
+        Preparer()
         :   m_mesh(NULL) {}
 
         /// Generates the primitive index arrays from the mesh data structure
         /// and calculates vertex normals from averaged face normals.
         void compile(Mesh const* mesh);
 
-        /// Renders the mesh primitives.
-        void render();
+        /// Returns a pointer to the last compiled mesh.
+        Mesh const* getCompiledMesh() const {
+            return m_mesh;
+        }
+
+        IndexArray points;    ///< Array of vertex indices describing points.
+        IndexArray lines;     ///< Array of vertex indices describing lines.
+        IndexArray triangles; ///< Array of vertex indices describing triangles.
+        IndexArray quads;     ///< Array of vertex indices describing quadrilaterals.
+
+        IndexTable polygons;  ///< Table of vertex indices describing polygons.
+
+        VectorArray normals;  ///< Array of vertex normals.
 
       protected:
 
         Mesh const* m_mesh;     ///< Reference to the mesh to render.
-
-        IndexArray m_points;    ///< Array of vertex indices describing points.
-        IndexArray m_lines;     ///< Array of vertex indices describing lines.
-        IndexArray m_triangles; ///< Array of vertex indices describing triangles.
-        IndexArray m_quads;     ///< Array of vertex indices describing quadrilaterals.
-
-        IndexTable m_polygons;  ///< Table of vertex indices describing polygons.
-
-        VectorArray m_normals;  ///< Array of vertex normals.
     };
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.

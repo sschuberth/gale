@@ -1,6 +1,6 @@
 #include "gale/math/color.h"
-#include "gale/model/mesh.h"
 #include "gale/wrapgl/camera.h"
+#include "gale/wrapgl/renderer.h"
 
 namespace gale {
 
@@ -94,19 +94,19 @@ void drawLogo()
         glColor3fv(math::Col3f::WHITE());
 
         // Render the cubes.
-        model::Mesh::Renderer renderer;
+        model::Mesh::Preparer preparer;
         model::Mesh* cube=model::Mesh::Factory::Hexahedron();
 
-        renderer.compile(cube);
+        preparer.compile(cube);
 
         glTranslatef(1,0,0);
-        renderer.render();
+        Renderer::draw(preparer);
 
         glTranslatef(-1,1,0);
-        renderer.render();
+        Renderer::draw(preparer);
 
         glTranslatef(0,-1,1);
-        renderer.render();
+        Renderer::draw(preparer);
 
         glTranslatef(0,0,-1);
 

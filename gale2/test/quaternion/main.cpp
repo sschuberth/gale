@@ -1,8 +1,8 @@
 #include <gale/wrapgl/defaultwindow.h>
 
 #include <gale/math/random.h>
-#include <gale/model/mesh.h>
 #include <gale/system/timer.h>
+#include <gale/wrapgl/renderer.h>
 
 using namespace gale::math;
 using namespace gale::model;
@@ -26,7 +26,7 @@ class TestWindow:public DefaultWindow
 
         // Create a cube mesh and prepare it for rendering.
         m_cube=Mesh::Factory::Hexahedron();
-        m_renderer.compile(m_cube);
+        m_cube_prep.compile(m_cube);
 
         // Use spherical-linear interpolation by default.
         m_interpolator=&slerp;
@@ -105,7 +105,7 @@ class TestWindow:public DefaultWindow
             m.setPositionVector(Vec3f(CATHETUS*(1.0f-((i+1)&2)),CATHETUS*(1.0f-(i&2)),0));
             glPushMatrix();
             glMultMatrixf(m);
-            m_renderer.render();
+            Renderer::draw(m_cube_prep);
             glPopMatrix();
         }
 
@@ -116,7 +116,7 @@ class TestWindow:public DefaultWindow
         m.setPositionVector(m_p);
         glPushMatrix();
         glMultMatrixf(m);
-        m_renderer.render();
+        Renderer::draw(m_cube_prep);
         glPopMatrix();
     }
 
@@ -203,7 +203,7 @@ class TestWindow:public DefaultWindow
   private:
 
     Mesh* m_cube;
-    Mesh::Renderer m_renderer;
+    Mesh::Preparer m_cube_prep;
 
     // Use a member function pointer to easily switch between the interpolation methods.
     Quatf::Interpolator m_interpolator;
