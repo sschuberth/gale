@@ -31,14 +31,14 @@
  * Pseudo Random Number Generators (PRNG)
  */
 
-#ifndef GALE_TINY
-    #include <time.h>
-#endif
+#include "../global/types.h"
 
 #include "matrix4.h"
 #include "quaternion.h"
 
-#include "../global/types.h"
+#ifndef GALE_TINY
+    #include <time.h>
+#endif
 
 namespace gale {
 

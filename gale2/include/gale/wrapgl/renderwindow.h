@@ -31,10 +31,10 @@
  * A render window implementation
  */
 
-#include "rendersurface.h"
-
 #include "../global/attributelist.h"
 #include "../system/timer.h"
+
+#include "rendersurface.h"
 
 namespace gale {
 

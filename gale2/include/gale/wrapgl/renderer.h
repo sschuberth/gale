@@ -31,7 +31,7 @@
  * A 3D graphics API abstraction for rendering geometry
  */
 
-#include "gale/model/mesh.h"
+#include "../model/mesh.h"
 
 namespace gale {
 
