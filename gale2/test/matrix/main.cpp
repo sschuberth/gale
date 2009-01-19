@@ -1,10 +1,10 @@
+#include <gale/math/random.h>
+#include <gale/math/hmatrix4.h>
+
 #include <stdlib.h>
 
 #include <ctime>
 #include <iostream>
-
-#include <gale/math/random.h>
-#include <gale/math/hmatrix4.h>
 
 using namespace std;
 

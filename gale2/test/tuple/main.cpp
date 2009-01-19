@@ -1,8 +1,7 @@
+#include <gale/math/color.h>
 #include <gale/math/random.h>
 #include <gale/math/tuple.h>
 #include <gale/math/vector.h>
-#include <gale/math/color.h>
-
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
 

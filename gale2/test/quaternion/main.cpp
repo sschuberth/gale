@@ -1,7 +1,6 @@
-#include <gale/wrapgl/defaultwindow.h>
-
 #include <gale/math/random.h>
 #include <gale/system/timer.h>
+#include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/renderer.h>
 
 using namespace gale::math;
