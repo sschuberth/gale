@@ -45,7 +45,7 @@ namespace math {
  * vector for the imaginary number part. It has common linear algebra and math
  * operations specialized on computer graphics.
  *
- * Example usage:
+ * OpenGL example usage:
  * \code
  * Quatf q(Vec3f::Z(),convDegToRad(45.0));
  * HMat4f m=q.getMatrix();

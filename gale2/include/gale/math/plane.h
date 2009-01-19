@@ -55,7 +55,7 @@ namespace math {
  * While internally equation 1) is used, all public methods assume the HNF, i.e.
  * equation 2) to be used, as it is more natural to deal with positive distances.
  *
- * Example usage:
+ * OpenGL example usage:
  * \code
  * Plane p(Vec3d(0,1,-1),0.5);
  * glClipPlane(GL_CLIP_PLANE0,p);

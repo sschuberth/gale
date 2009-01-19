@@ -201,7 +201,7 @@ inline double ColorModel<double>::MAX_INTENSITY()
  * Color representation based on an RGB(A)-tuple. It features predefined
  * constants for commonly used colors, HSV conversion and useful operators.
  *
- * Example usage:
+ * OpenGL example usage:
  * \code
  * Col4ub colors[8];
  * glColorPointer(4,GL_UNSIGNED_BYTE,0,colors);

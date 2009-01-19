@@ -41,7 +41,7 @@ namespace math {
  * Vector class implementation based on a tuple, featuring common linear algebra
  * and math operations specialized on computer graphics.
  *
- * Example usage:
+ * OpenGL example usage:
  * \code
  * glBegin(GL_LINE_LOOP);
  *     glVertex3fv(Vec3f::X());

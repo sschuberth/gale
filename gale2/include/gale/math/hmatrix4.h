@@ -50,7 +50,7 @@ namespace math {
  * required by OpenGL, i.e. the matrix entry at row r (0 <= r <= 3) and column
  * c (0 <= c <= 3) is located at offset i = c*4 + r.
  *
- * Example usage:
+ * OpenGL example usage:
  * \code
  * Quatf q(Vec3f::Z(),convDegToRad(45.0));
  * HMat4f m=q.getMatrix();
