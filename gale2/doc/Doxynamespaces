@@ -1,5 +1,5 @@
 /// \namespace gale
-/// Root namespace for all GALE related code.
+/// Root namespace for GALE.
 
 /// \namespace gale::global
 /// Namespace for miscellaneous globally used code.
@@ -17,4 +17,4 @@
 /// Namespace for operating system related code.
 
 /// \namespace gale::wrapgl
-/// Namespace for OpenGL wrapper classes and helper functions.
+/// Namespace for all code that contains OpenGL API calls.

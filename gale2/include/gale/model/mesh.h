@@ -196,7 +196,7 @@ struct Mesh
         static void assignNeighbors(Mesh const& orig,Mesh& mesh,int x0i);
     };
 
-    /// Inner class to prepare / render meshes for / using OpenGL.
+    /// Inner class to render a mesh using OpenGL.
     class Renderer
     {
         friend class Factory;
@@ -211,7 +211,7 @@ struct Mesh
         /// and calculates vertex normals from averaged face normals.
         void compile(Mesh const* mesh);
 
-        /// Renders the mesh primitives using OpenGL.
+        /// Renders the mesh primitives.
         void render();
 
       protected:

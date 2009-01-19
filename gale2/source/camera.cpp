@@ -58,7 +58,7 @@ void Camera::apply(bool const force)
             G_ASSERT_OPENGL
         }
 
-        // Set the viewport OpenGL should render to.
+        // Set the OpenGL viewport origin and dimensions.
         glViewport(m_screen.x,m_screen.y,m_screen.width,m_screen.height);
         G_ASSERT_OPENGL
         m_screen_changed=false;

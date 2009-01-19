@@ -199,7 +199,7 @@
 
 /**
  * \def G_ASSERT_OPENGL
- * Run-time assertion for the OpenGL error flag.
+ * Run-time assertion for the OpenGL error state.
  */
 
 #ifdef G_ASSERT_OPENGL
