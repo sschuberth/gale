@@ -38,10 +38,10 @@ namespace gale {
 namespace wrapgl {
 
 /**
- * This class serves as a base for everything that requires a render surface,
- * e.g. on-screen windows or off-screen buffers to render to using OpenGL. It
- * creates a dummy render surface that is used to initialize OpenGL extension
- * to create more powerful render surfaces later.
+ * This class serves as a base for everything that requires an OpenGL context,
+ * e.g. on-screen windows or off-screen buffers. It creates a dummy context
+ * that is just used to initialize OpenGL extensions required to create a more
+ * sophisticated context which replaces the dummy context.
  */
 
 // TODO: Add Linux implementation.
@@ -74,35 +74,36 @@ class RenderSurface
         int height; ///< Height of the render surface.
     };
 
-    /// Returns the active context for the current thread.
+    /// Returns the active OpenGL context for the current thread.
     static ContextHandle getCurrentContext() {
         return ContextHandle(wglGetCurrentDC(),wglGetCurrentContext());
     }
 
-    /// Sets the active context for the current thread.
+    /// Sets the active OpenGL context for the current thread.
     static bool setCurrentContext(ContextHandle const& handle) {
         return wglMakeCurrent(handle.device,handle.render)!=FALSE;
     }
 
-    /// Creates a minimal render surface with a hidden window without changing
-    /// the current rendering context.
+    /// Creates a minimal OpenGL context attached to a hidden window without
+    /// changing the current OpenGL context.
     RenderSurface();
 
     /// Frees all resources allocated by the render surface.
     ~RenderSurface();
 
     /// Returns the handle to the window associated with this render surface.
-    virtual WindowHandle const& windowHandle() const {
-        return s_window;
+    WindowHandle const& windowHandle() const {
+        return m_window;
     }
 
-    /// Returns the handle to the context associated with this render surface.
-    virtual ContextHandle const& contextHandle() const {
-        return s_handle;
+    /// Returns the handle to the OpenGL context associated with this render
+    /// surface.
+    ContextHandle const& contextHandle() const {
+        return m_handle;
     }
 
-    /// Sets this to be the active context for the current thread.
-    bool setCurrentContext() {
+    /// Makes this the active OpenGL context for the current thread.
+    bool makeCurrentContext() {
         return setCurrentContext(contextHandle());
     }
 
@@ -115,7 +116,7 @@ class RenderSurface
 
   protected:
 
-    /// Destroys the render context, i.e. frees all resources except the window
+    /// Destroys the render surface, i.e. frees all resources except the window
     /// class, so the method can be used by derived classes.
     void destroy();
 
@@ -125,13 +126,13 @@ class RenderSurface
     static int s_instances; ///< Counter for the number of instances.
     static ATOM s_atom;     ///< Identifier for the registered window class.
 
+    WindowHandle m_window;  ///< Handle to the window owning the OpenGL context.
+    ContextHandle m_handle; ///< Handle to the OpenGL context.
+
   private:
 
     /// Forwards window messages to the window specific message handler.
     static LRESULT CALLBACK WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
-
-    static WindowHandle s_window;  ///< Handle to the window owning the context.
-    static ContextHandle s_handle; ///< Handle to the context.
 };
 
 #endif // G_OS_WINDOWS

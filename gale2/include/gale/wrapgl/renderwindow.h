@@ -50,7 +50,6 @@ namespace wrapgl {
 #ifdef G_OS_WINDOWS
 
 #include "GLEX_WGL_ARB_pixel_format.h"
-#include "GLEX_ARB_color_buffer_float.h"
 
 class RenderWindow:public RenderSurface
 {
@@ -61,16 +60,6 @@ class RenderWindow:public RenderSurface
     /// by \a attr_pixel, and \a title specifies the caption. The window will be
     /// hidden initially, but it will become the current rendering context.
     RenderWindow(int width,int height,global::AttributeListi const& attr_pixel,LPCTSTR title);
-
-    /// Returns the handle to the window associated with this render surface.
-    WindowHandle const& windowHandle() const {
-        return m_window;
-    }
-
-    /// Returns the handle to the context associated with this render surface.
-    ContextHandle const& contextHandle() const {
-        return m_handle;
-    }
 
     /// Returns the currently set timeout value in seconds.
     double getTimeout() const {
@@ -122,11 +111,6 @@ class RenderWindow:public RenderSurface
 
     double m_timeout;      ///< Timeout event value in seconds.
     system::Timer m_timer; ///< Timer to trigger the timeout event.
-
-  private:
-
-    WindowHandle m_window;  ///< Handle to the render window.
-    ContextHandle m_handle; ///< Handle to the render context.
 };
 
 #endif // G_OS_WINDOWS

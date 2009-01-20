@@ -41,19 +41,20 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
 {
     // Activate the minimal render surface to get a context for OpenGL extension
     // initialization.
-    G_ASSERT_CALL(setCurrentContext(RenderSurface::contextHandle()));
+    G_ASSERT_CALL(makeCurrentContext());
 
-    if (GLEX_WGL_ARB_pixel_format!=GL_TRUE) {
-        // Initialize an OpenGL extension for more sophisticated selection of a
-        // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
-        G_ASSERT_CALL(GLEX_WGL_ARB_pixel_format_init());
-    }
+    // Try to initialize an OpenGL extension for more sophisticated selection of a
+    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
+    GLEX_WGL_ARB_pixel_format_init();
 
-    if (GLEX_ARB_color_buffer_float!=GL_TRUE) {
-        // Initialize an OpenGL extension for support of floating-point RGBA
-        // pixel formats, see <http://opengl.org/registry/specs/ARB/color_buffer_float.txt>.
-        G_ASSERT_CALL(GLEX_ARB_color_buffer_float_init());
-    }
+    // Try to initialize an extension required to create an OpenGL 3.0 compatible
+    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
+    GLEX_WGL_ARB_create_context_init();
+
+    // Now that the OpenGL extensions are initialized, destroy the dummy context.
+    // Note: This obviously only works for extensions that do not themselves
+    // require an OpenGL context to be active when called.
+    destroy();
 
     // Calculate the window size from the desired client area size.
     RECT rect={0,0,width,height};
@@ -78,32 +79,38 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
     m_handle.device=GetWindowDC(m_window);
     assert(m_handle.device!=NULL);
 
-    // Make sure some required attributes are specified.
-    AttributeListi attr=attr_pixel;
-    attr.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
-    attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
-    attr.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
-    attr.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
-
-    // Set the device context to the first pixel format that matches the
-    // specified attributes.
+    AttributeListi attr;
     GLint format;
-    UINT count;
-    G_ASSERT_CALL(wglChoosePixelFormatARB(m_handle.device,attr,NULL,1,&format,&count));
-    assert(count>0);
+
+    if (GLEX_WGL_ARB_pixel_format) {
+        attr=attr_pixel;
+
+        // Make sure some required attributes are specified.
+        attr.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
+        attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
+        attr.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
+        attr.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
+
+        // Set the device context to the first pixel format that matches the
+        // specified attributes.
+        UINT count;
+        G_ASSERT_CALL(wglChoosePixelFormatARB(m_handle.device,attr,NULL,1,&format,&count));
+        assert(count>0);
+    }
+    else {
+        // Maybe implement a fallback using ChoosePixelFormat().
+        assert(false);
+    }
 
     // Setting the pixel format is only allowed only per window!
     G_ASSERT_CALL(SetPixelFormat(m_handle.device,format,NULL));
 
-    // Try to initialize an extension required to create an OpenGL 3.0 compatible
-    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
-    if (GLEX_WGL_ARB_create_context || GLEX_WGL_ARB_create_context_init()) {
+    if (GLEX_WGL_ARB_create_context) {
         attr.clear();
         attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
         m_handle.render=wglCreateContextAttribsARB(m_handle.device,0,attr);
     }
-
-    if (!m_handle.render) {
+    else {
         // Fall back to an old-style rendering context.
         m_handle.render=wglCreateContext(m_handle.device);
     }
@@ -111,7 +118,7 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
     assert(m_handle.render!=NULL);
 
     // Activate the rendering context.
-    G_ASSERT_CALL(setCurrentContext());
+    G_ASSERT_CALL(makeCurrentContext());
 }
 
 void RenderWindow::processEvents()

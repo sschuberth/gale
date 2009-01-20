@@ -37,9 +37,6 @@ namespace wrapgl {
 int RenderSurface::s_instances=0;
 ATOM RenderSurface::s_atom=0;
 
-RenderSurface::WindowHandle RenderSurface::s_window=NULL;
-RenderSurface::ContextHandle RenderSurface::s_handle;
-
 LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
     // Using a dynamic_cast here would be safer, but that requires RTTI support.
@@ -66,24 +63,22 @@ LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wP
 
 RenderSurface::RenderSurface()
 {
-    // We only need to create the window class and dummy context once.
-    if (s_instances++) {
-        return;
+    // We only need to register the window class once.
+    if (!s_instances++) {
+        // Register a minimal window class used by all contexts we want to create.
+        WNDCLASS cls;
+        memset(&cls,0,sizeof(cls));
+        cls.style=CS_OWNDC|CS_SAVEBITS;
+        cls.lpfnWndProc=WindowProc;
+        cls.hCursor=LoadCursor(NULL,IDC_ARROW);
+        cls.lpszClassName=_T("G");
+
+        s_atom=RegisterClass(&cls);
+        assert(s_atom!=0);
     }
 
-    // Register a minimal window class used by all contexts we want to create.
-    WNDCLASS cls;
-    memset(&cls,0,sizeof(cls));
-    cls.style=CS_OWNDC|CS_SAVEBITS;
-    cls.lpfnWndProc=WindowProc;
-    cls.hCursor=LoadCursor(NULL,IDC_ARROW);
-    cls.lpszClassName=_T("G");
-
-    s_atom=RegisterClass(&cls);
-    assert(s_atom!=0);
-
     // Create a dummy window and get its device context.
-    s_window=CreateWindow(
+    m_window=CreateWindow(
     /* lpClassName  */ MAKEINTATOM(s_atom),
     /* lpWindowName */ NULL,
     /* dwStyle      */ 0,
@@ -96,10 +91,10 @@ RenderSurface::RenderSurface()
     /* hInstance    */ NULL,
     /* lpParam      */ NULL
     );
-    assert(s_window!=NULL);
+    assert(m_window!=NULL);
 
-    s_handle.device=GetWindowDC(s_window);
-    assert(s_handle.device!=NULL);
+    m_handle.device=GetWindowDC(m_window);
+    assert(m_handle.device!=NULL);
 
     // Set the device context to a pixel format that uses OpenGL acceleration.
     PIXELFORMATDESCRIPTOR pfd;
@@ -112,15 +107,15 @@ RenderSurface::RenderSurface()
               | PFD_SUPPORT_COMPOSITION
     ;
 
-    int format=ChoosePixelFormat(s_handle.device,&pfd);
+    int format=ChoosePixelFormat(m_handle.device,&pfd);
     assert(format!=0);
 
     // Setting the pixel format is only allowed only per window!
-    G_ASSERT_CALL(SetPixelFormat(s_handle.device,format,&pfd));
+    G_ASSERT_CALL(SetPixelFormat(m_handle.device,format,&pfd));
 
     // Create and activate a rendering context.
-    s_handle.render=wglCreateContext(s_handle.device);
-    assert(s_handle.render!=NULL);
+    m_handle.render=wglCreateContext(m_handle.device);
+    assert(m_handle.render!=NULL);
 }
 
 RenderSurface::~RenderSurface()
@@ -129,9 +124,6 @@ RenderSurface::~RenderSurface()
         return;
     }
     assert(s_instances==0);
-
-    // Clean up again.
-    destroy();
 
     G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL));
 }
