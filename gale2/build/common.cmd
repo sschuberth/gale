@@ -17,6 +17,9 @@ set PATH=%CYGWIN%;%PATH%
 
 pushd "%~dp0..\glex"
 
+echo *** Deleting existing OpenGL extension initialization files ...
+del GLEX_*.*
+
 : Download and parse the OpenGL extension registry if needed.
 if not exist "..\..\glex\registry\OpenGL.org\ARB\color_buffer_float.txt" (
     echo *** Generating local OpenGL registry ...
