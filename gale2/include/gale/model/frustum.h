@@ -39,6 +39,9 @@ namespace gale {
 
 namespace model {
 
+/**
+ * A camera frustum class for CPU-based frustum culling.
+ */
 class Frustum
 {
   public:
@@ -46,7 +49,7 @@ class Frustum
     Frustum(wrapgl::Camera const& camera)
     :   m_camera(camera) {}
 
-    bool isInside(math::Vec3f const& point);
+    bool contains(math::Vec3f const& point);
 
   private:
 

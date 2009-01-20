@@ -31,7 +31,7 @@ namespace gale {
 
 namespace model {
 
-bool Frustum::isInside(Vec3f const& point)
+bool Frustum::contains(Vec3f const& point)
 {
     Vec3f v=m_camera.getModelview()*point;
 
