@@ -37,16 +37,15 @@ namespace gale {
 
 namespace wrapgl {
 
+// TODO: Add Linux implementation.
+#ifdef G_OS_WINDOWS
+
 /**
  * This class serves as a base for everything that requires an OpenGL context,
  * e.g. on-screen windows or off-screen buffers. It creates a dummy context
  * that is just used to initialize OpenGL extensions required to create a more
  * sophisticated context which replaces the dummy context.
  */
-
-// TODO: Add Linux implementation.
-#ifdef G_OS_WINDOWS
-
 class RenderSurface
 {
   public:
@@ -99,7 +98,7 @@ class RenderSurface
     /// Returns the handle to the OpenGL context associated with this render
     /// surface.
     ContextHandle const& contextHandle() const {
-        return m_handle;
+        return m_context;
     }
 
     /// Makes this the active OpenGL context for the current thread.
@@ -123,11 +122,11 @@ class RenderSurface
     /// Handles window messages and forwards them to the event handlers.
     virtual LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
 
-    static int s_instances; ///< Counter for the number of instances.
-    static ATOM s_atom;     ///< Identifier for the registered window class.
+    static int s_instances;  ///< Counter for the number of instances.
+    static ATOM s_atom;      ///< Identifier for the registered window class.
 
-    WindowHandle m_window;  ///< Handle to the window owning the OpenGL context.
-    ContextHandle m_handle; ///< Handle to the OpenGL context.
+    WindowHandle m_window;   ///< Handle to the window owning the OpenGL context.
+    ContextHandle m_context; ///< Handle to the OpenGL context.
 
   private:
 

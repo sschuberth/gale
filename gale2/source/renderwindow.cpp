@@ -25,8 +25,6 @@
 
 #include "gale/wrapgl/renderwindow.h"
 
-#include "GLEX_WGL_ARB_create_context.h"
-
 using namespace gale::global;
 
 namespace gale {
@@ -76,8 +74,8 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
     );
     assert(m_window!=NULL);
 
-    m_handle.device=GetWindowDC(m_window);
-    assert(m_handle.device!=NULL);
+    m_context.device=GetWindowDC(m_window);
+    assert(m_context.device!=NULL);
 
     AttributeListi attr;
     GLint format;
@@ -94,7 +92,7 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
         // Set the device context to the first pixel format that matches the
         // specified attributes.
         UINT count;
-        G_ASSERT_CALL(wglChoosePixelFormatARB(m_handle.device,attr,NULL,1,&format,&count));
+        G_ASSERT_CALL(wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count));
         assert(count>0);
     }
     else {
@@ -102,20 +100,20 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
         assert(false);
     }
 
-    // Setting the pixel format is only allowed only per window!
-    G_ASSERT_CALL(SetPixelFormat(m_handle.device,format,NULL));
+    // Setting the pixel format is only allowed once per window!
+    G_ASSERT_CALL(SetPixelFormat(m_context.device,format,NULL));
 
     if (GLEX_WGL_ARB_create_context) {
         attr.clear();
         attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
-        m_handle.render=wglCreateContextAttribsARB(m_handle.device,0,attr);
+        m_context.render=wglCreateContextAttribsARB(m_context.device,0,attr);
     }
     else {
         // Fall back to an old-style rendering context.
-        m_handle.render=wglCreateContext(m_handle.device);
+        m_context.render=wglCreateContext(m_context.device);
     }
 
-    assert(m_handle.render!=NULL);
+    assert(m_context.render!=NULL);
 
     // Activate the rendering context.
     G_ASSERT_CALL(makeCurrentContext());

@@ -42,15 +42,14 @@ namespace wrapgl {
 // warning C4355: 'this' : used in base member initializer list
 #pragma warning(disable:4355)
 
+// TODO: Add Linux implementation.
+#ifdef G_OS_WINDOWS
+
 /**
  * This class provides a convenient default window along with camera navigation
  * using the mouse to be able to easily implement applications that require
  * simple scene interaction.
  */
-
-// TODO: Add Linux implementation.
-#ifdef G_OS_WINDOWS
-
 class DefaultWindow:public RenderWindow
 {
   public:

@@ -40,17 +40,17 @@ namespace gale {
 
 namespace wrapgl {
 
+// TODO: Add Linux implementation.
+#ifdef G_OS_WINDOWS
+
+#include "GLEX_WGL_ARB_pixel_format.h"
+#include "GLEX_WGL_ARB_create_context.h"
+
 /**
  * This class creates an on-screen window with a system-provided frame buffer to
  * render to using OpenGL. It makes use of the WGL_ARB_pixel_format and
  * WGL_ARB_pixel_format_float extensions to specify the desired pixel format.
  */
-
-// TODO: Add Linux implementation.
-#ifdef G_OS_WINDOWS
-
-#include "GLEX_WGL_ARB_pixel_format.h"
-
 class RenderWindow:public RenderSurface
 {
   public:

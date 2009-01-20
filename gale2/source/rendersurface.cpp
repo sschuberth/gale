@@ -93,8 +93,8 @@ RenderSurface::RenderSurface()
     );
     assert(m_window!=NULL);
 
-    m_handle.device=GetWindowDC(m_window);
-    assert(m_handle.device!=NULL);
+    m_context.device=GetWindowDC(m_window);
+    assert(m_context.device!=NULL);
 
     // Set the device context to a pixel format that uses OpenGL acceleration.
     PIXELFORMATDESCRIPTOR pfd;
@@ -107,15 +107,15 @@ RenderSurface::RenderSurface()
               | PFD_SUPPORT_COMPOSITION
     ;
 
-    int format=ChoosePixelFormat(m_handle.device,&pfd);
+    int format=ChoosePixelFormat(m_context.device,&pfd);
     assert(format!=0);
 
-    // Setting the pixel format is only allowed only per window!
-    G_ASSERT_CALL(SetPixelFormat(m_handle.device,format,&pfd));
+    // Setting the pixel format is only allowed once per window!
+    G_ASSERT_CALL(SetPixelFormat(m_context.device,format,&pfd));
 
     // Create and activate a rendering context.
-    m_handle.render=wglCreateContext(m_handle.device);
-    assert(m_handle.render!=NULL);
+    m_context.render=wglCreateContext(m_context.device);
+    assert(m_context.render!=NULL);
 }
 
 RenderSurface::~RenderSurface()
