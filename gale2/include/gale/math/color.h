@@ -494,9 +494,10 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
      */
     //@{
 
-    /// Returns a \a blend of 5 colors that match this color to form a palette.
+    /// Returns a blend of 5 colors that match this color to form a \a palette.
     void blend(Color (&palette)[5]) {
         assert(N>=3);
+
         updateHSV();
 
         float h,s,v;
