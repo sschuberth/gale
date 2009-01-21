@@ -75,10 +75,12 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
     assert(m_window!=NULL);
 
     m_context.device=GetWindowDC(m_window);
+    m_context.render=NULL;
+
     assert(m_context.device!=NULL);
 
     AttributeListi attr;
-    GLint format;
+    GLint format=0;
 
     if (GLEX_WGL_ARB_pixel_format) {
         attr=attr_pixel;
@@ -95,7 +97,8 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
         G_ASSERT_CALL(wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count));
         assert(count>0);
     }
-    else {
+
+    if (format==0) {
         // Maybe implement a fallback using ChoosePixelFormat().
         assert(false);
     }
@@ -108,7 +111,8 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
         attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
         m_context.render=wglCreateContextAttribsARB(m_context.device,0,attr);
     }
-    else {
+
+    if (!m_context.render) {
         // Fall back to an old-style rendering context.
         m_context.render=wglCreateContext(m_context.device);
     }

@@ -69,6 +69,9 @@ class Frustum
     /// (Re-)calculates the frustum planes.
     void calculate();
 
+    /// Disable assignments (to avoid warnings due to the reference member variable).
+    Frustum& operator=(Frustum const&);
+
     wrapgl::Camera const& m_camera; ///< Reference to the camera.
     Plane m_frustum[FACE_COUNT];    ///< Array of frustum planes.
 };
