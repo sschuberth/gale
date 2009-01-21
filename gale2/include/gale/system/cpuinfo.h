@@ -218,16 +218,16 @@ class CPUInfo:public global::Singleton<CPUInfo>
         unsigned int count=1;
 
         if (isIntel()) {
-            count=((m_std_cache_params&0xfc000000)>>26)+1;
+            count=((m_std_cache_params&0xfc000000UL)>>26)+1;
         }
         else if (isAMD()) {
             if (hasHTT() && hasCmpLegacy()) {
                 // This method to determine the number of cores is deprecated
                 // but we use it if it is supported.
-                count=(m_std_misc_info&0x00ff0000)>>16;
+                count=(m_std_misc_info&0x00ff0000UL)>>16;
             }
             else {
-                count=(m_ext_address_sizes&0x000000ff)+1;
+                count=(m_ext_address_sizes&0x000000ffUL)+1;
             }
         }
 
@@ -239,7 +239,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
         unsigned int count=1;
 
         if (hasHTT() && (isIntel() || !hasCmpLegacy())) {
-            count=(m_std_misc_info&0x00ff0000)>>16;
+            count=(m_std_misc_info&0x00ff0000UL)>>16;
             if (coresPerProcessor()) {
                 count/=coresPerProcessor();
             }
@@ -626,15 +626,15 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     char m_vendor[3*4+1]; ///< Stores the vendor string incl. trailing zero.
 
-    int m_std_misc_info;      ///< CPUID standard miscellaneous flags.
-    int m_std_cache_params;   ///< CPUID standard cache parameters.
-    int m_ext_address_sizes;  ///< CPUID extended address sizes.
+    unsigned int m_std_misc_info;      ///< CPUID standard miscellaneous flags.
+    unsigned int m_std_cache_params;   ///< CPUID standard cache parameters.
+    unsigned int m_ext_address_sizes;  ///< CPUID extended address sizes.
 
-    int m_std_feat_flags_edx; ///< CPUID standard feature flags, part 1.
-    int m_std_feat_flags_ecx; ///< CPUID standard feature flags, part 2.
+    unsigned int m_std_feat_flags_edx; ///< CPUID standard feature flags, part 1.
+    unsigned int m_std_feat_flags_ecx; ///< CPUID standard feature flags, part 2.
 
-    int m_ext_feat_flags_edx; ///< CPUID extended feature flags, part 1.
-    int m_ext_feat_flags_ecx; ///< CPUID extended feature flags, part 2.
+    unsigned int m_ext_feat_flags_edx; ///< CPUID extended feature flags, part 1.
+    unsigned int m_ext_feat_flags_ecx; ///< CPUID extended feature flags, part 2.
 };
 
 /// For convenience, offer a predefined instance of the CPUInfo class.

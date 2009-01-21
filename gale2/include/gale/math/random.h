@@ -66,7 +66,7 @@ class RandomBase
 #ifndef GALE_TINY
         init(static_cast<g_uint32>(time(NULL)));
 #else
-        init(0xdeadbeef);
+        init(0xdeadbeefUL);
 #endif
     }
 
