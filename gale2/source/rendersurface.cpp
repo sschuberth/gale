@@ -93,7 +93,7 @@ RenderSurface::RenderSurface()
     );
     assert(m_window!=NULL);
 
-    m_context.device=GetWindowDC(m_window);
+    m_context.device=GetDC(m_window);
     assert(m_context.device!=NULL);
 
     // Set the device context to a pixel format that uses OpenGL acceleration.

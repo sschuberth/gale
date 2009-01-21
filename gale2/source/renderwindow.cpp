@@ -74,7 +74,7 @@ RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel
     );
     assert(m_window!=NULL);
 
-    m_context.device=GetWindowDC(m_window);
+    m_context.device=GetDC(m_window);
     m_context.render=NULL;
 
     assert(m_context.device!=NULL);
