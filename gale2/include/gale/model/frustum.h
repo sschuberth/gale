@@ -46,27 +46,31 @@ class Frustum
 {
   public:
 
+    /// Constructs the frustum planes for the given \a camera.
     Frustum(wrapgl::Camera const& camera)
     :   m_camera(camera) {}
 
+    /// Returns whether the given \a point is contained in the frustum.
     bool contains(math::Vec3f const& point);
 
   private:
 
+    /// Names for the plane array entries (as seen from the camera).
     enum Face {
-        FACE_LEFT,
-        FACE_RIGHT,
-        FACE_BOTTOM,
-        FACE_TOP,
-        FACE_ZNEAR,
-        FACE_ZFAR,
-        FACE_COUNT
+        FACE_LEFT,   ///< Index of the left frustum plane.
+        FACE_RIGHT,  ///< Index of the right frustum plane.
+        FACE_BOTTOM, ///< Index of the bottom frustum plane.
+        FACE_TOP,    ///< Index of the top frustum plane.
+        FACE_ZNEAR,  ///< Index of the near (clipping) frustum plane.
+        FACE_ZFAR,   ///< Index of the far (clipping) frustum plane.
+        FACE_COUNT   ///< Helper entry to name the number of enumerations.
     };
 
+    /// (Re-)calculates the frustum planes.
     void calculate();
 
-    wrapgl::Camera const& m_camera;
-    Plane m_frustum[FACE_COUNT];
+    wrapgl::Camera const& m_camera; ///< Reference to the camera.
+    Plane m_frustum[FACE_COUNT];    ///< Array of frustum planes.
 };
 
 } // namespace model
