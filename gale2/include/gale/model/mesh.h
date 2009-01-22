@@ -110,10 +110,10 @@ struct Mesh
          */
         //@{
 
-        /// Generates a mesh by extruding the line loop defined by \a profile
+        /// Generates a mesh by extruding the line loop defined by \a contour
         /// along the given \a path. If \a close is \c true, the end of the path
         /// is connected to its beginning, else cut faces are created.
-        static Mesh* Extrude(VectorArray const& path,VectorArray const& profile,bool closed=true);
+        static Mesh* Extrude(VectorArray const& path,VectorArray const& contour,bool closed=true);
 
         /// Generates a mesh consisting of lines only that represent the
         /// compiled mesh's vertex normals stored in the \a renderer, optionally

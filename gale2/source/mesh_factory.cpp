@@ -192,12 +192,12 @@ Mesh* Mesh::Factory::Dodecahedron()
 Mesh* Mesh::Factory::Torus(float r1,float r2,int r1_segs,int r2_segs)
 {
     VectorArray path(r1_segs);
-    VectorArray profile(r2_segs);
+    VectorArray contour(r2_segs);
 
     float a,d;
     int i;
 
-    // Calculate points on the outer path.
+    // Calculate points on the path.
     a=0;
     d=2*Constf::PI()/r1_segs;
     for (i=0;i<r1_segs;++i) {
@@ -205,25 +205,25 @@ Mesh* Mesh::Factory::Torus(float r1,float r2,int r1_segs,int r2_segs)
         a+=d;
     }
 
-    // Calculate points on the inner profile.
+    // Calculate points on the contour.
     a=0;
     d=2*Constf::PI()/r2_segs;
     for (i=0;i<r2_segs;++i) {
-        profile[i]=Vec3f(::cos(a)*r2,::sin(a)*r2,0);
+        contour[i]=Vec3f(::cos(a)*r2,::sin(a)*r2,0);
         a+=d;
     }
 
-    return Extrude(path,profile);
+    return Extrude(path,contour);
 }
 
 Mesh* Mesh::Factory::TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w,float h,int p,int q)
 {
     VectorArray path(r1_segs);
-    VectorArray profile(r2_segs);
+    VectorArray contour(r2_segs);
 
     int i;
 
-    // Calculate points on the outer path.
+    // Calculate points on the path.
     for (i=0;i<r1_segs;++i) {
         float angle=2*Constf::PI()/r1_segs*i;
 
@@ -240,24 +240,24 @@ Mesh* Mesh::Factory::TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w
         path[i]=Vec3f(x,y,z);
     }
 
-    // Calculate points on the inner profile.
+    // Calculate points on the contour.
     float a=0;
     float d=2*Constf::PI()/r2_segs;
     for (i=0;i<r2_segs;++i) {
-        profile[i]=Vec3f(::cos(a)*r2,::sin(a)*r2,0);
+        contour[i]=Vec3f(::cos(a)*r2,::sin(a)*r2,0);
         a+=d;
     }
 
-    return Extrude(path,profile);
+    return Extrude(path,contour);
 }
 
-Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,bool closed)
+Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,bool closed)
 {
-    if (path.getSize()<2 || profile.getSize()<3) {
+    if (path.getSize()<2 || contour.getSize()<3) {
         return NULL;
     }
 
-    Mesh* m=new Mesh(static_cast<int>(!closed)*2+path.getSize()*profile.getSize());
+    Mesh* m=new Mesh(static_cast<int>(!closed)*2+path.getSize()*contour.getSize());
 
     // Pointers to the first and last vectors (Alpha and Omega :-) in the path.
     Vec3f const* const pA=&path[0];
@@ -273,9 +273,9 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
         // Add the first path vertex as the center of the start cut face.
         m->vertices[vi]=*pA;
 
-        // All vertices of the start cut face are its neighbors.
+        // Make ell vertices of the start cut face its neighbors.
         IndexArray& nA=m->neighbors[vi];
-        nA.setSize(profile.getSize());
+        nA.setSize(contour.getSize());
         for (int i=0;i<nA.getSize();++i) {
             nA[i]=2+i;
         }
@@ -284,16 +284,16 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
         // Add the first path vertex as the center of the end cut face.
         m->vertices[vi]=*pO;
 
-        // All vertices of the end cut face are its neighbors.
+        // Make all vertices of the end cut face its neighbors.
         IndexArray& nO=m->neighbors[vi];
-        nO.setSize(profile.getSize());
+        nO.setSize(contour.getSize());
         for (int i=0;i<nO.getSize();++i) {
             nO[i]=m->vertices.getSize()-1-i;
         }
         ++vi;
     }
 
-    for (int pi=vi;vi<m->vertices.getSize();pi+=profile.getSize()) {
+    for (int pi=vi;vi<m->vertices.getSize();pi+=contour.getSize()) {
         // Pointer to p's predecessor along the path.
         Vec3f const* a=(p==pA)?(closed?pO:p):p-1;
 
@@ -307,20 +307,20 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
 
         HMat4f frenet(binormal,normal,tangent,*p);
 
-        for (int k=0;k<profile.getSize();++k) {
-            // Transform the profile along the path.
-            m->vertices[vi]=frenet*profile[k];
+        for (int c=0;c<contour.getSize();++c) {
+            // Transform the contour along the path.
+            m->vertices[vi]=frenet*contour[c];
 
             // Connect the neighbors.
             IndexArray& vn=m->neighbors[vi];
             vn.setSize(6);
 
-#define WRAP_I(x) wrap(x,m->vertices.getSize())
-#define WRAP_K(x) wrap(x,profile.getSize())
+#define WRAP_P(x) wrap(x,m->vertices.getSize())
+#define WRAP_C(x) wrap(x,contour.getSize())
 
             int piwk,n=0;
 
-            piwk=pi+WRAP_K(k-1);
+            piwk=pi+WRAP_C(c-1);
             vn[n++]=piwk;
 
             if (!closed && p==pO) {
@@ -329,11 +329,11 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
                 vn.setSize(5);
             }
             else {
-                vn[n++]=WRAP_I(piwk+profile.getSize());
-                vn[n++]=WRAP_I(vi+profile.getSize());
+                vn[n++]=WRAP_P(piwk+contour.getSize());
+                vn[n++]=WRAP_P(vi+contour.getSize());
             }
 
-            piwk=pi+WRAP_K(k+1);
+            piwk=pi+WRAP_C(c+1);
             vn[n++]=piwk;
 
             if (!closed && p==pA) {
@@ -342,12 +342,12 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& profile,
                 vn.setSize(5);
             }
             else {
-                vn[n++]=WRAP_I(piwk-profile.getSize());
-                vn[n++]=WRAP_I(vi-profile.getSize());
+                vn[n++]=WRAP_P(piwk-contour.getSize());
+                vn[n++]=WRAP_P(vi-contour.getSize());
             }
 
-#undef WRAP_K
-#undef WRAP_I
+#undef WRAP_C
+#undef WRAP_P
 
             ++vi;
         }
