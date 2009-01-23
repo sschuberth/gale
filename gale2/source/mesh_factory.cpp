@@ -293,7 +293,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
         ++vi;
     }
 
-    for (int pi=vi;vi<m->vertices.getSize();pi+=contour.getSize()) {
+    for (int bi=vi;vi<m->vertices.getSize();bi+=contour.getSize()) {
         // Pointer to p's predecessor along the path.
         Vec3f const* a=(p==pA)?(closed?pO:p):p-1;
 
@@ -307,9 +307,9 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
 
         HMat4f frenet(binormal,normal,tangent,*p);
 
-        for (int c=0;c<contour.getSize();++c) {
+        for (int ci=0;ci<contour.getSize();++ci) {
             // Transform the contour along the path.
-            m->vertices[vi]=frenet*contour[c];
+            m->vertices[vi]=frenet*contour[ci];
 
             // Connect the neighbors.
             IndexArray& vn=m->neighbors[vi];
@@ -318,10 +318,10 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
 #define WRAP_P(x) wrap(x,m->vertices.getSize())
 #define WRAP_C(x) wrap(x,contour.getSize())
 
-            int piwk,n=0;
+            int biwc,n=0;
 
-            piwk=pi+WRAP_C(c-1);
-            vn[n++]=piwk;
+            biwc=bi+WRAP_C(ci-1);
+            vn[n++]=biwc;
 
             if (!closed && p==pO) {
                 // Connect the end cut face vertices to the last path vertex.
@@ -329,12 +329,12 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                 vn.setSize(5);
             }
             else {
-                vn[n++]=WRAP_P(piwk+contour.getSize());
+                vn[n++]=WRAP_P(biwc+contour.getSize());
                 vn[n++]=WRAP_P(vi+contour.getSize());
             }
 
-            piwk=pi+WRAP_C(c+1);
-            vn[n++]=piwk;
+            biwc=bi+WRAP_C(ci+1);
+            vn[n++]=biwc;
 
             if (!closed && p==pA) {
                 // Connect the start cut face vertices to the first path vertex.
@@ -342,7 +342,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                 vn.setSize(5);
             }
             else {
-                vn[n++]=WRAP_P(piwk-contour.getSize());
+                vn[n++]=WRAP_P(biwc-contour.getSize());
                 vn[n++]=WRAP_P(vi-contour.getSize());
             }
 
