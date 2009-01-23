@@ -32,7 +32,7 @@
  */
 
 #include "../global/dynamicarray.h"
-#include "../math/vector.h"
+#include "../math/hmatrix4.h"
 
 namespace gale {
 
@@ -56,10 +56,21 @@ struct Mesh
     /// Forward declaration for use by inner classes.
     class Preparer;
 
-    /// Inner factory class to create some predefined meshes.
+    /// Factory class to create some meshes.
     class Factory
     {
       public:
+
+        /// Factory class to create some shapes, e.g. for use as extrude contours.
+        struct Shape
+        {
+            /// Returns an array of vectors on an ellipse with width \a w, height
+            /// \a h and divided into \a segs segments.
+            static void Ellipse(VectorArray& shape,float w,float h,int segs);
+        };
+
+        /// Array of transformation matrices.
+        typedef global::DynamicArray<math::HMat4f> MatrixArray;
 
         /**
          * \name Platonic Solids
@@ -103,6 +114,12 @@ struct Mesh
         /// \a q have to be relatively prime.
         static Mesh* TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w,float h,int p,int q);
 
+        /// Returns a Möbius Strip with an outer radius width \a r1w and height
+        /// \a r1h, and inner radius width \a r2w and height \a r2h, where the
+        /// inner and outer ellipses are divided into \a r1_segs and \a r2_segs
+        /// segments respectively.
+        static Mesh* MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1_segs,int r2_segs);
+
         /**
          * \name Helper and debug meshes
          * Factory methods to create meshes that are not particularly useful
@@ -113,7 +130,7 @@ struct Mesh
         /// Generates a mesh by extruding the line loop defined by \a contour
         /// along the given \a path. If \a close is \c true, the end of the path
         /// is connected to its beginning, else cut faces are created.
-        static Mesh* Extrude(VectorArray const& path,VectorArray const& contour,bool closed=true);
+        static Mesh* Extrude(VectorArray const& path,VectorArray const& contour,bool closed=true,MatrixArray const* trans=NULL);
 
         /// Generates a mesh consisting of lines only that represent the
         /// compiled mesh's vertex normals stored in the \a renderer, optionally
@@ -129,8 +146,8 @@ struct Mesh
         static void populateNeighborhood(Mesh* mesh,float distance,int valence);
     };
 
-    /// Inner class to subdivide meshes using different algorithms, for an
-    /// overview see <http://en.wikipedia.org/wiki/Subdivision_surface>.
+    /// Class to subdivide meshes using different algorithms, for an overview
+    /// see <http://en.wikipedia.org/wiki/Subdivision_surface>.
     class Subdivider
     {
       public:
@@ -200,7 +217,7 @@ struct Mesh
         static void assignNeighbors(Mesh const& orig,Mesh& mesh,int x0i);
     };
 
-    /// Inner class to prepare a mesh for rendering.
+    /// Class to prepare a mesh for rendering.
     class Preparer
     {
       public:

@@ -25,13 +25,24 @@
 
 #include "gale/model/mesh.h"
 
-#include "gale/math/hmatrix4.h"
-
 using namespace gale::math;
 
 namespace gale {
 
 namespace model {
+
+void Mesh::Factory::Shape::Ellipse(VectorArray& shape,float w,float h,int segs)
+{
+    shape.setSize(segs);
+
+    float a=0;
+    float d=2*Constf::PI()/segs;
+
+    for (int i=0;i<segs;++i) {
+        shape[i]=Vec3f(::cos(a)*w,::sin(a)*h,0);
+        a+=d;
+    }
+}
 
 Mesh* Mesh::Factory::Tetrahedron()
 {
@@ -191,40 +202,23 @@ Mesh* Mesh::Factory::Dodecahedron()
 
 Mesh* Mesh::Factory::Torus(float r1,float r2,int r1_segs,int r2_segs)
 {
-    VectorArray path(r1_segs);
-    VectorArray contour(r2_segs);
-
-    float a,d;
-    int i;
-
     // Calculate points on the path.
-    a=0;
-    d=2*Constf::PI()/r1_segs;
-    for (i=0;i<r1_segs;++i) {
-        path[i]=Vec3f(::cos(a)*r1,::sin(a)*r1,0);
-        a+=d;
-    }
+    VectorArray path;
+    Shape::Ellipse(path,r1,r1,r1_segs);
 
     // Calculate points on the contour.
-    a=0;
-    d=2*Constf::PI()/r2_segs;
-    for (i=0;i<r2_segs;++i) {
-        contour[i]=Vec3f(::cos(a)*r2,::sin(a)*r2,0);
-        a+=d;
-    }
+    VectorArray contour;
+    Shape::Ellipse(contour,r2,r2,r2_segs);
 
+    // Extrude the contour along the path.
     return Extrude(path,contour);
 }
 
 Mesh* Mesh::Factory::TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w,float h,int p,int q)
 {
-    VectorArray path(r1_segs);
-    VectorArray contour(r2_segs);
-
-    int i;
-
     // Calculate points on the path.
-    for (i=0;i<r1_segs;++i) {
+    VectorArray path(r1_segs);
+    for (int i=0;i<r1_segs;++i) {
         float angle=2*Constf::PI()/r1_segs*i;
 
         // Calculate the cylindrical coordinates.
@@ -241,17 +235,33 @@ Mesh* Mesh::Factory::TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w
     }
 
     // Calculate points on the contour.
-    float a=0;
-    float d=2*Constf::PI()/r2_segs;
-    for (i=0;i<r2_segs;++i) {
-        contour[i]=Vec3f(::cos(a)*r2,::sin(a)*r2,0);
-        a+=d;
-    }
+    VectorArray contour;
+    Shape::Ellipse(contour,r2,r2,r2_segs);
 
+    // Extrude the contour along the path.
     return Extrude(path,contour);
 }
 
-Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,bool closed)
+Mesh* Mesh::Factory::MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1_segs,int r2_segs)
+{
+    // Calculate points on the path.
+    VectorArray path;
+    Shape::Ellipse(path,r1w,r1h,r1_segs);
+
+    // Calculate points on the contour.
+    VectorArray contour;
+    Shape::Ellipse(contour,r2w,r2h,r2_segs);
+
+    MatrixArray rotation(r1_segs);
+    for (int i=0;i<r1_segs;++i) {
+        rotation[i]=HMat4f::Factory::RotationZ(Constd::PI()/r1_segs*i);
+    }
+
+    // Extrude the contour along the path.
+    return Extrude(path,contour,true,&rotation);
+}
+
+Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,bool closed,MatrixArray const* trans)
 {
     if (path.getSize()<2 || contour.getSize()<3) {
         return NULL;
@@ -293,7 +303,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
         ++vi;
     }
 
-    for (int bi=vi;vi<m->vertices.getSize();bi+=contour.getSize()) {
+    for (int bi=vi,pi=0;vi<m->vertices.getSize();bi+=contour.getSize(),++pi) {
         // Pointer to p's predecessor along the path.
         Vec3f const* a=(p==pA)?(closed?pO:p):p-1;
 
@@ -306,6 +316,10 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
         Vec3f normal=binormal^tangent;
 
         HMat4f frenet(binormal,normal,tangent,*p);
+
+        if (trans) {
+            frenet*=(*trans)[pi%trans->getSize()];
+        }
 
         for (int ci=0;ci<contour.getSize();++ci) {
             // Transform the contour along the path.
