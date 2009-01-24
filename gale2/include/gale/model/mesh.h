@@ -243,10 +243,16 @@ struct Mesh
             return m_mesh;
         }
 
+        // Work around a Doxygen bug that causes to find no matching class
+        // member for orbit(int ai,int bi,IndexArray &polygon) if IndexArray is
+        // already used here.
+
+        /// \cond DOXYGEN_IGNORE
         IndexArray points;    ///< Array of vertex indices describing points.
         IndexArray lines;     ///< Array of vertex indices describing lines.
         IndexArray triangles; ///< Array of vertex indices describing triangles.
         IndexArray quads;     ///< Array of vertex indices describing quadrilaterals.
+        /// \endcond
 
         IndexTable polygons;  ///< Table of vertex indices describing polygons.
 

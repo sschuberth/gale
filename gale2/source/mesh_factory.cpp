@@ -325,7 +325,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             // Transform the contour along the path.
             m->vertices[vi]=frenet*contour[ci];
 
-            // Connect the neighbors.
+            // Connect the 6 neighbors (5 for the endpoints of an open path).
             IndexArray& vn=m->neighbors[vi];
             vn.setSize(6);
 
