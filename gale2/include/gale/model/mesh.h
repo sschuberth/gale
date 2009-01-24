@@ -56,16 +56,16 @@ struct Mesh
     /// Forward declaration for use by inner classes.
     class Preparer;
 
-    /// Factory class to create some meshes.
+    /// %Factory class to create procedural meshes.
     class Factory
     {
       public:
 
-        /// Factory class to create some shapes, e.g. for use as extrude contours.
+        /// %Factory methods to create some shapes, e.g. for use as extrude contours.
         struct Shape
         {
-            /// Returns an array of vectors on an ellipse with width \a w, height
-            /// \a h and divided into \a segs segments.
+            /// Returns an array of vectors on an ellipse with width \a w and
+            /// height \a h, divided into \a segs segments.
             static void Ellipse(VectorArray& shape,float w,float h,int segs);
         };
 
@@ -74,7 +74,7 @@ struct Mesh
 
         /**
          * \name Platonic Solids
-         * Factory methods to create the five Platonic Solids, each with unit
+         * %Factory methods to create the five Platonic Solids, each with unit
          * edge length, see <http://mathworld.wolfram.com/PlatonicSolid.html>.
          */
         //@{
@@ -101,6 +101,12 @@ struct Mesh
 
         //@}
 
+        /**
+         * \name Ellipse-based meshes
+         * %Factory methods to create meshes that are based on extruded ellipses.
+         */
+        //@{
+
         /// Returns a torus with outer radius \a r1 and inner radius \a r2. The
         /// outer and inner circles are divided into \a r1_segs and \a r2_segs
         /// segments respectively.
@@ -120,9 +126,11 @@ struct Mesh
         /// segments respectively.
         static Mesh* MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1_segs,int r2_segs);
 
+        //@}
+
         /**
          * \name Helper and debug meshes
-         * Factory methods to create meshes that are not particularly useful
+         * %Factory methods to create meshes that are not particularly useful
          * on their own, but are used by other factory methods or for debugging.
          */
         //@{

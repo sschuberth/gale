@@ -69,7 +69,7 @@ class Matrix4
     /// Definition of the type of vector used as the columns for the matrix.
     typedef Vector<4,T> Vec;
 
-    /// Factory class to easily create commonly used matrices.
+    /// %Factory methods to easily create commonly used matrices.
     struct Factory
     {
         /// Creates an orthographic projection matrix with the points in the

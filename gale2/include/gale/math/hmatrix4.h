@@ -68,7 +68,7 @@ class HMatrix4
     /// Definition of the type of vector used as the columns for the matrix.
     typedef Vector<3,T> Vec;
 
-    /// Factory class to easily create commonly used homogeneous matrices.
+    /// %Factory methods to easily create commonly used homogeneous matrices.
     struct Factory
     {
         /// Creates a rotation matrix about the x-axis for the given \a angle in
