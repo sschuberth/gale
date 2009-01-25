@@ -76,7 +76,20 @@ RenderSurface::RenderSurface()
         s_atom=RegisterClass(&cls);
         assert(s_atom!=0);
     }
+}
 
+RenderSurface::~RenderSurface()
+{
+    if (--s_instances>0) {
+        return;
+    }
+    assert(s_instances==0);
+
+    G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL));
+}
+
+bool RenderSurface::create(int format)
+{
     // Create a dummy window and get its device context.
     m_window=CreateWindow(
     /* lpClassName  */ MAKEINTATOM(s_atom),
@@ -91,48 +104,61 @@ RenderSurface::RenderSurface()
     /* hInstance    */ NULL,
     /* lpParam      */ NULL
     );
-    assert(m_window!=NULL);
 
-    m_context.device=GetDC(m_window);
-    assert(m_context.device!=NULL);
+    if (m_window) {
+        m_context.device=GetDC(m_window);
+        if (m_context.device) {
+            if (format<=0) {
+                // Set the device context to a pixel format that uses OpenGL acceleration.
+                PIXELFORMATDESCRIPTOR pfd;
+                memset(&pfd,0,sizeof(pfd));
+                pfd.nSize=sizeof(pfd);
+                pfd.nVersion=1;
+                pfd.dwFlags=PFD_DRAW_TO_WINDOW
+                          | PFD_SUPPORT_OPENGL
+                          | PFD_GENERIC_ACCELERATED
+                          | PFD_DOUBLEBUFFER
+                          | PFD_SUPPORT_COMPOSITION
+                ;
+                pfd.iPixelType=PFD_TYPE_RGBA;
+                pfd.cColorBits=32;
+                pfd.cDepthBits=24;
+                pfd.cStencilBits=8;
 
-    // Set the device context to a pixel format that uses OpenGL acceleration.
-    PIXELFORMATDESCRIPTOR pfd;
-    memset(&pfd,0,sizeof(pfd));
-    pfd.nSize=sizeof(pfd);
-    pfd.nVersion=1;
-    pfd.dwFlags=PFD_DRAW_TO_WINDOW
-              | PFD_SUPPORT_OPENGL
-              | PFD_GENERIC_ACCELERATED
-              | PFD_SUPPORT_COMPOSITION
-    ;
+                format=ChoosePixelFormat(m_context.device,&pfd);
+            }
 
-    int format=ChoosePixelFormat(m_context.device,&pfd);
-    assert(format!=0);
-
-    // Setting the pixel format is only allowed once per window!
-    G_ASSERT_CALL(SetPixelFormat(m_context.device,format,&pfd));
-
-    // Create and activate a rendering context.
-    m_context.render=wglCreateContext(m_context.device);
-    assert(m_context.render!=NULL);
-}
-
-RenderSurface::~RenderSurface()
-{
-    if (--s_instances>0) {
-        return;
+            // Setting the pixel format is only allowed once per window! Passing
+            // NULL as the last argument is undocumented, but seems to work.
+            if (SetPixelFormat(m_context.device,format,NULL)!=FALSE) {
+                // Create and activate a rendering context.
+                m_context.render=wglCreateContext(m_context.device);
+                if (m_context.render) {
+                    return true;
+                }
+            }
+        }
     }
-    assert(s_instances==0);
 
-    G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL));
+    destroy();
+
+    return false;
 }
 
 void RenderSurface::destroy()
 {
-    G_ASSERT_CALL(wglDeleteContext(contextHandle().render));
-    G_ASSERT_CALL(ReleaseDC(windowHandle(),contextHandle().device));
-    G_ASSERT_CALL(DestroyWindow(windowHandle()));
+    if (m_context.render) {
+        G_ASSERT_CALL(wglDeleteContext(m_context.render));
+        m_context.render=NULL;
+    }
+    if (m_context.device) {
+        G_ASSERT_CALL(ReleaseDC(m_window,m_context.device));
+        m_context.device=NULL;
+    }
+    if (m_window) {
+        G_ASSERT_CALL(DestroyWindow(m_window));
+        m_window=NULL;
+    }
 }
 
 LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
@@ -152,7 +178,7 @@ LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 
         default: {
             // Let Window's default handler process other messages.
-            return DefWindowProc(windowHandle(),uMsg,wParam,lParam);
+            return DefWindowProc(m_window,uMsg,wParam,lParam);
         }
     }
 }

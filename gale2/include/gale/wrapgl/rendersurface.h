@@ -83,12 +83,15 @@ class RenderSurface
         return wglMakeCurrent(handle.device,handle.render)!=FALSE;
     }
 
-    /// Creates a minimal OpenGL context attached to a hidden window without
-    /// changing the current OpenGL context.
+    /// Registers a common window class for all OpenGL contexts.
     RenderSurface();
 
-    /// Frees all resources allocated by the render surface.
+    /// Unregisters the window class if it is not used anymore.
     ~RenderSurface();
+
+    /// Creates a minimal OpenGL context attached to a hidden window without
+    /// changing the current OpenGL context.
+    bool create(int format=0);
 
     /// Returns the handle to the window associated with this render surface.
     WindowHandle const& windowHandle() const {
@@ -103,13 +106,13 @@ class RenderSurface
 
     /// Makes this the active OpenGL context for the current thread.
     bool makeCurrentContext() {
-        return setCurrentContext(contextHandle());
+        return setCurrentContext(m_context);
     }
 
     /// Returns the width and height of this render surface.
     Dimensions dimensions() const {
         RECT rect;
-        G_ASSERT_CALL(GetClientRect(windowHandle(),&rect));
+        G_ASSERT_CALL(GetClientRect(m_window,&rect));
         return Dimensions(rect.right,rect.bottom);
     }
 
