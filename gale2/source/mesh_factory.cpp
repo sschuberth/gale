@@ -267,7 +267,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
         return NULL;
     }
 
-    Mesh* m=new Mesh(static_cast<int>(!closed)*2+path.getSize()*contour.getSize());
+    Mesh* m=new Mesh(path.getSize()*contour.getSize()+static_cast<int>(!closed)*2);
 
     // Pointers to the first and last vectors (Alpha and Omega :-) in the path.
     Vec3f const* const pA=&path[0];
@@ -279,31 +279,8 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
     // Index of the vertex currently being calculated.
     int vi=0;
 
-    if (!closed) {
-        // Add the first path vertex as the center of the start cut face.
-        m->vertices[vi]=*pA;
-
-        // Make ell vertices of the start cut face its neighbors.
-        IndexArray& nA=m->neighbors[vi];
-        nA.setSize(contour.getSize());
-        for (int i=0;i<nA.getSize();++i) {
-            nA[i]=2+i;
-        }
-        ++vi;
-
-        // Add the first path vertex as the center of the end cut face.
-        m->vertices[vi]=*pO;
-
-        // Make all vertices of the end cut face its neighbors.
-        IndexArray& nO=m->neighbors[vi];
-        nO.setSize(contour.getSize());
-        for (int i=0;i<nO.getSize();++i) {
-            nO[i]=m->vertices.getSize()-1-i;
-        }
-        ++vi;
-    }
-
-    for (int bi=vi,pi=0;vi<m->vertices.getSize();bi+=contour.getSize(),++pi) {
+    // Calculate the vertex positions.
+    for (int pi=0;pi<path.getSize();++pi) {
         // Pointer to p's predecessor along the path.
         Vec3f const* a=(p==pA)?(closed?pO:p):p-1;
 
@@ -315,7 +292,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
         Vec3f binormal=~(tangent^(*a+*b));
         Vec3f normal=binormal^tangent;
 
-        HMat4f frenet(binormal,normal,tangent,*p);
+        HMat4f frenet(binormal,normal,tangent,*p++);
 
         if (trans) {
             frenet*=(*trans)[pi%trans->getSize()];
@@ -323,8 +300,42 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
 
         for (int ci=0;ci<contour.getSize();++ci) {
             // Transform the contour along the path.
-            m->vertices[vi]=frenet*contour[ci];
+            m->vertices[vi++]=frenet*contour[ci];
+        }
+    }
 
+    if (!closed) {
+        // Add the first path vertex as the center of the start cut face.
+        m->vertices[vi]=*pA;
+
+        // Make all vertices of the start cut face its neighbors.
+        IndexArray& nA=m->neighbors[vi];
+        nA.setSize(contour.getSize());
+        for (int i=0;i<nA.getSize();++i) {
+            nA[i]=i;
+        }
+        ++vi;
+
+        // Add the last path vertex as the center of the end cut face.
+        m->vertices[vi]=*pO;
+
+        // Make all vertices of the end cut face its neighbors.
+        IndexArray& nO=m->neighbors[vi];
+        nO.setSize(contour.getSize());
+        for (int i=0;i<nO.getSize();++i) {
+            nO[i]=m->vertices.getSize()-3-i;
+        }
+        ++vi;
+    }
+
+    vi=0;
+
+    // Calculate the vertex neighbors.
+    for (int pi=0;pi<path.getSize();++pi) {
+        // Current "base" vertex on the contour.
+        int bi=vi;
+
+        for (int ci=0;ci<contour.getSize();++ci) {
             // Connect the 6 neighbors (5 for the endpoints of an open path).
             IndexArray& vn=m->neighbors[vi];
             vn.setSize(6);
@@ -332,14 +343,14 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
 #define WRAP_P(x) wrap(x,m->vertices.getSize())
 #define WRAP_C(x) wrap(x,contour.getSize())
 
-            int biwc,n=0;
+            int n=0,biwc;
 
             biwc=bi+WRAP_C(ci-1);
             vn[n++]=biwc;
 
-            if (!closed && p==pO) {
+            if (!closed && pi==path.getSize()-1) {
                 // Connect the end cut face vertices to the last path vertex.
-                vn[n++]=1;
+                vn[n++]=m->vertices.getSize()-1;
                 vn.setSize(5);
             }
             else {
@@ -350,9 +361,9 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             biwc=bi+WRAP_C(ci+1);
             vn[n++]=biwc;
 
-            if (!closed && p==pA) {
+            if (!closed && pi==0) {
                 // Connect the start cut face vertices to the first path vertex.
-                vn[n++]=0;
+                vn[n++]=m->vertices.getSize()-2;
                 vn.setSize(5);
             }
             else {
@@ -365,8 +376,6 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
 
             ++vi;
         }
-
-        ++p;
     }
 
     return m;
