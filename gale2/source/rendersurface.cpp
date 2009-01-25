@@ -88,7 +88,7 @@ RenderSurface::~RenderSurface()
     G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL));
 }
 
-bool RenderSurface::create(int format)
+bool RenderSurface::create(int pixel_format)
 {
     // Create a dummy window and get its device context.
     m_window=CreateWindow(
@@ -108,7 +108,7 @@ bool RenderSurface::create(int format)
     if (m_window) {
         m_context.device=GetDC(m_window);
         if (m_context.device) {
-            if (format<=0) {
+            if (pixel_format<=0) {
                 // Set the device context to a pixel format that uses OpenGL acceleration.
                 PIXELFORMATDESCRIPTOR pfd;
                 memset(&pfd,0,sizeof(pfd));
@@ -125,12 +125,12 @@ bool RenderSurface::create(int format)
                 pfd.cDepthBits=24;
                 pfd.cStencilBits=8;
 
-                format=ChoosePixelFormat(m_context.device,&pfd);
+                pixel_format=ChoosePixelFormat(m_context.device,&pfd);
             }
 
             // Setting the pixel format is only allowed once per window! Passing
             // NULL as the last argument is undocumented, but seems to work.
-            if (SetPixelFormat(m_context.device,format,NULL)!=FALSE) {
+            if (SetPixelFormat(m_context.device,pixel_format,NULL)!=FALSE) {
                 // Create and activate a rendering context.
                 m_context.render=wglCreateContext(m_context.device);
                 if (m_context.render) {

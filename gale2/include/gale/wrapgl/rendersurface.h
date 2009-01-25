@@ -89,9 +89,10 @@ class RenderSurface
     /// Unregisters the window class if it is not used anymore.
     ~RenderSurface();
 
-    /// Creates a minimal OpenGL context attached to a hidden window without
-    /// changing the current OpenGL context.
-    bool create(int format=0);
+    /// Creates a minimal OpenGL context with either a default or the specified
+    /// \a pixel_format which is attached to a hidden window. The current OpenGL
+    /// context is not changed.
+    bool create(int pixel_format=0);
 
     /// Returns the handle to the window associated with this render surface.
     WindowHandle const& windowHandle() const {
