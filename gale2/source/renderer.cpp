@@ -33,13 +33,13 @@ namespace wrapgl {
 
 void Renderer::draw(model::Mesh::Preparer const& geom)
 {
-    if (!geom.getCompiledMesh()) {
+    if (!geom.getMesh()) {
         return;
     }
 
     // Set-up the arrays to be indexed.
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3,GL_FLOAT,0,geom.getCompiledMesh()->vertices);
+    glVertexPointer(3,GL_FLOAT,0,geom.getMesh()->vertices);
     glEnableClientState(GL_NORMAL_ARRAY);
     glNormalPointer(GL_FLOAT,0,geom.normals);
 

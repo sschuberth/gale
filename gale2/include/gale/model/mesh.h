@@ -239,7 +239,7 @@ struct Mesh
         void compile(Mesh const* mesh);
 
         /// Returns a pointer to the last compiled mesh.
-        Mesh const* getCompiledMesh() const {
+        Mesh const* getMesh() const {
             return m_mesh;
         }
 
@@ -260,7 +260,7 @@ struct Mesh
 
       protected:
 
-        Mesh const* m_mesh;     ///< Reference to the mesh to render.
+        Mesh const* m_mesh;   ///< Reference to the mesh to render.
     };
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.

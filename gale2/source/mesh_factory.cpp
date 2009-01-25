@@ -428,17 +428,17 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
 
 Mesh* Mesh::Factory::Normals(Preparer const& geom,float scale)
 {
-    if (!geom.getCompiledMesh()) {
+    if (!geom.getMesh()) {
         return NULL;
     }
 
-    int n=geom.getCompiledMesh()->vertices.getSize();
+    int n=geom.getMesh()->vertices.getSize();
 
     // Double the vertices and neighbors for the lines' endpoints.
     Mesh* m=new Mesh(n*2);
 
     // Copy the vertices to the normal mesh.
-    memcpy(m->vertices,geom.getCompiledMesh()->vertices,n*sizeof(VectorArray::Type));
+    memcpy(m->vertices,geom.getMesh()->vertices,n*sizeof(VectorArray::Type));
 
     for (int i=0,k=n;i<n;++i,++k) {
         // Calculate the endpoints by pointing from the vertex into the normal direction.
