@@ -347,14 +347,8 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             biwc=bi+WRAP_C(ci-1);
             vn[n++]=biwc;
 
-            if (!closed && pi==path.getSize()-1) {
-                // Connect the end cut face vertices to the last path vertex.
-                vn[n++]=m->vertices.getSize()-1;
-                vn.setSize(5);
-            }
-            else {
-                biwc+=contour.getSize();
-                if (biwc>=m->vertices.getSize()) {
+            if (pi==path.getSize()-1) {
+                if (closed) {
                     // It is not easy to find the transformed neighbors of a
                     // closed path, so simply connect to the closest ones.
                     Vec3f const& v=m->vertices[vi];
@@ -375,22 +369,21 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                     vn[n++]=mn;
                 }
                 else {
-                    vn[n++]=biwc;
-                    vn[n++]=vi+contour.getSize();
+                    // Connect the end cut face vertices to the last path vertex.
+                    vn[n++]=m->vertices.getSize()-1;
+                    vn.setSize(5);
                 }
+            }
+            else {
+                vn[n++]=biwc+contour.getSize();
+                vn[n++]=vi+contour.getSize();
             }
 
             biwc=bi+WRAP_C(ci+1);
             vn[n++]=biwc;
 
-            if (!closed && pi==0) {
-                // Connect the start cut face vertices to the first path vertex.
-                vn[n++]=m->vertices.getSize()-2;
-                vn.setSize(5);
-            }
-            else {
-                biwc-=contour.getSize();
-                if (biwc<0) {
+            if (pi==0) {
+                if (closed) {
                     // It is not easy to find the transformed neighbors of a
                     // closed path, so simply connect to the closest ones.
                     Vec3f const& v=m->vertices[vi];
@@ -414,9 +407,14 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                     vn[n++]=mn;
                 }
                 else {
-                    vn[n++]=biwc;
-                    vn[n++]=vi-contour.getSize();
+                    // Connect the start cut face vertices to the first path vertex.
+                    vn[n++]=m->vertices.getSize()-2;
+                    vn.setSize(5);
                 }
+            }
+            else {
+                vn[n++]=biwc-contour.getSize();
+                vn[n++]=vi-contour.getSize();
             }
 
 #undef WRAP_C
