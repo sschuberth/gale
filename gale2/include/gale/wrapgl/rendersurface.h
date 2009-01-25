@@ -94,6 +94,10 @@ class RenderSurface
     /// context is not changed.
     bool create(int pixel_format=0);
 
+    /// Destroys the render surface, i.e. frees all resources except the window
+    /// class, so the method can be used by derived classes.
+    void destroy();
+
     /// Returns the handle to the window associated with this render surface.
     WindowHandle const& windowHandle() const {
         return m_window;
@@ -118,10 +122,6 @@ class RenderSurface
     }
 
   protected:
-
-    /// Destroys the render surface, i.e. frees all resources except the window
-    /// class, so the method can be used by derived classes.
-    void destroy();
 
     /// Handles window messages and forwards them to the event handlers.
     virtual LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);

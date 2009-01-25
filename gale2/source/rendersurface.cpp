@@ -37,30 +37,6 @@ namespace wrapgl {
 int RenderSurface::s_instances=0;
 ATOM RenderSurface::s_atom=0;
 
-LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
-{
-    // Using a dynamic_cast here would be safer, but that requires RTTI support.
-    size_t ptr=static_cast<size_t>(GetWindowLongPtr(hWnd,GWLP_USERDATA));
-    RenderSurface *_this=reinterpret_cast<RenderSurface*>(ptr);
-
-    if (uMsg==WM_CREATE) {
-        LPVOID params=reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;
-        _this=static_cast<RenderSurface*>(params);
-        ptr=reinterpret_cast<size_t>(_this);
-#ifdef G_ARCH_X86_64
-        SetWindowLongPtr(hWnd,GWLP_USERDATA,(LONG_PTR)ptr);
-#else
-        SetWindowLongPtr(hWnd,GWLP_USERDATA,(LONG)ptr);
-#endif
-    }
-
-    if (_this==NULL) {
-        return DefWindowProc(hWnd,uMsg,wParam,lParam);
-    }
-
-    return _this->handleMessage(uMsg,wParam,lParam);
-}
-
 RenderSurface::RenderSurface()
 {
     // We only need to register the window class once.
@@ -80,6 +56,8 @@ RenderSurface::RenderSurface()
 
 RenderSurface::~RenderSurface()
 {
+    destroy();
+
     if (--s_instances>0) {
         return;
     }
@@ -94,7 +72,7 @@ bool RenderSurface::create(int pixel_format)
     m_window=CreateWindow(
     /* lpClassName  */ MAKEINTATOM(s_atom),
     /* lpWindowName */ NULL,
-    /* dwStyle      */ 0,
+    /* dwStyle      */ WS_OVERLAPPEDWINDOW,
     /* x            */ 0,
     /* y            */ 0,
     /* nWidth       */ 0,
@@ -102,7 +80,7 @@ bool RenderSurface::create(int pixel_format)
     /* hWndParent   */ HWND_DESKTOP,
     /* hMenu        */ NULL,
     /* hInstance    */ NULL,
-    /* lpParam      */ NULL
+    /* lpParam      */ this
     );
 
     if (m_window) {
@@ -181,6 +159,30 @@ LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
             return DefWindowProc(m_window,uMsg,wParam,lParam);
         }
     }
+}
+
+LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
+{
+    // Using a dynamic_cast here would be safer, but that requires RTTI support.
+    size_t ptr=static_cast<size_t>(GetWindowLongPtr(hWnd,GWLP_USERDATA));
+    RenderSurface *_this=reinterpret_cast<RenderSurface*>(ptr);
+
+    if (uMsg==WM_CREATE) {
+        LPVOID params=reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;
+        _this=static_cast<RenderSurface*>(params);
+        ptr=reinterpret_cast<size_t>(_this);
+#ifdef G_ARCH_X86_64
+        SetWindowLongPtr(hWnd,GWLP_USERDATA,(LONG_PTR)ptr);
+#else
+        SetWindowLongPtr(hWnd,GWLP_USERDATA,(LONG)ptr);
+#endif
+    }
+
+    if (_this==NULL) {
+        return DefWindowProc(hWnd,uMsg,wParam,lParam);
+    }
+
+    return _this->handleMessage(uMsg,wParam,lParam);
 }
 
 #endif // G_OS_WINDOWS
