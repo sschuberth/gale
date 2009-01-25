@@ -92,8 +92,23 @@ class DefaultWindow:public RenderWindow
     }
 
     void onResize(int width,int height) {
+        static int const init_width=width;
+        static double const init_fov=math::Constd::PI()*0.25;
+
+        double fov;
+
+        if (width>=init_width) {
+            // Scale the FOV down in the same ration the width increased.
+            fov=static_cast<double>(init_width)/width*init_fov;
+        }
+        else {
+            // Scale the FOV so that for a zero window width it becomes PI.
+            fov=(init_fov-math::Constd::PI())/init_width*width+math::Constd::PI();
+        }
+
         m_camera.setScreenSpaceDimensions(width,height);
-        m_camera.setProjection(math::Mat4d::Factory::PerspectiveProjection(width,height));
+        m_camera.setProjection(math::Mat4d::Factory::PerspectiveProjection(width,height,fov));
+
         repaint();
     }
 
