@@ -340,7 +340,6 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             IndexArray& vn=m->neighbors[vi];
             vn.setSize(6);
 
-#define WRAP_P(x) wrap(x,m->vertices.getSize())
 #define WRAP_C(x) wrap(x,contour.getSize())
 
             int n=0,biwc;
@@ -354,8 +353,31 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                 vn.setSize(5);
             }
             else {
-                vn[n++]=WRAP_P(biwc+contour.getSize());
-                vn[n++]=WRAP_P(vi+contour.getSize());
+                biwc+=contour.getSize();
+                if (biwc>=m->vertices.getSize()) {
+                    // It is not easy to find the transformed neighbors of a
+                    // closed path, so simply connect to the closest ones.
+                    Vec3f const& v=m->vertices[vi];
+
+                    int mn=0;
+                    float md=(m->vertices[mn]-v).length2();
+
+                    for (int cA=1;cA<contour.getSize();++cA) {
+                        float dA=(m->vertices[cA]-v).length2();
+                        if (dA<md) {
+                            md=dA;
+                            mn=cA;
+                        }
+                    }
+
+                    biwc=mn%contour.getSize();
+                    vn[n++]=mn-biwc+WRAP_C(biwc-1);
+                    vn[n++]=mn;
+                }
+                else {
+                    vn[n++]=biwc;
+                    vn[n++]=vi+contour.getSize();
+                }
             }
 
             biwc=bi+WRAP_C(ci+1);
@@ -367,12 +389,37 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                 vn.setSize(5);
             }
             else {
-                vn[n++]=WRAP_P(biwc-contour.getSize());
-                vn[n++]=WRAP_P(vi-contour.getSize());
+                biwc-=contour.getSize();
+                if (biwc<0) {
+                    // It is not easy to find the transformed neighbors of a
+                    // closed path, so simply connect to the closest ones.
+                    Vec3f const& v=m->vertices[vi];
+
+                    int start=m->vertices.getSize()-1;
+
+                    int mn=start;
+                    float md=(m->vertices[mn]-v).length2();
+
+                    for (int cA=1;cA<contour.getSize();++cA) {
+                        int cO=start-cA;
+                        float dA=(m->vertices[cO]-v).length2();
+                        if (dA<md) {
+                            md=dA;
+                            mn=cO;
+                        }
+                    }
+
+                    biwc=mn%contour.getSize();
+                    vn[n++]=mn-biwc+WRAP_C(biwc+1);
+                    vn[n++]=mn;
+                }
+                else {
+                    vn[n++]=biwc;
+                    vn[n++]=vi-contour.getSize();
+                }
             }
 
 #undef WRAP_C
-#undef WRAP_P
 
             ++vi;
         }
