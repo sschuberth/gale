@@ -37,6 +37,8 @@ namespace wrapgl {
 RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel,LPCTSTR title)
 :   m_timeout(0)
 {
+    create();
+
     // Activate the minimal render surface to get a context for OpenGL extension
     // initialization.
     G_ASSERT_CALL(makeCurrentContext());

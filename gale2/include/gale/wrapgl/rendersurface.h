@@ -42,9 +42,9 @@ namespace wrapgl {
 
 /**
  * This class serves as a base for everything that requires an OpenGL context,
- * e.g. on-screen windows or off-screen buffers. It creates a dummy context
- * that is just used to initialize OpenGL extensions required to create a more
- * sophisticated context which replaces the dummy context.
+ * e.g. on-screen windows or off-screen buffers. It creates a default context
+ * that is used to initialize OpenGL extensions required to create a more
+ * sophisticated context which replaces the default context.
  */
 class RenderSurface
 {

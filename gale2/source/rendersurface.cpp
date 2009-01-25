@@ -90,7 +90,7 @@ RenderSurface::~RenderSurface()
 
 bool RenderSurface::create(int pixel_format)
 {
-    // Create a dummy window and get its device context.
+    // Create a default window and get its device context.
     m_window=CreateWindow(
     /* lpClassName  */ MAKEINTATOM(s_atom),
     /* lpWindowName */ NULL,
