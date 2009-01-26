@@ -76,6 +76,7 @@ class DefaultWindow:public RenderWindow
         }
     }
 
+    /// Adjusts the camera if the window size changes.
     void onResize(int width,int height) {
         static int const init_width=width;
         static double const init_fov=math::Constd::PI()*0.25;
@@ -97,7 +98,7 @@ class DefaultWindow:public RenderWindow
         repaint();
     }
 
-    /// Override the default paint event handler to draw a logo.
+    /// Overrides the default paint event handler to draw a logo.
     void onPaint() {
         onRender();
         drawLogo();
@@ -119,6 +120,7 @@ class DefaultWindow:public RenderWindow
 
   protected:
 
+    /// Defines a custom ID for the About dialog menu entry.
     static UINT_PTR const ID_ABOUT_DLG=0x00AB;
 
     /// Handles window messages and forwards them to the event handlers.

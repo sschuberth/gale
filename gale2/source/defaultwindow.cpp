@@ -25,14 +25,14 @@
 
 #include "gale/wrapgl/defaultwindow.h"
 
+using namespace gale::math;
+
 namespace gale {
 
 namespace wrapgl {
 
 void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
 {
-    using namespace math;
-
     static int mouse_prev_x=0,mouse_prev_y=0;
 
     // This is positive if the mouse cursor was moved to the right.
