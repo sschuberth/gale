@@ -33,6 +33,56 @@
 
 #ifdef GALE_TINY
 
+// In order to work without linking against the CRT, the following C/C++ compiler
+// settings need to be adjust from within the IDE.
+//
+// Optimization:
+// Set "Enable Intrinsic Functions" to "Yes" (/Oi)
+//
+// Code Generation:
+// Set "Enable C++ Exceptions" to "No"
+// Set "Buffer Security Check" to "No" (/GS-)
+// Set "Floating Point Model" to "Fast" (/fp:fast)
+#pragma optimize("gsy",on)
+#pragma comment(linker,"/nodefaultlib")
+
+// "Enable Intrinsic Functions" is supposed to make memcpy an intrinsic, but that
+// does not work in VS2005. Although the compiler claims it would be, the linker
+// wants to pull in memcpy from the CRT. So in order to implement our own minimal
+// version, we first need to force memcpy to formally be a function, also see
+// <http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=101250>.
+#pragma function(memcpy)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/// Minimal "puts" function implementation.
+#define puts(str) print(#str "\n")
+int print(char const* str);
+
+/// Minimal "calloc" function implementation.
+void* calloc(size_t num,size_t size);
+
+/// Minimal "malloc" function implementation.
+void* malloc(size_t size);
+
+/// Minimal "realloc" function implementation.
+void* realloc(void* memblock,size_t size);
+
+/// Minimal "free" function implementation.
+void free(void* memblock);
+
+/// Minimal "memcpy" function implementation.
+void* memcpy(void* dest,void const* src,size_t count);
+
+/// Minimal "memmove" function implementation.
+void* memmove(void* dest,void const* src,size_t count);
+
+#ifdef __cplusplus
+};
+#endif
+
 /// Minimal "new" operator implementation.
 void* operator new(size_t bytes);
 
@@ -47,6 +97,9 @@ void operator delete(void* pointer);
 
 /// Minimal array "delete" operator implementation.
 void operator delete[](void* pointer);
+
+/// Minimal placement "delete" operator implementation.
+void operator delete(void* pointer,void* place);
 
 #endif // GALE_TINY
 

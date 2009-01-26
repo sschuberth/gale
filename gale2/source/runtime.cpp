@@ -26,28 +26,118 @@
 #ifdef GALE_TINY
 
 #include "gale/global/platform.h"
+#include "gale/system/runtime.h"
+
+static HANDLE stdout;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // MSVC needs this symbol as soon as floating-point numbers are used.
-extern "C" int _fltused=0x9875;
+int _fltused=0x9875;
 
 // Forward declaration to the usual main() entry point.
-extern "C" int main();
+int main();
 
 // This is the real entry point as used by the C runtime; just call the usual
 // main() entry point and exit with its return value.
-extern "C" int mainCRTStartup()
+int mainCRTStartup()
 {
+    stdout=GetStdHandle(STD_OUTPUT_HANDLE);
     ExitProcess(main());
 }
 
+#ifdef __cplusplus
+};
+#endif
+
+/*
+ * Minimal C function implementations
+ */
+
+int print(char const* str)
+{
+    DWORD length=0,written;
+    while (str[length]) {
+        ++length;
+    }
+    if (WriteFile(stdout,str,length,&written,NULL)==FALSE || written!=length) {
+        return -1;
+    }
+    return written;
+}
+
+__declspec(noalias,restrict) void* calloc(size_t num,size_t size)
+{
+    return HeapAlloc(GetProcessHeap(),HEAP_ZERO_MEMORY,num*size);
+}
+
+__declspec(noalias,restrict) void* malloc(size_t size)
+{
+    return HeapAlloc(GetProcessHeap(),0,size);
+}
+
+__declspec(noalias,restrict) void* realloc(void* memblock,size_t size)
+{
+    if (memblock) {
+        return HeapReAlloc(GetProcessHeap(),0,memblock,size);
+    }
+    else {
+        return HeapAlloc(GetProcessHeap(),0,size);
+    }
+}
+
+__declspec(noalias) void free(void* memblock)
+{
+    if (memblock) {
+        HeapFree(GetProcessHeap(),0,memblock);
+    }
+}
+
+void* memcpy(void* dest,void const* src,size_t count)
+{
+    char* d=(char*)dest;
+    char const* s=(char const*)src;
+
+    for (size_t i=0;i<count;++i) {
+        *d++=*s++;
+    }
+
+    return dest;
+}
+
+void* memmove(void* dest,void const* src,size_t count)
+{
+    char* d=(char*)dest;
+    char const* s=(char const*)src;
+
+    if (d<=s) {
+        return memcpy(dest,src,count);
+    }
+    else {
+        d+=count;
+        s+=count;
+        while (count--) {
+            *(--d)=*(--s);
+        }
+    }
+
+    return dest;
+}
+
+/*
+ * Minimal C++ operator implementations
+ */
+
 void* operator new(size_t bytes)
 {
-    return HeapAlloc(GetProcessHeap(),0,bytes);
+    return malloc(bytes);
 }
 
 void* operator new[](size_t bytes)
 {
-    return HeapAlloc(GetProcessHeap(),0,bytes);
+    return malloc(bytes);
 }
 
 void* operator new(size_t bytes,void* place)
@@ -58,16 +148,17 @@ void* operator new(size_t bytes,void* place)
 
 void operator delete(void* pointer)
 {
-    if (pointer) {
-        HeapFree(GetProcessHeap(),0,pointer);
-    }
+    free(pointer);
 }
 
 void operator delete[](void* pointer)
 {
-    if (pointer) {
-        HeapFree(GetProcessHeap(),0,pointer);
-    }
+    free(pointer);
+}
+
+void operator delete(void* pointer,void* place)
+{
+    // Do nothing, not even calling a destructor.
 }
 
 #endif // GALE_TINY
