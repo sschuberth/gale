@@ -96,6 +96,7 @@ bool RenderSurface::create(int pixel_format,int width,int height,LPCTSTR title)
                           | PFD_DOUBLEBUFFER
                           | PFD_SUPPORT_COMPOSITION
                 ;
+
                 pfd.iPixelType=PFD_TYPE_RGBA;
                 pfd.cColorBits=32;
                 pfd.cDepthBits=24;

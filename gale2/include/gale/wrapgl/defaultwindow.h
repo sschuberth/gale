@@ -63,24 +63,9 @@ class DefaultWindow:public RenderWindow
         ME_WHEEL_SCROLL  = 1 << 3  ///< The mouse wheel was scrolled.
     };
 
-    /// Returns the default pixel format attributes to use.
-    static global::AttributeListi const& PixelAttributes() {
-        static global::AttributeListi attribs;
-        if (attribs.getSize()==0) {
-            attribs.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
-            attribs.insert(WGL_COLOR_BITS_ARB,24);
-            attribs.insert(WGL_RED_BITS_ARB,8);
-            attribs.insert(WGL_GREEN_BITS_ARB,8);
-            attribs.insert(WGL_BLUE_BITS_ARB,8);
-            attribs.insert(WGL_ALPHA_BITS_ARB,8);
-            attribs.insert(WGL_DEPTH_BITS_ARB,24);
-        }
-        return attribs;
-    }
-
     /// Creates a window with reasonable defaults set.
     DefaultWindow(LPCTSTR title,int client_width=500,int client_height=500)
-    :   RenderWindow(client_width,client_height,PixelAttributes(),title)
+    :   RenderWindow(title,client_width,client_height)
     ,   m_camera(this)
     {
         // Add an "About" entry to the system menu.

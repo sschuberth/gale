@@ -40,6 +40,8 @@ namespace gale {
 
 namespace wrapgl {
 
+#include "GLEX_ARB_multisample.h"
+
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
@@ -47,19 +49,17 @@ namespace wrapgl {
 #include "GLEX_WGL_ARB_create_context.h"
 
 /**
- * This class creates an on-screen window with a system-provided frame buffer to
- * render to using OpenGL. It makes use of the WGL_ARB_pixel_format and
- * WGL_ARB_pixel_format_float extensions to specify the desired pixel format.
+ * This class creates an on-screen window for OpenGL rendering.
  */
 class RenderWindow:public RenderSurface
 {
   public:
 
-    /// Creates a window with a client size of the given \a width and \a height
-    /// to render to. The properties of the pixel format to use are determined
-    /// by \a pixel_attr, and \a title specifies the caption. The window will be
-    /// hidden initially, but it will become the current rendering context.
-    RenderWindow(int width,int height,global::AttributeListi const& pixel_attr,LPCTSTR title);
+    /// Creates a window with the specified \a title, a client size of the given
+    /// \a width and \a height, and a pixel format determined by \a pixel_attr.
+    /// The window will be hidden initially, but it will become the current
+    /// rendering context.
+    RenderWindow(LPCTSTR title,int width,int height,global::AttributeListi const* pixel_attr=NULL);
 
     /// Returns the currently set timeout value in seconds.
     double getTimeout() const {
@@ -78,8 +78,8 @@ class RenderWindow:public RenderSurface
 
     /// Invalidates the whole window and requests to repaint its contents.
     void repaint() {
-        InvalidateRect(windowHandle(),NULL,FALSE);
-        UpdateWindow(windowHandle());
+        InvalidateRect(m_window,NULL,FALSE);
+        UpdateWindow(m_window);
     }
 
     /// Event handler that gets called when there are no messages to process.

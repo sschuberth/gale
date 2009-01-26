@@ -89,16 +89,6 @@ class RenderSurface
     /// Unregisters the window class if it is not used anymore.
     ~RenderSurface();
 
-    /// Creates a minimal device context with either a default or the specified
-    /// \a pixel_format which is attached to an initially hidden window with the
-    /// given \a width, \a height and \a title. No rendering context is created
-    /// yet to allow creating one using OpenGL extensions.
-    bool create(int pixel_format=0,int width=0,int height=0,LPCTSTR title=NULL);
-
-    /// Destroys the render surface, i.e. frees all resources except the window
-    /// class, so the method can be used by derived classes.
-    void destroy();
-
     /// Returns the handle to the window associated with this render surface.
     WindowHandle const& windowHandle() const {
         return m_window;
@@ -123,6 +113,16 @@ class RenderSurface
     }
 
   protected:
+
+    /// Creates a minimal device context with either a default or the specified
+    /// \a pixel_format which is attached to an initially hidden window with the
+    /// given \a width, \a height and \a title. No rendering context is created
+    /// yet to allow creating one using OpenGL extensions.
+    bool create(int pixel_format=0,int width=0,int height=0,LPCTSTR title=NULL);
+
+    /// Destroys the render surface, i.e. frees all resources except the window
+    /// class, so the method can be used by derived classes.
+    void destroy();
 
     /// Handles window messages and forwards them to the event handlers.
     virtual LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
