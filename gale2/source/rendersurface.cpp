@@ -56,8 +56,6 @@ RenderSurface::RenderSurface()
 
 RenderSurface::~RenderSurface()
 {
-    destroy();
-
     if (--s_instances>0) {
         return;
     }
@@ -66,17 +64,17 @@ RenderSurface::~RenderSurface()
     G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL));
 }
 
-bool RenderSurface::create(int pixel_format)
+bool RenderSurface::create(int pixel_format,int width,int height,LPCTSTR title)
 {
     // Create a default window and get its device context.
     m_window=CreateWindow(
     /* lpClassName  */ MAKEINTATOM(s_atom),
-    /* lpWindowName */ NULL,
+    /* lpWindowName */ title,
     /* dwStyle      */ WS_OVERLAPPEDWINDOW,
-    /* x            */ 0,
+    /* x            */ CW_USEDEFAULT,
     /* y            */ 0,
-    /* nWidth       */ 0,
-    /* nHeight      */ 0,
+    /* nWidth       */ width,
+    /* nHeight      */ height,
     /* hWndParent   */ HWND_DESKTOP,
     /* hMenu        */ NULL,
     /* hInstance    */ NULL,
@@ -109,11 +107,8 @@ bool RenderSurface::create(int pixel_format)
             // Setting the pixel format is only allowed once per window! Passing
             // NULL as the last argument is undocumented, but seems to work.
             if (SetPixelFormat(m_context.device,pixel_format,NULL)!=FALSE) {
-                // Create and activate a rendering context.
-                m_context.render=wglCreateContext(m_context.device);
-                if (m_context.render) {
-                    return true;
-                }
+                // Do not create a rendering context yet.
+                return true;
             }
         }
     }

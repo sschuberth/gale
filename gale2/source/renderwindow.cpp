@@ -34,95 +34,71 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-RenderWindow::RenderWindow(int width,int height,AttributeListi const& attr_pixel,LPCTSTR title)
+RenderWindow::RenderWindow(int width,int height,AttributeListi const& pixel_attr,LPCTSTR title)
 :   m_timeout(0)
 {
-    create();
-
-    // Activate the minimal render surface to get a context for OpenGL extension
-    // initialization.
-    G_ASSERT_CALL(makeCurrentContext());
-
-    // Try to initialize an OpenGL extension for more sophisticated selection of a
-    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
-    GLEX_WGL_ARB_pixel_format_init();
-
-    // Try to initialize an extension required to create an OpenGL 3.0 compatible
-    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
-    GLEX_WGL_ARB_create_context_init();
-
-    // Now that the OpenGL extensions are initialized, destroy the dummy context.
-    // Note: This obviously only works for extensions that do not themselves
-    // require an OpenGL context to be active when called.
-    destroy();
-
     // Calculate the window size from the desired client area size.
     RECT rect={0,0,width,height};
     G_ASSERT_CALL(AdjustWindowRect(&rect,WS_OVERLAPPEDWINDOW,FALSE));
 
-    // Create a render window and get its device context.
-    m_window=CreateWindow(
-    /* lpClassName  */ MAKEINTATOM(s_atom),
-    /* lpWindowName */ title,
-    /* dwStyle      */ WS_OVERLAPPEDWINDOW,
-    /* x            */ CW_USEDEFAULT,
-    /* y            */ 0,
-    /* nWidth       */ rect.right-rect.left,
-    /* nHeight      */ rect.bottom-rect.top,
-    /* hWndParent   */ HWND_DESKTOP,
-    /* hMenu        */ NULL,
-    /* hInstance    */ NULL,
-    /* lpParam      */ this
-    );
-    assert(m_window!=NULL);
+    width=rect.right-rect.left;
+    height=rect.bottom-rect.top;
 
-    m_context.device=GetDC(m_window);
-    m_context.render=NULL;
+    // Create a default device context.
+    G_ASSERT_CALL(create(0,width,height,title));
 
-    assert(m_context.device!=NULL);
+    // Create and activate a rendering context for OpenGL extension
+    // initialization.
+    m_context.render=wglCreateContext(m_context.device);
+    assert(m_context.render);
+
+    G_ASSERT_CALL(makeCurrentContext());
 
     AttributeListi attr;
     GLint format=0;
 
-    if (GLEX_WGL_ARB_pixel_format) {
-        attr=attr_pixel;
+    // Try to initialize an OpenGL extension for more sophisticated selection of a
+    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
+    if (GLEX_WGL_ARB_pixel_format_init()) {
+        attr=pixel_attr;
 
         // Make sure some required attributes are specified.
         attr.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
-        attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
         attr.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
+        attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
         attr.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
 
         // Set the device context to the first pixel format that matches the
         // specified attributes.
         UINT count;
         G_ASSERT_CALL(wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count));
-        assert(count>0);
     }
 
-    if (format==0) {
-        // Maybe implement a fallback using ChoosePixelFormat().
-        assert(false);
+    // Try to initialize an extension required to create an OpenGL 3.0 compatible
+    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
+    if (GLEX_WGL_ARB_create_context_init() || format>0) {
+        // Note: The code below obviously only works for extensions that do not
+        // themselves require an OpenGL context to be active when called.
+
+        // Destroy the default context to create a more sophisticated one.
+        destroy();
+
+        // Create a device context with a possibly better pixel format.
+        create(format,width,height,title);
+
+        // Create and activate the final rendering context.
+        if (GLEX_WGL_ARB_create_context) {
+            attr.clear();
+            attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
+            m_context.render=wglCreateContextAttribsARB(m_context.device,0,attr);
+        }
+        else {
+            m_context.render=wglCreateContext(m_context.device);
+        }
+        assert(m_context.render);
+
+        G_ASSERT_CALL(makeCurrentContext());
     }
-
-    // Setting the pixel format is only allowed once per window!
-    G_ASSERT_CALL(SetPixelFormat(m_context.device,format,NULL));
-
-    if (GLEX_WGL_ARB_create_context) {
-        attr.clear();
-        attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
-        m_context.render=wglCreateContextAttribsARB(m_context.device,0,attr);
-    }
-
-    if (!m_context.render) {
-        // Fall back to an old-style rendering context.
-        m_context.render=wglCreateContext(m_context.device);
-    }
-
-    assert(m_context.render!=NULL);
-
-    // Activate the rendering context.
-    G_ASSERT_CALL(makeCurrentContext());
 }
 
 void RenderWindow::processEvents()

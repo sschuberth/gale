@@ -57,9 +57,9 @@ class RenderWindow:public RenderSurface
 
     /// Creates a window with a client size of the given \a width and \a height
     /// to render to. The properties of the pixel format to use are determined
-    /// by \a attr_pixel, and \a title specifies the caption. The window will be
+    /// by \a pixel_attr, and \a title specifies the caption. The window will be
     /// hidden initially, but it will become the current rendering context.
-    RenderWindow(int width,int height,global::AttributeListi const& attr_pixel,LPCTSTR title);
+    RenderWindow(int width,int height,global::AttributeListi const& pixel_attr,LPCTSTR title);
 
     /// Returns the currently set timeout value in seconds.
     double getTimeout() const {

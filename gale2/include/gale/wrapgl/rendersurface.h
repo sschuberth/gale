@@ -89,10 +89,11 @@ class RenderSurface
     /// Unregisters the window class if it is not used anymore.
     ~RenderSurface();
 
-    /// Creates a minimal OpenGL context with either a default or the specified
-    /// \a pixel_format which is attached to a hidden window. The current OpenGL
-    /// context is not changed.
-    bool create(int pixel_format=0);
+    /// Creates a minimal device context with either a default or the specified
+    /// \a pixel_format which is attached to an initially hidden window with the
+    /// given \a width, \a height and \a title. No rendering context is created
+    /// yet to allow creating one using OpenGL extensions.
+    bool create(int pixel_format=0,int width=0,int height=0,LPCTSTR title=NULL);
 
     /// Destroys the render surface, i.e. frees all resources except the window
     /// class, so the method can be used by derived classes.
