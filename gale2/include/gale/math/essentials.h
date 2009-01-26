@@ -41,8 +41,6 @@
 #include <float.h>
 #include <limits.h>
 
-#include <stdlib.h>
-
 #ifdef G_COMP_MSVC
     #include <intrin.h>
 
