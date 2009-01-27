@@ -43,7 +43,6 @@ void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
 
     if (event!=ME_BUTTON_NONE) {
         // Simulate translating the object by inversely translating the camera.
-
         if (event&ME_BUTTON_MIDDLE) {
             m_camera.strafe(static_cast<float>(mouse_diff_x)/100);
             m_camera.elevate(static_cast<float>(-mouse_diff_y)/100);
@@ -54,7 +53,6 @@ void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
         }
 
         // Rotate the camera.
-
         if (event&ME_BUTTON_LEFT) {
             m_camera.pitch(-mouse_diff_y*Constd::DEG_TO_RAD()/10);
             m_camera.rotate(Vec3f::Y(),-mouse_diff_x*Constd::DEG_TO_RAD()/10);
