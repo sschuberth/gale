@@ -39,7 +39,7 @@ namespace gale {
 
 namespace wrapgl {
 
-// warning C4355: 'this' : used in base member initializer list
+// Warning C4355: 'this' used in base member initializer list.
 #pragma warning(disable:4355)
 
 // TODO: Add Linux implementation.
@@ -131,7 +131,7 @@ class DefaultWindow:public RenderWindow
 
 #endif // G_OS_WINDOWS
 
-// warning C4355: 'this' : used in base member initializer list
+// Warning C4355: 'this' used in base member initializer list.
 #pragma warning(default:4355)
 
 } // namespace wrapgl
