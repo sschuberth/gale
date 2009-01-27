@@ -31,7 +31,7 @@
  * Optimized essential mathematical functions
  */
 
-#include "../global/defines.h"
+#include "../global/platform.h"
 
 #ifndef _USE_MATH_DEFINES
     #define _USE_MATH_DEFINES
@@ -40,13 +40,6 @@
 
 #include <float.h>
 #include <limits.h>
-
-#ifdef G_COMP_MSVC
-    #include <intrin.h>
-
-    #pragma intrinsic(_BitScanForward)
-    #pragma intrinsic(_BitScanReverse)
-#endif
 
 namespace gale {
 

@@ -82,8 +82,13 @@
         #define _WIN32_WINNT 0x0500
     #endif
 
+    #ifdef GALE_TINY
+        // Avoid inclusion of code parts that declare CRT functions.
+        #define _INC_STRING
+        #define _SYS_GUID_OPERATORS_
+        #define __STRALIGN_H_
+    #endif
     #include <windows.h>
-    #include <tchar.h>
 
     /**
      * \def PFD_SUPPORT_COMPOSITION
@@ -93,7 +98,19 @@
     #ifndef PFD_SUPPORT_COMPOSITION
         #define PFD_SUPPORT_COMPOSITION 0x00008000
     #endif
+
+    #include <tchar.h>
+
+    #ifdef GALE_TINY
+        // Avoid inclusion of code parts that declare CRT functions.
+        #define _INC_MALLOC
+    #endif
+    #include <intrin.h>
 #endif // G_OS_WINDOWS
+
+#ifdef GALE_TINY
+    #include "../system/runtime.h"
+#endif
 
 #include <GL/gl.h>
 

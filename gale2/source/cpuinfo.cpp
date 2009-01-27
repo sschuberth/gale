@@ -23,12 +23,7 @@
  *
  */
 
-#include "gale/global/defines.h"
 #include "gale/system/cpuinfo.h"
-
-#ifdef G_COMP_MSVC
-    #include <intrin.h>
-#endif
 
 // Helper macro to be able to use the stringizing operator on complex expressions.
 #define STRINGIZER(s) #s
