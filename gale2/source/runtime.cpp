@@ -95,15 +95,17 @@ __declspec(noalias) void free(void* memblock)
     }
 }
 
-// "Enable Intrinsic Functions" is supposed to make memcpy an intrinsic, but that
-// does not work in VS2005. Although the compiler claims it would be, the linker
-// wants to pull in memcpy from the CRT. So in order to implement our own minimal
-// version, we first need to force memcpy to formally be a function, also see
+// "Enable Intrinsic Functions" (/Oi) is supposed to make memcpy and memset
+// intrinsics, but that does not work in VS2005. Although the compiler claims it
+// would work, the linker wants to pull in the functions from the CRT. So in
+// order to implement our own minimal versions, we first need to force the
+// functions to formally be a function, also see
 // <http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=101250>.
 
 // Warning C4164: Intrinsic function not declared.
 #pragma warning(disable:4164)
 #pragma function(memcpy)
+#pragma function(memset)
 #pragma warning(default:4164)
 
 void* memcpy(void* dest,void const* src,size_t count)
@@ -132,6 +134,17 @@ void* memmove(void* dest,void const* src,size_t count)
         while (count--) {
             *(--d)=*(--s);
         }
+    }
+
+    return dest;
+}
+
+void* memset(void* dest,int c,size_t count)
+{
+    char* d=(char*)dest;
+
+    for (size_t i=0;i<count;++i) {
+        *d++=0;
     }
 
     return dest;

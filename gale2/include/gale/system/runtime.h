@@ -74,6 +74,9 @@ void* memcpy(void* dest,void const* src,size_t count);
 /// Minimal "memmove" function implementation.
 void* memmove(void* dest,void const* src,size_t count);
 
+/// Minimal "memset" function implementation.
+void* memset(void* dest,int c,size_t count);
+
 #ifdef __cplusplus
 };
 #endif
