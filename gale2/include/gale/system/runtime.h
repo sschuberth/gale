@@ -43,15 +43,9 @@
 // Set "Enable C++ Exceptions" to "No"
 // Set "Buffer Security Check" to "No" (/GS-)
 // Set "Floating Point Model" to "Fast" (/fp:fast)
+
 #pragma optimize("gsy",on)
 #pragma comment(linker,"/nodefaultlib")
-
-// "Enable Intrinsic Functions" is supposed to make memcpy an intrinsic, but that
-// does not work in VS2005. Although the compiler claims it would be, the linker
-// wants to pull in memcpy from the CRT. So in order to implement our own minimal
-// version, we first need to force memcpy to formally be a function, also see
-// <http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=101250>.
-#pragma function(memcpy)
 
 #ifdef __cplusplus
 extern "C" {
