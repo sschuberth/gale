@@ -33,7 +33,7 @@
 
 #ifdef GALE_TINY
 
-// In order to work without linking against the CRT, the following C/C++ compiler
+// In order to be able to not link against the CRT, the following C/C++ compiler
 // settings need to be adjust from within the IDE.
 //
 // Optimization:
@@ -41,6 +41,7 @@
 //
 // Code Generation:
 // Set "Enable C++ Exceptions" to "No"
+// Set "Basic Runtime Checks" to "Default"
 // Set "Buffer Security Check" to "No" (/GS-)
 // Set "Floating Point Model" to "Fast" (/fp:fast)
 
