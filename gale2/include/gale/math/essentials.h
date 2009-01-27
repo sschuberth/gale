@@ -201,54 +201,75 @@ struct Numerics<unsigned char>
 };
 /// \endcond
 
-
 /**
- * \name Bit juggling functions
+ * \name Overloaded functions to calculate the absolute value
  */
 //@{
 
-/// Returns the number of leading (most significant) zero bits in \a x.
-inline unsigned long countLeadingZeroBits(unsigned long x)
+/// This is needed as a dummy for template methods.
+inline unsigned int abs(unsigned int const x)
+{
+    return x;
+}
+
+/// This is needed as a dummy for template methods.
+inline unsigned long abs(unsigned long const x)
+{
+    return x;
+}
+
+/// This is needed as a dummy for template methods.
+inline unsigned long long abs(unsigned long long const x)
+{
+    return x;
+}
+
+/// Calls the appropriate run-time function.
+inline int abs(int const x)
+{
+    return ::abs(x);
+}
+
+/// Calls the appropriate run-time function.
+inline long abs(long const x)
+{
+    return ::labs(x);
+}
+
+/// Calls the appropriate run-time function.
+inline long long abs(long long const x)
 {
 #ifdef G_COMP_GNUC
 
-    if (x==0) {
-        return sizeof(x)*8;
-    }
-
-    return __builtin_clz(x);
+    return ::llabs(x);
 
 #elif defined(G_COMP_MSVC)
 
-    unsigned long index;
-    if (!_BitScanReverse(&index,x)) {
-        return sizeof(x)*8;
-    }
-    return index^31;
+    return ::_abs64(x);
 
 #else // G_COMP_GNUC
 
-    unsigned long const MSB=sizeof(x)*8-1;
-    unsigned long const mask=1UL<<MSB;
-
-    // At this point, we know there is at least one bit set.
-    unsigned long count=0;
-    while ((x&mask)==0) {
-        ++count;
-        x<<=1;
-    }
-    return count;
+    return ::abs(x);
 
 #endif // G_COMP_GNUC
 }
 
-/// Returns the number of set bits in \a x.
-inline unsigned long countSetBits(unsigned long x) {
-    x =    ((x & 0xaaaaaaaaUL) >>  1) + (x & 0x55555555UL);
-    x =    ((x & 0xccccccccUL) >>  2) + (x & 0x33333333UL);
-    x =    ((x & 0xf0f0f0f0UL) >>  4) + (x & 0x0f0f0f0fUL);
-    x =    ((x & 0xff00ff00UL) >>  8) + (x & 0x00ff00ffUL);
-    return ((x & 0xffff0000UL) >> 16) + (x & 0x0000ffffUL);
+/// Calls the appropriate run-time function.
+inline float abs(float const x)
+{
+    return ::fabsf(x);
+}
+
+/// Calls the appropriate run-time function.
+inline double abs(double const x)
+{
+    return ::fabs(x);
+}
+
+/// Calls the appropriate run-time function.
+inline long double abs(long double const x)
+{
+    return ::fabsl(x);
 }
 
 //@}
@@ -547,74 +568,52 @@ inline long long roundToZero(double const d)
 //@}
 
 /**
- * \name Overloaded functions to calculate the absolute value
+ * \name Bit juggling functions
  */
 //@{
 
-/// This is needed as a dummy for template methods.
-inline unsigned int abs(unsigned int const x)
-{
-    return x;
-}
-
-/// This is needed as a dummy for template methods.
-inline unsigned long abs(unsigned long const x)
-{
-    return x;
-}
-
-/// This is needed as a dummy for template methods.
-inline unsigned long long abs(unsigned long long const x)
-{
-    return x;
-}
-
-/// Calls the appropriate run-time function.
-inline int abs(int const x)
-{
-    return ::abs(x);
-}
-
-/// Calls the appropriate run-time function.
-inline long abs(long const x)
-{
-    return ::labs(x);
-}
-
-/// Calls the appropriate run-time function.
-inline long long abs(long long const x)
+/// Returns the number of leading (most significant) zero bits in \a x.
+inline unsigned long countLeadingZeroBits(unsigned long x)
 {
 #ifdef G_COMP_GNUC
 
-    return ::llabs(x);
+    if (x==0) {
+        return sizeof(x)*8;
+    }
+
+    return __builtin_clz(x);
 
 #elif defined(G_COMP_MSVC)
 
-    return ::_abs64(x);
+    unsigned long index;
+    if (!_BitScanReverse(&index,x)) {
+        return sizeof(x)*8;
+    }
+    return index^31;
 
 #else // G_COMP_GNUC
 
-    return ::abs(x);
+    unsigned long const MSB=sizeof(x)*8-1;
+    unsigned long const mask=1UL<<MSB;
+
+    // At this point, we know there is at least one bit set.
+    unsigned long count=0;
+    while ((x&mask)==0) {
+        ++count;
+        x<<=1;
+    }
+    return count;
 
 #endif // G_COMP_GNUC
 }
 
-/// Calls the appropriate run-time function.
-inline float abs(float const x)
-{
-    return ::fabsf(x);
-}
-
-/// Calls the appropriate run-time function.
-inline double abs(double const x)
-{
-    return ::fabs(x);
-}
-
-/// Calls the appropriate run-time function.
-inline long double abs(long double const x)
-{
-    return ::fabsl(x);
+/// Returns the number of set bits in \a x.
+inline unsigned long countSetBits(unsigned long x) {
+    x =    ((x & 0xaaaaaaaaUL) >>  1) + (x & 0x55555555UL);
+    x =    ((x & 0xccccccccUL) >>  2) + (x & 0x33333333UL);
+    x =    ((x & 0xf0f0f0f0UL) >>  4) + (x & 0x0f0f0f0fUL);
+    x =    ((x & 0xff00ff00UL) >>  8) + (x & 0x00ff00ffUL);
+    return ((x & 0xffff0000UL) >> 16) + (x & 0x0000ffffUL);
 }
 
 //@}
