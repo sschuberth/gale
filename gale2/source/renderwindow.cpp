@@ -81,7 +81,7 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
         // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
         if (GLEX_ARB_multisample_init()) {
             attr.insert(WGL_SAMPLE_BUFFERS_ARB,TRUE);
-            attr.insert(WGL_SAMPLES_ARB,4);
+            attr.insert(WGL_SAMPLES_ARB,8);
 
             if (wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count)!=TRUE) {
                 attr.remove(WGL_SAMPLE_BUFFERS_ARB);
