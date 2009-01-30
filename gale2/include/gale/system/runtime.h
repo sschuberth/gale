@@ -34,22 +34,28 @@
 #ifdef GALE_TINY
 
 // In order to be able to not link against the CRT, the following settings need
-// to be adjust from within the MSVC IDE:
+// to be adjusted manually from within the MSVC IDE:
 //
-// Optimization:
-// Set "Enable Intrinsic Functions" to "Yes" (/Oi)
-//
-// Code Generation:
-// Set "Enable C++ Exceptions" to "No"
-// Set "Basic Runtime Checks" to "Default"
-// Set "Buffer Security Check" to "No" (/GS-)
-// Set "Floating Point Model" to "Fast" (/fp:fast)
-
-// Enable global optimization, favor code size, enable frame pointer omission.
-#pragma optimize("gsy",on)
+// C/C++
+//     Optimization
+//         Set "Optimization" to "Minimize Size" (/O1)
+//         Set "Enable Intrinsic Functions" to "Yes" (/Oi)
+//     Code Generation
+//         Set "Enable C++ Exceptions" to "No" (/GX-)
+//         Set "Basic Runtime Checks" to "Default"
+//         Set "Buffer Security Check" to "No" (/GS-)
+//         Set "Floating Point Model" to "Fast" (/fp:fast)
+//     Language
+//         Set "Enable Run-Time Typ Info" to "No" (/GR-)
 
 // Ignore all default libraries during linking.
 #pragma comment(linker,"/nodefaultlib")
+
+// To further reduce the executable size, based on the "Release" mode
+// configuration, adjust the following settings from within the MSVC IDE:
+
+// Enable global optimization, favor code size, enable frame pointer omission.
+#pragma optimize("gsy",on)
 
 #ifdef __cplusplus
 extern "C" {
