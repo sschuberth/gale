@@ -53,7 +53,7 @@ int mainCRTStartup()
 #endif
 
 /*
- * Minimal C function implementations
+ * Replacements for C runtime functions
  */
 
 int print(char const* str)
@@ -151,7 +151,7 @@ void* memset(void* dest,int c,size_t count)
 }
 
 /*
- * Minimal C++ operator implementations
+ * Replacements for C++ runtime functions
  */
 
 void* operator new(size_t bytes)

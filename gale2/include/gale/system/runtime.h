@@ -28,13 +28,13 @@
 
 /**
  * \file
- * Minimal replacements for C runtime functions
+ * Minimal replacements for runtime functions
  */
 
 #ifdef GALE_TINY
 
-// In order to be able to not link against the CRT, the following C/C++ compiler
-// settings need to be adjust from within the IDE.
+// In order to be able to not link against the CRT, the following settings need
+// to be adjust from within the MSVC IDE:
 //
 // Optimization:
 // Set "Enable Intrinsic Functions" to "Yes" (/Oi)
@@ -45,16 +45,24 @@
 // Set "Buffer Security Check" to "No" (/GS-)
 // Set "Floating Point Model" to "Fast" (/fp:fast)
 
+// Enable global optimization, favor code size, enable frame pointer omission.
 #pragma optimize("gsy",on)
+
+// Ignore all default libraries during linking.
 #pragma comment(linker,"/nodefaultlib")
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/**
+ * \name Replacements for C runtime functions
+ */
+//@{
+
 /// Minimal "puts" function implementation.
-#define puts(str) print(#str "\n")
 int print(char const* str);
+#define puts(str) print(#str "\n")
 
 /// Minimal "calloc" function implementation.
 void* calloc(size_t num,size_t size);
@@ -77,9 +85,16 @@ void* memmove(void* dest,void const* src,size_t count);
 /// Minimal "memset" function implementation.
 void* memset(void* dest,int c,size_t count);
 
+//@}
+
 #ifdef __cplusplus
 };
 #endif
+
+/**
+ * \name Replacements for C++ runtime functions
+ */
+//@{
 
 /// Minimal "new" operator implementation.
 void* operator new(size_t bytes);
@@ -98,6 +113,8 @@ void operator delete[](void* pointer);
 
 /// Minimal placement "delete" operator implementation.
 void operator delete(void* pointer,void* place);
+
+//@}
 
 #endif // GALE_TINY
 
