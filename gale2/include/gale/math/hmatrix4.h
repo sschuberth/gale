@@ -33,10 +33,6 @@
 
 #include "vector.h"
 
-#ifndef GALE_TINY
-    #include <iostream>
-#endif
-
 namespace gale {
 
 namespace math {
