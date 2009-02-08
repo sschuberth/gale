@@ -182,7 +182,16 @@ class CPUInfo:public global::Singleton<CPUInfo>
     unsigned int processors() const {
         unsigned int count=1;
 
-#ifdef G_OS_WINDOWS
+#ifdef G_OS_LINUX
+        // Get the number of "online" processors. This also counts multiple
+        // cores, but what we want here is the number of CPUs (i.e. sockets)!
+        // Note: HT-enabled single-socket, single-core machines return 1 here!
+        count=sysconf(_SC_NPROCESSORS_ONLN);
+
+        if (coresPerProcessor()) {
+            count/=coresPerProcessor();
+        }
+#elif defined G_OS_WINDOWS
         SYSTEM_INFO info;
         GetSystemInfo(&info);
 
@@ -198,15 +207,6 @@ class CPUInfo:public global::Singleton<CPUInfo>
             if (threadsPerCore()) {
                 count/=threadsPerCore();
             }
-        }
-#elif defined(G_OS_LINUX)
-        // Get the number of "online" processors. This also counts multiple
-        // cores, but what we want here is the number of CPUs (i.e. sockets)!
-        // Note: HT-enabled single-socket, single-core machines return 1 here!
-        count=sysconf(_SC_NPROCESSORS_ONLN);
-
-        if (coresPerProcessor()) {
-            count/=coresPerProcessor();
         }
 #endif
 

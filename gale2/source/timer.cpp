@@ -25,17 +25,17 @@
 
 #include "gale/system/timer.h"
 
-#ifdef G_OS_WINDOWS
-
 namespace gale {
 
 namespace system {
 
+#ifdef G_OS_WINDOWS
+
 unsigned int Timer::s_instances=0;
 DWORD_PTR Timer::s_mask=0;
+
+#endif // G_OS_WINDOWS
 
 } // namespace system
 
 } // namespace gale
-
-#endif // G_OS_WINDOWS

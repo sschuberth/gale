@@ -31,6 +31,9 @@ namespace gale {
 
 namespace wrapgl {
 
+// TODO: Add Linux implementation.
+#ifdef G_OS_WINDOWS
+
 void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
 {
     static int mouse_prev_x=0,mouse_prev_y=0;
@@ -151,6 +154,8 @@ LRESULT DefaultWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
 
     return 0;
 }
+
+#endif // G_OS_WINDOWS
 
 } // namespace wrapgl
 

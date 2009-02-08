@@ -39,11 +39,11 @@ namespace gale {
 
 namespace wrapgl {
 
-// Warning C4355: 'this' used in base member initializer list.
-#pragma warning(disable:4355)
-
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
+
+// Warning C4355: 'this' used in base member initializer list.
+#pragma warning(disable:4355)
 
 /**
  * This class provides a convenient default window along with camera navigation
@@ -129,10 +129,10 @@ class DefaultWindow:public RenderWindow
     wrapgl::Camera m_camera; ///< The window's default camera.
 };
 
-#endif // G_OS_WINDOWS
-
 // Warning C4355: 'this' used in base member initializer list.
 #pragma warning(default:4355)
+
+#endif // G_OS_WINDOWS
 
 } // namespace wrapgl
 

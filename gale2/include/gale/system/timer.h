@@ -47,10 +47,10 @@ class Timer
     /// Suspends the execution of the current thread for the given amount of
     /// milliseconds.
     static void sleep(unsigned int const milliseconds) {
-#ifdef G_OS_WINDOWS
-        Sleep(milliseconds);
-#else
+#ifdef G_OS_LINUX
         usleep(milliseconds*1000);
+#elif defined G_OS_WINDOWS
+        Sleep(milliseconds);
 #endif
     }
 
@@ -90,33 +90,18 @@ class Timer
 
     /// Sets a new start time for the timer.
     bool start() {
-#ifdef G_OS_WINDOWS
-        return QueryPerformanceCounter(&m_start)!=FALSE;
-#else
+#ifdef G_OS_LINUX
         m_start=times(NULL);
         return m_start!=-1;
+#elif defined G_OS_WINDOWS
+        return QueryPerformanceCounter(&m_start)!=FALSE;
 #endif
     }
 
     /// Returns the elapsed time in seconds since reset() was called and stops
     /// the timing. It may be resumed by calling start() again.
     bool stop(double& seconds) {
-#ifdef G_OS_WINDOWS
-        if (QueryPerformanceCounter(&m_stop)!=TRUE) {
-            return false;
-        }
-
-        // On modern CPUs with power-saving capabilities the frequency may vary,
-        // so get it each time here.
-        LARGE_INTEGER frequency;
-        if (QueryPerformanceFrequency(&frequency)!=TRUE) {
-            return false;
-        }
-
-        // Convert the counter difference to the number of seconds elapsed.
-        m_offset+=m_stop.QuadPart-m_start.QuadPart;
-        seconds=static_cast<double>(m_offset)/frequency.QuadPart;
-#else
+#ifdef G_OS_LINUX
         m_stop=times(NULL);
         if (m_stop==-1) {
             return false;
@@ -131,6 +116,21 @@ class Timer
 
         m_offset+=m_stop-m_start;
         seconds=static_cast<double>(m_offset)/ticks;
+#elif defined G_OS_WINDOWS
+        if (QueryPerformanceCounter(&m_stop)!=TRUE) {
+            return false;
+        }
+
+        // On modern CPUs with power-saving capabilities the frequency may vary,
+        // so get it each time here.
+        LARGE_INTEGER frequency;
+        if (QueryPerformanceFrequency(&frequency)!=TRUE) {
+            return false;
+        }
+
+        // Convert the counter difference to the number of seconds elapsed.
+        m_offset+=m_stop.QuadPart-m_start.QuadPart;
+        seconds=static_cast<double>(m_offset)/frequency.QuadPart;
 #endif
 
         return true;
@@ -153,7 +153,9 @@ class Timer
     /// \var m_stop
     /// Stores the last time when stop() was called.
 
-#ifdef G_OS_WINDOWS
+#ifdef G_OS_LINUX
+    clock_t m_offset,m_start,m_stop;
+#elif defined G_OS_WINDOWS
     /// This is a reference counter for the instances of this class.
     static unsigned int s_instances;
     /// Needed restore the affinity mask after the last instance's destruction.
@@ -161,8 +163,6 @@ class Timer
 
     long long m_offset;
     LARGE_INTEGER m_start,m_stop;
-#else
-    clock_t m_offset,m_start,m_stop;
 #endif
 };
 

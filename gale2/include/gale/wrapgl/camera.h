@@ -39,6 +39,9 @@ namespace gale {
 
 namespace wrapgl {
 
+// TODO: Add Linux implementation.
+#ifdef G_OS_WINDOWS
+
 /**
  * This class defines a camera with a modelview transformation and projection
  * matrix that projects onto a given screen space portion of the render surface
@@ -47,10 +50,6 @@ namespace wrapgl {
  * the negative z-axis, the positive y-axis marks the "up" direction and the
  * positive x-axis marks the "right" direction.
  */
-
-// TODO: Add Linux implementation.
-#ifdef G_OS_WINDOWS
-
 class Camera
 {
   public:

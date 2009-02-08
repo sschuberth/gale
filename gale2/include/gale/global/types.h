@@ -33,6 +33,36 @@
 
 #include "platform.h"
 
+/// \typedef g_int8
+/// Platform-independent signed 8-bit integer type.
+
+/// \typedef g_int16;
+/// Platform-independent signed 16-bit integer type.
+
+/// \typedef g_int32;
+/// Platform-independent signed 32-bit integer type.
+
+/// \typedef g_int64;
+/// Platform-independent signed 64-bit integer type.
+
+/// \typedef g_uint8;
+/// Platform-independent unsigned 8-bit integer type.
+
+/// \typedef g_uint16;
+/// Platform-independent unsigned 16-bit integer type.
+
+/// \typedef g_uint32;
+/// Platform-independent unsigned 32-bit integer type.
+
+/// \typedef g_uint64;
+/// Platform-independent unsigned 64-bit integer type.
+
+/// \typedef g_real32;
+/// Platform-independent 32-bit floating-point type.
+
+/// \typedef g_real64;
+/// Platform-independent 64-bit floating-point type.
+
 #ifdef G_OS_LINUX
 
 typedef int8_t g_int8;
