@@ -75,7 +75,7 @@ class AttributeList
         }
 
         // Append the new attribute.
-        assert(m_size<N-2);
+        G_ASSERT(m_size<N-2)
 
 // Avoid a buffer overrun warning from the VS code analyzer which does not take
 // the above assertion into account.

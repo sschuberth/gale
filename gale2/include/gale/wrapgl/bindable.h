@@ -99,7 +99,7 @@ class Bindable
     :   m_id(id)
     {
         // This is a trick to ensure derived classes implement this static method.
-        G_ASSERT_CALL(C::isValid(id));
+        G_ASSERT_CALL(C::isValid(id))
     }
 
     GLuint m_id; ///< The ID of this OpenGL object.

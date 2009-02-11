@@ -94,7 +94,7 @@ struct OpArithDiv
     /// Divides \a a by \a b.
     template<typename T>
     static G_INLINE void evaluate(T& a,T const& b) {
-        assert(math::abs(b)>math::Numerics<T>::ZERO_TOLERANCE());
+        G_ASSERT(math::abs(b)>math::Numerics<T>::ZERO_TOLERANCE())
         a/=b;
     }
 };
@@ -105,7 +105,7 @@ struct OpArithReci
     /// Calculates the reciprocal of \a b and stores the result into \a a.
     template<typename T>
     static G_INLINE void evaluate(T& a,T const& b) {
-        assert(math::abs(b)>math::Numerics<T>::ZERO_TOLERANCE());
+        G_ASSERT(math::abs(b)>math::Numerics<T>::ZERO_TOLERANCE())
         a=1/b;
     }
 };
@@ -210,7 +210,7 @@ struct OpCalcLerp
     /// Returns the linear interpolation between \a a and \a b based on \a c.
     template<typename T,typename U>
     static G_INLINE T evaluate(T const& a,T const& b,U const& c) {
-        assert(0<=c && c<=1);
+        G_ASSERT(0<=c && c<=1)
         return T(a+(b-a)*c);
     }
 };

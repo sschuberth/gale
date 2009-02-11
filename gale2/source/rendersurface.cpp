@@ -50,7 +50,7 @@ RenderSurface::RenderSurface()
         cls.lpszClassName=_T("G");
 
         s_atom=RegisterClass(&cls);
-        assert(s_atom!=0);
+        G_ASSERT(s_atom!=0)
     }
 }
 
@@ -59,9 +59,9 @@ RenderSurface::~RenderSurface()
     if (--s_instances>0) {
         return;
     }
-    assert(s_instances==0);
+    G_ASSERT(s_instances==0)
 
-    G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL));
+    G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL))
 }
 
 bool RenderSurface::create(int pixel_format,int width,int height,LPCTSTR title)
@@ -122,15 +122,15 @@ bool RenderSurface::create(int pixel_format,int width,int height,LPCTSTR title)
 void RenderSurface::destroy()
 {
     if (m_context.render) {
-        G_ASSERT_CALL(wglDeleteContext(m_context.render));
+        G_ASSERT_CALL(wglDeleteContext(m_context.render))
         m_context.render=NULL;
     }
     if (m_context.device) {
-        G_ASSERT_CALL(ReleaseDC(m_window,m_context.device));
+        G_ASSERT_CALL(ReleaseDC(m_window,m_context.device))
         m_context.device=NULL;
     }
     if (m_window) {
-        G_ASSERT_CALL(DestroyWindow(m_window));
+        G_ASSERT_CALL(DestroyWindow(m_window))
         m_window=NULL;
     }
 }

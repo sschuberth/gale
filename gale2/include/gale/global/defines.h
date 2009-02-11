@@ -181,18 +181,33 @@
 #define G_ARRAY_LENGTH(x) (sizeof(x)/sizeof(*x))
 
 /**
- * \def G_ASSERT_CALL
- * Run-time assertion for function call results.
+ * \def G_ASSERT
+ * Run-time assertion to the CRT, if available.
  */
 
 #include <assert.h>
+
+#ifdef G_ASSERT
+    #undef G_ASSERT
+#endif
+
+#ifndef GALE_TINY
+    #define G_ASSERT(x) assert(x);
+#else
+    #define G_ASSERT(x)
+#endif
+
+/**
+ * \def G_ASSERT_CALL
+ * Run-time assertion for function calls.
+ */
 
 #ifdef G_ASSERT_CALL
     #undef G_ASSERT_CALL
 #endif
 
 #ifndef NDEBUG
-    #define G_ASSERT_CALL(x) assert(x);
+    #define G_ASSERT_CALL(x) G_ASSERT(x)
 #else
     #define G_ASSERT_CALL(x) x;
 #endif
@@ -206,7 +221,7 @@
     #undef G_ASSERT_OPENGL
 #endif
 
-#define G_ASSERT_OPENGL assert(glGetError()==GL_NO_ERROR);
+#define G_ASSERT_OPENGL G_ASSERT(glGetError()==GL_NO_ERROR)
 
 /**
  * \def G_INLINE

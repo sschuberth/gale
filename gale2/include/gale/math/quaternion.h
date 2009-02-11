@@ -247,7 +247,7 @@ class Quaternion
 
     /// Divides \c this quaternion by a scalar \a s.
     Quaternion const& operator/=(T const s) {
-        assert(abs(s)>Numerics<T>::ZERO_TOLERANCE());
+        G_ASSERT(abs(s)>Numerics<T>::ZERO_TOLERANCE())
         return (*this)*=1/s;
     }
 

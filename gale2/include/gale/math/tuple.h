@@ -66,7 +66,7 @@ class TupleBase
     /// initialized to 0 if \c GALE_INIT is defined.
     TupleBase() {
         // Do not allow tuples with less than 2 elements.
-        assert(N>=2);
+        G_ASSERT(N>=2)
 
 #ifdef GALE_INIT
         meta::LoopFwd<N,meta::OpAssign>::iterate(data(),0);
@@ -75,14 +75,14 @@ class TupleBase
 
     /// Allows to initialize 2-tuples directly.
     TupleBase(T const e0,T const e1) {
-        assert(N==2);
+        G_ASSERT(N==2)
         m_data[0]=e0;
         m_data[1]=e1;
     }
 
     /// Allows to initialize 3-tuples directly.
     TupleBase(T const e0,T const e1,T const e2) {
-        assert(N==3);
+        G_ASSERT(N==3)
         m_data[0]=e0;
         m_data[1]=e1;
         m_data[2]=e2;
@@ -90,7 +90,7 @@ class TupleBase
 
     /// Allows to initialize 4-tuples directly.
     TupleBase(T const e0,T const e1,T const e2,T const e3) {
-        assert(N==4);
+        G_ASSERT(N==4)
         m_data[0]=e0;
         m_data[1]=e1;
         m_data[2]=e2;

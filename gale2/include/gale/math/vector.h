@@ -155,7 +155,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Assigns new values to the x-, y- and z-components.
     void set(T const x,T const y,T const z) {
-        assert(N>=3);
+        G_ASSERT(N>=3)
         Base::data()[0]=x;
         Base::data()[1]=y;
         Base::data()[2]=z;
@@ -163,7 +163,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Assigns new values to the x-, y-, z- and w-components.
     void set(T const x,T const y,T const z,T const w) {
-        assert(N>=4);
+        G_ASSERT(N>=4)
         Base::data()[0]=x;
         Base::data()[1]=y;
         Base::data()[2]=z;
@@ -202,37 +202,37 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the z-component.
     T getZ() {
-        assert(N>=3);
+        G_ASSERT(N>=3)
         return Base::data()[2];
     }
 
     /// Returns a constant reference to the z-component.
     T const& getZ() const {
-        assert(N>=3);
+        G_ASSERT(N>=3)
         return Base::data()[2];
     }
 
     /// Assigns a new value to the z-component.
     void setZ(T const& z) {
-        assert(N>=3);
+        G_ASSERT(N>=3)
         Base::data()[2]=z;
     }
 
     /// Returns the w-component.
     T getW() {
-        assert(N>=4);
+        G_ASSERT(N>=4)
         return Base::data()[3];
     }
 
     /// Returns a constant reference to the w-component.
     T const& getW() const {
-        assert(N>=4);
+        G_ASSERT(N>=4)
         return Base::data()[3];
     }
 
     /// Assigns a new value to the w-component.
     void setW(T const& w) {
-        assert(N>=4);
+        G_ASSERT(N>=4)
         Base::data()[3]=w;
     }
 
@@ -277,7 +277,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Calculates the cross product between this vector and vector \a v.
     Vector cross(Vector const& v) const {
-        assert(N==3);
+        G_ASSERT(N==3)
         return Vector(
             Base::data()[1]*v.data()[2] - Base::data()[2]*v.data()[1],
             Base::data()[2]*v.data()[0] - Base::data()[0]*v.data()[2],

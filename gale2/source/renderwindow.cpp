@@ -39,20 +39,20 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
 {
     // Calculate the window size from the desired client area size.
     RECT rect={0,0,width,height};
-    G_ASSERT_CALL(AdjustWindowRect(&rect,WS_OVERLAPPEDWINDOW,FALSE));
+    G_ASSERT_CALL(AdjustWindowRect(&rect,WS_OVERLAPPEDWINDOW,FALSE))
 
     width=rect.right-rect.left;
     height=rect.bottom-rect.top;
 
     // Create a default device context.
-    G_ASSERT_CALL(RenderSurface::create(0,width,height,title));
+    G_ASSERT_CALL(RenderSurface::create(0,width,height,title))
 
     // Create and activate a rendering context for OpenGL extension
     // initialization.
     m_context.render=wglCreateContext(m_context.device);
-    assert(m_context.render);
+    G_ASSERT(m_context.render)
 
-    G_ASSERT_CALL(makeCurrentContext());
+    G_ASSERT_CALL(makeCurrentContext())
 
     AttributeListi attr;
     GLint format=0;
@@ -104,7 +104,7 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
         destroy();
 
         // Create a device context with a possibly better pixel format.
-        G_ASSERT_CALL(RenderSurface::create(format,width,height,title));
+        G_ASSERT_CALL(RenderSurface::create(format,width,height,title))
 
         // Create and activate the final rendering context.
         if (GLEX_WGL_ARB_create_context) {
@@ -115,9 +115,9 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
         else {
             m_context.render=wglCreateContext(m_context.device);
         }
-        assert(m_context.render);
+        G_ASSERT(m_context.render)
 
-        G_ASSERT_CALL(makeCurrentContext());
+        G_ASSERT_CALL(makeCurrentContext())
     }
 }
 
