@@ -43,6 +43,7 @@
 //     Code Generation
 //         Set "Enable C++ Exceptions" to "No" (/GX-)
 //         Set "Basic Runtime Checks" to "Default"
+//         Set "Runtime Library" to "Multi-threaded" (/MT) (to avoid linker warnings)
 //         Set "Buffer Security Check" to "No" (/GS-)
 //         Set "Floating Point Model" to "Fast" (/fp:fast)
 //     Language
@@ -69,27 +70,6 @@ extern "C" {
 /// Minimal "puts" function implementation.
 int print(char const* str);
 #define puts(str) print(#str "\n")
-
-/// Minimal "calloc" function implementation.
-void* calloc(size_t num,size_t size);
-
-/// Minimal "malloc" function implementation.
-void* malloc(size_t size);
-
-/// Minimal "realloc" function implementation.
-void* realloc(void* memblock,size_t size);
-
-/// Minimal "free" function implementation.
-void free(void* memblock);
-
-/// Minimal "memcpy" function implementation.
-void* memcpy(void* dest,void const* src,size_t count);
-
-/// Minimal "memmove" function implementation.
-void* memmove(void* dest,void const* src,size_t count);
-
-/// Minimal "memset" function implementation.
-void* memset(void* dest,int c,size_t count);
 
 //@}
 

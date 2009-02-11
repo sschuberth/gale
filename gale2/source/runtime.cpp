@@ -26,7 +26,6 @@
 #ifdef GALE_TINY
 
 #include "gale/global/platform.h"
-#include "gale/system/runtime.h"
 
 static HANDLE stdout;
 

@@ -82,12 +82,6 @@
         #define _WIN32_WINNT 0x0500
     #endif
 
-    #ifdef GALE_TINY
-        // Avoid inclusion of code parts that declare CRT functions.
-        #define _INC_STRING
-        #define _SYS_GUID_OPERATORS_
-        #define __STRALIGN_H_
-    #endif
     #include <windows.h>
 
     /**
@@ -101,16 +95,10 @@
 
     #include <tchar.h>
 
-    #ifdef GALE_TINY
-        // Avoid inclusion of code parts that declare CRT functions.
-        #define _INC_MALLOC
-    #endif
     #include <intrin.h>
 #endif // G_OS_WINDOWS
 
-#ifdef GALE_TINY
-    #include "../system/runtime.h"
-#endif
+#include "../system/runtime.h"
 
 #include <GL/gl.h>
 
