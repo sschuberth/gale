@@ -191,10 +191,10 @@
     #undef G_ASSERT
 #endif
 
-#ifndef GALE_TINY
-    #define G_ASSERT(x) assert(x);
-#else
+#ifdef GALE_TINY
     #define G_ASSERT(x)
+#else
+    #define G_ASSERT(x) assert(x);
 #endif
 
 /**
@@ -206,10 +206,10 @@
     #undef G_ASSERT_CALL
 #endif
 
-#ifndef NDEBUG
-    #define G_ASSERT_CALL(x) G_ASSERT(x)
-#else
+#if defined NDEBUG || defined GALE_TINY
     #define G_ASSERT_CALL(x) x;
+#else
+    #define G_ASSERT_CALL(x) assert(x);
 #endif
 
 /**
