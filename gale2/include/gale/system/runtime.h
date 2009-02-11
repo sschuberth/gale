@@ -54,9 +54,28 @@
 
 // To further reduce the executable size, based on the "Release" mode
 // configuration, adjust the following settings from within the MSVC IDE:
+//
+// C/C++
+//     Code Generation
+//         Set "Enable Function-Level Linking" to "Yes" (/Gy)
+//     Command Line
+//         Specify "/Zl" ("omit default library name in .OBJ")
+// Linker
+//     Optimization
+//         Set "References" to "Eliminate Unreferenced Data" (/OPT:REF)
+//         Set "Optimize for Windows98" to "No" (/OPT:NOWIN98) (not in VS2008)
+//     Advanced
+//         Set "Randomize Base Address" to "Disable Image Randomization" (/DYNAMICBASE:NO) (in VS2008)
+//         Set "Fixed Base Address" to "Image must be loaded at a fixed address" (/FIXED)
+// Manifest Tool
+//     Input and Output
+//         Set "Embed Manifest" to "No"
 
 // Enable global optimization, favor code size, enable frame pointer omission.
 #pragma optimize("gsy",on)
+
+// Merge the read-only data section into the .text (code) section.
+#pragma comment(linker,"/merge:.rdata=.text")
 
 #ifdef __cplusplus
 extern "C" {
