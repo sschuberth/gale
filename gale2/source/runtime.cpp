@@ -151,6 +151,65 @@ void* memset(void* dest,int c,size_t count)
 }
 
 /*
+ * Replacements for non-inline math functions
+ */
+
+// When this is called, the argument is in st(0)=x.
+__declspec(naked) double _CIacos(void)
+{
+    // acos(x) = atan(sqrt(1 - sqr(x)) / x)
+    __asm {
+        sub esp,4
+        fst DWORD PTR [esp]
+
+        fmul st(0),st(0)
+        fld1
+        fsubrp st(1),st(0)
+
+        fsqrt
+        fdiv DWORD PTR [esp]
+
+        fld1
+        fpatan
+
+        mov eax,DWORD PTR [esp]
+        cmp eax,0x80000000
+        jbe _acos_exit
+
+        fldpi
+        faddp st(1),st(0)
+
+    _acos_exit:
+        pop eax
+
+        ret
+    }
+}
+
+// When this is called, the arguments are in st(0)=y and st(1)=x.
+__declspec(naked) double _CIpow(void)
+{
+    // pow(x,y) = exp2(log2(x) * y)
+    __asm {
+        fxch
+        fyl2x
+
+        fld1
+        fld st(1)
+        fprem
+        f2xm1
+
+        faddp st(1),st(0)
+        fscale
+
+        fxch
+        fstp st(0)
+
+        ret
+    }
+}
+
+/*
  * Replacements for C++ runtime functions
  */
 
