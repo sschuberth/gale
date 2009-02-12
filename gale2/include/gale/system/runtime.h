@@ -68,6 +68,8 @@
 //     Advanced
 //         Set "Randomize Base Address" to "Disable Image Randomization" (/DYNAMICBASE:NO) (in VS2008)
 //         Set "Fixed Base Address" to "Image must be loaded at a fixed address" (/FIXED)
+//     Command Line
+//         Specify "/ALIGN:16"
 // Manifest Tool
 //     Input and Output
 //         Set "Embed Manifest" to "No"
