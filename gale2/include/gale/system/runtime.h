@@ -57,6 +57,7 @@
 //
 // C/C++
 //     Code Generation
+//         Set "Enable String Pooling" to "Yes" (/GF)
 //         Set "Enable Function-Level Linking" to "Yes" (/Gy)
 //     Command Line
 //         Specify "/Zl" ("omit default library name in .OBJ")
