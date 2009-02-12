@@ -89,7 +89,7 @@ extern "C" {
 
 /// Minimal "puts" function implementation.
 int print(char const* str);
-#define puts(str) print(#str "\n")
+#define puts(str) print(str "\n")
 
 //@}
 
