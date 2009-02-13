@@ -67,6 +67,10 @@ class AttributeList
 
     /// Appends / replaces the specified \a type and \a value to / in the list.
     bool insert(T const type,T const value) {
+        if (m_size>=N-2) {
+            return false;
+        }
+
         int pos=find(type);
         if (pos>0) {
             // Replace its value if the type already exists.
@@ -74,12 +78,10 @@ class AttributeList
             return false;
         }
 
-        if (m_size<N-2) {
-            // Append the new attribute.
-            m_attributes[m_size++]=type;
-            m_attributes[m_size++]=value;
-            m_attributes[m_size]=0;
-        }
+        // Append the new attribute.
+        m_attributes[m_size++]=type;
+        m_attributes[m_size++]=value;
+        m_attributes[m_size]=0;
 
         return true;
     }
