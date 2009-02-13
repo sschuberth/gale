@@ -74,16 +74,12 @@ class AttributeList
             return false;
         }
 
-        // Append the new attribute.
-        G_ASSERT(m_size<N-2)
-
-// Avoid a buffer overrun warning from the VS code analyzer which does not take
-// the above assertion into account.
-#pragma warning(disable:6386)
-        m_attributes[m_size++]=type;
-        m_attributes[m_size++]=value;
-        m_attributes[m_size]=0;
-#pragma warning(default:6386)
+        if (m_size<N-2) {
+            // Append the new attribute.
+            m_attributes[m_size++]=type;
+            m_attributes[m_size++]=value;
+            m_attributes[m_size]=0;
+        }
 
         return true;
     }
@@ -97,17 +93,12 @@ class AttributeList
         }
 
         // Remove the attribute by overwriting it with succeeding attributes.
-        while (pos<m_size) {
-            m_attributes[pos]=m_attributes[pos+2];
-            if (m_attributes[pos]==0) {
-                break;
-            }
-            ++pos;
+        while (pos+2<=m_size) {
             m_attributes[pos]=m_attributes[pos+2];
             ++pos;
         }
         m_size-=2;
-        m_attributes[m_size]=0;
+
         return true;
     }
 
