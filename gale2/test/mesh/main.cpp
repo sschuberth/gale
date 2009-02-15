@@ -60,6 +60,9 @@ class TestWindow:public DefaultWindow
         glDisable(GL_LIGHTING);
         glColor3fv(Col3f::RED());
         Renderer::draw(m_normals_prep);
+
+        glColor3fv((Col3f::RED()+Col3f::YELLOW())*0.5f);
+        Renderer::draw(m_mesh_prep.box);
     }
 
     void onKeyEvent(char key) {

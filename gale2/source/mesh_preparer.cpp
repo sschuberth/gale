@@ -48,10 +48,40 @@ void Mesh::Preparer::compile(Mesh const* mesh)
     normals.setSize(m_mesh->vertices.getSize());
     memset(normals,0,normals.getSize()*sizeof(VectorArray::Type));
 
+    if (m_mesh->vertices.getSize()<=0) {
+        box.min=box.max=Vec3f::ZERO();
+        return;
+    }
+
+    box.min=box.max=m_mesh->vertices[0];
+
     for (int vi=0;vi<m_mesh->vertices.getSize();++vi) {
         IndexArray const& vn=m_mesh->neighbors[vi];
         Vec3f const& v=m_mesh->vertices[vi];
 
+        // Update the bounding box extents.
+        if (v.getX()<box.min.getX()) {
+            box.min.setX(v.getX());
+        }
+        else if (v.getX()>box.max.getX()) {
+            box.max.setX(v.getX());
+        }
+
+        if (v.getY()<box.min.getY()) {
+            box.min.setY(v.getY());
+        }
+        else if (v.getY()>box.max.getY()) {
+            box.max.setY(v.getY());
+        }
+
+        if (v.getZ()<box.min.getZ()) {
+            box.min.setZ(v.getZ());
+        }
+        else if (v.getZ()>box.max.getZ()) {
+            box.max.setZ(v.getZ());
+        }
+
+        // Check for non-face primitives.
         if (vn.getSize()==0) {
             // This is just a point with an empty neighborhood.
             points.insert(vi);

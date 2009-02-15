@@ -45,6 +45,9 @@ struct Renderer
 {
     /// Renders the given \a mesh.
     static void draw(model::Mesh::Preparer const& geom);
+
+    /// Renders the given axis-aligned bounding \a box.
+    static void draw(model::AABB const& box);
 };
 
 } // namespace wrapgl

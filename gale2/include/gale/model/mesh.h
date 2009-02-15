@@ -31,6 +31,8 @@
  * Mesh management related classes
  */
 
+#include "boundingbox.h"
+
 #include "../global/dynamicarray.h"
 #include "../math/hmatrix4.h"
 
@@ -246,7 +248,6 @@ struct Mesh
         // Work around a Doxygen bug that causes to find no matching class
         // member for orbit(int ai,int bi,IndexArray &polygon) if IndexArray is
         // already used here.
-
         /// \cond DOXYGEN_IGNORE
         IndexArray points;    ///< Array of vertex indices describing points.
         IndexArray lines;     ///< Array of vertex indices describing lines.
@@ -257,6 +258,7 @@ struct Mesh
         IndexTable polygons;  ///< Table of vertex indices describing polygons.
 
         VectorArray normals;  ///< Array of vertex normals.
+        AABB box;             ///< The axis-aligned bounding box.
 
       protected:
 

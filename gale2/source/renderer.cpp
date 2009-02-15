@@ -27,6 +27,8 @@
 
 #include "gale/global/platform.h"
 
+using namespace gale::math;
+
 namespace gale {
 
 namespace wrapgl {
@@ -54,6 +56,49 @@ void Renderer::draw(model::Mesh::Preparer const& geom)
     for (int i=0;i<geom.polygons.getSize();++i) {
         glDrawElements(GL_POLYGON,geom.polygons[i].getSize(),GL_UNSIGNED_INT,geom.polygons[i]);
     }
+}
+
+void Renderer::draw(model::AABB const& box)
+{
+    Vec3f v000(box.min.getX(),box.min.getY(),box.min.getZ());
+    Vec3f v001(box.min.getX(),box.min.getY(),box.max.getZ());
+    Vec3f v010(box.min.getX(),box.max.getY(),box.min.getZ());
+    Vec3f v011(box.min.getX(),box.max.getY(),box.max.getZ());
+    Vec3f v100(box.max.getX(),box.min.getY(),box.min.getZ());
+    Vec3f v101(box.max.getX(),box.min.getY(),box.max.getZ());
+    Vec3f v110(box.max.getX(),box.max.getY(),box.min.getZ());
+    Vec3f v111(box.max.getX(),box.max.getY(),box.max.getZ());
+
+    // "Back" face outline.
+    glBegin(GL_LINE_LOOP);
+        glVertex3fv(v000);
+        glVertex3fv(v100);
+        glVertex3fv(v110);
+        glVertex3fv(v010);
+    glEnd();
+
+    // "Front" face outline.
+    glBegin(GL_LINE_LOOP);
+        glVertex3fv(v001);
+        glVertex3fv(v101);
+        glVertex3fv(v111);
+        glVertex3fv(v011);
+    glEnd();
+
+    // Lines connecting "back" and "front" faces.
+    glBegin(GL_LINES);
+        glVertex3fv(v000);
+        glVertex3fv(v001);
+
+        glVertex3fv(v100);
+        glVertex3fv(v101);
+
+        glVertex3fv(v110);
+        glVertex3fv(v111);
+
+        glVertex3fv(v010);
+        glVertex3fv(v011);
+    glEnd();
 }
 
 } // namespace wrapgl
