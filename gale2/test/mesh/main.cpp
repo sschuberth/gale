@@ -2,7 +2,11 @@
 #include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/renderer.h>
 
-#include <stdio.h>
+#ifndef GALE_TINY
+    #include <stdio.h>
+#else
+    #define printf print
+#endif
 
 using namespace gale::math;
 using namespace gale::model;
@@ -20,10 +24,12 @@ class TestWindow:public DefaultWindow
     {
         m_camera.approach(5);
 
+#ifndef GALE_TINY
         int error=m_mesh->check();
         if (error>=0) {
             printf("Mesh is inconsistent at vertex %d.\n",error);
         }
+#endif
         m_mesh_prep.compile(m_mesh);
 
         m_mesh_normals=Mesh::Factory::Normals(m_mesh_prep,0.2f);
@@ -69,6 +75,7 @@ class TestWindow:public DefaultWindow
             key=last_scheme_key;
         }
 
+        static char buffer[]=" (step 0).\n";
         switch (key) {
             case 'p': {
                 last_scheme_key=key;
@@ -80,7 +87,8 @@ class TestWindow:public DefaultWindow
                     m_scheme=Mesh::Subdivider::Polyhedral;
                     key=last_mesh_key;
                 }
-                printf(" (step %d).\n",m_step);
+                buffer[7]='0'+m_step;
+                printf(buffer);
                 break;
             }
             case 'b': {
@@ -93,7 +101,8 @@ class TestWindow:public DefaultWindow
                     m_scheme=Mesh::Subdivider::Butterfly;
                     key=last_mesh_key;
                 }
-                printf(" (step %d).\n",m_step);
+                buffer[7]='0'+m_step;
+                printf(buffer);
                 break;
             }
             case 'l': {
@@ -106,7 +115,8 @@ class TestWindow:public DefaultWindow
                     m_scheme=Mesh::Subdivider::Loop;
                     key=last_mesh_key;
                 }
-                printf(" (step %d).\n",m_step);
+                buffer[7]='0'+m_step;
+                printf(buffer);
                 break;
             }
             case 's': {
@@ -119,7 +129,8 @@ class TestWindow:public DefaultWindow
                     m_scheme=Mesh::Subdivider::Sqrt3;
                     key=last_mesh_key;
                 }
-                printf(" (step %d).\n",m_step);
+                buffer[7]='0'+m_step;
+                printf(buffer);
                 break;
             }
             case 'c': {
@@ -132,12 +143,15 @@ class TestWindow:public DefaultWindow
                     m_scheme=Mesh::Subdivider::CatmullClark;
                     key=last_mesh_key;
                 }
-                printf(" (step %d).\n",m_step);
+                buffer[7]='0'+m_step;
+                printf(buffer);
                 break;
             }
             case 'd': {
                 last_scheme_key=key;
-                printf("Doo-Sabin subdivision (step %d).\n",m_step);
+                printf("Doo-Sabin subdivision");
+                buffer[7]='0'+m_step;
+                printf(buffer);
                 m_scheme=Mesh::Subdivider::DooSabin;
                 key=last_mesh_key;
                 break;
@@ -199,10 +213,12 @@ class TestWindow:public DefaultWindow
 
         if (key>='1' && key<='5') {
             m_scheme(*m_mesh,m_step);
+#ifndef GALE_TINY
             int error=m_mesh->check();
             if (error>=0) {
                 printf("Mesh is inconsistent at vertex %d.\n",error);
             }
+#endif
             m_mesh_prep.compile(m_mesh);
 
             delete m_mesh_normals;
@@ -283,7 +299,7 @@ int main()
         window.processEvents();
     }
 
-#ifndef NDEBUG
+#if !defined NDEBUG && !defined GALE_TINY
     _CrtDumpMemoryLeaks();
 #endif
 
