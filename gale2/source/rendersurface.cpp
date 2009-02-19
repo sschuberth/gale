@@ -44,7 +44,7 @@ RenderSurface::RenderSurface()
         // Register a minimal window class used by all contexts we want to create.
         WNDCLASS cls;
         memset(&cls,0,sizeof(cls));
-        cls.style=CS_OWNDC|CS_SAVEBITS;
+        cls.style=CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
         cls.lpfnWndProc=WindowProc;
         cls.hCursor=LoadCursor(NULL,IDC_ARROW);
         cls.lpszClassName=_T("G");
