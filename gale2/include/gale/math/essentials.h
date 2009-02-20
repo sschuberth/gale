@@ -195,7 +195,7 @@ template<>
 struct Numerics<unsigned char>
 {
     static unsigned char MIN()             { return 0;            }
-    static unsigned char MAX()             { return CHAR_MAX;     }
+    static unsigned char MAX()             { return UCHAR_MAX;    }
     static unsigned char EPSILON()         { return 0;            }
     static unsigned char ZERO_TOLERANCE()  { return 0;            }
 };
