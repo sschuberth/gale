@@ -487,6 +487,16 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         return Color(c).inverse();
     }
 
+    /// Returns the additive mix between colors \a a and \a b.
+    friend Color operator&(Color const& a,Color const& b) {
+        return Color(a).mixAdd(b);
+    }
+
+    /// Returns the subtractive mix between colors \a a and \a b.
+    friend Color operator|(Color const& a,Color const& b) {
+        return Color(a).mixSub(b);
+    }
+
     //@}
 
     /**
@@ -590,19 +600,70 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     }
 
     /// Returns the color's inverse (the alpha channel is omitted, if present).
-    Color inverse() {
-        Color tmp=WHITE()-(*this);
+    Color inverse() const {
+        // Normalize the color to range [0,1].
+        Color<N,double> tD(*this);
+        tD-=BLACK();
+
+        T const range=MAX_INTENSITY()-MIN_INTENSITY();
+        tD/=range;
+
+        // This can be seen as converting from RGB to CMY, meaning that "iD"
+        // represents the same color in the CMY model as "tD" in the RGB model.
+        Color<N,double> iD=Color<N,double>::WHITE()-tD;
 
 // Warning C4127: Conditional expression is constant.
 #pragma warning(disable:4127)
 
         if (N==4) {
-            tmp.setA(getA());
+            iD.setA(tD.getA());
         }
 
 #pragma warning(default:4127)
 
-        return tmp;
+        // Map the result back to the original range.
+        iD*=range;
+        iD+=BLACK();
+
+        return iD;
+    }
+
+    //@}
+
+    /**
+     * \name Mixing methods
+     */
+    //@{
+
+    /// Returns the additive mix between this color and color \a c.
+    Color mixAdd(Color const& c) {
+        // Normalize the colors to range [0,1] and mix them.
+        Color<N,double> tD(*this);
+        tD-=BLACK();
+
+        Color<N,double> cD(c);
+        cD-=BLACK();
+
+        T const range=MAX_INTENSITY()-MIN_INTENSITY();
+        Color<N,double> mD=(tD+cD)/range;
+
+        // Normalize the result to the unit color cube.
+        double me=mD.maxElement();
+        if (me>1.0) {
+            mD/=me;
+        }
+
+        // Map the result back to the original range.
+        mD*=range;
+        mD+=BLACK();
+
+        return mD;
+    }
+
+    /// Returns the subtractive mix between this color and color \a c.
+    Color mixSub(Color const& c) {
+        Color tCMY=inverse(),cCMY=c.inverse();
+        return tCMY.mixAdd(cCMY).inverse();
     }
 
     //@}
