@@ -61,7 +61,8 @@ class TestWindow:public DefaultWindow
         glColor3fv(Col3f::RED());
         Renderer::draw(m_normals_prep);
 
-        glColor3fv((Col3f::RED()+Col3f::YELLOW())*0.5f);
+        static Col3f const orange=Col3f::RED()&Col3f::YELLOW();
+        glColor3fv(orange);
         Renderer::draw(m_mesh_prep.box);
     }
 
