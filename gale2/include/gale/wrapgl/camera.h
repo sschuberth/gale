@@ -50,12 +50,12 @@ namespace wrapgl {
 #pragma warning(disable:4355)
 
 /**
- * This class defines a camera with a modelview transformation and projection
- * matrix that projects onto a given screen space portion of the render surface
- * that it is attached to. The camera's coordinate system equals OpenGL's, i.e.
- * it is a right-handed coordinate system where the camera looks forward long
- * the negative z-axis, the positive y-axis marks the "up" direction and the
- * positive x-axis marks the "right" direction.
+ * This class defines a camera with a projection matrix and modelview
+ * transformation that projects onto a given screen space portion of the render
+ * surface that it is attached to. The camera's coordinate system equals
+ * OpenGL's, i.e. it is a right-handed coordinate system where the camera looks
+ * forward long the negative z-axis, the positive y-axis marks the "up"
+ * direction and the positive x-axis marks the "right" direction.
  */
 class Camera
 {
@@ -135,8 +135,8 @@ class Camera
         G_ASSERT_OPENGL
 
         // Set a perspective camera with no transformation by default.
-        setModelview(math::HMat4f::IDENTITY());
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height));
+        setModelview(math::HMat4f::IDENTITY());
     }
 
     /// Returns a reference to the camera's view frustum.
@@ -144,8 +144,13 @@ class Camera
         return m_frustum;
     }
 
+    /// Makes the camera the current one by applying all its settings to the
+    /// current render context. If \a force is \c true, the camera settings are
+    /// also applied if they did not change.
+    void makeCurrent(bool const force=false);
+
     /**
-     * \name Screen space related methods
+     * \name Projection related methods
      */
     //@{
 
@@ -174,10 +179,27 @@ class Camera
         return m_screen_changed;
     }
 
+    /// Returns the current projection matrix.
+    math::Mat4d const& getProjection() const {
+        return m_projection;
+    }
+
+    /// Sets the projection matrix.
+    void setProjection(math::Mat4d const& projection) {
+        m_projection=projection;
+        m_projection_changed=true;
+    }
+
+    /// Returns whether the projection matrix has changed since the camera was
+    /// last made current.
+    bool hasProjectionChanged() const {
+        return m_projection_changed;
+    }
+
     //@}
 
     /**
-     * \name Modelview transformation matrix related methods
+     * \name Modelview transformation related methods
      */
     //@{
 
@@ -199,35 +221,6 @@ class Camera
     }
 
     //@}
-
-    /**
-     * \name Projection matrix related methods
-     */
-    //@{
-
-    /// Returns the current projection matrix.
-    math::Mat4d const& getProjection() const {
-        return m_projection;
-    }
-
-    /// Sets the projection matrix.
-    void setProjection(math::Mat4d const& projection) {
-        m_projection=projection;
-        m_projection_changed=true;
-    }
-
-    /// Returns whether the projection matrix has changed since the camera was
-    /// last made current.
-    bool hasProjectionChanged() const {
-        return m_projection_changed;
-    }
-
-    //@}
-
-    /// Makes the camera the current one by applying all its settings to the
-    /// current render context. If \a force is \c true, the camera settings are
-    /// also applied if they did not change.
-    void makeCurrent(bool const force=false);
 
     /**
      * \name Absolute transformations in the world coordinate system
@@ -356,11 +349,11 @@ class Camera
     ScreenSpace m_screen;           ///< The camera's current screen space.
     bool m_screen_changed;          ///< Dirty flag for the screen space.
 
-    math::HMat4f m_modelview;       ///< Modelview transformation of the camera.
-    bool m_modelview_changed;       ///< Dirty flag for the modelview transformation.
-
     math::Mat4d m_projection;       ///< Projection matrix of the camera.
     bool m_projection_changed;      ///< Dirty flag for projection matrix.
+
+    math::HMat4f m_modelview;       ///< Modelview transformation of the camera.
+    bool m_modelview_changed;       ///< Dirty flag for the modelview transformation.
 };
 
 // Warning C4355: 'this' used in base member initializer list.
