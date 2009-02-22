@@ -50,20 +50,31 @@ class TestWindow:public DefaultWindow
     void onRender() {
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-        m_camera.apply();
+        m_camera.makeCurrent();
         glLightfv(GL_LIGHT0,GL_POSITION,m_camera.getPosition());
 
-        glEnable(GL_LIGHTING);
-        glColor3fv(Col3f::WHITE());
-        Renderer::draw(m_mesh_prep);
+        if (m_camera.frustum().contains(m_mesh_prep.box)) {
+            glEnable(GL_LIGHTING);
+            glColor3fv(Col3f::WHITE());
+            Renderer::draw(m_mesh_prep);
+
+            glDisable(GL_LIGHTING);
+            static Col3f const orange=Col3f::RED()&Col3f::YELLOW();
+            glColor3fv(orange);
+            Renderer::draw(m_mesh_prep.box);
+        }
+        else {
+            puts("Mesh out of frustum.");
+        }
 
         glDisable(GL_LIGHTING);
         glColor3fv(Col3f::RED());
-        Renderer::draw(m_normals_prep);
-
-        static Col3f const orange=Col3f::RED()&Col3f::YELLOW();
-        glColor3fv(orange);
-        Renderer::draw(m_mesh_prep.box);
+        if (m_camera.frustum().contains(m_normals_prep.box)) {
+            Renderer::draw(m_normals_prep);
+        }
+        else {
+            puts("Normals out of frustum.");
+        }
     }
 
     void onKeyEvent(char key) {
