@@ -92,7 +92,7 @@ class TestWindow:public DefaultWindow
     void onRender() {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        m_camera.apply();
+        m_camera.makeCurrent();
 
         HMat4f m;
 

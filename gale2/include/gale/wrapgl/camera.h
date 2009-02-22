@@ -63,10 +63,16 @@ class Camera
         GLsizei height; ///< Height of the screen space.
     };
 
-    /// Returns a pointer to the camera instance that was applied last, or NULL
-    /// if no camera has been applied yet.
-    static Camera* getAppliedCamera() {
+    /// Returns a pointer to the camera that was last made current, or NULL
+    /// if there is no current camera.
+    static Camera* getCurrent() {
         return s_current;
+    }
+
+    /// Makes \a camera the current one. This is merely a convenience method to
+    /// equalize APIs among classes.
+    static void setCurrent(Camera& camera) {
+        camera.makeCurrent();
     }
 
     /// Constructor that initializes a perspective camera attached to the given
@@ -84,6 +90,11 @@ class Camera
         setModelview(math::HMat4f::IDENTITY());
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height));
     }
+
+    /**
+     * \name Screen space related methods
+     */
+    //@{
 
     /// Returns the currently set screen space.
     ScreenSpace const& getScreenSpace() const {
@@ -105,10 +116,17 @@ class Camera
     }
 
     /// Returns whether the screen space has changed since the camera was last
-    /// applied.
+    /// made current.
     bool hasScreenSpaceChanged() const {
         return m_screen_changed;
     }
+
+    //@}
+
+    /**
+     * \name Modelview transformation matrix related methods
+     */
+    //@{
 
     /// Returns the current modelview transformation.
     math::HMat4f const& getModelview() const {
@@ -122,10 +140,17 @@ class Camera
     }
 
     /// Returns whether the modelview transformation has changed since the
-    /// camera was last applied.
+    /// camera was last made current.
     bool hasModelviewChanged() const {
         return m_modelview_changed;
     }
+
+    //@}
+
+    /**
+     * \name Projection matrix related methods
+     */
+    //@{
 
     /// Returns the current projection matrix.
     math::Mat4d const& getProjection() const {
@@ -139,15 +164,17 @@ class Camera
     }
 
     /// Returns whether the projection matrix has changed since the camera was
-    /// last applied.
+    /// last made current.
     bool hasProjectionChanged() const {
         return m_projection_changed;
     }
 
-    /// Activates the camera by applying all its settings to the current render
-    /// context. If \a force is \c true, the camera settings are also applied if
-    /// they did not change.
-    void apply(bool const force=false);
+    //@}
+
+    /// Makes the camera the current one by applying all its settings to the
+    /// current render context. If \a force is \c true, the camera settings are
+    /// also applied if they did not change.
+    void makeCurrent(bool const force=false);
 
     /**
      * \name Absolute transformations in the world coordinate system
@@ -267,18 +294,18 @@ class Camera
 
   protected:
 
-    static Camera* s_current; ///< Common pointer to the last applied camera.
+    static Camera* s_current;       ///< Common pointer to the current camera.
 
     RenderSurface const* m_surface; ///< The surface that the camera is attached to.
 
-    ScreenSpace m_screen;  ///< The camera's current screen space.
-    bool m_screen_changed; ///< Marks whether the screen space needs to be applied.
+    ScreenSpace m_screen;           ///< The camera's current screen space.
+    bool m_screen_changed;          ///< Dirty flag for the screen space.
 
-    math::HMat4f m_modelview; ///< Modelview transformation of the camera.
-    bool m_modelview_changed; ///< Marks whether the modelview needs to be applied.
+    math::HMat4f m_modelview;       ///< Modelview transformation of the camera.
+    bool m_modelview_changed;       ///< Dirty flag for the modelview transformation.
 
-    math::Mat4d m_projection;  ///< Projection matrix of the camera.
-    bool m_projection_changed; ///< Marks whether the projection needs to be applied.
+    math::Mat4d m_projection;       ///< Projection matrix of the camera.
+    bool m_projection_changed;      ///< Dirty flag for projection matrix.
 };
 
 #endif // G_OS_WINDOWS

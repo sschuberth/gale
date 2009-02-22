@@ -34,7 +34,7 @@ namespace wrapgl {
 
 Camera* Camera::s_current=NULL;
 
-void Camera::apply(bool const force)
+void Camera::makeCurrent(bool const force)
 {
     bool camera_changed=(s_current!=this) || force;
 

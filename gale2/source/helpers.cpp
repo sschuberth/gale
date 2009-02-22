@@ -62,7 +62,7 @@ void drawLogo()
     camera_logo.setPosition(normal);
     camera_logo.setLookTarget(math::Vec3f::ZERO());
 
-    camera_logo.apply();
+    camera_logo.makeCurrent();
 
     // Prepare a display list to speed up running draw calls.
     static GLuint list=0;
