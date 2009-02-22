@@ -85,6 +85,10 @@ void Camera::makeCurrent(bool const force)
         G_ASSERT_OPENGL
         glLoadMatrixd(m_projection);
         G_ASSERT_OPENGL
+
+        // Update the view frustum.
+        m_frustum.calculate();
+
         m_projection_changed=false;
     }
 

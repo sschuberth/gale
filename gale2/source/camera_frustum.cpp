@@ -23,22 +23,16 @@
  *
  */
 
-#include "gale/model/frustum.h"
+#include "gale/wrapgl/camera.h"
 
 using namespace gale::math;
+using namespace gale::model;
 
 namespace gale {
 
-namespace model {
+namespace wrapgl {
 
-Frustum::Frustum(wrapgl::Camera const& camera)
-:   m_camera(camera)
-{
-    // Initialize the frustum planes.
-    calculate();
-}
-
-bool Frustum::contains(Vec3f const& point)
+bool Camera::Frustum::contains(Vec3f const& point)
 {
     Vec3f v=!m_camera.getModelview()*point;
 
@@ -49,7 +43,7 @@ bool Frustum::contains(Vec3f const& point)
     }
 
     // To be inside, the point has to lie in front of all frustum planes.
-    for (int i=0;i<G_ARRAY_LENGTH(m_frustum)-1;++i) {
+    for (int i=0;i<G_ARRAY_LENGTH(m_frustum);++i) {
         if (m_frustum[i].distanceTo(v)<0) {
             return false;
         }
@@ -58,16 +52,16 @@ bool Frustum::contains(Vec3f const& point)
     return true;
 }
 
-bool Frustum::contains(AABB const& box)
+bool Camera::Frustum::contains(AABB const& box)
 {
-    // Get the boxes corner vertices.
+    // Get the boxes' corner vertices.
     AABB::Vertices v;
     box.vertices(v);
 
     return contains(v);
 }
 
-bool Frustum::contains(AABB::Vertices const& box)
+bool Camera::Frustum::contains(AABB::Vertices const& box)
 {
     for (int i=0;i<G_ARRAY_LENGTH(box);++i) {
         // The box is (partly) contained if at least one of its corner vertices
@@ -80,7 +74,7 @@ bool Frustum::contains(AABB::Vertices const& box)
     return false;
 }
 
-void Frustum::calculate()
+void Camera::Frustum::calculate()
 {
     Mat4d const& projection=m_camera.getProjection();
 
@@ -90,7 +84,6 @@ void Frustum::calculate()
     Vec3d r3(projection[ 3], projection[ 7], projection[11]);
 
     // All frustum planes face inwards.
-
     m_frustum[ FACE_LEFT   ] = Plane(Vec3d(r3 + r0), projection[15] + projection[12]);
     m_frustum[ FACE_RIGHT  ] = Plane(Vec3d(r3 - r0), projection[15] - projection[12]);
     m_frustum[ FACE_BOTTOM ] = Plane(Vec3d(r3 + r1), projection[15] + projection[13]);
@@ -99,6 +92,6 @@ void Frustum::calculate()
     m_frustum[ FACE_ZFAR   ] = Plane(Vec3d(r3 - r2), projection[15] - projection[14]);
 }
 
-} // namespace model
+} // namespace wrapgl
 
 } // namespace gale

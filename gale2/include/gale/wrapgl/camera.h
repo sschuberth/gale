@@ -33,6 +33,10 @@
 
 #include "../math/matrix4.h"
 #include "../math/quaternion.h"
+
+#include "../model/boundingbox.h"
+#include "../model/plane.h"
+
 #include "../wrapgl/rendersurface.h"
 
 namespace gale {
@@ -41,6 +45,9 @@ namespace wrapgl {
 
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
+
+// Warning C4355: 'this' used in base member initializer list.
+#pragma warning(disable:4355)
 
 /**
  * This class defines a camera with a modelview transformation and projection
@@ -53,6 +60,49 @@ namespace wrapgl {
 class Camera
 {
   public:
+
+    /// A class to represent the camera's view frustum.
+    class Frustum
+    {
+        friend class Camera;
+
+      public:
+
+        /// Constructs the frustum planes for the given \a camera.
+        Frustum(Camera const& camera)
+        :   m_camera(camera) {}
+
+        /// Returns whether the given \a point is contained in the frustum.
+        bool contains(math::Vec3f const& point);
+
+        /// Returns whether the given \a box is (partly) contained in the frustum.
+        bool contains(model::AABB const& box);
+
+        /// Returns whether the given \a box is (partly) contained in the frustum.
+        bool contains(model::AABB::Vertices const& box);
+
+      private:
+
+        /// Names for the plane array entries (as seen from the camera).
+        enum Face {
+            FACE_LEFT,   ///< Index of the left frustum plane.
+            FACE_RIGHT,  ///< Index of the right frustum plane.
+            FACE_BOTTOM, ///< Index of the bottom frustum plane.
+            FACE_TOP,    ///< Index of the top frustum plane.
+            FACE_ZNEAR,  ///< Index of the near (clipping) frustum plane.
+            FACE_ZFAR,   ///< Index of the far (clipping) frustum plane.
+            FACE_COUNT   ///< Helper entry to name the number of enumerations.
+        };
+
+        /// (Re-)calculates the frustum planes.
+        void calculate();
+
+        /// Disable assignments (to avoid warnings due to the reference member variable).
+        Frustum& operator=(Frustum const&);
+
+        Camera const& m_camera;             ///< Reference to the camera.
+        model::Plane m_frustum[FACE_COUNT]; ///< Array of frustum planes.
+    };
 
     /// Stores the location and size of the render surface portion that the
     /// camera projects to.
@@ -80,6 +130,7 @@ class Camera
     /// and no transformation is set to the modelview matrix.
     Camera(RenderSurface const* surface=NULL)
     :   m_surface(surface)
+    ,   m_frustum(*this)
     ,   m_screen_changed(false)
     {
         // Initialize the camera screen space to the current OpenGL viewport.
@@ -89,6 +140,11 @@ class Camera
         // Set a perspective camera with no transformation by default.
         setModelview(math::HMat4f::IDENTITY());
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height));
+    }
+
+    /// Returns a reference to the camera's view frustum.
+    Frustum& frustum() {
+        return m_frustum;
     }
 
     /**
@@ -298,6 +354,8 @@ class Camera
 
     RenderSurface const* m_surface; ///< The surface that the camera is attached to.
 
+    Frustum m_frustum;              ///< The camera's view frustum.
+
     ScreenSpace m_screen;           ///< The camera's current screen space.
     bool m_screen_changed;          ///< Dirty flag for the screen space.
 
@@ -307,6 +365,9 @@ class Camera
     math::Mat4d m_projection;       ///< Projection matrix of the camera.
     bool m_projection_changed;      ///< Dirty flag for projection matrix.
 };
+
+// Warning C4355: 'this' used in base member initializer list.
+#pragma warning(default:4355)
 
 #endif // G_OS_WINDOWS
 
