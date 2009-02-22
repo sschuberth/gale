@@ -52,7 +52,7 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
     m_context.render=wglCreateContext(m_context.device);
     G_ASSERT(m_context.render)
 
-    G_ASSERT_CALL(makeCurrentContext())
+    G_ASSERT_CALL(makeCurrent())
 
     AttributeListi attr;
     GLint format=0;
@@ -117,7 +117,7 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
         }
         G_ASSERT(m_context.render)
 
-        G_ASSERT_CALL(makeCurrentContext())
+        G_ASSERT_CALL(makeCurrent())
     }
 }
 

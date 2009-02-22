@@ -74,12 +74,12 @@ class RenderSurface
     };
 
     /// Returns the active OpenGL context for the current thread.
-    static ContextHandle getCurrentContext() {
+    static ContextHandle getCurrent() {
         return ContextHandle(wglGetCurrentDC(),wglGetCurrentContext());
     }
 
     /// Sets the active OpenGL context for the current thread.
-    static bool setCurrentContext(ContextHandle const& handle) {
+    static bool setCurrent(ContextHandle const& handle) {
         return wglMakeCurrent(handle.device,handle.render)!=FALSE;
     }
 
@@ -101,8 +101,8 @@ class RenderSurface
     }
 
     /// Makes this the active OpenGL context for the current thread.
-    bool makeCurrentContext() {
-        return setCurrentContext(m_context);
+    bool makeCurrent() {
+        return setCurrent(m_context);
     }
 
     /// Returns the width and height of this render surface.
