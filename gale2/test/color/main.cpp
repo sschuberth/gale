@@ -143,13 +143,17 @@ class TestWindow:public DefaultWindow
 
 int main()
 {
-    TestWindow window;
+    // Make sure the window is destroyed before dumping memory leaks.
+    {
+        TestWindow window;
 
-    ShowWindow(window.windowHandle(),SW_SHOW);
-    window.processEvents();
+        ShowWindow(window.windowHandle(),SW_SHOW);
+        window.processEvents();
+    }
 
-#ifndef NDEBUG
+#if !defined NDEBUG && !defined GALE_TINY
     _CrtDumpMemoryLeaks();
 #endif
+
     return 0;
 }
