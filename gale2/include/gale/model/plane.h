@@ -71,8 +71,12 @@ class Plane
     //@{
 
     /// Constructs a plane from a \a normal and a \a distance to the origin.
-    Plane(math::Vec3d const& normal=-math::Vec3d::Z(),double distance=0)
-    :   m_normal(~normal),m_distance(-distance) {}
+    Plane(math::Vec3d const& normal,double distance)
+    :   m_normal(normal)
+    ,   m_distance(-distance)
+    {
+        normalize();
+    }
 
     /// Constructs a plane from three vectors \a a, \a b and \a c on that plane.
     Plane(math::Vec3d const& a,math::Vec3d const& b,math::Vec3d const& c) {
@@ -146,6 +150,13 @@ class Plane
     /// Returns the distance of \a v to the plane along the normal vector.
     double distanceTo(math::Vec3d const& v) const {
         return (v%m_normal)+m_distance;
+    }
+
+    /// Normalizes the plane equation so its normal vector length equals 1.
+    void normalize() {
+        double length=m_normal.length();
+        m_normal/=length;
+        m_distance/=length;
     }
 
     //@}
