@@ -31,9 +31,16 @@ namespace gale {
 
 namespace model {
 
+Frustum::Frustum(wrapgl::Camera const& camera)
+:   m_camera(camera)
+{
+    // Initialize the frustum planes.
+    calculate();
+}
+
 bool Frustum::contains(Vec3f const& point)
 {
-    Vec3f v=m_camera.getModelview()*point;
+    Vec3f v=!m_camera.getModelview()*point;
 
     // Recalculate the frustum planes if the camera's projection matrix has
     // changed.
@@ -42,7 +49,7 @@ bool Frustum::contains(Vec3f const& point)
     }
 
     // To be inside, the point has to lie in front of all frustum planes.
-    for (int i=5;i>=0;--i) {
+    for (int i=0;i<G_ARRAY_LENGTH(m_frustum)-1;++i) {
         if (m_frustum[i].distanceTo(v)<0) {
             return false;
         }
@@ -51,65 +58,45 @@ bool Frustum::contains(Vec3f const& point)
     return true;
 }
 
+bool Frustum::contains(AABB const& box)
+{
+    // Get the boxes corner vertices.
+    AABB::Vertices v;
+    box.vertices(v);
+
+    return contains(v);
+}
+
+bool Frustum::contains(AABB::Vertices const& box)
+{
+    for (int i=0;i<G_ARRAY_LENGTH(box);++i) {
+        // The box is (partly) contained if at least one of its corner vertices
+        // is contained.
+        if (contains(box[i])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void Frustum::calculate()
 {
     Mat4d const& projection=m_camera.getProjection();
 
+    Vec3d r0(projection[ 0], projection[ 4], projection[ 8]);
+    Vec3d r1(projection[ 1], projection[ 5], projection[ 9]);
+    Vec3d r2(projection[ 2], projection[ 6], projection[10]);
+    Vec3d r3(projection[ 3], projection[ 7], projection[11]);
+
     // All frustum planes face inwards.
 
-    m_frustum[FACE_LEFT]=Plane(
-        Vec3d(
-            projection[3]+projection[0],
-            projection[7]+projection[4],
-            projection[11]+projection[8]
-        ),
-        projection[15]+projection[12]
-    );
-
-    m_frustum[FACE_RIGHT]=Plane(
-        Vec3d(
-            projection[3]-projection[0],
-            projection[7]-projection[4],
-            projection[11]-projection[8]
-        ),
-        projection[15]-projection[12]
-    );
-
-    m_frustum[FACE_BOTTOM]=Plane(
-        Vec3d(
-            projection[3]+projection[1],
-            projection[7]+projection[5],
-            projection[11]+projection[9]
-        ),
-        projection[15]+projection[13]
-    );
-
-    m_frustum[FACE_TOP]=Plane(
-        Vec3d(
-            projection[3]-projection[1],
-            projection[7]-projection[5],
-            projection[11]-projection[9]
-        ),
-        projection[15]-projection[13]
-    );
-
-    m_frustum[FACE_ZNEAR]=Plane(
-        Vec3d(
-            projection[3]+projection[2],
-            projection[7]+projection[6],
-            projection[11]+projection[10]
-        ),
-        projection[15]+projection[14]
-    );
-
-    m_frustum[FACE_ZFAR]=Plane(
-        Vec3d(
-            projection[3]-projection[2],
-            projection[7]-projection[6],
-            projection[11]-projection[10]
-        ),
-        projection[15]-projection[14]
-    );
+    m_frustum[ FACE_LEFT   ] = Plane(Vec3d(r3 + r0), projection[15] + projection[12]);
+    m_frustum[ FACE_RIGHT  ] = Plane(Vec3d(r3 - r0), projection[15] - projection[12]);
+    m_frustum[ FACE_BOTTOM ] = Plane(Vec3d(r3 + r1), projection[15] + projection[13]);
+    m_frustum[ FACE_TOP    ] = Plane(Vec3d(r3 - r1), projection[15] - projection[13]);
+    m_frustum[ FACE_ZNEAR  ] = Plane(Vec3d(r3 + r2), projection[15] + projection[14]);
+    m_frustum[ FACE_ZFAR   ] = Plane(Vec3d(r3 - r2), projection[15] - projection[14]);
 }
 
 } // namespace model
