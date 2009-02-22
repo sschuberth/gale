@@ -71,7 +71,7 @@ class Plane
     //@{
 
     /// Constructs a plane from a \a normal and a \a distance to the origin.
-    Plane(math::Vec3d const& normal,double distance)
+    Plane(math::Vec3d const& normal=-math::Vec3d::Z(),double distance=0)
     :   m_normal(normal)
     ,   m_distance(-distance)
     {
