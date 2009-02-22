@@ -149,7 +149,7 @@ class Plane
 
     /// Returns the distance of \a v to the plane along the normal vector.
     double distanceTo(math::Vec3d const& v) const {
-        return (v%m_normal)+m_distance;
+        return (v%m_normal)-m_distance;
     }
 
     /// Normalizes the plane equation so its normal vector length equals 1.
