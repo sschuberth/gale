@@ -110,6 +110,7 @@ class Matrix4
           double const clip_near=0.001,
           double const clip_far=1000.0)
         {
+            // For details, see the gluPerspective() documentation in the OpenGL SDK.
             double f=1.0/::tan(fov*0.5);
             double a=static_cast<double>(view_width)/view_height;
 
