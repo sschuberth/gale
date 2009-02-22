@@ -42,6 +42,9 @@ namespace model {
  */
 struct AABB
 {
+    /// Array of the boxes' corner vertices.
+    typedef math::Vec3f Vertices[8];
+
     /// Creates an empty box.
     AABB()
     :   min(math::Vec3f::ZERO())
@@ -101,6 +104,18 @@ struct AABB
     /// Returns the center of the box.
     math::Vec3f center() const {
         return math::Vec3f(min.getX()+max.getX(),min.getY()+max.getY(),min.getZ()+max.getZ())*0.5f;
+    }
+
+    /// Sets the vertices in \a v to the corner vertices of the box.
+    void vertices(Vertices& v) const {
+        v[0]=math::Vec3f(min.getX(),min.getY(),min.getZ());
+        v[1]=math::Vec3f(min.getX(),min.getY(),max.getZ());
+        v[2]=math::Vec3f(min.getX(),max.getY(),min.getZ());
+        v[3]=math::Vec3f(min.getX(),max.getY(),max.getZ());
+        v[4]=math::Vec3f(max.getX(),min.getY(),min.getZ());
+        v[5]=math::Vec3f(max.getX(),min.getY(),max.getZ());
+        v[6]=math::Vec3f(max.getX(),max.getY(),min.getZ());
+        v[7]=math::Vec3f(max.getX(),max.getY(),max.getZ());
     }
 
     math::Vec3f min; ///< Minimum coordinates of the box.

@@ -28,12 +28,13 @@
 #include "gale/global/platform.h"
 
 using namespace gale::math;
+using namespace gale::model;
 
 namespace gale {
 
 namespace wrapgl {
 
-void Renderer::draw(model::Mesh::Preparer const& geom)
+void Renderer::draw(Mesh::Preparer const& geom)
 {
     if (!geom.getMesh()) {
         return;
@@ -58,46 +59,41 @@ void Renderer::draw(model::Mesh::Preparer const& geom)
     }
 }
 
-void Renderer::draw(model::AABB const& box)
+void Renderer::draw(AABB const& box)
 {
-    Vec3f v000(box.min.getX(),box.min.getY(),box.min.getZ());
-    Vec3f v001(box.min.getX(),box.min.getY(),box.max.getZ());
-    Vec3f v010(box.min.getX(),box.max.getY(),box.min.getZ());
-    Vec3f v011(box.min.getX(),box.max.getY(),box.max.getZ());
-    Vec3f v100(box.max.getX(),box.min.getY(),box.min.getZ());
-    Vec3f v101(box.max.getX(),box.min.getY(),box.max.getZ());
-    Vec3f v110(box.max.getX(),box.max.getY(),box.min.getZ());
-    Vec3f v111(box.max.getX(),box.max.getY(),box.max.getZ());
+    // Get the boxes' corner vertices.
+    AABB::Vertices v;
+    box.vertices(v);
 
     // "Back" face outline.
     glBegin(GL_LINE_LOOP);
-        glVertex3fv(v000);
-        glVertex3fv(v100);
-        glVertex3fv(v110);
-        glVertex3fv(v010);
+        glVertex3fv(v[0]);
+        glVertex3fv(v[4]);
+        glVertex3fv(v[6]);
+        glVertex3fv(v[2]);
     glEnd();
 
     // "Front" face outline.
     glBegin(GL_LINE_LOOP);
-        glVertex3fv(v001);
-        glVertex3fv(v101);
-        glVertex3fv(v111);
-        glVertex3fv(v011);
+        glVertex3fv(v[1]);
+        glVertex3fv(v[5]);
+        glVertex3fv(v[7]);
+        glVertex3fv(v[3]);
     glEnd();
 
     // Lines connecting "back" and "front" faces.
     glBegin(GL_LINES);
-        glVertex3fv(v000);
-        glVertex3fv(v001);
+        glVertex3fv(v[0]);
+        glVertex3fv(v[1]);
 
-        glVertex3fv(v100);
-        glVertex3fv(v101);
+        glVertex3fv(v[4]);
+        glVertex3fv(v[5]);
 
-        glVertex3fv(v110);
-        glVertex3fv(v111);
+        glVertex3fv(v[6]);
+        glVertex3fv(v[7]);
 
-        glVertex3fv(v010);
-        glVertex3fv(v011);
+        glVertex3fv(v[2]);
+        glVertex3fv(v[3]);
     glEnd();
 }
 
