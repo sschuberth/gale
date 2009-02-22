@@ -58,15 +58,10 @@ bool Camera::Frustum::contains(AABB const& box)
     AABB::Vertices v;
     box.vertices(v);
 
-    return contains(v);
-}
-
-bool Camera::Frustum::contains(AABB::Vertices const& box)
-{
-    for (int i=0;i<G_ARRAY_LENGTH(box);++i) {
+    for (int i=0;i<G_ARRAY_LENGTH(v);++i) {
         // The box is (partly) contained if at least one of its corner vertices
         // is contained.
-        if (contains(box[i])) {
+        if (contains(v[i])) {
             return true;
         }
     }

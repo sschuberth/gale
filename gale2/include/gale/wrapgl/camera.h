@@ -78,9 +78,6 @@ class Camera
         /// Returns whether the given \a box is (partly) contained in the frustum.
         bool contains(model::AABB const& box);
 
-        /// Returns whether the given \a box is (partly) contained in the frustum.
-        bool contains(model::AABB::Vertices const& box);
-
       private:
 
         /// Names for the plane array entries (as seen from the camera).
