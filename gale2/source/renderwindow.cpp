@@ -60,6 +60,7 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
     // Try to initialize an OpenGL extension for more sophisticated selection of a
     // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
     if (GLEX_WGL_ARB_pixel_format_init()) {
+        // If additional pixel attributes were given, copy them over.
         if (pixel_attr) {
             attr=*pixel_attr;
         }
@@ -70,12 +71,15 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
         attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
         attr.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
 
+        // Specify some common pixel format attributes.
         attr.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
         attr.insert(WGL_COLOR_BITS_ARB,32);
         attr.insert(WGL_DEPTH_BITS_ARB,24);
         attr.insert(WGL_STENCIL_BITS_ARB,8);
 
+        // Try to find a matching (one-based) pixel format.
         UINT count;
+        wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count);
 
         // Try to get a multi-sampled pixel format, see
         // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
@@ -83,14 +87,10 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
             attr.insert(WGL_SAMPLE_BUFFERS_ARB,TRUE);
             attr.insert(WGL_SAMPLES_ARB,8);
 
-            if (wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count)!=TRUE) {
-                attr.remove(WGL_SAMPLE_BUFFERS_ARB);
-                attr.remove(WGL_SAMPLES_ARB);
+            GLint format_multisample=0;
+            if (wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format_multisample,&count)!=FALSE) {
+                format=format_multisample;
             }
-        }
-
-        if (format==0) {
-            wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count);
         }
     }
 

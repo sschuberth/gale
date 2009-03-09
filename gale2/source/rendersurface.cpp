@@ -84,10 +84,12 @@ bool RenderSurface::create(int pixel_format,int width,int height,LPCTSTR title)
     if (m_window) {
         m_context.device=GetDC(m_window);
         if (m_context.device) {
+            // If no pixel format was specified, get one.
             if (pixel_format<=0) {
-                // Set the device context to a pixel format that uses OpenGL acceleration.
                 PIXELFORMATDESCRIPTOR pfd;
                 memset(&pfd,0,sizeof(pfd));
+
+                // Make sure some required attributes are specified.
                 pfd.nSize=sizeof(pfd);
                 pfd.nVersion=1;
                 pfd.dwFlags=PFD_DRAW_TO_WINDOW
@@ -97,11 +99,13 @@ bool RenderSurface::create(int pixel_format,int width,int height,LPCTSTR title)
                           | PFD_SUPPORT_COMPOSITION
                 ;
 
+                // Specify some common pixel format attributes.
                 pfd.iPixelType=PFD_TYPE_RGBA;
                 pfd.cColorBits=32;
                 pfd.cDepthBits=24;
                 pfd.cStencilBits=8;
 
+                // Try to find a matching (one-based) pixel format.
                 pixel_format=ChoosePixelFormat(m_context.device,&pfd);
             }
 
