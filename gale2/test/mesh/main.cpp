@@ -21,6 +21,10 @@ class TestWindow:public DefaultWindow
     ,   m_mesh(Mesh::Factory::Tetrahedron())
     ,   m_scheme(Mesh::Subdivider::Polyhedral)
     ,   m_step(0)
+    ,   m_show_box(true)
+    ,   m_show_normals(true)
+    ,   m_lighting(true)
+    ,   m_culling(true)
     {
         m_camera.approach(5);
 
@@ -36,7 +40,6 @@ class TestWindow:public DefaultWindow
         m_normals_prep.compile(m_mesh_normals);
 
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
 
         glEnable(GL_LIGHT0);
@@ -50,30 +53,46 @@ class TestWindow:public DefaultWindow
     void onRender() {
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
+        if (m_culling) {
+            glEnable(GL_CULL_FACE);
+        }
+        else {
+            glDisable(GL_CULL_FACE);
+        }
+
         m_camera.makeCurrent();
         glLightfv(GL_LIGHT0,GL_POSITION,m_camera.getPosition());
 
         if (m_camera.frustum().contains(m_mesh_prep.box)) {
-            glEnable(GL_LIGHTING);
+            if (m_lighting) {
+                glEnable(GL_LIGHTING);
+            }
+            else {
+                glDisable(GL_LIGHTING);
+            }
             glColor3fv(Col3f::WHITE());
             Renderer::draw(m_mesh_prep);
 
-            glDisable(GL_LIGHTING);
-            static Col3f const orange=Col3f::RED()&Col3f::YELLOW();
-            glColor3fv(orange);
-            Renderer::draw(m_mesh_prep.box);
+            if (m_show_box) {
+                glDisable(GL_LIGHTING);
+                static Col3f const orange=Col3f::RED()&Col3f::YELLOW();
+                glColor3fv(orange);
+                Renderer::draw(m_mesh_prep.box);
+            }
         }
         else {
             puts("Mesh out of frustum.");
         }
 
-        glDisable(GL_LIGHTING);
-        glColor3fv(Col3f::RED());
-        if (m_camera.frustum().contains(m_normals_prep.box)) {
-            Renderer::draw(m_normals_prep);
-        }
-        else {
-            puts("Normals out of frustum.");
+        if (m_show_normals) {
+            glDisable(GL_LIGHTING);
+            glColor3fv(Col3f::RED());
+            if (m_camera.frustum().contains(m_normals_prep.box)) {
+                Renderer::draw(m_normals_prep);
+            }
+            else {
+                puts("Normals out of frustum.");
+            }
         }
     }
 
@@ -169,6 +188,27 @@ class TestWindow:public DefaultWindow
                 printf(buffer);
                 m_scheme=Mesh::Subdivider::DooSabin;
                 key=last_mesh_key;
+                break;
+            }
+
+            case 'x': {
+                m_show_box=!m_show_box;
+                repaint();
+                break;
+            }
+            case 'n': {
+                m_show_normals=!m_show_normals;
+                repaint();
+                break;
+            }
+            case 'r': {
+                m_lighting=!m_lighting;
+                repaint();
+                break;
+            }
+            case 'f': {
+                m_culling=!m_culling;
+                repaint();
                 break;
             }
         }
@@ -294,6 +334,8 @@ class TestWindow:public DefaultWindow
 
     Mesh::Preparer m_mesh_prep;
     Mesh::Preparer m_normals_prep;
+
+    bool m_show_box,m_show_normals,m_lighting,m_culling;
 };
 
 // Enable memory leak detection, see:
@@ -306,6 +348,31 @@ class TestWindow:public DefaultWindow
 
 int main()
 {
+#ifndef NDEBUG
+    puts("Base mesh selection");
+    puts("-------------------");
+    puts("1: Tetrahedron");
+    puts("2: Octahedron");
+    puts("3: Hexahedron");
+    puts("4: Icosahedron");
+    puts("5: Dodecahedron");
+    puts("\n");
+    puts("Sub-division mode");
+    puts("-----------------");
+    puts("p: Polyhedral");
+    puts("b: Butterfly");
+    puts("l: Loop");
+    puts("s: Sqrt3");
+    puts("c: Catmull-Clark");
+    puts("d: Doo-Sabin");
+    puts("\n");
+    puts("Display toggles");
+    puts("---------------");
+    puts("x: Bounding box");
+    puts("n: Vertex normals");
+    puts("r: Lighting");
+#endif
+
     // Make sure the window is destroyed before dumping memory leaks.
     {
         TestWindow window;
