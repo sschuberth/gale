@@ -97,6 +97,68 @@ void Renderer::draw(AABB const& box)
     glEnd();
 }
 
+void Renderer::draw(Camera const& camera)
+{
+    double t=::tan(camera.getFOV()/2);
+
+    HMat4f const& m=camera.getModelview();
+    float r=static_cast<float>(camera.getScreenSpace().width)/camera.getScreenSpace().height;
+
+    // Calculate x- and y-offsets from the look direction on the near plane.
+    float near_s=static_cast<float>(t*camera.getNearClipping());
+    Vec3f near_y=m.getUpVector()*near_s;
+    Vec3f near_x=m.getRightVector()*near_s*r;
+
+    Vec3f near_d=~m.getBackwardVector()*static_cast<float>(-camera.getNearClipping())+camera.getPosition();
+
+    Vec3f near_a=near_x+near_y;
+    Vec3f near_b=near_x-near_y;
+
+    // Calculate x- and y-offsets from the look direction on the far plane.
+    float far_s=static_cast<float>(t*camera.getFarClipping());
+    Vec3f far_y=m.getUpVector()*far_s;
+    Vec3f far_x=m.getRightVector()*far_s*r;
+
+    Vec3f far_d=~m.getBackwardVector()*static_cast<float>(-camera.getFarClipping())+camera.getPosition();
+
+    Vec3f far_a=far_x+far_y;
+    Vec3f far_b=far_x-far_y;
+
+    // Put the vertices into an array.
+    Vec3f cone[]={
+        near_d - near_a , near_d + near_b , near_d + near_a , near_d - near_b
+    ,   far_d  - far_a  , far_d  + far_b  , far_d  + far_a  , far_d  - far_b
+    };
+
+    // Draw the clipping plane outlines.
+    glBegin(GL_LINE_STRIP);
+        glVertex3fv(cone[0]);
+        glVertex3fv(cone[1]);
+        glVertex3fv(cone[2]);
+        glVertex3fv(cone[3]);
+
+        glVertex3fv(cone[0]);
+        glVertex3fv(cone[4]);
+
+        glVertex3fv(cone[5]);
+        glVertex3fv(cone[6]);
+        glVertex3fv(cone[7]);
+        glVertex3fv(cone[4]);
+    glEnd();
+
+    // Draw the remaining frustum lines.
+    glBegin(GL_LINES);
+        glVertex3fv(cone[1]);
+        glVertex3fv(cone[5]);
+
+        glVertex3fv(cone[2]);
+        glVertex3fv(cone[6]);
+
+        glVertex3fv(cone[3]);
+        glVertex3fv(cone[7]);
+    glEnd();
+}
+
 } // namespace wrapgl
 
 } // namespace gale

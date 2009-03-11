@@ -32,6 +32,7 @@
  */
 
 #include "../model/mesh.h"
+#include "camera.h"
 
 namespace gale {
 
@@ -48,6 +49,9 @@ struct Renderer
 
     /// Renders the given axis-aligned bounding \a box.
     static void draw(model::AABB const& box);
+
+    /// Renders the view frustum of the given \a camera.
+    static void draw(Camera const& camera);
 };
 
 } // namespace wrapgl
