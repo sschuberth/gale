@@ -289,41 +289,6 @@ class TestWindow:public DefaultWindow
         }
     }
 
-    void onMouseEvent(int x,int y,int wheel,int event) {
-        UNREFERENCED_PARAMETER(wheel);
-
-        static int mouse_prev_x=0,mouse_prev_y=0;
-
-        // This is positive if the mouse cursor was moved to the right.
-        int mouse_diff_x=x-mouse_prev_x;
-
-        // This is positive if the mouse cursor was moved downwards.
-        int mouse_diff_y=y-mouse_prev_y;
-
-        if (event!=ME_BUTTON_NONE) {
-            if (event&ME_BUTTON_LEFT) {
-                HMat4f m=m_camera.getModelview();
-                m=HMat4f::Factory::Rotation(m.getUpVector(),-mouse_diff_x*Constd::DEG_TO_RAD()*0.5)*m;
-                m=HMat4f::Factory::Rotation(m.getRightVector(),-mouse_diff_y*Constd::DEG_TO_RAD()*0.5)*m;
-                m_camera.setModelview(m);
-            }
-
-            if (event&ME_BUTTON_MIDDLE) {
-                m_camera.strafe(static_cast<float>(-mouse_diff_x)/100);
-                m_camera.elevate(static_cast<float>(mouse_diff_y)/100);
-            }
-
-            if (event&ME_BUTTON_RIGHT) {
-                m_camera.approach(-mouse_diff_y*Constf::DEG_TO_RAD());
-            }
-
-            repaint();
-        }
-
-        mouse_prev_x=x;
-        mouse_prev_y=y;
-    }
-
   private:
 
     Mesh* m_mesh;
