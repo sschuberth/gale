@@ -189,7 +189,7 @@ class Camera
 
     /// Returns the camera's current vertical field of view.
     double getFOV() const {
-        m_fov;
+        return m_fov;
     }
 
     /// Sets the vertical field of view the camera should use.
@@ -200,7 +200,7 @@ class Camera
 
     /// Returns the camera's current near clipping plane distance.
     double getNearClipping() const {
-        m_clip_near;
+        return m_clip_near;
     }
 
     /// Sets the near clipping plane distance the camera should use.
@@ -211,7 +211,7 @@ class Camera
 
     /// Returns the camera's current far clipping plane distance.
     double getFarClipping() const {
-        m_clip_far;
+        return m_clip_far;
     }
 
     /// Sets the far clipping plane distance the camera should use.
