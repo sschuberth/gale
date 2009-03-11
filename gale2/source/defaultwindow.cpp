@@ -52,7 +52,7 @@ void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
         }
 
         if (event&ME_WHEEL_SCROLL) {
-            m_camera.approach(static_cast<float>(-wheel)/50000);
+            m_camera.approach(static_cast<float>(wheel)/50000);
         }
 
         // Rotate the camera.

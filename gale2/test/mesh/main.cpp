@@ -26,7 +26,7 @@ class TestWindow:public DefaultWindow
     ,   m_lighting(true)
     ,   m_culling(true)
     {
-        m_camera.approach(5);
+        m_camera.approach(-5);
 
 #ifndef GALE_TINY
         int error=m_mesh->check();
@@ -314,7 +314,7 @@ class TestWindow:public DefaultWindow
             }
 
             if (event&ME_BUTTON_RIGHT) {
-                m_camera.approach(mouse_diff_y*Constf::DEG_TO_RAD());
+                m_camera.approach(-mouse_diff_y*Constf::DEG_TO_RAD());
             }
 
             repaint();

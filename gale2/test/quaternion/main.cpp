@@ -21,7 +21,7 @@ class TestWindow:public DefaultWindow
     ,   m_cubic(true)
     {
         // Move the camera back to be able to see objects at the origin.
-        m_camera.approach(20);
+        m_camera.approach(-20);
 
         // Create a cube mesh and prepare it for rendering.
         m_cube=Mesh::Factory::Hexahedron();
@@ -189,7 +189,7 @@ class TestWindow:public DefaultWindow
             }
 
             if (event&ME_BUTTON_RIGHT) {
-                m_camera.approach(mouse_diff_y*Constf::DEG_TO_RAD());
+                m_camera.approach(-mouse_diff_y*Constf::DEG_TO_RAD());
             }
 
             repaint();

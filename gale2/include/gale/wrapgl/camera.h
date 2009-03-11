@@ -334,12 +334,12 @@ class Camera
         m_modelview_changed=true;
     }
 
-    /// Moves the camera backward (for a positive \a distance) or forward along
+    /// Moves the camera forward (for a positive \a distance) or backward along
     /// its z-axis.
     void approach(float const distance) {
         math::HMat4f::Vec& position=m_modelview.getPositionVector();
         math::HMat4f::Vec const& backward=m_modelview.getBackwardVector();
-        position+=backward*distance;
+        position-=backward*distance;
 
         m_modelview_changed=true;
     }
