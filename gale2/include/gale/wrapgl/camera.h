@@ -123,19 +123,25 @@ class Camera
     }
 
     /// Constructor that initializes a perspective camera attached to the given
-    /// render \a surface. By default, its screen space is the current viewport
-    /// and no transformation is set to the modelview matrix.
-    Camera(RenderSurface const* surface=NULL)
+    /// render \a surface. By default, its screen space matches the current
+    /// viewport and the modelview matrix is set to identity, so the camera
+    /// looks down the negative z-axis. Optionally, the camera's vertical field
+    /// of view and clipping plane distances can be specified as \a fov,
+    /// \a clip_near and \a clip_far.
+    Camera(RenderSurface const* surface=NULL,double fov=math::Constd::PI()*0.25,double clip_near=0.001,double clip_far=1000.0)
     :   m_surface(surface)
     ,   m_frustum(*this)
     ,   m_screen_changed(false)
+    ,   m_fov(fov)
+    ,   m_clip_near(clip_near)
+    ,   m_clip_far(clip_far)
     {
         // Initialize the camera screen space to the current OpenGL viewport.
         glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&m_screen));
         G_ASSERT_OPENGL
 
         // Set a perspective camera with no transformation by default.
-        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height));
+        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
         setModelview(math::HMat4f::IDENTITY());
     }
 
@@ -171,12 +177,47 @@ class Camera
         m_screen.width=width;
         m_screen.height=height;
         m_screen_changed=true;
+
+        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
     }
 
     /// Returns whether the screen space has changed since the camera was last
     /// made current.
     bool hasScreenSpaceChanged() const {
         return m_screen_changed;
+    }
+
+    /// Returns the camera's current vertical field of view.
+    double getFOV() const {
+        m_fov;
+    }
+
+    /// Sets the vertical field of view the camera should use.
+    void setFOV(double fov) {
+        m_fov=fov;
+        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
+    }
+
+    /// Returns the camera's current near clipping plane distance.
+    double getNearClipping() const {
+        m_clip_near;
+    }
+
+    /// Sets the near clipping plane distance the camera should use.
+    void setNearClipping(double clip_near) {
+        m_clip_near=clip_near;
+        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
+    }
+
+    /// Returns the camera's current far clipping plane distance.
+    double getFarClipping() const {
+        m_clip_far;
+    }
+
+    /// Sets the far clipping plane distance the camera should use.
+    void setFarClipping(double clip_far) {
+        m_clip_far=clip_far;
+        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
     }
 
     /// Returns the current projection matrix.
@@ -348,6 +389,10 @@ class Camera
 
     ScreenSpace m_screen;           ///< The camera's current screen space.
     bool m_screen_changed;          ///< Dirty flag for the screen space.
+
+    double m_fov;                   ///< The camera's vertical field of view.
+    double m_clip_near;             ///< The camera's near clipping plane distance.
+    double m_clip_far;              ///< The camera's far clipping plane distance.
 
     math::Mat4d m_projection;       ///< Projection matrix of the camera.
     bool m_projection_changed;      ///< Dirty flag for projection matrix.

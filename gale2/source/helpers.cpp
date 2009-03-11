@@ -54,8 +54,7 @@ void drawLogo()
 
     int size=math::min(camera_logo.getScreenSpace().width,camera_logo.getScreenSpace().height)/6;
     camera_logo.setScreenSpaceDimensions(size,size);
-
-    camera_logo.setProjection(math::Mat4d::Factory::PerspectiveProjection(size,size,90*math::Constd::DEG_TO_RAD()));
+    camera_logo.setFOV(90*math::Constd::DEG_TO_RAD());
 
     float distance=3.0f;
     math::Vec3f normal(distance,distance,distance);

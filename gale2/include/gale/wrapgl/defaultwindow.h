@@ -93,7 +93,7 @@ class DefaultWindow:public RenderWindow
         }
 
         m_camera.setScreenSpaceDimensions(width,height);
-        m_camera.setProjection(math::Mat4d::Factory::PerspectiveProjection(width,height,fov));
+        m_camera.setFOV(fov);
 
         repaint();
     }
