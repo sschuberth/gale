@@ -269,7 +269,7 @@ class Camera
     //@{
 
     /// Sets the camera's location to the given \a position.
-    math::Vec3f const& getPosition() {
+    math::Vec3f const& getPosition() const {
         return m_modelview.getPositionVector();
     }
 
