@@ -111,33 +111,38 @@ void Renderer::draw(Camera const& camera)
 {
     double t=::tan(camera.getFOV()/2);
 
+    // Get the modelview transformation and aspect ratio.
     HMat4f const& m=camera.getModelview();
     float r=static_cast<float>(camera.getScreenSpace().width)/camera.getScreenSpace().height;
 
-    // Calculate x- and y-offsets from the look direction on the near plane.
-    float near_s=static_cast<float>(t*camera.getNearClipping());
-    Vec3f near_y=m.getUpVector()*near_s;
-    Vec3f near_x=m.getRightVector()*near_s*r;
+    // Calculate the half clipping plane heights.
+    float height_n=static_cast<float>(t*camera.getNearClipping());
+    float height_f=static_cast<float>(t*camera.getFarClipping());
 
-    Vec3f near_d=~m.getBackwardVector()*static_cast<float>(-camera.getNearClipping())+camera.getPosition();
+    // Calculate the spanning vectors on the clipping planes that point from the
+    // plane center to the right / top edges.
+    Vec3f span_w_n=m.getRightVector()*height_n*r;
+    Vec3f span_h_n=m.getUpVector()*height_n;
 
-    Vec3f near_a=near_x+near_y;
-    Vec3f near_b=near_x-near_y;
+    Vec3f span_w_f=m.getRightVector()*height_f*r;
+    Vec3f span_h_f=m.getUpVector()*height_f;
 
-    // Calculate x- and y-offsets from the look direction on the far plane.
-    float far_s=static_cast<float>(t*camera.getFarClipping());
-    Vec3f far_y=m.getUpVector()*far_s;
-    Vec3f far_x=m.getRightVector()*far_s*r;
+    // Calculate the diagonal vectors on the clipping planes that point from the
+    // plane center to the right side top / bottom corners.
+    Vec3f diag_p_n=span_w_n+span_h_n;
+    Vec3f diag_m_n=span_w_n-span_h_n;
 
-    Vec3f far_d=~m.getBackwardVector()*static_cast<float>(-camera.getFarClipping())+camera.getPosition();
+    Vec3f diag_p_f=span_w_f+span_h_f;
+    Vec3f diag_m_f=span_w_f-span_h_f;
 
-    Vec3f far_a=far_x+far_y;
-    Vec3f far_b=far_x-far_y;
+    // Calculate the vectors from the camera's position to the clipping plane centers.
+    Vec3f dist_n=m.getBackwardVector()*static_cast<float>(-camera.getNearClipping())+camera.getPosition();
+    Vec3f dist_f=m.getBackwardVector()*static_cast<float>(-camera.getFarClipping())+camera.getPosition();
 
     // Put the vertices into an array.
     Vec3f cone[]={
-        near_d - near_a , near_d + near_b , near_d + near_a , near_d - near_b
-    ,   far_d  - far_a  , far_d  + far_b  , far_d  + far_a  , far_d  - far_b
+        dist_n - diag_p_n, dist_n + diag_m_n, dist_n + diag_p_n, dist_n - diag_m_n
+    ,   dist_f - diag_p_f, dist_f + diag_m_f, dist_f + diag_p_f, dist_f - diag_m_f
     };
 
     // Draw the clipping plane outlines.
