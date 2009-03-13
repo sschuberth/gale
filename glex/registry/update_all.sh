@@ -1,3 +1,3 @@
 #!/bin/sh
 
-find -type d -regex "\./[^\.].+" -maxdepth 1 -exec update_registry.sh {} \;
+find -maxdepth 1 -type d -regex "\./[^\.].+" -exec update_registry.sh {} \;
