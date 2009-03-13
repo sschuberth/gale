@@ -31,16 +31,16 @@ namespace gale {
 
 namespace model {
 
-void Mesh::Factory::Shape::Ellipse(VectorArray& shape,float w,float h,int segs)
+void Mesh::Factory::Shape::Ellipse(VectorArray& shape,int segs,float w,float h)
 {
     shape.setSize(segs);
 
-    float a=0;
-    float d=2*Constf::PI()/segs;
-
+    float delta=2*Constf::PI()/segs;
     for (int i=0;i<segs;++i) {
-        shape[i]=Vec3f(::cos(a)*w,::sin(a)*h,0);
-        a+=d;
+        // Because of precision issues, multiply here in each iteration instead
+        // of accumulating the delta angles.
+        float phi=i*delta;
+        shape[i]=Vec3f(::cos(phi)*w,::sin(phi)*h,0);
     }
 }
 
@@ -204,11 +204,11 @@ Mesh* Mesh::Factory::Torus(float r1,float r2,int r1_segs,int r2_segs)
 {
     // Calculate points on the path.
     VectorArray path;
-    Shape::Ellipse(path,r1,r1,r1_segs);
+    Shape::Ellipse(path,r1_segs,r1,r1);
 
     // Calculate points on the contour.
     VectorArray contour;
-    Shape::Ellipse(contour,r2,r2,r2_segs);
+    Shape::Ellipse(contour,r2_segs,r2,r2);
 
     // Extrude the contour along the path.
     return Extrude(path,contour);
@@ -236,7 +236,7 @@ Mesh* Mesh::Factory::TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w
 
     // Calculate points on the contour.
     VectorArray contour;
-    Shape::Ellipse(contour,r2,r2,r2_segs);
+    Shape::Ellipse(contour,r2_segs,r2,r2);
 
     // Extrude the contour along the path.
     return Extrude(path,contour);
@@ -246,11 +246,11 @@ Mesh* Mesh::Factory::MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1
 {
     // Calculate points on the path.
     VectorArray path;
-    Shape::Ellipse(path,r1w,r1h,r1_segs);
+    Shape::Ellipse(path,r1_segs,r1w,r1h);
 
     // Calculate points on the contour.
     VectorArray contour;
-    Shape::Ellipse(contour,r2w,r2h,r2_segs);
+    Shape::Ellipse(contour,r2_segs,r2w,r2h);
 
     MatrixArray rotation(r1_segs);
     for (int i=0;i<r1_segs;++i) {

@@ -63,12 +63,12 @@ struct Mesh
     {
       public:
 
-        /// %Factory methods to create some shapes, e.g. for use as extrude contours.
+        /// %Factory methods to create some shapes, e.g. for use as extrusion contours.
         struct Shape
         {
             /// Returns an array of vectors on an ellipse with width \a w and
             /// height \a h, divided into \a segs segments.
-            static void Ellipse(VectorArray& shape,float w,float h,int segs);
+            static void Ellipse(VectorArray& shape,int segs,float w,float h);
         };
 
         /**
