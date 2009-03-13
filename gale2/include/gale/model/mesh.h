@@ -69,6 +69,10 @@ struct Mesh
             /// Returns an array of vectors on an ellipse with width \a w and
             /// height \a h, divided into \a segs segments.
             static void Ellipse(VectorArray& shape,int segs,float w,float h);
+
+            // Returns an array of vectors as calculated by the Superformula,
+            // see <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape/>.
+            static void Superformula(VectorArray& shape,int segs,float m,float n1,float n2,float n3,float a=1.0,float b=1.0);
         };
 
         /**

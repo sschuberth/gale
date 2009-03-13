@@ -44,6 +44,26 @@ void Mesh::Factory::Shape::Ellipse(VectorArray& shape,int segs,float w,float h)
     }
 }
 
+void Mesh::Factory::Shape::Superformula(VectorArray& shape,int segs,float m,float n1,float n2,float n3,float a,float b)
+{
+    shape.setSize(segs);
+
+    float delta=2*Constf::PI()/segs;
+    for (int i=0;i<segs;++i) {
+        // Because of precision issues, multiply here in each iteration instead
+        // of accumulating the delta angles.
+        float phi=i*delta;
+
+        float ta=::cos(m*phi/4.0f)/a;
+        ta=::pow(::abs(ta),n2);
+        float tb=::sin(m*phi/4.0f)/b;
+        tb=::pow(::abs(tb),n3);
+        float r=::pow(ta+tb,-1.0f/n1);
+
+        shape[i]=Vec3f(::cos(phi)*r,::sin(phi)*r,0);
+    }
+}
+
 Mesh* Mesh::Factory::Tetrahedron()
 {
     // http://mathworld.wolfram.com/Tetrahedron.html
