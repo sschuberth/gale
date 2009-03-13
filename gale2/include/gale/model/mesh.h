@@ -71,9 +71,6 @@ struct Mesh
             static void Ellipse(VectorArray& shape,float w,float h,int segs);
         };
 
-        /// Array of transformation matrices.
-        typedef global::DynamicArray<math::HMat4f> MatrixArray;
-
         /**
          * \name Platonic Solids
          * %Factory methods to create the five Platonic Solids, each with unit
@@ -136,6 +133,9 @@ struct Mesh
          * on their own, but are used by other factory methods or for debugging.
          */
         //@{
+
+        /// Array of transformation matrices.
+        typedef global::DynamicArray<math::HMat4f> MatrixArray;
 
         /// Generates a mesh by extruding the line loop defined by \a contour
         /// along the given \a path. If \a close is \c true, the end of the path
