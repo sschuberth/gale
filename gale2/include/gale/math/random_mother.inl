@@ -44,7 +44,7 @@ struct RandomMotherImpl
             x[i]=seed;
         }
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
         // "Warm up" the random generator.
         for (i=0;i<19;++i) {
             random();

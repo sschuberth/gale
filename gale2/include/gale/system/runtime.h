@@ -31,7 +31,7 @@
  * Minimal replacements for runtime functions
  */
 
-#ifdef GALE_TINY
+#ifdef GALE_TINY_CODE
 
 // In order to be able to not link against the CRT, the following settings need
 // to be adjusted manually from within the MSVC IDE:
@@ -140,6 +140,6 @@ void operator delete(void* pointer,void* place);
 
 //@}
 
-#endif // GALE_TINY
+#endif // GALE_TINY_CODE
 
 #endif // RUNTIME_H

@@ -2,7 +2,7 @@
 #include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/renderer.h>
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
     #include <stdio.h>
 #else
     #define printf print
@@ -28,7 +28,7 @@ class TestWindow:public DefaultWindow
     {
         m_camera.approach(-5);
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
         int error=m_mesh->check();
         if (error>=0) {
             printf("Mesh is inconsistent at vertex %d.\n",error);
@@ -268,7 +268,7 @@ class TestWindow:public DefaultWindow
 
         if (key>='1' && key<='5') {
             m_scheme(*m_mesh,m_step);
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
             int error=m_mesh->check();
             if (error>=0) {
                 printf("Mesh is inconsistent at vertex %d.\n",error);
@@ -346,7 +346,7 @@ int main()
         window.processEvents();
     }
 
-#if !defined NDEBUG && !defined GALE_TINY
+#if !defined NDEBUG && !defined GALE_TINY_CODE
     _CrtDumpMemoryLeaks();
 #endif
 

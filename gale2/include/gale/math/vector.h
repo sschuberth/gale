@@ -118,7 +118,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
   public:
 
     /// Create a vector whose components are either not initialized at all or
-    /// initialized to 0 if \c GALE_INIT is defined.
+    /// initialized to 0 if \c GALE_INIT_DATA is defined.
     Vector() {}
 
     /// Allows to initialize 2-vectors directly.

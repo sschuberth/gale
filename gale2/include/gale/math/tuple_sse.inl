@@ -40,7 +40,7 @@ class TupleBase<4,float,C>
     //@{
 
     /// Create a tuple whose elements are either not initialized at all or
-    /// initialized to 0 if \c GALE_INIT is defined.
+    /// initialized to 0 if \c GALE_INIT_DATA is defined.
     TupleBase() {}
 
     /// Allows to initialize 4-tuples directly.
@@ -291,7 +291,7 @@ class TupleBase<4,float,C>
 
     //@}
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
 
     /**
      * \name Streaming input / output methods
@@ -321,7 +321,7 @@ class TupleBase<4,float,C>
 
     //@}
 
-#endif // GALE_TINY
+#endif // GALE_TINY_CODE
 
   protected:
 

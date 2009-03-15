@@ -36,7 +36,7 @@
 #include "matrix4.h"
 #include "quaternion.h"
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
     #include <time.h>
 #endif
 
@@ -63,7 +63,7 @@ class RandomBase
     /// Initializes the generator with a seed value that is derived from the
     /// current system time.
     RandomBase() {
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
         init(static_cast<g_uint32>(time(NULL)));
 #else
         init(0xdeadbeefUL);

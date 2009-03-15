@@ -186,7 +186,7 @@ class HMatrix4
     //@{
 
     /// Create a matrix whose components are either not initialized at all or
-    /// initialized to 0 if \c GALE_INIT is defined.
+    /// initialized to 0 if \c GALE_INIT_DATA is defined.
     HMatrix4()
     :   m_c0w(0),m_c1w(0),m_c2w(0),m_c3w(1) {}
 
@@ -566,7 +566,7 @@ class HMatrix4
 
     //@}
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
 
     /**
      * \name Streaming input / output methods
@@ -585,7 +585,7 @@ class HMatrix4
 
     //@}
 
-#endif // GALE_TINY
+#endif // GALE_TINY_CODE
 
   public:
 

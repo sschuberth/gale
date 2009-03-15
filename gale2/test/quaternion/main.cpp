@@ -204,7 +204,7 @@ int main()
         window.processEvents();
     }
 
-#if !defined NDEBUG && !defined GALE_TINY
+#if !defined NDEBUG && !defined GALE_TINY_CODE
     _CrtDumpMemoryLeaks();
 #endif
 

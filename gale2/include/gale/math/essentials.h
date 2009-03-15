@@ -400,7 +400,7 @@ inline long long roundToEven(float const f)
 
 #else
 
-  #ifdef GALE_SSE
+  #ifdef GALE_USE_SSE
 
     return static_cast<long long>(_mm_cvtss_si32(_mm_load_ss(&f)));
 
@@ -425,13 +425,13 @@ inline long long roundToEven(float const f)
     }
     return static_cast<long long>(i);
 
-  #else // GALE_SSE
+  #else // GALE_USE_SSE
 
     // Do not offer a C++ fallback for "round to even" as it cannot be nicely
     // implemented.
     #error Unsupported compiler.
 
-  #endif // GALE_SSE
+  #endif // GALE_USE_SSE
 
 #endif // G_ARCH_X86_64
 }
@@ -447,7 +447,7 @@ inline long long roundToEven(double const d)
 
 #else
 
-  #ifdef GALE_SSE2
+  #ifdef GALE_USE_SSE2
 
     return static_cast<long long>(_mm_cvtsd_si32(_mm_load_sd(&d)));
 
@@ -472,13 +472,13 @@ inline long long roundToEven(double const d)
     }
     return static_cast<long long>(i);
 
-  #else // GALE_SSE2
+  #else // GALE_USE_SSE2
 
     // Do not offer a C++ fallback for "round to even" as it cannot be nicely
     // implemented.
     #error Unsupported compiler.
 
-  #endif // GALE_SSE2
+  #endif // GALE_USE_SSE2
 
 #endif // G_ARCH_X86_64
 }
@@ -492,7 +492,7 @@ inline long long roundToZero(float const f)
 
     return _mm_cvttss_si64x(_mm_load_ss(&f));
 
-#elif defined(GALE_SSE3) && defined(G_COMP_GNUC)
+#elif defined(GALE_USE_SSE3) && defined(G_COMP_GNUC)
 
     int i;
     __asm__(
@@ -503,7 +503,7 @@ inline long long roundToZero(float const f)
     );
     return static_cast<long long>(i);
 
-#elif defined(GALE_SSE3) && defined(G_COMP_MSVC)
+#elif defined(GALE_USE_SSE3) && defined(G_COMP_MSVC)
 
     // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     int i;
@@ -513,7 +513,7 @@ inline long long roundToZero(float const f)
     }
     return static_cast<long long>(i);
 
-#elif defined(GALE_SSE2)
+#elif defined(GALE_USE_SSE2)
 
     return static_cast<long long>(_mm_cvttss_si32(_mm_load_ss(&f)));
 
@@ -533,7 +533,7 @@ inline long long roundToZero(double const d)
 
     return _mm_cvttsd_si64x(_mm_load_sd(&d));
 
-#elif defined(GALE_SSE3) && defined(G_COMP_GNUC)
+#elif defined(GALE_USE_SSE3) && defined(G_COMP_GNUC)
 
     int i;
     __asm__(
@@ -544,7 +544,7 @@ inline long long roundToZero(double const d)
     );
     return static_cast<long long>(i);
 
-#elif defined(GALE_SSE3) && defined(G_COMP_MSVC)
+#elif defined(GALE_USE_SSE3) && defined(G_COMP_MSVC)
 
     // MSVC 8.0 does not support inline assembly on the x86-64 architecture.
     int i;
@@ -554,7 +554,7 @@ inline long long roundToZero(double const d)
     }
     return static_cast<long long>(i);
 
-#elif defined(GALE_SSE2)
+#elif defined(GALE_USE_SSE2)
 
     return static_cast<long long>(_mm_cvttsd_si32(_mm_load_sd(&d)));
 

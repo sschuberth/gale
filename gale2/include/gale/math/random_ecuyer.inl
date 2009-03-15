@@ -63,7 +63,7 @@ struct RandomEcuyerImpl
 
 #undef LCG
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
         // "Warm up" the random generator.
         for (g_int32 i=0;i<6;++i) {
             random();

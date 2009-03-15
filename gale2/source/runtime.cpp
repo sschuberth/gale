@@ -23,7 +23,7 @@
  *
  */
 
-#ifdef GALE_TINY
+#ifdef GALE_TINY_CODE
 
 #include "gale/global/platform.h"
 
@@ -243,4 +243,4 @@ void operator delete(void* pointer,void* place)
     // Do nothing, not even calling a destructor.
 }
 
-#endif // GALE_TINY
+#endif // GALE_TINY_CODE

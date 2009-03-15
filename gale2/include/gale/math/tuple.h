@@ -34,7 +34,7 @@
 #include "../meta/loops.h"
 #include "../meta/operators.h"
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
     #include <iostream>
 #endif
 
@@ -63,12 +63,12 @@ class TupleBase
     //@{
 
     /// Create a tuple whose elements are either not initialized at all or
-    /// initialized to 0 if \c GALE_INIT is defined.
+    /// initialized to 0 if \c GALE_INIT_DATA is defined.
     TupleBase() {
         // Do not allow tuples with less than 2 elements.
         G_ASSERT(N>=2)
 
-#ifdef GALE_INIT
+#ifdef GALE_INIT_DATA
         meta::LoopFwd<N,meta::OpAssign>::iterate(data(),0);
 #endif
     }
@@ -344,7 +344,7 @@ class TupleBase
 
     //@}
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
 
     /**
      * \name Streaming input / output methods
@@ -370,14 +370,14 @@ class TupleBase
 
     //@}
 
-#endif // GALE_TINY
+#endif // GALE_TINY_CODE
 
   protected:
 
     T m_data[N]; ///< Tightly packed array of \a N elements of type \a T.
 };
 
-#ifdef GALE_SSE
+#ifdef GALE_USE_SSE
     #include "tuple_sse.inl"
 #endif
 
@@ -403,7 +403,7 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> >
     //@{
 
     /// Create a tuple whose elements are either not initialized at all or
-    /// initialized to 0 if \c GALE_INIT is defined.
+    /// initialized to 0 if \c GALE_INIT_DATA is defined.
     Tuple() {}
 
     /// Allows to initialize 2-tuples directly.

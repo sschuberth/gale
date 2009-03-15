@@ -62,7 +62,7 @@ int main()
 
 void test_tuple()
 {
-#ifdef GALE_SSE
+#ifdef GALE_USE_SSE
     cout << "Check SIMD implementation ..."
          << endl;
     float t4f_a0=2.0f,t4f_a1=3.0f,t4f_a2=5.0f,t4f_a3=7.0f;

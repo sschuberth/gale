@@ -155,7 +155,7 @@ class Matrix4
     //@{
 
     /// Create a matrix whose components are either not initialized at all or
-    /// initialized to 0 if \c GALE_INIT is defined.
+    /// initialized to 0 if \c GALE_INIT_DATA is defined.
     Matrix4() {}
 
     /// Initialize the column vectors with vectors \a c0 to \a c3.
@@ -509,7 +509,7 @@ class Matrix4
 
     //@}
 
-#ifndef GALE_TINY
+#ifndef GALE_TINY_CODE
 
     /**
      * \name Streaming input / output methods
@@ -528,7 +528,7 @@ class Matrix4
 
     //@}
 
-#endif // GALE_TINY
+#endif // GALE_TINY_CODE
 
   public:
 
