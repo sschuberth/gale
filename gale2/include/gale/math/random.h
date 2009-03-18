@@ -47,9 +47,9 @@ namespace math {
 /**
  * Random number generator template base class for the data type specified by
  * the \c T template argument. It provides common wrapper methods around the
- * implementation passed as the \c C template argument.
+ * implementation passed as the \c I template argument.
  */
-template<typename T,class C>
+template<typename T,class I>
 class RandomBase
 {
   public:
@@ -86,12 +86,12 @@ class RandomBase
 
     /// Sets the generator seed to the given value.
     void init(g_uint32 seed) {
-        m_rand.init(seed);
+        m_impl.init(seed);
     }
 
     /// Generates a pseudo random number within the full range of 32 bits.
     g_uint32 random() {
-        return m_rand.random();
+        return m_impl.random();
     }
 
     //@}
@@ -218,7 +218,7 @@ class RandomBase
 
   private:
 
-    C m_rand; ///< Instance of the random generator implementation.
+    I m_impl; ///< Instance of the random generator implementation.
 };
 
 #include "random_ecuyer.inl"

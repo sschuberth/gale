@@ -38,17 +38,17 @@ namespace global {
 /**
  * Singleton design pattern implementation as described in "More Effective
  * C++" by Scott Meyers (Addison-Wesley, 1996a), item 26. You need to derive
- * from this class and pass the derived class as template argument \c C, see
+ * from this class and pass the derived class as template argument \c I, see
  * the CPUInfo class for an example usage.
  */
-template<class C>
+template<class I>
 class Singleton
 {
   public:
 
     /// Returns a reference to the one and only instance of this class.
-    static C& the() {
-        static C instance;
+    static I& the() {
+        static I instance;
         return instance;
     }
 
