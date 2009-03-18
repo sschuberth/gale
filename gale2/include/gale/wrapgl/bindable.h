@@ -5,7 +5,7 @@
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
  * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
- * Copyright (C) 2005-2008  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
+ * Copyright (C) 2005-2009  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,69 +40,57 @@ namespace wrapgl {
 
 /**
  * All objects that can be bound to the OpenGL state should be derived from this
- * class. The template argument \c C is the derived class, \c T is the enum for
- * the target, \c B the enum for the binding, and \c M the enum for querying the
- * object's maximum size.
+ * class. The template argument \c T is the name for the target, \c B is the
+ * name to query the binding, and \c M is the name to query the object's maximum
+ * size.
  */
-template<class C,GLenum T,GLenum B,GLenum M>
+template<GLenum T,GLenum B,GLenum M>
 class Bindable
 {
   public:
 
-    static GLenum const TARGET  = T; ///< The enum value for the target.
-    static GLenum const BINDING = B; ///< The enum value for the binding.
-    static GLenum const MAX     = M; ///< The enum value to query the maximum size.
+    static GLenum const TARGET  = T; ///< The target's name, e.g. \c GL_TEXTURE_2D.
+    static GLenum const BINDING = B; ///< The binding's name, e.g. \c GL_TEXTURE_BINDING_2D.
+    static GLenum const MAX     = M; ///< The name to query the maximum size, e.g. \c GL_MAX_TEXTURE_SIZE.
 
-    /// Returns the object's maximum size. The exact interpretation depends on
-    /// the object type, i.e. for textures this is the maximum dimension in
-    /// texels, for frame buffers the maximum number of color buffer attachments.
-    static GLint MaxSize() {
+    /// Returns an object's maximum size. The exact interpretation depends on
+    /// the object type, i.e. for textures this is the maximum extent in texels
+    /// in any dimension.
+    static GLint maxSize() {
         GLint param;
         glGetIntegerv(MAX,&param);
         G_ASSERT_OPENGL
         return param;
     }
 
-    /// Returns the ID of the currently bound object.
-    static GLuint getCurrentBinding() {
+    /// Returns the handle of the currently bound object.
+    static GLuint getCurrent() {
         GLint param;
         glGetIntegerv(BINDING,&param);
         G_ASSERT_OPENGL
         return static_cast<GLuint>(param);
     }
 
-    /// Returns this object's ID.
-    GLuint ID() const {
-        return m_id;
-    }
+    /// Sets the current binding to the object described by \a handle. If
+    /// \a handle is 0, the current object will be unbound.
+    virtual void setCurrent(GLuint handle) const=0;
 
-    /// Sets the current binding to the object described by \a id or to this
-    /// object if the ID is negative.
-    virtual void setCurrentBinding(GLint const id=-1) const=0;
+    /// Checks whether the given \a handle describes a valid object.
+    virtual bool isValid(GLuint handle) const=0;
+
+    /// Returns this object's handle.
+    GLuint handle() const {
+        return m_handle;
+    }
 
     /// Binds this object to the OpenGL state, making it the current one.
-    void bind() const {
-        if (getCurrentBinding()!=ID()) {
-            setCurrentBinding();
-        }
-    }
-
-    /// Unbinds this object from the OpenGL state, restoring the default object.
-    void unbind() const {
-        setCurrentBinding(0);
+    void makeCurrent() const {
+        setCurrent(m_handle);
     }
 
   protected:
 
-    /// Helper constructor for special objects with a fixed \a id.
-    Bindable(GLuint const id=0)
-    :   m_id(id)
-    {
-        // This is a trick to ensure derived classes implement this static method.
-        G_ASSERT_CALL(C::isValid(id))
-    }
-
-    GLuint m_id; ///< The ID of this OpenGL object.
+    GLuint m_handle; ///< This object's handle.
 };
 
 } // namespace wrapgl
