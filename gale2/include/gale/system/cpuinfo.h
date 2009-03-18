@@ -213,7 +213,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
         return count<1?1:count;
     }
 
-    /// Returns the number of cores per processor package.
+    /// Returns the number of cores per processor.
     unsigned int coresPerProcessor() const {
         unsigned int count=1;
 
