@@ -104,6 +104,10 @@ struct Mesh
 
         //@}
 
+        /// Returns a uniformly tesselated sphere of radius \a r, created using
+        /// a number of subdivision \a steps from an Icosahedron.
+        static Mesh* Sphere(float r,int steps=3);
+
         /**
          * \name Ellipse-based meshes
          * %Factory methods to create meshes that are based on extruded ellipses.
@@ -166,7 +170,8 @@ struct Mesh
     {
       public:
 
-        /// Function pointer type definition for subdivision schemes.
+        /// Function pointer type definition for subdivision schemes that
+        /// perform the given number of subdivision \a steps on \a mesh.
         typedef void (*Scheme)(Mesh& mesh,int steps);
 
         /**
@@ -176,8 +181,15 @@ struct Mesh
          */
         //@{
 
-        /// Divides the triangular faces of a mesh into further triangles.
-        static void Polyhedral(Mesh& mesh,int steps=1);
+        /// Divides the triangular faces of a mesh into further triangles. If
+        /// \a scale is non-zero, the new vertices are scaled to have that length.
+        static void Polyhedral(Mesh& mesh,int steps,float scale);
+
+        /// Convenience wrapper for use with a function pointer that calls
+        /// Polyhedral() with \a scale set to \c 0.
+        static void Polyhedral(Mesh& mesh,int steps=1) {
+            Polyhedral(mesh,steps,0.0f);
+        }
 
         /// Divides the triangular faces of a mesh as described by Dyn et al. in
         /// <http://www.math.tau.ac.il/~niradyn/papers/butterfly.pdf>.

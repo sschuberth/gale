@@ -220,6 +220,22 @@ Mesh* Mesh::Factory::Dodecahedron()
     return m;
 }
 
+Mesh* Mesh::Factory::Sphere(float r,int steps)
+{
+    Mesh* m=Icosahedron();
+
+    // Scale the base mesh's vertices to have the radius' length.
+    for (int vi=0;vi<m->vertices.getSize();++vi) {
+        m->vertices[vi]=(~m->vertices[vi])*r;
+    }
+
+    // Create new vertices in the middle of each edge and push them out to the
+    // surface of the sphere.
+    Subdivider::Polyhedral(*m,steps,r);
+
+    return m;
+}
+
 Mesh* Mesh::Factory::Torus(float r1,float r2,int r1_segs,int r2_segs)
 {
     // Calculate points on the path.

@@ -35,7 +35,7 @@ namespace model {
  * Interpolating subdivision schemes
  */
 
-void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps)
+void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float scale)
 {
     while (steps-->0) {
         Mesh orig=mesh;
@@ -61,7 +61,13 @@ void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps)
                 }
 
                 // Add a new vertex as the arithmetic average of its two neighbors.
-                mesh.insert(ui,vi,(u+v)*0.5f);
+                Vec3f a=u+v;
+                if (scale==0.0f) {
+                    mesh.insert(ui,vi,a*0.5f);
+                }
+                else {
+                    mesh.insert(ui,vi,(~a)*scale);
+                }
             }
         }
 
