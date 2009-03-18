@@ -26,10 +26,12 @@ void test_color();
 int main()
 {
     cout << "Found "
+         << CPU.processors()
+         << " processor(s), "
          << CPU.coresPerProcessor()
-         << " core(s) per processor, each supporting "
+         << " core(s) per processor, "
          << CPU.threadsPerCore()
-         << " hardware thread(s)."
+         << " hardware thread(s) per core."
          << endl;
 
     cout << "CPU vendor: "
