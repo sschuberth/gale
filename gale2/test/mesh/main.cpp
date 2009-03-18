@@ -35,6 +35,9 @@ class TestWindow:public DefaultWindow
         }
 #endif
         m_mesh_prep.compile(m_mesh);
+#ifndef GALE_TINY_CODE
+        printf("Bounding box size is %f x %f.\n",m_mesh_prep.box.getWidth(),m_mesh_prep.box.getHeight());
+#endif
 
         m_mesh_normals=Mesh::Factory::Normals(m_mesh_prep,0.2f);
         m_normals_prep.compile(m_mesh_normals);
@@ -275,6 +278,9 @@ class TestWindow:public DefaultWindow
             }
 #endif
             m_mesh_prep.compile(m_mesh);
+#ifndef GALE_TINY_CODE
+            printf("Bounding box size is %f x %f.\n",m_mesh_prep.box.getWidth(),m_mesh_prep.box.getHeight());
+#endif
 
             delete m_mesh_normals;
             m_mesh_normals=Mesh::Factory::Normals(m_mesh_prep,0.2f);
