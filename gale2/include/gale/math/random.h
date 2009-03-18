@@ -45,7 +45,9 @@ namespace gale {
 namespace math {
 
 /**
- * Random number generator template base class that provides common methods.
+ * Random number generator template base class for the data type specified by
+ * the \c T template argument. It provides common wrapper methods around the
+ * implementation passed as the \c C template argument.
  */
 template<typename T,class C>
 class RandomBase

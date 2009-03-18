@@ -37,7 +37,9 @@ namespace global {
 
 /**
  * Singleton design pattern implementation as described in "More Effective
- * C++" by Scott Meyers (Addison-Wesley, 1996a), item 26.
+ * C++" by Scott Meyers (Addison-Wesley, 1996a), item 26. You need to derive
+ * from this class and pass the derived class as template argument \c C, see
+ * the CPUInfo class for an example usage.
  */
 template<class C>
 class Singleton
