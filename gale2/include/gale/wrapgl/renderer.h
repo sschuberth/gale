@@ -32,6 +32,7 @@
  */
 
 #include "../model/mesh.h"
+
 #include "camera.h"
 
 namespace gale {
