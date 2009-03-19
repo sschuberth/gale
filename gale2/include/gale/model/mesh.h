@@ -31,10 +31,11 @@
  * Mesh management related classes
  */
 
-#include "boundingbox.h"
-
 #include "../global/dynamicarray.h"
+#include "../math/formula.h"
 #include "../math/hmatrix4.h"
+
+#include "boundingbox.h"
 
 namespace gale {
 
@@ -132,6 +133,25 @@ struct Mesh
         /// inner and outer ellipses are divided into \a r1_segs and \a r2_segs
         /// segments respectively.
         static Mesh* MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1_segs,int r2_segs);
+
+        //@}
+
+        /**
+         * \name Product meshes
+         * %Factory methods based on multiplying formulas to yield a 3D composite,
+         * see e.g. <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape3d/>.
+         */
+        //@{
+
+        /// Generates a mesh's surface by calculating the spherical product of
+        /// the formulas \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs
+        /// samples, respectively.
+        static Mesh* SphericalProduct(math::Formula& r1,int r1_segs,math::Formula& r2,int r2_segs);
+
+        /// Generates a mesh's surface by calculating the toroidal product of
+        /// the formulas \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs
+        /// samples, respectively.
+        static Mesh* ToroidalProduct(math::Formula& r1,int r1_segs,math::Formula& r2,int r2_segs);
 
         //@}
 

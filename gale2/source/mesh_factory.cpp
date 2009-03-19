@@ -297,6 +297,18 @@ Mesh* Mesh::Factory::MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1
     return Extrude(path,contour,true,&rotation);
 }
 
+Mesh* Mesh::Factory::SphericalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_segs)
+{
+    Mesh* m=new Mesh(r1_segs*r2_segs);
+    return m;
+}
+
+Mesh* Mesh::Factory::ToroidalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_segs)
+{
+    Mesh* m=new Mesh(r1_segs*r2_segs);
+    return m;
+}
+
 Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,bool closed,MatrixArray const* trans)
 {
     if (path.getSize()<2 || contour.getSize()<3) {
