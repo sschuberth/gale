@@ -299,13 +299,55 @@ Mesh* Mesh::Factory::MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1
 
 Mesh* Mesh::Factory::SphericalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_segs)
 {
+    if (r1_segs<4 || r2_segs<2) {
+        return NULL;
+    }
+
     Mesh* m=new Mesh(r1_segs*r2_segs);
     return m;
 }
 
 Mesh* Mesh::Factory::ToroidalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_segs)
 {
+    if (r1_segs<4 || r2_segs<2) {
+        return NULL;
+    }
+
     Mesh* m=new Mesh(r1_segs*r2_segs);
+
+    int vi=0,ni;
+    for (int longitude=0;longitude<r1_segs;++longitude) {
+        // -PI <= theta <= PI
+        float theta=2*Constf::PI()/r1_segs*longitude-Constf::PI();
+
+        for (int latitude=0;latitude<r2_segs;++latitude) {
+            // -PI/2 <= phi <= PI/2
+            float phi=Constf::PI()/r2_segs*latitude-Constf::PI()*0.5f;
+
+            float x=::cos(theta)*(r1(theta)+r2(phi)*::cos(phi));
+            float y=::sin(theta)*(r1(theta)+r2(phi)*::cos(phi));
+            float z=r2(phi)*::sin(phi);
+
+            m->vertices[vi]=Vec3f(x,y,z);
+
+            m->neighbors[vi]=IndexArray();
+
+            //ni=vi-1;
+            //if (ni<0) {
+            //    ni=m->vertices.getSize()-1;
+            //}
+            //m->neighbors[vi][0]=ni;
+
+            //ni=vi+1;
+            //if (ni==m->vertices.getSize()) {
+            //    ni=0;
+            //}
+            //m->neighbors[vi][1]=ni;
+
+            ++vi;
+        }
+    }
+
     return m;
 }
 
