@@ -66,7 +66,7 @@ class TestWindow:public DefaultWindow
         m_camera.makeCurrent();
         glLightfv(GL_LIGHT0,GL_POSITION,m_camera.getPosition());
 
-        if (m_camera.frustum().contains(m_mesh_prep.box)) {
+        if (m_camera.frustum().contains(m_mesh_prep.box) || !m_culling) {
             if (m_lighting) {
                 glEnable(GL_LIGHTING);
             }
@@ -90,7 +90,7 @@ class TestWindow:public DefaultWindow
         if (m_show_normals) {
             glDisable(GL_LIGHTING);
             glColor3fv(Col3f::RED());
-            if (m_camera.frustum().contains(m_normals_prep.box)) {
+            if (m_camera.frustum().contains(m_normals_prep.box) || !m_culling) {
                 Renderer::draw(m_normals_prep);
             }
             else {
@@ -342,6 +342,7 @@ int main()
     puts("x: Bounding box");
     puts("n: Vertex normals");
     puts("r: Lighting");
+    puts("f: Face / frustum culling");
 #endif
 
     // Make sure the window is destroyed before dumping memory leaks.
