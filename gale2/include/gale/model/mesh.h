@@ -334,7 +334,7 @@ struct Mesh
     int prevTo(int xi,int vi,int steps=1) const;
 
     /// Given an oriented edge from \a ai to \a bi, returns the number of
-    /// vertices, and their indices in \a polygon.
+    /// vertices that make up the edge's face, and their indices in \a polygon.
     int orbit(int ai,int bi,IndexArray& polygon) const;
 
     //@}
