@@ -40,18 +40,35 @@ namespace math {
  */
 struct Formula
 {
-    /// Pure virtual destructor, as we have virtual methods.
-    virtual ~Formula()=0;
+    /// Define a virtual destructor, as we have a virtual method.
+    virtual ~Formula() {}
 
-    /// Pure virtual call operator to be overloaded with the formula evaluation.
-    virtual float operator()(float x)=0;
+    /// The call operator to be overloaded with the formula. Defaults to
+    /// evaluating the identity.
+    virtual float operator()(float x) {
+        return x;
+    }
 };
 
-// Defined even though it is pure virtual. The C++ FAQ Lite claims it is faster
-// this way, see <http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.10>.
-inline Formula::~Formula()
+/**
+ * Functor for a constant formula.
+ */
+struct Constantformula:public Formula
 {
-}
+    /// Initializing constructor for the formula's constant parameters.
+    Constantformula(float constant)
+    :   constant(constant) {}
+
+    /// Evaluator for the formula.
+    float operator()(float x) {
+        return constant;
+    }
+
+    //@{
+    /// Parameters which are constant during evaluation.
+    float constant;
+    //@}
+};
 
 /**
  * Functor for the generalized Superformula as described by J. Gielis, see
