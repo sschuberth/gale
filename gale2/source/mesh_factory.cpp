@@ -299,50 +299,73 @@ Mesh* Mesh::Factory::MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1
 
 Mesh* Mesh::Factory::SphericalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_segs)
 {
+    // Perform some sanity checks.
     if (r1_segs<4 || r2_segs<2) {
         return NULL;
     }
 
+    // Create an empty mesh with the required number of vertices.
     Mesh* m=new Mesh(r1_segs*r2_segs);
+
     return m;
 }
 
 Mesh* Mesh::Factory::ToroidalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_segs)
 {
+    // Perform some sanity checks.
     if (r1_segs<4 || r2_segs<2) {
         return NULL;
     }
 
+    // Create an empty mesh with the required number of vertices.
     Mesh* m=new Mesh(r1_segs*r2_segs);
 
-    int vi=0,ni;
+    // Index of the vertex currently being calculated.
+    int vi=0;
+
     for (int longitude=0;longitude<r1_segs;++longitude) {
         // -PI <= theta <= PI
         float theta=2*Constf::PI()/r1_segs*longitude-Constf::PI();
+
+        // Current "base" vertex on the contour.
+        int bi=vi;
 
         for (int latitude=0;latitude<r2_segs;++latitude) {
             // -PI/2 <= phi <= PI/2
             float phi=Constf::PI()/r2_segs*latitude-Constf::PI()*0.5f;
 
+            // Calculate the vertex position.
             float x=::cos(theta)*(r1(theta)+r2(phi)*::cos(phi));
             float y=::sin(theta)*(r1(theta)+r2(phi)*::cos(phi));
             float z=r2(phi)*::sin(phi);
 
             m->vertices[vi]=Vec3f(x,y,z);
 
-            m->neighbors[vi]=IndexArray();
+            // Calculate the vertex neighborhood.
+            IndexArray& vn=m->neighbors[vi];
+            vn.setSize(6);
 
-            //ni=vi-1;
-            //if (ni<0) {
-            //    ni=m->vertices.getSize()-1;
-            //}
-            //m->neighbors[vi][0]=ni;
+#define WRAP_LAT(x) wrap(x,r2_segs)
 
-            //ni=vi+1;
-            //if (ni==m->vertices.getSize()) {
-            //    ni=0;
-            //}
-            //m->neighbors[vi][1]=ni;
+            vn[0]=bi+WRAP_LAT(latitude-1);
+            vn[1]=vn[0]+r2_segs;
+            vn[2]=vi+r2_segs;
+            if (longitude==r1_segs-1) {
+                // Wrap around in longitude direction.
+                vn[1]-=m->vertices.getSize();
+                vn[2]-=m->vertices.getSize();
+            }
+
+            vn[3]=bi+WRAP_LAT(latitude+1);
+            vn[4]=vn[3]-r2_segs;
+            vn[5]=vi-r2_segs;
+            if (longitude==0) {
+                // Wrap around in longitude direction.
+                vn[4]+=m->vertices.getSize();
+                vn[5]+=m->vertices.getSize();
+            }
+
+#undef WRAP_LAT
 
             ++vi;
         }
@@ -437,6 +460,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             biwc=bi+WRAP_C(ci-1);
             vn[n++]=biwc;
 
+            // Is this the last vertex on the path?
             if (pi==path.getSize()-1) {
                 if (closed) {
                     // It is not easy to find the transformed neighbors of a
@@ -472,6 +496,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             biwc=bi+WRAP_C(ci+1);
             vn[n++]=biwc;
 
+            // Is this the first vertex on the path?
             if (pi==0) {
                 if (closed) {
                     // It is not easy to find the transformed neighbors of a
