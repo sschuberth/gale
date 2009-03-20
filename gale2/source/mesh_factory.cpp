@@ -305,6 +305,62 @@ Mesh* Mesh::Factory::SphericalProduct(Formula& r1,int r1_segs,Formula& r2,int r2
     // Create an empty mesh with the required number of vertices.
     Mesh* m=new Mesh(r1_segs*r2_segs);
 
+    // Index of the vertex currently being calculated.
+    int vi=0;
+
+    for (int longitude=0;longitude<r1_segs;++longitude) {
+        // -PI <= theta <= PI
+        float theta=2*Constf::PI()/r1_segs*longitude-Constf::PI();
+
+        // Current "base" vertex on the contour.
+        int bi=vi;
+
+        for (int latitude=0;latitude<r2_segs;++latitude) {
+            // -PI/2 <= phi <= PI/2
+            float phi=Constf::PI()/r2_segs*latitude-Constf::PI()*0.5f;
+
+            // Calculate the vertex position.
+            float r1t=r1(theta),r2p=r2(phi);
+            float ct=::cos(theta),cp=::cos(phi);
+            float st=::sin(theta),sp=::sin(phi);
+
+            float x=r1t*ct*r2p*cp;
+            float y=r1t*st*r2p*cp;
+
+            float z=r2p*sp;
+
+            m->vertices[vi]=Vec3f(x,y,z);
+
+            // Calculate the vertex neighborhood.
+            IndexArray& vn=m->neighbors[vi];
+            vn.setSize(6);
+
+#define WRAP_LAT(x) wrap(x,r2_segs)
+
+            vn[0]=bi+WRAP_LAT(latitude-1);
+            vn[1]=vn[0]+r2_segs;
+            vn[2]=vi+r2_segs;
+            if (longitude==r1_segs-1) {
+                // Wrap around in longitude direction.
+                vn[1]-=m->vertices.getSize();
+                vn[2]-=m->vertices.getSize();
+            }
+
+            vn[3]=bi+WRAP_LAT(latitude+1);
+            vn[4]=vn[3]-r2_segs;
+            vn[5]=vi-r2_segs;
+            if (longitude==0) {
+                // Wrap around in longitude direction.
+                vn[4]+=m->vertices.getSize();
+                vn[5]+=m->vertices.getSize();
+            }
+
+#undef WRAP_LAT
+
+            ++vi;
+        }
+    }
+
     return m;
 }
 
@@ -333,9 +389,14 @@ Mesh* Mesh::Factory::ToroidalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_
             float phi=Constf::PI()/r2_segs*latitude-Constf::PI()*0.5f;
 
             // Calculate the vertex position.
-            float x=::cos(theta)*(r1(theta)+r2(phi)*::cos(phi));
-            float y=::sin(theta)*(r1(theta)+r2(phi)*::cos(phi));
-            float z=r2(phi)*::sin(phi);
+            float r1t=r1(theta),r2p=r2(phi);
+            float ct=::cos(theta),cp=::cos(phi);
+            float st=::sin(theta),sp=::sin(phi);
+
+            float x=ct*(r1t+r2p*cp);
+            float y=st*(r1t+r2p*cp);
+
+            float z=r2p*sp;
 
             m->vertices[vi]=Vec3f(x,y,z);
 
@@ -531,6 +592,70 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             }
 
 #undef WRAP_C
+
+            ++vi;
+        }
+    }
+
+    return m;
+}
+
+Mesh* Mesh::Factory::FunctionalProduct(math::Formula& r1,int r1_segs,math::Formula& r2,int r2_segs)
+{
+    // Perform some sanity checks.
+    if (r1_segs<4 || r2_segs<2) {
+        return NULL;
+    }
+
+    // Create an empty mesh with the required number of vertices.
+    Mesh* m=new Mesh(r1_segs*r2_segs);
+
+    // Index of the vertex currently being calculated.
+    int vi=0;
+
+    for (int longitude=0;longitude<r1_segs;++longitude) {
+        // -PI <= theta <= PI
+        float theta=2*Constf::PI()/r1_segs*longitude-Constf::PI();
+
+        // Current "base" vertex on the contour.
+        int bi=vi;
+
+        for (int latitude=0;latitude<r2_segs;++latitude) {
+            // -PI/2 <= phi <= PI/2
+            float phi=Constf::PI()/r2_segs*latitude-Constf::PI()*0.5f;
+
+            // Calculate the vertex position.
+            float x=::cos(theta)*(r1(theta)+r2(phi)*::cos(phi));
+            float y=::sin(theta)*(r1(theta)+r2(phi)*::cos(phi));
+            float z=r2(phi)*::sin(phi);
+
+            m->vertices[vi]=Vec3f(x,y,z);
+
+            // Calculate the vertex neighborhood.
+            IndexArray& vn=m->neighbors[vi];
+            vn.setSize(6);
+
+#define WRAP_LAT(x) wrap(x,r2_segs)
+
+            vn[0]=bi+WRAP_LAT(latitude-1);
+            vn[1]=vn[0]+r2_segs;
+            vn[2]=vi+r2_segs;
+            if (longitude==r1_segs-1) {
+                // Wrap around in longitude direction.
+                vn[1]-=m->vertices.getSize();
+                vn[2]-=m->vertices.getSize();
+            }
+
+            vn[3]=bi+WRAP_LAT(latitude+1);
+            vn[4]=vn[3]-r2_segs;
+            vn[5]=vi-r2_segs;
+            if (longitude==0) {
+                // Wrap around in longitude direction.
+                vn[4]+=m->vertices.getSize();
+                vn[5]+=m->vertices.getSize();
+            }
+
+#undef WRAP_LAT
 
             ++vi;
         }

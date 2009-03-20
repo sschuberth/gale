@@ -170,6 +170,9 @@ struct Mesh
         /// is connected to its beginning, else cut faces are created.
         static Mesh* Extrude(VectorArray const& path,VectorArray const& contour,bool closed=true,MatrixArray const* trans=NULL);
 
+
+        static Mesh* FunctionalProduct(math::Formula& r1,int r1_segs,math::Formula& r2,int r2_segs);
+
         /// Generates a mesh consisting of lines only that represent the
         /// compiled mesh's vertex normals stored in the \a renderer, optionally
         /// with the given \a scale applied.
