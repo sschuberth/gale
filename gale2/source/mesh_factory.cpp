@@ -379,6 +379,10 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
         // Current "base" vertex on the contour.
         int bi=vi;
 
+        // Index of an end cut face vertex with minimal distance to the first
+        // start cut face vertex.
+        int mn;
+
         for (int ci=0;ci<contour.getSize();++ci) {
             // Connect the 6 neighbors (5 for the endpoints of an open path).
             IndexArray& vn=m->neighbors[vi];
@@ -394,25 +398,15 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             // Is this the last vertex on the path?
             if (pi==path.getSize()-1) {
                 if (closed) {
-                    // It is not easy to find the transformed neighbors of a
-                    // closed path, so just connect to the closest ones.
+                    // As the start cut face's neighbors were already determined,
+                    // just turn partial neighbors into mutual neighbors here.
                     Vec3f const& v=m->vertices[vi];
 
-                    int mn=0;
-                    float md=(m->vertices[mn]-v).length2();
-
-                    // Calculate the distances to the opposite cut face's vertices.
-                    for (int cA=1;cA<contour.getSize();++cA) {
-                        float dA=(m->vertices[cA]-v).length2();
-                        if (dA<md) {
-                            md=dA;
-                            mn=cA;
+                    for (int cA=0;cA<contour.getSize();++cA) {
+                        if (m->neighbors[cA].find(vi)>=0) {
+                            vn[n++]=cA;
                         }
                     }
-
-                    biwc=mn%contour.getSize();
-                    vn[n++]=mn-biwc+WRAP_C(biwc-1);
-                    vn[n++]=mn;
                 }
                 else {
                     // Connect the end cut face vertices to the last path vertex.
@@ -435,18 +429,29 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                     // closed path, so just connect to the closest ones.
                     Vec3f const& v=m->vertices[vi];
 
-                    int start=m->vertices.getSize()-1;
+                    // Determine the index of the closest end cut face vertex
+                    // only for the first start cut face vertex, and simply
+                    // increment the index from then on.
+                    if (vi==0) {
+                        int start=m->vertices.getSize()-1;
 
-                    int mn=start;
-                    float md=(m->vertices[mn]-v).length2();
+                        mn=start;
+                        float md=(m->vertices[mn]-v).length2();
 
-                    // Calculate the distances to the opposite cut face's vertices.
-                    for (int cA=1;cA<contour.getSize();++cA) {
-                        int cO=start-cA;
-                        float dA=(m->vertices[cO]-v).length2();
-                        if (dA<md) {
-                            md=dA;
-                            mn=cO;
+                        // Calculate the distances to the opposite cut face's vertices.
+                        for (int cA=1;cA<contour.getSize();++cA) {
+                            int cO=start-cA;
+                            float dA=(m->vertices[cO]-v).length2();
+                            if (dA<md) {
+                                md=dA;
+                                mn=cO;
+                            }
+                        }
+                    }
+                    else {
+                        ++mn;
+                        if (mn==m->vertices.getSize()) {
+                            mn-=contour.getSize();
                         }
                     }
 
