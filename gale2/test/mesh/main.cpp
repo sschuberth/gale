@@ -271,7 +271,7 @@ class TestWindow:public DefaultWindow
             case '6': {
                 delete m_mesh;
                 m_mesh=Mesh::Factory::MoebiusStrip(1.2f,1.0f,0.4f,0.1f,40,10);
-                puts("Möbius Strip mesh.");
+                puts("Moebius Strip mesh.");
                 if (m_step>0 && last_scheme_key=='c') {
                     puts("Current subdivision scheme not supported on this mesh, resetting.");
                     m_step=0;
@@ -367,7 +367,7 @@ int main()
     puts("3: Hexahedron");
     puts("4: Icosahedron");
     puts("5: Dodecahedron");
-    puts("6: Möbius Strip");
+    puts("6: Moebius Strip");
     puts("7: Spherical Supershape");
     puts("8: Toroidal Supershape");
     puts("\n");
