@@ -170,8 +170,11 @@ struct Mesh
         /// is connected to its beginning, else cut faces are created.
         static Mesh* Extrude(VectorArray const& path,VectorArray const& contour,bool closed=true,MatrixArray const* trans=NULL);
 
-
-        static Mesh* FunctionalProduct(math::Formula& r1,int r1_segs,math::Formula& r2,int r2_segs);
+        /// Generates a mesh's surface by calculating a product of the formulas
+        /// \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs samples,
+        /// respectively. The product is altered by \a fm and \a fa which define
+        /// multiplicative and additive terms for the product calculation.
+        static Mesh* FunctionalProduct(math::Formula& r1,int r1_segs,math::Formula& r2,int r2_segs,math::Formula& fm,math::Formula& fa);
 
         /// Generates a mesh consisting of lines only that represent the
         /// compiled mesh's vertex normals stored in the \a renderer, optionally
