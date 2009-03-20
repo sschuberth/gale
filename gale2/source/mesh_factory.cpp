@@ -395,12 +395,13 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             if (pi==path.getSize()-1) {
                 if (closed) {
                     // It is not easy to find the transformed neighbors of a
-                    // closed path, so simply connect to the closest ones.
+                    // closed path, so just connect to the closest ones.
                     Vec3f const& v=m->vertices[vi];
 
                     int mn=0;
                     float md=(m->vertices[mn]-v).length2();
 
+                    // Calculate the distances to the opposite cut face's vertices.
                     for (int cA=1;cA<contour.getSize();++cA) {
                         float dA=(m->vertices[cA]-v).length2();
                         if (dA<md) {
@@ -431,7 +432,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             if (pi==0) {
                 if (closed) {
                     // It is not easy to find the transformed neighbors of a
-                    // closed path, so simply connect to the closest ones.
+                    // closed path, so just connect to the closest ones.
                     Vec3f const& v=m->vertices[vi];
 
                     int start=m->vertices.getSize()-1;
@@ -439,6 +440,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                     int mn=start;
                     float md=(m->vertices[mn]-v).length2();
 
+                    // Calculate the distances to the opposite cut face's vertices.
                     for (int cA=1;cA<contour.getSize();++cA) {
                         int cO=start-cA;
                         float dA=(m->vertices[cO]-v).length2();
