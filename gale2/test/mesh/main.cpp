@@ -117,7 +117,7 @@ class TestWindow:public DefaultWindow
             case 'p': {
                 last_scheme_key=key;
                 printf("Polyhedral subdivision");
-                if (last_mesh_key!='1' && last_mesh_key!='2' && last_mesh_key!='4') {
+                if (last_mesh_key!='1' && last_mesh_key!='2' && last_mesh_key!='4' && last_mesh_key<6) {
                     printf(" not supported on this mesh");
                 }
                 else {
@@ -131,7 +131,7 @@ class TestWindow:public DefaultWindow
             case 'b': {
                 last_scheme_key=key;
                 printf("Butterfly subdivision");
-                if (last_mesh_key!='1' && last_mesh_key!='2' && last_mesh_key!='4') {
+                if (last_mesh_key!='1' && last_mesh_key!='2' && last_mesh_key!='4' && last_mesh_key<6) {
                     printf(" not supported on this mesh");
                 }
                 else {
@@ -145,7 +145,7 @@ class TestWindow:public DefaultWindow
             case 'l': {
                 last_scheme_key=key;
                 printf("Loop subdivision");
-                if (last_mesh_key!='1' && last_mesh_key!='2' && last_mesh_key!='4') {
+                if (last_mesh_key!='1' && last_mesh_key!='2' && last_mesh_key!='4' && last_mesh_key<6) {
                     printf(" not supported on this mesh");
                 }
                 else {
@@ -159,7 +159,7 @@ class TestWindow:public DefaultWindow
             case 's': {
                 last_scheme_key=key;
                 printf("Sqrt3 subdivision");
-                if (last_mesh_key!='1' && last_mesh_key!='2' && last_mesh_key!='4') {
+                if (last_mesh_key!='1' && last_mesh_key!='2' && last_mesh_key!='4' && last_mesh_key<6) {
                     printf(" not supported on this mesh");
                 }
                 else {
@@ -267,9 +267,49 @@ class TestWindow:public DefaultWindow
                 }
                 break;
             }
+
+            case '6': {
+                delete m_mesh;
+                m_mesh=Mesh::Factory::MoebiusStrip(1.2f,1.0f,0.4f,0.1f,40,10);
+                puts("Möbius Strip mesh.");
+                if (m_step>0 && last_scheme_key=='c') {
+                    puts("Current subdivision scheme not supported on this mesh, resetting.");
+                    m_step=0;
+                }
+                break;
+            }
+
+            case '7': {
+                delete m_mesh;
+
+                static Superformula r1(7.0f,0.2f,1.7f,1.7f);
+                static Superformula r2(7.0f,0.2f,1.7f,1.7f);
+                m_mesh=Mesh::Factory::SphericalProduct(r1,60,r2,30);
+
+                puts("Spherical Supershape mesh.");
+                if (m_step>0 && last_scheme_key=='c') {
+                    puts("Current subdivision scheme not supported on this mesh, resetting.");
+                    m_step=0;
+                }
+                break;
+            }
+            case '8': {
+                delete m_mesh;
+
+                static Superformula r1(6.0f,-0.68f,22.77f,0.75f,1.99f,0.64f);
+                static Superformula r2(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
+                m_mesh=Mesh::Factory::ToroidalProduct(r1,40,r2,20);
+
+                puts("Toroidal Supershape mesh.");
+                if (m_step>0 && last_scheme_key=='c') {
+                    puts("Current subdivision scheme not supported on this mesh, resetting.");
+                    m_step=0;
+                }
+                break;
+            }
         }
 
-        if (key>='1' && key<='5') {
+        if (key>='1' && key<='8') {
             m_scheme(*m_mesh,m_step);
 #ifndef GALE_TINY_CODE
             int error=m_mesh->check();
@@ -327,6 +367,9 @@ int main()
     puts("3: Hexahedron");
     puts("4: Icosahedron");
     puts("5: Dodecahedron");
+    puts("6: Möbius Strip");
+    puts("7: Spherical Supershape");
+    puts("8: Toroidal Supershape");
     puts("\n");
     puts("Sub-division mode");
     puts("-----------------");
