@@ -270,7 +270,7 @@ class TestWindow:public DefaultWindow
 
             case '6': {
                 delete m_mesh;
-                m_mesh=Mesh::Factory::MoebiusStrip(1.2f,1.0f,0.4f,0.1f,40,10);
+                m_mesh=Mesh::Factory::MoebiusStrip(1.2f,1.0f,0.4f,0.1f,20,10);
                 puts("Moebius Strip mesh.");
                 if (m_step>0 && last_scheme_key=='c') {
                     puts("Current subdivision scheme not supported on this mesh, resetting.");
@@ -386,6 +386,7 @@ int main()
     puts("n: Vertex normals");
     puts("r: Lighting");
     puts("f: Face / frustum culling");
+    puts("\n");
 #endif
 
     // Make sure the window is destroyed before dumping memory leaks.
