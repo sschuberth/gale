@@ -106,7 +106,7 @@ struct Mesh
         //@}
 
         /// Returns a uniformly tesselated sphere of radius \a r, created using
-        /// a number of subdivision \a steps from an Icosahedron.
+        /// a number of polyhedral subdivision \a steps from an Icosahedron.
         static Mesh* Sphere(float r,int steps);
 
         /**
