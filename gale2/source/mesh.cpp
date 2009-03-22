@@ -69,21 +69,32 @@ int Mesh::prevTo(int xi,int vi,int steps) const
 
 int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
 {
-    polygon.clear();
-    polygon.insert(ai);
+    // Optimize for triangles.
+    polygon.setSize(3);
+
+    polygon[0]=ai;
+    polygon[1]=bi;
+
+    int ci=prevTo(ai,bi);
+    if (ci<0 || static_cast<unsigned int>(ci)==polygon[0]) {
+        polygon.setSize(2);
+        return polygon.getSize();
+    }
+
+    polygon[2]=ci;
 
     // Add the vertex immediately following ai in the neighborhood of bi until
     // we return to the starting vertex.
     for (;;) {
-        polygon.insert(bi);
+        ai=bi;
+        bi=ci;
 
         int ci=prevTo(ai,bi);
         if (ci<0 || static_cast<unsigned int>(ci)==polygon[0]) {
             break;
         }
 
-        ai=bi;
-        bi=ci;
+        polygon.insert(ci);
     }
 
     return polygon.getSize();
