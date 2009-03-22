@@ -69,7 +69,7 @@ int Mesh::prevTo(int xi,int vi,int steps) const
 
 int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
 {
-    // Optimize for triangles.
+    // Optimize for triangle faces.
     polygon.setSize(3);
 
     polygon[0]=ai;
