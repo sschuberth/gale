@@ -55,6 +55,8 @@ void Mesh::Preparer::compile(Mesh const* mesh)
 
     box.min=box.max=m_mesh->vertices[0];
 
+    IndexArray polygon;
+
     for (int vi=0;vi<m_mesh->vertices.getSize();++vi) {
         IndexArray const& vn=m_mesh->neighbors[vi];
         Vec3f const& v=m_mesh->vertices[vi];
@@ -98,7 +100,6 @@ void Mesh::Preparer::compile(Mesh const* mesh)
         for (int n=0;n<vn.getSize();++n) {
             // Get the orbit vertices starting with the edge from vi to its
             // currently selected neighbor.
-            IndexArray polygon;
             int o=m_mesh->orbit(vi,vn[n],polygon);
             if (o<3 || o>5) {
                 // Only triangular to pentagonal faces are supported right now.

@@ -367,6 +367,8 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
 
 void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
 {
+    IndexArray polygon;
+
     while (steps-->0) {
         Mesh orig=mesh;
 
@@ -383,7 +385,6 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
                 int pi=vn[n];
                 Vec3f const& p=orig.vertices[pi];
 
-                IndexArray polygon;
                 int o=orig.orbit(vi,pi,polygon);
 
                 Vec3f t;
