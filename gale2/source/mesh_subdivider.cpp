@@ -457,6 +457,8 @@ void Mesh::Subdivider::assignNeighbors(Mesh const& orig,Mesh& mesh,int x0i)
         int ai=vn[0];
         int bi=orig.nextTo(ai,vi);
 
+        vn.setCapacity(vn.getSize()+4);
+
         // ai and bi are already neighbors.
         vn.insert(orig.nextTo(vi,ai),0);
         vn.insert(orig.prevTo(vi,ai),2);
