@@ -295,12 +295,12 @@ Mesh* Mesh::Factory::MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1
     return Extrude(path,contour,true,&rotation);
 }
 
-Mesh* Mesh::Factory::SphericalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_segs)
+Mesh* Mesh::Factory::SphericalProduct(Formula const& r1,int r1_segs,Formula const& r2,int r2_segs)
 {
     return FunctionalProduct(r1,r1_segs,r2,r2_segs,Formula(),Constantformula(0));
 }
 
-Mesh* Mesh::Factory::ToroidalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_segs)
+Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int r1_segs,Formula const& r2,int r2_segs)
 {
     return FunctionalProduct(r1,r1_segs,r2,r2_segs,Constantformula(1),Formula());
 }
@@ -477,7 +477,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
     return m;
 }
 
-Mesh* Mesh::Factory::FunctionalProduct(Formula& r1,int r1_segs,Formula& r2,int r2_segs,Formula& fm,Formula& fa)
+Mesh* Mesh::Factory::FunctionalProduct(Formula const& r1,int r1_segs,Formula const& r2,int r2_segs,Formula const& fm,Formula const& fa)
 {
     // Perform some sanity checks.
     if (r1_segs<4 || r2_segs<2) {

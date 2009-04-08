@@ -146,12 +146,12 @@ struct Mesh
         /// Generates a mesh's surface by calculating the spherical product of
         /// the formulas \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs
         /// samples, respectively.
-        static Mesh* SphericalProduct(math::Formula& r1,int r1_segs,math::Formula& r2,int r2_segs);
+        static Mesh* SphericalProduct(math::Formula const& r1,int r1_segs,math::Formula const& r2,int r2_segs);
 
         /// Generates a mesh's surface by calculating the toroidal product of
         /// the formulas \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs
         /// samples, respectively.
-        static Mesh* ToroidalProduct(math::Formula& r1,int r1_segs,math::Formula& r2,int r2_segs);
+        static Mesh* ToroidalProduct(math::Formula const& r1,int r1_segs,math::Formula const& r2,int r2_segs);
 
         //@}
 
@@ -174,7 +174,7 @@ struct Mesh
         /// \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs samples,
         /// respectively. The product is altered by \a fm and \a fa which define
         /// multiplicative and additive terms for the product calculation.
-        static Mesh* FunctionalProduct(math::Formula& r1,int r1_segs,math::Formula& r2,int r2_segs,math::Formula& fm,math::Formula& fa);
+        static Mesh* FunctionalProduct(math::Formula const& r1,int r1_segs,math::Formula const& r2,int r2_segs,math::Formula const& fm,math::Formula const& fa);
 
         /// Generates a mesh consisting of lines only that represent the
         /// compiled mesh's vertex normals stored in the \a renderer, optionally
