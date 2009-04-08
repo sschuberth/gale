@@ -15,7 +15,10 @@ Tools
 
 - Cygwin (http://www.cygwin.com/)
 
-  For the PHP package you will need to add the following URL during setup:
+  For the PHP package you will need to run setup.exe with the -X argument to
+  skip the verification of the cryptograhic signature of the setup.ini file
+  and add the following source URL during setup:
+
     * ftp://sourceware.org/pub/cygwinports/
 
   Then install the follwing packages:
