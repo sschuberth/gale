@@ -400,8 +400,6 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                 if (closed) {
                     // As the start cut face's neighbors were already determined,
                     // just turn partial neighbors into mutual neighbors here.
-                    Vec3f const& v=m->vertices[vi];
-
                     for (int cA=0;cA<contour.getSize();++cA) {
                         if (m->neighbors[cA].find(vi)>=0) {
                             vn[n++]=cA;
