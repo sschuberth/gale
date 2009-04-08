@@ -67,17 +67,17 @@ int print(char const* str)
     return written;
 }
 
-__declspec(noalias,restrict) void* calloc(size_t num,size_t size)
+__declspec(noalias,restrict) void* __cdecl calloc(size_t num,size_t size)
 {
     return HeapAlloc(GetProcessHeap(),HEAP_ZERO_MEMORY,num*size);
 }
 
-__declspec(noalias,restrict) void* malloc(size_t size)
+__declspec(noalias,restrict) void* __cdecl malloc(size_t size)
 {
     return HeapAlloc(GetProcessHeap(),0,size);
 }
 
-__declspec(noalias,restrict) void* realloc(void* memblock,size_t size)
+__declspec(noalias,restrict) void* __cdecl realloc(void* memblock,size_t size)
 {
     if (memblock) {
         return HeapReAlloc(GetProcessHeap(),0,memblock,size);
@@ -87,7 +87,7 @@ __declspec(noalias,restrict) void* realloc(void* memblock,size_t size)
     }
 }
 
-__declspec(noalias) void free(void* memblock)
+__declspec(noalias) void __cdecl free(void* memblock)
 {
     if (memblock) {
         HeapFree(GetProcessHeap(),0,memblock);
@@ -107,7 +107,7 @@ __declspec(noalias) void free(void* memblock)
 #pragma function(memset)
 #pragma warning(default:4164)
 
-void* memcpy(void* dest,void const* src,size_t count)
+void* __cdecl memcpy(void* dest,void const* src,size_t count)
 {
     char* d=(char*)dest;
     char const* s=(char const*)src;
@@ -119,7 +119,7 @@ void* memcpy(void* dest,void const* src,size_t count)
     return dest;
 }
 
-void* memmove(void* dest,void const* src,size_t count)
+void* __cdecl memmove(void* dest,void const* src,size_t count)
 {
     char* d=(char*)dest;
     char const* s=(char const*)src;
@@ -138,7 +138,7 @@ void* memmove(void* dest,void const* src,size_t count)
     return dest;
 }
 
-void* memset(void* dest,int c,size_t count)
+void* __cdecl memset(void* dest,int c,size_t count)
 {
     char* d=(char*)dest;
 
@@ -154,7 +154,7 @@ void* memset(void* dest,int c,size_t count)
  */
 
 // When this is called, the argument is in st(0)=x.
-__declspec(naked) double _CIacos(void)
+__declspec(naked) double __cdecl _CIacos(void)
 {
     // acos(x) = atan(sqrt(1 - sqr(x)) / x)
     __asm {
@@ -186,7 +186,7 @@ __declspec(naked) double _CIacos(void)
 }
 
 // When this is called, the arguments are in st(0)=y and st(1)=x.
-__declspec(naked) double _CIpow(void)
+__declspec(naked) double __cdecl _CIpow(void)
 {
     // pow(x,y) = exp2(log2(x) * y)
     __asm {
@@ -212,33 +212,33 @@ __declspec(naked) double _CIpow(void)
  * Replacements for C++ runtime functions
  */
 
-void* operator new(size_t bytes)
+void* __cdecl operator new(size_t bytes)
 {
     return malloc(bytes);
 }
 
-void* operator new[](size_t bytes)
+void* __cdecl operator new[](size_t bytes)
 {
     return malloc(bytes);
 }
 
-void* operator new(size_t bytes,void* place)
+void* __cdecl operator new(size_t bytes,void* place)
 {
     UNREFERENCED_PARAMETER(bytes);
     return place;
 }
 
-void operator delete(void* pointer)
+void __cdecl operator delete(void* pointer)
 {
     free(pointer);
 }
 
-void operator delete[](void* pointer)
+void __cdecl operator delete[](void* pointer)
 {
     free(pointer);
 }
 
-void operator delete(void* pointer,void* place)
+void __cdecl operator delete(void* pointer,void* place)
 {
     // Do nothing, not even calling a destructor.
 }

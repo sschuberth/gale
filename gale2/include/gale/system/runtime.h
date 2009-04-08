@@ -48,6 +48,8 @@
 //         Set "Floating Point Model" to "Fast" (/fp:fast)
 //     Language
 //         Set "Enable Run-Time Typ Info" to "No" (/GR-)
+//     Command Line
+//         Specify "/QIfist" ("suppress _ftol")
 
 // Ignore all default libraries during linking.
 #pragma comment(linker,"/nodefaultlib")
@@ -59,6 +61,8 @@
 //     Code Generation
 //         Set "Enable String Pooling" to "Yes" (/GF)
 //         Set "Enable Function-Level Linking" to "Yes" (/Gy)
+//     Advanced
+//         Set "Calling Convention" to "__fastcall" (/Gr)
 //     Command Line
 //         Specify "/Zl" ("omit default library name in .OBJ")
 // Linker
@@ -103,11 +107,11 @@ int print(char const* str);
 
 /// Replacement for a CRT function required by MSVC to calculate the arcus
 /// cosinus of a number x. Arguments are passed in FPU registers.
-double _CIacos(void);
+double __cdecl _CIacos(void);
 
 /// Replacement for a CRT function required by MSVC to calculate x to the y-th
 /// power. Arguments are passed in FPU registers.
-double _CIpow(void);
+double __cdecl _CIpow(void);
 
 //@}
 
@@ -121,22 +125,22 @@ double _CIpow(void);
 //@{
 
 /// Minimal "new" operator implementation.
-void* operator new(size_t bytes);
+void* __cdecl operator new(size_t bytes);
 
 /// Minimal array "new" operator implementation.
-void* operator new[](size_t bytes);
+void* __cdecl operator new[](size_t bytes);
 
 /// Minimal placement "new" operator implementation.
-void* operator new(size_t bytes,void* place);
+void* __cdecl operator new(size_t bytes,void* place);
 
 /// Minimal "delete" operator implementation.
-void operator delete(void* pointer);
+void __cdecl operator delete(void* pointer);
 
 /// Minimal array "delete" operator implementation.
-void operator delete[](void* pointer);
+void __cdecl operator delete[](void* pointer);
 
 /// Minimal placement "delete" operator implementation.
-void operator delete(void* pointer,void* place);
+void __cdecl operator delete(void* pointer,void* place);
 
 //@}
 
