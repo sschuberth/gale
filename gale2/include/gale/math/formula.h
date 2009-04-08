@@ -61,6 +61,7 @@ struct Constantformula:public Formula
 
     /// Evaluator for the formula.
     float operator()(float x) {
+        UNREFERENCED_PARAMETER(x);
         return constant;
     }
 
