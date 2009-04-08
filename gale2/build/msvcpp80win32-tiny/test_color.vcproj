@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="test_color"
 	ProjectGUID="{6661B415-F0C6-4111-A3AB-8C9A8F354B08}"
 	RootNamespace="test_color"
@@ -193,9 +193,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/QIfist"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include;..\..\glex"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;GALE_TINY"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -203,6 +204,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
+				CallingConvention="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -271,13 +273,15 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/QIfist"
 				AdditionalIncludeDirectories="..\..\include;..\..\glex"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;GALE_TINY"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
+				CallingConvention="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
