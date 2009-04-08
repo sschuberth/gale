@@ -575,14 +575,13 @@ inline long long roundToZero(double const d)
 /// Returns the number of leading (most significant) zero bits in \a x.
 inline unsigned int countLeadingZeroBits(unsigned int x)
 {
-    unsigned int const MSB=sizeof(x)*8-1;
-
 #ifdef G_COMP_GNUC
 
     if (x==0) {
         return sizeof(x)*8;
     }
 
+    // At this point, we know there is at least one bit set.
     return __builtin_clz(x);
 
 #elif defined(G_COMP_MSVC)
@@ -591,9 +590,17 @@ inline unsigned int countLeadingZeroBits(unsigned int x)
     if (!_BitScanReverse(&index,x)) {
         return sizeof(x)*8;
     }
+
+    unsigned int const MSB=sizeof(x)*8-1;
     return index^MSB;
 
 #else // G_COMP_GNUC
+
+    if (x==0) {
+        return sizeof(x)*8;
+    }
+
+    unsigned int const MSB=sizeof(x)*8-1;
 
     // At this point, we know there is at least one bit set.
     unsigned int count=0;
@@ -676,8 +683,6 @@ inline int indexLSBSet(unsigned int x)
 /// significant bit has index 0).
 inline int indexMSBSet(unsigned int x)
 {
-    unsigned int const MSB=sizeof(x)*8-1;
-
 #ifdef G_COMP_GNUC
 
     if (x==0) {
@@ -685,6 +690,7 @@ inline int indexMSBSet(unsigned int x)
     }
 
     // At this point, we know there is at least one bit set.
+    unsigned int const MSB=sizeof(x)*8-1;
     return static_cast<int>(MSB)-__builtin_clz(x);
 
 #elif defined(G_COMP_MSVC)
@@ -700,6 +706,8 @@ inline int indexMSBSet(unsigned int x)
     if (x==0) {
         return -1;
     }
+
+    unsigned int const MSB=sizeof(x)*8-1;
 
     // At this point, we know there is at least one bit set.
     int index=static_cast<int>(MSB);
