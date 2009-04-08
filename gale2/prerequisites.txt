@@ -15,8 +15,7 @@ Tools
 
 - Cygwin (http://www.cygwin.com/)
 
-  For PHP you will need to add one of the following sources during setup:
-    * ftp://sunsite.dk/projects/cygwinports/
+  For the PHP package you will need to add the following URL during setup:
     * ftp://sourceware.org/pub/cygwinports/
 
   Then install the follwing packages:
@@ -30,7 +29,7 @@ Tools
 Compiler
 --------
 
-- Visual Studio .NET 2003 or Visual Studio 2005
+- Visual Studio 2005 or Visual Studio 2008 (the Express editions should do)
 
 Linux
 =====
