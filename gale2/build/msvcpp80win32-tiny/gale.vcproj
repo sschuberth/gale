@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="gale"
 	ProjectGUID="{75EEA8D3-24FB-415A-9585-ECE5D7E1C8A2}"
 	RootNamespace="gale"
@@ -293,15 +293,15 @@
 			Name="glex"
 			>
 			<File
-				RelativePath="..\..\glex\GLEX_ARB_color_buffer_float.c"
+				RelativePath="..\..\glex\GLEX_ARB_multisample.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\glex\GLEX_ARB_color_buffer_float.h"
+				RelativePath="..\..\glex\GLEX_ARB_multisample.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\glex\GLEX_ARB_color_buffer_float_procs.h"
+				RelativePath="..\..\glex\GLEX_ARB_multisample_procs.h"
 				>
 			</File>
 			<File
@@ -389,15 +389,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\gale\math\formula.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\gale\math\hmatrix4.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\include\gale\math\matrix4.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\gale\math\plane.h"
 				>
 			</File>
 			<File
@@ -449,6 +449,10 @@
 			Name="model"
 			>
 			<File
+				RelativePath="..\..\include\gale\model\boundingbox.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\source\mesh.cpp"
 				>
 			</File>
@@ -461,11 +465,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\source\mesh_renderer.cpp"
+				RelativePath="..\..\source\mesh_preparer.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\source\mesh_subdivider.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\gale\model\plane.h"
 				>
 			</File>
 		</Filter>
@@ -485,11 +493,43 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\source\camera_frustum.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\source\defaultwindow.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\gale\wrapgl\defaultwindow.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\include\gale\wrapgl\framebuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\source\helpers.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\gale\wrapgl\helpers.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\source\renderer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\gale\wrapgl\renderer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\source\rendersurface.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\gale\wrapgl\rendersurface.h"
 				>
 			</File>
 			<File
@@ -513,11 +553,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\source\rendersurface.cpp"
+				RelativePath="..\..\source\runtime.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\gale\system\rendersurface.h"
+				RelativePath="..\..\include\gale\system\runtime.h"
 				>
 			</File>
 			<File
