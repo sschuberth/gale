@@ -577,6 +577,9 @@ Mesh* Mesh::Factory::Normals(Preparer const& geom,float scale)
 
 void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int valence)
 {
+    // Square the distance so we can compare it to the (cheaper) squared length.
+    distance*=distance;
+
     for (int i=0;i<mesh->vertices.getSize();++i) {
         // Get the reference vector, i.e. to one to determine the neighborhood of.
         Vec3f const& r=mesh->vertices[i];
@@ -592,7 +595,7 @@ void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int valence)
             // Get the vector from the reference to the (possible) neighbor.
             Vec3f v=mesh->vertices[k]-r;
 
-            if (i==k || !meta::OpCmpEqual::evaluate(static_cast<float>(v.length()),distance)) {
+            if (i==k || !meta::OpCmpEqual::evaluate(static_cast<float>(v.length2()),distance)) {
                 // Skip measuring the distance to itself or if it does not equal
                 // the required edge length.
                 continue;
