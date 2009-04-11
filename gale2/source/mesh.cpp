@@ -89,7 +89,7 @@ int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
         ai=bi;
         bi=ci;
 
-        int ci=prevTo(ai,bi);
+        ci=prevTo(ai,bi);
         if (ci<0 || static_cast<unsigned int>(ci)==polygon[0]) {
             break;
         }
