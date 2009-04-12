@@ -1,6 +1,8 @@
-# Set the project name to the current directory name prefixed by "test_".
+# Set the project name to the current directory name prefixed by its parent.
+get_filename_component(parent "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
+get_filename_component(prefix ${parent} NAME)
 get_filename_component(name ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-set(name "test_${name}")
+set(name "${prefix}_${name}")
 
 project(${name})
 
