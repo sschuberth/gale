@@ -76,6 +76,17 @@ link_libraries(${OPENGL_gl_LIBRARY} ${library_name})
 
 # Relative to CMAKE_CURRENT_SOURCE_DIR, add more projects to this one by
 # refering to their CMakeLists.txt files.
+file(GLOB demos "../demo/*")
+foreach(demo ${demos})
+    get_filename_component(path "${demo}" ABSOLUTE)
+    if(IS_DIRECTORY ${path})
+        get_filename_component(dir ${path} NAME)
+        if(NOT ${dir} STREQUAL ".git" AND NOT ${dir} STREQUAL ".svn")
+            add_subdirectory(${demo} "${CMAKE_CURRENT_BINARY_DIR}/${dir}")
+        endif(NOT ${dir} STREQUAL ".git" AND NOT ${dir} STREQUAL ".svn")
+    endif(IS_DIRECTORY ${path})
+endforeach(demo ${demos})
+
 file(GLOB tests "../test/*")
 foreach(test ${tests})
     get_filename_component(path "${test}" ABSOLUTE)
