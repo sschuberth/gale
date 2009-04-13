@@ -16,7 +16,7 @@ class TestWindow:public DefaultWindow
     {
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-        // Set the clear color to red to see if scissoring works.
+        // Set the clear color to blue to see if scissoring works.
         Col4f c=Col4f::YELLOW();
         c=c.complement();
         glClearColor(c.getR(),c.getG(),c.getB(),c.getA());
