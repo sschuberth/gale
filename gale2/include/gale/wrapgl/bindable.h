@@ -40,28 +40,16 @@ namespace wrapgl {
 
 /**
  * All objects that can be bound to the OpenGL state should be derived from this
- * class. The template argument \c T is the name for the target, \c B is the
- * name to query the binding, and \c M is the name to query the object's maximum
- * size.
+ * class. The template argument \c T is the name for the target and \c B is the
+ * name to query the binding.
  */
-template<GLenum T,GLenum B,GLenum M>
+template<GLenum T,GLenum B>
 class Bindable
 {
   public:
 
     static GLenum const TARGET  = T; ///< The target's name, e.g. \c GL_TEXTURE_2D.
     static GLenum const BINDING = B; ///< The binding's name, e.g. \c GL_TEXTURE_BINDING_2D.
-    static GLenum const MAX     = M; ///< The name to query the maximum size, e.g. \c GL_MAX_TEXTURE_SIZE.
-
-    /// Returns an object's maximum size. The exact interpretation depends on
-    /// the object type, i.e. for textures this is the maximum extent in texels
-    /// in any dimension.
-    static GLint maxSize() {
-        GLint param;
-        glGetIntegerv(MAX,&param);
-        G_ASSERT_OPENGL
-        return param;
-    }
 
     /// Returns the handle of the currently bound object.
     static GLuint getCurrent() {
@@ -75,18 +63,13 @@ class Bindable
     /// \a handle is 0, the current object will be unbound.
     virtual void setCurrent(GLuint handle) const=0;
 
-    /// Checks whether the given \a handle describes a valid object.
-    virtual bool isValid(GLuint handle) const=0;
-
-    /// Returns this object's handle.
-    GLuint handle() const {
-        return m_handle;
-    }
-
     /// Binds this object to the OpenGL state, making it the current one.
     void makeCurrent() const {
         setCurrent(m_handle);
     }
+
+    /// Checks whether the given \a handle describes a valid object.
+    virtual bool isValid(GLuint handle) const=0;
 
   protected:
 
