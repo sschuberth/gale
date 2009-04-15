@@ -282,26 +282,23 @@ function writePrototypeHeader($extension,$procs,$tokens) {
 
     $ignore=strtoupper($extension).'_IGNORE';
 
+    fwrite($handle,"#ifdef __linux\n");
+    fwrite($handle,"    // TODO: Linux support.\n");
+    if (strpos($guard,"_WGL_")!==FALSE) {
+        fwrite($handle,"\n    // Ignore WGL extensions under Linux.\n");
+        fwrite($handle,"    #define $ignore\n");
+    }
+    fwrite($handle,"#endif\n\n");
+
     fwrite($handle,"#ifdef _WIN32\n");
     fwrite($handle,"    #ifndef WIN32_LEAN_AND_MEAN\n");
-    fwrite($handle,"        #define WIN32_LEAN_AND_MEAN\n");
-    fwrite($handle,"        #include <windows.h>\n");
-    fwrite($handle,"        #undef WIN32_LEAN_AND_MEAN\n");
+    fwrite($handle,"        #define WIN32_LEAN_AND_MEAN 1\n");
+    fwrite($handle,"    #endif\n");
+    fwrite($handle,"    #include <windows.h>\n");
     if (strpos($guard,"_GLX_")!==FALSE) {
-        fwrite($handle,"\n        // Ignore GLX extensions under Windows.\n");
-        fwrite($handle,"        #define $ignore\n");
+        fwrite($handle,"\n    // Ignore GLX extensions under Windows.\n");
+        fwrite($handle,"    #define $ignore\n");
     }
-    fwrite($handle,"    #else\n");
-    fwrite($handle,"        #include <windows.h>\n");
-    fwrite($handle,"    #endif\n");
-    fwrite($handle,"#else\n");
-    fwrite($handle,"    #ifdef __linux\n");
-    fwrite($handle,"        // TODO: Linux support.\n");
-    if (strpos($guard,"_WGL_")!==FALSE) {
-        fwrite($handle,"\n        // Ignore WGL extensions under Linux.\n");
-        fwrite($handle,"        #define $ignore\n");
-    }
-    fwrite($handle,"    #endif\n");
     fwrite($handle,"#endif\n\n");
 
     fwrite($handle,"#ifndef $ignore\n\n");
