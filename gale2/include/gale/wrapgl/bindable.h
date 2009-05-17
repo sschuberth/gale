@@ -39,41 +39,51 @@ namespace gale {
 namespace wrapgl {
 
 /**
- * All objects that can be bound to the OpenGL state should be derived from this
- * class. The template argument \c T is the name for the target and \c B is the
- * name to query the binding.
+ * This is a wrapper class for all objects that can be bound to the OpenGL
+ * state. The template argument \c B is the name to query the binding and \c I
+ * refers to the implementation class.
  */
-template<GLenum T,GLenum B>
-class Bindable
+template<GLenum B,class I>
+class Bindable:public I
 {
   public:
 
-    static GLenum const TARGET  = T; ///< The target's name, e.g. \c GL_TEXTURE_2D.
-    static GLenum const BINDING = B; ///< The binding's name, e.g. \c GL_TEXTURE_BINDING_2D.
-
-    /// Returns the handle of the currently bound object.
+    /// Returns the handle of the currently bound object of type \c B.
     static GLuint getCurrent() {
         GLint param;
-        glGetIntegerv(BINDING,&param);
+        glGetIntegerv(B,&param);
         G_ASSERT_OPENGL
         return static_cast<GLuint>(param);
     }
 
-    /// Sets the current binding to the object described by \a handle. If
-    /// \a handle is 0, the current object will be unbound.
-    virtual void setCurrent(GLuint handle) const=0;
+    /// Creates a new (initially unbound) OpenGL object.
+    Bindable() {
+        // Explicit "this" is required for templates dependent names.
+        this->createObject(m_handle);
+    }
+
+    /// Destroys this OpenGL object. If the object is currently bound, the
+    /// default object becomes current.
+    ~Bindable() {
+        // Explicit "this" is required for templates dependent names.
+        this->destroyObject(m_handle);
+    }
 
     /// Binds this object to the OpenGL state, making it the current one.
     void makeCurrent() const {
-        setCurrent(m_handle);
+        // Explicit "this" is required for templates dependent names.
+        this->setCurrent(m_handle);
     }
 
-    /// Checks whether the given \a handle describes a valid object.
-    virtual bool isValid(GLuint handle) const=0;
+    /// Checks whether this object's handle is valid.
+    bool isValid() const {
+        // Explicit "this" is required for templates dependent names.
+        return this->isValidObject(m_handle);
+    }
 
   protected:
 
-    GLuint m_handle; ///< This object's handle.
+    GLuint m_handle; ///< The handle identifying the object.
 };
 
 } // namespace wrapgl
