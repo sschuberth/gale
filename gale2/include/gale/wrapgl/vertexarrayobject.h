@@ -80,6 +80,7 @@ class VertexArrayObjectImpl
     }
 };
 
+/// Definition of the Vertex Array Object class.
 typedef Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjectImpl> VertexArrayObject;
 
 } // namespace wrapgl
