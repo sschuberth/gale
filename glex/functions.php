@@ -104,8 +104,7 @@ function writeMacroHeader($extension,$procs) {
             "/(^|\W)(double)/",
             "/(^|\W)(clampd)/",
             "/(^|\W)(time)/",
-            "/(^|\W)(void)/",
-            "/(^|\W)(\w+ARB)/"
+            "/(^|\W)(void)/"
         );
         $result=preg_replace($patterns,"\\1GL\\2",$arguments);
         if ($result===NULL || $result===$arguments) {
@@ -117,36 +116,40 @@ function writeMacroHeader($extension,$procs) {
 
     global $cmdline;
 
-    // Real-world argument examples:
-    // enum texunit
-    // const float *m
-    // void* *params
-    $type="\w+\s*\**\s*\**\w+\s*\**\s*\**";
-    $name="\w+";
-    $arguments="($type\s*,?\s*)*";
+    // First, roughly split into the parts outside and inside of the parentheses.
+    preg_match_all("/\s*([^\(\)]+)\s*\(([^\(\)]*)\)\s*;?/",$procs,$matches_proc,PREG_SET_ORDER);
 
-    preg_match_all("/($type)\s+($name)\s*\(($arguments)\)\s*;?/",$procs,$matches,PREG_SET_ORDER);
+    for ($i=0;$i<count($matches_proc);++$i) {
+        // Second, separate the return type and procedure name.
+        preg_match("/^(.+)(\w+?)$/U",$matches_proc[$i][1],$matches_line);
 
-    $count=count($matches);
-    for ($i=0;$i<$count;++$i) {
+        // Trim whitespaces from the return type.
+        $matches_proc[$i][0]=trim($matches_line[1]);
+
+        // Trim whitespaces from the procedure name.
+        $matches_proc[$i][1]=trim($matches_line[2]);
+
+        // Trim whitespaces from the procedure arguments.
+        $matches_proc[$i][2]=trim($matches_proc[$i][2]);
+
         // For custom data types, prepend "GL".
-        $replaced1=addDataTypePrefix($matches[$i][1]);
+        $replaced_type=addDataTypePrefix($matches_proc[$i][0]);
 
         // If there is no lower case prefix, prepend "gl" to the name.
-        $match=&$matches[$i][2];
+        $match=&$matches_proc[$i][1];
         if ($match[0]>='A' && $match[0]<='Z') {
             $match='gl'.$match;
         }
 
         // For custom data types, prepend "GL".
-        $replaced3=addDataTypePrefix($matches[$i][3]);
+        $replaced_args=addDataTypePrefix($matches_proc[$i][2]);
 
         // Check that we have at least once prefixed an OpenGL data type (e.g.
         // the return type), else remove the invalid match.
-        if (!$replaced1 && !$replaced3) {
+        if (!$replaced_type && !$replaced_args) {
             // Note that $i is not an index but a key into the array. This means
             // deleting an entry will not make the following entries "move up".
-            unset($matches[$i]);
+            unset($matches_proc[$i]);
         }
     }
 
@@ -155,8 +158,8 @@ function writeMacroHeader($extension,$procs) {
     $arguments_length_max=0;
 
     // Get the maximum string lengths for alignment.
-    foreach ($matches as $procedure) {
-        list($all,$type,$name,$arguments,$argument)=$procedure;
+    foreach ($matches_proc as $procedure) {
+        list($type,$name,$arguments)=$procedure;
 
         $length=strlen($type);
         if ($type_length_max<$length) {
@@ -181,12 +184,12 @@ function writeMacroHeader($extension,$procs) {
     $handle=fopen($file,'w');
 
     $i=0;
-    foreach ($matches as $procedure) {
+    foreach ($matches_proc as $procedure) {
         if ($i++>0) {
             fwrite($handle,"\n");
         }
 
-        list($all,$type,$name,$arguments,$argument)=$procedure;
+        list($type,$name,$arguments)=$procedure;
 
         // Write the padded function prototypes to a header file.
         $type_pad=str_pad($type,$type_length_max+1);
