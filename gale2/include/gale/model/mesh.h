@@ -288,7 +288,7 @@ struct Mesh
             return m_mesh;
         }
 
-        // Returns the offset to the normals in the GPU buffer.
+        /// Returns the offset to the normals in the GPU buffer.
         void* getNormalOffset() const {
             if (!m_mesh) {
                 return NULL;
