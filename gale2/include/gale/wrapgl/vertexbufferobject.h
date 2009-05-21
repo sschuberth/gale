@@ -88,17 +88,17 @@ class VertexBufferObject:public Bindable<T,VertexBufferObject<T> >
 
     /// Returns the size of the object's data store.
     GLsizeiptrARB getSize() const {
-        return (GLsizeiptrARB)getParameter(GL_BUFFER_SIZE_ARB);
+        return static_cast<GLsizeiptrARB>(getParameter(GL_BUFFER_SIZE_ARB));
     }
 
     /// Returns the usage type of the object's data store.
     GLenum getUsageType() const {
-        return (GLenum)getParameter(GL_BUFFER_USAGE_ARB);
+        return static_cast<GLenum>(getParameter(GL_BUFFER_USAGE_ARB));
     }
 
     /// Returns the access type of the object's data store.
     GLenum getAccessType() const {
-        return (GLenum)getParameter(GL_BUFFER_ACCESS_ARB);
+        return static_cast<GLenum>(getParameter(GL_BUFFER_ACCESS_ARB));
     }
 
     /// Returns whether the object's data store is currently mapped to
@@ -111,8 +111,9 @@ class VertexBufferObject:public Bindable<T,VertexBufferObject<T> >
     /// the optionally specified \a access type, and returns the pointer.
     void* map(GLenum access=GL_WRITE_ONLY_ARB) const {
         makeCurrent();
-        glMapBufferARB(T,access);
+        GLvoid* data=glMapBufferARB(T,access);
         G_ASSERT_OPENGL
+        return data;
     }
 
     /// Unmaps the object's data store from client memory, returns \c true on
@@ -128,9 +129,9 @@ class VertexBufferObject:public Bindable<T,VertexBufferObject<T> >
     /// the pointer to it, or \c NULL otherwise.
     void* getMappedData() const {
         makeCurrent();
-        GLvoid* value;
-        glGetBufferPointervARB(T,GL_BUFFER_MAP_POINTER_ARB,&value);
-        return value;
+        GLvoid* data;
+        glGetBufferPointervARB(T,GL_BUFFER_MAP_POINTER_ARB,&data);
+        return data;
     }
 
     //@}
