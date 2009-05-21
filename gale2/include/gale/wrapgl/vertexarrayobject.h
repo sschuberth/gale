@@ -43,8 +43,10 @@ namespace wrapgl {
  * This is a bindable OpenGL object implementation for Vertex Array Objects, see
  * <http://www.opengl.org/registry/specs/ARB/vertex_array_object.txt>
  */
-class VertexArrayObjectImpl
+class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObject>
 {
+    template<GLenum B,class I> friend class Bindable;
+
   public:
 
     /// Sets the current binding to the object described by \a handle. If
@@ -79,9 +81,6 @@ class VertexArrayObjectImpl
         return result!=GL_FALSE;
     }
 };
-
-/// Definition of the Vertex Array Object class.
-typedef Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjectImpl> VertexArrayObject;
 
 } // namespace wrapgl
 

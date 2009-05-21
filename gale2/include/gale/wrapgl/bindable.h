@@ -44,7 +44,7 @@ namespace wrapgl {
  * refers to the implementation class.
  */
 template<GLenum B,class I>
-class Bindable:public I
+class Bindable
 {
   public:
 
@@ -58,27 +58,23 @@ class Bindable:public I
 
     /// Creates a new (initially unbound) OpenGL object.
     Bindable() {
-        // Explicit "this" is required for templates dependent names.
-        this->createObject(m_handle);
+        I::createObject(m_handle);
     }
 
     /// Destroys this OpenGL object. If the object is currently bound, the
     /// default object becomes current.
     ~Bindable() {
-        // Explicit "this" is required for templates dependent names.
-        this->destroyObject(m_handle);
+        I::destroyObject(m_handle);
     }
 
     /// Binds this object to the OpenGL state, making it the current one.
     void makeCurrent() const {
-        // Explicit "this" is required for templates dependent names.
-        this->setCurrent(m_handle);
+        I::setCurrent(m_handle);
     }
 
     /// Checks whether this object's handle is valid.
     bool isValid() const {
-        // Explicit "this" is required for templates dependent names.
-        return this->isValidObject(m_handle);
+        return I::isValidObject(m_handle);
     }
 
   protected:
