@@ -61,6 +61,11 @@ class RenderWindow:public RenderSurface
     /// rendering context.
     RenderWindow(LPCTSTR title,int width,int height,global::AttributeListi const* pixel_attr=NULL);
 
+    /// Frees the window resources.
+    ~RenderWindow() {
+        RenderSurface::destroy();
+    }
+
     /// Returns the currently set timeout value in seconds.
     double getTimeout() const {
         return m_timeout;
@@ -108,6 +113,8 @@ class RenderWindow:public RenderSurface
 
     /// Handles window messages and forwards them to the event handlers.
     LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
+
+    bool m_close_requested; ///< Indicates whether the window should be closed.
 
     double m_timeout;      ///< Timeout event value in seconds.
     system::Timer m_timer; ///< Timer to trigger the timeout event.

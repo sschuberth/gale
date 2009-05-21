@@ -35,7 +35,8 @@ namespace wrapgl {
 #ifdef G_OS_WINDOWS
 
 RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeListi const* pixel_attr)
-:   m_timeout(0)
+:   m_close_requested(false)
+,   m_timeout(0)
 {
     // Calculate the window size from the desired client area size.
     RECT rect={0,0,width,height};
@@ -125,15 +126,11 @@ void RenderWindow::processEvents()
 {
     MSG msg;
 
-    for (;;) {
+    while (!m_close_requested) {
         // We need to use the non-blocking PeekMessage() here which causes high
         // CPU usage instead of the blocking GetMessage() because we want to be
         // able to do something during idle time.
         if (PeekMessage(&msg,m_window,0,0,PM_REMOVE)) {
-            if (msg.message==WM_QUIT) {
-                // Do not dispatch the quit message.
-                break;
-            }
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
@@ -188,7 +185,12 @@ LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
         // This is sent to a window when it should terminate.
         case WM_CLOSE: {
             onClose();
-            destroy();
+
+            // Delay the call to destroy() until class destruction time so other
+            // OpenGL wrapper classes can free their resources in their
+            // destructors before the rendering context gets deleted.
+            m_close_requested=true;
+
             break;
         }
 
