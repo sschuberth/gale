@@ -6,7 +6,7 @@ typedef char GLcharARB;
 typedef unsigned int GLhandleARB;
 
 // Introduced by GL_ARB_vertex_buffer_object:
-typedef GLint* GLintptrARB;
-typedef GLsizei* GLsizeiptrARB;
+typedef ptrdiff_t GLintptrARB;
+typedef ptrdiff_t GLsizeiptrARB;
 
 #endif // GLEX_GLOBALS_H
