@@ -174,7 +174,7 @@ class DynamicArray
             capacity=m_size;
         }
 
-        if (capacity>m_capacity || capacity==0) {
+        if (capacity!=m_capacity) {
             T* data=static_cast<T*>(realloc(m_data,capacity*sizeof(T)));
             if (data) {
                 m_data=data;
