@@ -240,7 +240,7 @@ class DynamicArray
     /// is -1, the item gets appended at the end of the array. Returns the first
     /// index of the newly added item.
     int insert(T const& item,int position=-1) {
-        if (position==-1 || position>m_size) {
+        if (position<0 || position>m_size) {
             position=m_size;
         }
 
@@ -259,7 +259,7 @@ class DynamicArray
     /// If \a position is -1, the item gets appended at the end of the array.
     /// Returns the first index of the newly added array.
     int insert(DynamicArray const& array,int position=-1) {
-        if (position==-1 || position>m_size) {
+        if (position<0 || position>m_size) {
             position=m_size;
         }
 
@@ -279,7 +279,7 @@ class DynamicArray
     /// Returns the first index of the newly added array.
     template<size_t size>
     int insert(T const (&array)[size],int position=-1) {
-        if (position==-1 || position>m_size) {
+        if (position<0 || position>m_size) {
             position=m_size;
         }
 
@@ -303,7 +303,7 @@ class DynamicArray
         }
 
         int end=begin+count;
-        if (count==-1 || end>m_size) {
+        if (count<0 || end>m_size) {
             end=m_size;
         }
 
