@@ -34,6 +34,7 @@
 #include "../global/dynamicarray.h"
 #include "../math/formula.h"
 #include "../math/hmatrix4.h"
+#include "../wrapgl/vertexbufferobject.h"
 
 #include "boundingbox.h"
 
@@ -287,6 +288,14 @@ struct Mesh
             return m_mesh;
         }
 
+        // Returns the offset to the normals in the GPU buffer.
+        void* getNormalOffset() const {
+            if (!m_mesh) {
+                return NULL;
+            }
+            return reinterpret_cast<void*>(m_mesh->vertices.getSize()*sizeof(VectorArray::Type));
+        }
+
         // Work around a Doxygen bug that causes to find no matching class
         // member for orbit(int ai,int bi,IndexArray &polygon) if IndexArray is
         // already used here.
@@ -299,8 +308,9 @@ struct Mesh
 
         IndexTable polygons;  ///< Table of vertex indices describing polygons.
 
-        VectorArray normals;  ///< Array of vertex normals.
-        AABB box;             ///< The axis-aligned bounding box.
+        AABB box; ///< The axis-aligned bounding box.
+
+        wrapgl::ArrayBufferObject buffer; ///< Vertices and normals on the GPU.
 
       protected:
 

@@ -42,9 +42,11 @@ void Renderer::draw(Mesh::Preparer const& geom)
 
     // Set-up the arrays to be indexed.
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3,GL_FLOAT,0,geom.getMesh()->vertices);
     glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_FLOAT,0,geom.normals);
+
+    geom.buffer.makeCurrent();
+    glVertexPointer(3,GL_FLOAT,0,NULL);
+    glNormalPointer(GL_FLOAT,0,geom.getNormalOffset());
 
     // Render the different indexed primitives, if any.
     if (geom.points.getSize()>0) {

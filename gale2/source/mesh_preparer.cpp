@@ -45,8 +45,17 @@ void Mesh::Preparer::compile(Mesh const* mesh)
     quads.clear();
     polygons.clear();
 
-    normals.setSize(m_mesh->vertices.getSize());
-    memset(normals,0,normals.getSize()*sizeof(VectorArray::Type));
+    // Allocate uninitialized GPU memory for the vertices and normals.
+    wrapgl::GLsizeiptrARB size=m_mesh->vertices.getSize()*sizeof(VectorArray::Type);
+    buffer.setData(size*2,NULL);
+
+    // Copy the vertices to the GPU.
+    Vec3f* buffer_ptr=static_cast<Vec3f*>(buffer.map(GL_READ_WRITE_ARB));
+    memcpy(buffer_ptr,m_mesh->vertices.data(),size);
+
+    // Map the GPU memory for the normals and initialize it to 0.
+    buffer_ptr+=m_mesh->vertices.getSize();
+    memset(buffer_ptr,0,size);
 
     if (m_mesh->vertices.getSize()<=0) {
         box.min=box.max=Vec3f::ZERO();
@@ -126,9 +135,9 @@ void Mesh::Preparer::compile(Mesh const* mesh)
                 triangles.insert(polygon);
 
                 // Accumulate the "normal" for all face vertices.
-                normals[polygon[0]]+=normal;
-                normals[polygon[1]]+=normal;
-                normals[polygon[2]]+=normal;
+                buffer_ptr[polygon[0]]+=normal;
+                buffer_ptr[polygon[1]]+=normal;
+                buffer_ptr[polygon[2]]+=normal;
             }
             else {
                 // More than 3 vertices require another check.
@@ -141,10 +150,10 @@ void Mesh::Preparer::compile(Mesh const* mesh)
                     quads.insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    normals[polygon[0]]+=normal;
-                    normals[polygon[1]]+=normal;
-                    normals[polygon[2]]+=normal;
-                    normals[polygon[3]]+=normal;
+                    buffer_ptr[polygon[0]]+=normal;
+                    buffer_ptr[polygon[1]]+=normal;
+                    buffer_ptr[polygon[2]]+=normal;
+                    buffer_ptr[polygon[3]]+=normal;
                 }
                 else {
                     // More than 4 vertices require another check.
@@ -157,20 +166,22 @@ void Mesh::Preparer::compile(Mesh const* mesh)
                     polygons.insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    normals[polygon[0]]+=normal;
-                    normals[polygon[1]]+=normal;
-                    normals[polygon[2]]+=normal;
-                    normals[polygon[3]]+=normal;
-                    normals[polygon[4]]+=normal;
+                    buffer_ptr[polygon[0]]+=normal;
+                    buffer_ptr[polygon[1]]+=normal;
+                    buffer_ptr[polygon[2]]+=normal;
+                    buffer_ptr[polygon[3]]+=normal;
+                    buffer_ptr[polygon[4]]+=normal;
                 }
             }
         }
     }
 
     // Normalize the accumulated face "normals".
-    for (int i=0;i<normals.getSize();++i) {
-        normals[i].normalize();
+    for (int i=0;i<m_mesh->vertices.getSize();++i) {
+        buffer_ptr[i].normalize();
     }
+
+    buffer.unmap();
 }
 
 } // namespace model
