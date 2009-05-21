@@ -44,7 +44,8 @@ void pushOrtho2D();
 void popOrtho2D();
 
 /// Draws a logo into the lower left viewport corner, similar to a TV logo.
-void drawLogo();
+/// Returns the identifier of the created display list to delete it later.
+GLuint drawLogo();
 
 } // namespace wrapgl
 

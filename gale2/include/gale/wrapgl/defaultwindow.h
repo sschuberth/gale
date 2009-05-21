@@ -67,6 +67,7 @@ class DefaultWindow:public RenderWindow
     DefaultWindow(LPCTSTR title,int client_width=500,int client_height=500)
     :   RenderWindow(title,client_width,client_height)
     ,   m_camera(this)
+    ,   m_logo(0)
     {
         // Add an "About" entry to the system menu.
         HMENU menu=GetSystemMenu(windowHandle(),FALSE);
@@ -74,6 +75,12 @@ class DefaultWindow:public RenderWindow
             AppendMenu(menu,MF_SEPARATOR,NULL,NULL);
             AppendMenu(menu,MF_STRING,ID_ABOUT_DLG,_T("&About ..."));
         }
+    }
+
+    void onClose() {
+        // Free any OpenGL resources, else tools like gDEBugger will report
+        // graphic memory leaks.
+        glDeleteLists(m_logo,1);
     }
 
     /// Adjusts the camera if the window size changes.
@@ -101,7 +108,7 @@ class DefaultWindow:public RenderWindow
     /// Overrides the default paint event handler to draw a logo.
     void onPaint() {
         onRender();
-        drawLogo();
+        m_logo=drawLogo();
     }
 
     /// Applications that wish to benefit from extra stuff (like logos) being
@@ -127,6 +134,8 @@ class DefaultWindow:public RenderWindow
     LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
 
     wrapgl::Camera m_camera; ///< The window's default camera.
+
+    GLuint m_logo; ///< Display list identifier of the logo.
 };
 
 // Warning C4355: 'this' used in base member initializer list.

@@ -134,6 +134,8 @@ void RenderSurface::destroy()
         m_context.device=NULL;
     }
     if (m_window) {
+        // Send WM_DESTROY, which triggers WM_QUIT via PostQuitMessage() to
+        // break out of the message loop.
         G_ASSERT_CALL(DestroyWindow(m_window))
         m_window=NULL;
     }

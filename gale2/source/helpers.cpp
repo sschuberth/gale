@@ -72,7 +72,7 @@ void popOrtho2D()
     glMatrixMode(matrix_mode);
 }
 
-void drawLogo()
+GLuint drawLogo()
 {
     // Apply the required camera settings.
     Camera camera_logo;
@@ -170,6 +170,8 @@ void drawLogo()
         glEndList();
         G_ASSERT_OPENGL
     }
+
+    return list;
 }
 
 } // namespace wrapgl
