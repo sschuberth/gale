@@ -44,29 +44,36 @@ void Renderer::draw(Mesh::Preparer const& geom)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
 
-    geom.buffer.makeCurrent();
+    geom.arrays.makeCurrent();
     glVertexPointer(3,GL_FLOAT,0,NULL);
     glNormalPointer(GL_FLOAT,0,geom.getNormalOffset());
 
     // Render the different indexed primitives, if any.
+    geom.indices.makeCurrent();
+    Mesh::IndexArray::Type* offset=NULL;
     if (geom.points.getSize()>0) {
-        glDrawElements(GL_POINTS,geom.points.getSize(),GL_UNSIGNED_INT,geom.points);
+        glDrawElements(GL_POINTS,geom.points.getSize(),GL_UNSIGNED_INT,offset);
+        offset+=geom.points.getSize();
     }
     if (geom.lines.getSize()>0) {
-        glDrawElements(GL_LINES,geom.lines.getSize(),GL_UNSIGNED_INT,geom.lines);
+        glDrawElements(GL_LINES,geom.lines.getSize(),GL_UNSIGNED_INT,offset);
+        offset+=geom.lines.getSize();
     }
     if (geom.triangles.getSize()>0) {
-        glDrawElements(GL_TRIANGLES,geom.triangles.getSize(),GL_UNSIGNED_INT,geom.triangles);
+        glDrawElements(GL_TRIANGLES,geom.triangles.getSize(),GL_UNSIGNED_INT,offset);
+        offset+=geom.triangles.getSize();
     }
     if (geom.quads.getSize()>0) {
-        glDrawElements(GL_QUADS,geom.quads.getSize(),GL_UNSIGNED_INT,geom.quads);
+        glDrawElements(GL_QUADS,geom.quads.getSize(),GL_UNSIGNED_INT,offset);
+        offset+=geom.quads.getSize();
     }
 
     // As polygons do not have a fixed number of vertices, each one has its own
     // index array instead of a single array for all the primitive's vertices.
     for (int i=0;i<geom.polygons.getSize();++i) {
         if (geom.polygons[i].getSize()>0) {
-            glDrawElements(GL_POLYGON,geom.polygons[i].getSize(),GL_UNSIGNED_INT,geom.polygons[i]);
+            glDrawElements(GL_POLYGON,geom.polygons[i].getSize(),GL_UNSIGNED_INT,offset);
+            offset+=geom.polygons[i].getSize();
         }
     }
 }

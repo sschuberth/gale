@@ -296,6 +296,8 @@ struct Mesh
             return reinterpret_cast<void*>(m_mesh->vertices.getSize()*sizeof(VectorArray::Type));
         }
 
+        AABB box; ///< The axis-aligned bounding box.
+
         // Work around a Doxygen bug that causes to find no matching class
         // member for orbit(int ai,int bi,IndexArray &polygon) if IndexArray is
         // already used here.
@@ -308,9 +310,8 @@ struct Mesh
 
         IndexTable polygons;  ///< Table of vertex indices describing polygons.
 
-        AABB box; ///< The axis-aligned bounding box.
-
-        wrapgl::ArrayBufferObject buffer; ///< Vertices and normals on the GPU.
+        wrapgl::ArrayBufferObject arrays;  ///< Vertices and normals on the GPU.
+        wrapgl::IndexBufferObject indices; ///< Primitive indices on the GPU.
 
       protected:
 

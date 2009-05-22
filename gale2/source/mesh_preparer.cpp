@@ -47,15 +47,15 @@ void Mesh::Preparer::compile(Mesh const* mesh)
 
     // Allocate uninitialized GPU memory for the vertices and normals.
     wrapgl::GLsizeiptrARB size=m_mesh->vertices.getSize()*sizeof(VectorArray::Type);
-    buffer.setData(size*2,NULL);
+    arrays.setData(size*2,NULL);
 
     // Copy the vertices to the GPU.
-    Vec3f* buffer_ptr=static_cast<Vec3f*>(buffer.map(GL_READ_WRITE_ARB));
-    memcpy(buffer_ptr,m_mesh->vertices.data(),size);
+    VectorArray::Type* arrays_ptr=static_cast<VectorArray::Type*>(arrays.map(GL_READ_WRITE_ARB));
+    memcpy(arrays_ptr,m_mesh->vertices.data(),size);
 
     // Map the GPU memory for the normals and initialize it to 0.
-    buffer_ptr+=m_mesh->vertices.getSize();
-    memset(buffer_ptr,0,size);
+    arrays_ptr+=m_mesh->vertices.getSize();
+    memset(arrays_ptr,0,size);
 
     if (m_mesh->vertices.getSize()<=0) {
         box.min=box.max=Vec3f::ZERO();
@@ -135,9 +135,9 @@ void Mesh::Preparer::compile(Mesh const* mesh)
                 triangles.insert(polygon);
 
                 // Accumulate the "normal" for all face vertices.
-                buffer_ptr[polygon[0]]+=normal;
-                buffer_ptr[polygon[1]]+=normal;
-                buffer_ptr[polygon[2]]+=normal;
+                arrays_ptr[polygon[0]]+=normal;
+                arrays_ptr[polygon[1]]+=normal;
+                arrays_ptr[polygon[2]]+=normal;
             }
             else {
                 // More than 3 vertices require another check.
@@ -150,10 +150,10 @@ void Mesh::Preparer::compile(Mesh const* mesh)
                     quads.insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    buffer_ptr[polygon[0]]+=normal;
-                    buffer_ptr[polygon[1]]+=normal;
-                    buffer_ptr[polygon[2]]+=normal;
-                    buffer_ptr[polygon[3]]+=normal;
+                    arrays_ptr[polygon[0]]+=normal;
+                    arrays_ptr[polygon[1]]+=normal;
+                    arrays_ptr[polygon[2]]+=normal;
+                    arrays_ptr[polygon[3]]+=normal;
                 }
                 else {
                     // More than 4 vertices require another check.
@@ -166,11 +166,11 @@ void Mesh::Preparer::compile(Mesh const* mesh)
                     polygons.insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    buffer_ptr[polygon[0]]+=normal;
-                    buffer_ptr[polygon[1]]+=normal;
-                    buffer_ptr[polygon[2]]+=normal;
-                    buffer_ptr[polygon[3]]+=normal;
-                    buffer_ptr[polygon[4]]+=normal;
+                    arrays_ptr[polygon[0]]+=normal;
+                    arrays_ptr[polygon[1]]+=normal;
+                    arrays_ptr[polygon[2]]+=normal;
+                    arrays_ptr[polygon[3]]+=normal;
+                    arrays_ptr[polygon[4]]+=normal;
                 }
             }
         }
@@ -178,10 +178,39 @@ void Mesh::Preparer::compile(Mesh const* mesh)
 
     // Normalize the accumulated face "normals".
     for (int i=0;i<m_mesh->vertices.getSize();++i) {
-        buffer_ptr[i].normalize();
+        arrays_ptr[i].normalize();
     }
 
-    buffer.unmap();
+    arrays.unmap();
+
+    // Allocate uninitialized GPU memory for the indices.
+    size=points.getSize()+lines.getSize()+triangles.getSize()+quads.getSize();
+    for (int i=0;i<polygons.getSize();++i) {
+        size+=polygons[i].getSize();
+    }
+    indices.setData(size*sizeof(IndexArray::Type),NULL);
+
+    // Copy the indices to the GPU.
+    IndexArray::Type* indices_ptr=static_cast<IndexArray::Type*>(indices.map(GL_WRITE_ONLY_ARB));
+
+    memcpy(indices_ptr,points.data(),points.getSize()*sizeof(IndexArray::Type));
+    indices_ptr+=points.getSize();
+
+    memcpy(indices_ptr,lines.data(),lines.getSize()*sizeof(IndexArray::Type));
+    indices_ptr+=lines.getSize();
+
+    memcpy(indices_ptr,triangles.data(),triangles.getSize()*sizeof(IndexArray::Type));
+    indices_ptr+=triangles.getSize();
+
+    memcpy(indices_ptr,quads.data(),quads.getSize()*sizeof(IndexArray::Type));
+    indices_ptr+=quads.getSize();
+
+    for (int i=0;i<polygons.getSize();++i) {
+        memcpy(indices_ptr,polygons[i].data(),polygons[i].getSize()*sizeof(IndexArray::Type));
+        indices_ptr+=polygons[i].getSize();
+    }
+
+    indices.unmap();
 }
 
 } // namespace model
