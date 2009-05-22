@@ -45,35 +45,40 @@ void Renderer::draw(Mesh::Preparer const& geom)
     glEnableClientState(GL_NORMAL_ARRAY);
 
     geom.arrays.makeCurrent();
-    glVertexPointer(3,GL_FLOAT,0,NULL);
-    glNormalPointer(GL_FLOAT,0,geom.getNormalOffset());
+    Mesh::VectorArray::Type* arrays_ptr=NULL;
+
+    glVertexPointer(3,GL_FLOAT,0,arrays_ptr);
+    arrays_ptr+=geom.getMesh()->vertices.getSize();
+
+    glNormalPointer(GL_FLOAT,0,arrays_ptr);
 
     // Render the different indexed primitives, if any.
     geom.indices.makeCurrent();
-    Mesh::IndexArray::Type* offset=NULL;
+    Mesh::IndexArray::Type* indices_ptr=NULL;
+
     if (geom.points.getSize()>0) {
-        glDrawElements(GL_POINTS,geom.points.getSize(),GL_UNSIGNED_INT,offset);
-        offset+=geom.points.getSize();
+        glDrawElements(GL_POINTS,geom.points.getSize(),GL_UNSIGNED_INT,indices_ptr);
+        indices_ptr+=geom.points.getSize();
     }
     if (geom.lines.getSize()>0) {
-        glDrawElements(GL_LINES,geom.lines.getSize(),GL_UNSIGNED_INT,offset);
-        offset+=geom.lines.getSize();
+        glDrawElements(GL_LINES,geom.lines.getSize(),GL_UNSIGNED_INT,indices_ptr);
+        indices_ptr+=geom.lines.getSize();
     }
     if (geom.triangles.getSize()>0) {
-        glDrawElements(GL_TRIANGLES,geom.triangles.getSize(),GL_UNSIGNED_INT,offset);
-        offset+=geom.triangles.getSize();
+        glDrawElements(GL_TRIANGLES,geom.triangles.getSize(),GL_UNSIGNED_INT,indices_ptr);
+        indices_ptr+=geom.triangles.getSize();
     }
     if (geom.quads.getSize()>0) {
-        glDrawElements(GL_QUADS,geom.quads.getSize(),GL_UNSIGNED_INT,offset);
-        offset+=geom.quads.getSize();
+        glDrawElements(GL_QUADS,geom.quads.getSize(),GL_UNSIGNED_INT,indices_ptr);
+        indices_ptr+=geom.quads.getSize();
     }
 
     // As polygons do not have a fixed number of vertices, each one has its own
     // index array instead of a single array for all the primitive's vertices.
     for (int i=0;i<geom.polygons.getSize();++i) {
         if (geom.polygons[i].getSize()>0) {
-            glDrawElements(GL_POLYGON,geom.polygons[i].getSize(),GL_UNSIGNED_INT,offset);
-            offset+=geom.polygons[i].getSize();
+            glDrawElements(GL_POLYGON,geom.polygons[i].getSize(),GL_UNSIGNED_INT,indices_ptr);
+            indices_ptr+=geom.polygons[i].getSize();
         }
     }
 }

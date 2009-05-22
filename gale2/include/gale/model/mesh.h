@@ -288,14 +288,6 @@ struct Mesh
             return m_mesh;
         }
 
-        /// Returns the offset to the normals in the GPU buffer.
-        void* getNormalOffset() const {
-            if (!m_mesh) {
-                return NULL;
-            }
-            return reinterpret_cast<void*>(m_mesh->vertices.getSize()*sizeof(VectorArray::Type));
-        }
-
         AABB box; ///< The axis-aligned bounding box.
 
         // Work around a Doxygen bug that causes to find no matching class

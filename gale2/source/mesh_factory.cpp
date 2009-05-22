@@ -561,9 +561,7 @@ Mesh* Mesh::Factory::Normals(Preparer const& geom,float scale)
     // Copy the vertices to the normal mesh.
     memcpy(m->vertices,geom.getMesh()->vertices,n*sizeof(VectorArray::Type));
 
-    wrapgl::GLintptrARB offset=reinterpret_cast<wrapgl::GLintptrARB>(geom.arrays.map(GL_READ_ONLY_ARB));
-    offset+=reinterpret_cast<wrapgl::GLintptrARB>(geom.getNormalOffset());
-    Vec3f* normals_ptr=reinterpret_cast<Vec3f*>(offset);
+    VectorArray::Type* normals_ptr=static_cast<VectorArray::Type*>(geom.arrays.map(GL_READ_ONLY_ARB))+n;
 
     for (int i=0,k=n;i<n;++i,++k) {
         // Calculate the endpoints by pointing from the vertex into the normal direction.
