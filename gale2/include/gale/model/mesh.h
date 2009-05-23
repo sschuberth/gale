@@ -34,7 +34,10 @@
 #include "../global/dynamicarray.h"
 #include "../math/formula.h"
 #include "../math/hmatrix4.h"
-#include "../wrapgl/vertexbufferobject.h"
+
+#ifdef GALE_USE_VBO
+    #include "../wrapgl/vertexbufferobject.h"
+#endif
 
 #include "boundingbox.h"
 
@@ -302,8 +305,12 @@ struct Mesh
 
         IndexTable polygons;  ///< Table of vertex indices describing polygons.
 
+#ifdef GALE_USE_VBO
         wrapgl::ArrayBufferObject arrays;  ///< Vertices and normals on the GPU.
         wrapgl::IndexBufferObject indices; ///< Primitive indices on the GPU.
+#else
+        VectorArray normals; ///< Array of vertex normals.
+#endif
 
       protected:
 

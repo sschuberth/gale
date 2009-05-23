@@ -4,16 +4,24 @@
     instantiation instead of leaving them uninitialized for performance reasons.
 
 
+#define GALE_TINY_CODE
+
+    If defined, GALE does not use any external libraries (which includes the STL
+    an even the C runtime) to reduce the executable size. As a result, several
+    convenience or debugging methods will not be available.
+
+
+#define GALE_USE_VBO
+
+    If defined, explicitly uses Vertex Buffer Objects (VBOs) for rendering. In
+    recent OpenGL drivers, there does not seem to be much performance gain by
+    using VBOs, however. Probably the driver internally performs optimizations
+    to use VBOs or disply lists automatically.
+
+
 #define GALE_USE_SSE
 #define GALE_USE_SSE2
 #define GALE_USE_SSE3
 
     If defined, GALE uses SSE / SSE2 / SSE3 instructions on x86 machines to
     speed up certain calculations.
-
-
-#define GALE_TINY_CODE
-
-    If defined, GALE does not use any external libraries (which includes the STL
-    an even the C runtime) to reduce the executable size. As a result, several
-    convenience or debugging methods will not be available.

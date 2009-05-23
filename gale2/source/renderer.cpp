@@ -44,41 +44,66 @@ void Renderer::draw(Mesh::Preparer const& geom)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
 
+#ifdef GALE_USE_VBO
     geom.arrays.makeCurrent();
-    Mesh::VectorArray::Type* arrays_ptr=NULL;
+    Mesh::VectorArray::Type const* arrays_ptr=NULL;
 
     glVertexPointer(3,GL_FLOAT,0,arrays_ptr);
     arrays_ptr+=geom.getMesh()->vertices.getSize();
 
     glNormalPointer(GL_FLOAT,0,arrays_ptr);
 
-    // Render the different indexed primitives, if any.
     geom.indices.makeCurrent();
-    Mesh::IndexArray::Type* indices_ptr=NULL;
+    Mesh::IndexArray::Type const* indices_ptr=NULL;
+#else
+    glVertexPointer(3,GL_FLOAT,0,geom.getMesh()->vertices);
+    glNormalPointer(GL_FLOAT,0,geom.normals);
+#endif
 
+    // Render the different indexed primitives, if any.
     if (geom.points.getSize()>0) {
+#ifdef GALE_USE_VBO
         glDrawElements(GL_POINTS,geom.points.getSize(),GL_UNSIGNED_INT,indices_ptr);
         indices_ptr+=geom.points.getSize();
+#else
+        glDrawElements(GL_POINTS,geom.points.getSize(),GL_UNSIGNED_INT,geom.points);
+#endif
     }
     if (geom.lines.getSize()>0) {
+#ifdef GALE_USE_VBO
         glDrawElements(GL_LINES,geom.lines.getSize(),GL_UNSIGNED_INT,indices_ptr);
         indices_ptr+=geom.lines.getSize();
+#else
+        glDrawElements(GL_LINES,geom.lines.getSize(),GL_UNSIGNED_INT,geom.lines);
+#endif
     }
     if (geom.triangles.getSize()>0) {
+#ifdef GALE_USE_VBO
         glDrawElements(GL_TRIANGLES,geom.triangles.getSize(),GL_UNSIGNED_INT,indices_ptr);
         indices_ptr+=geom.triangles.getSize();
+#else
+        glDrawElements(GL_TRIANGLES,geom.triangles.getSize(),GL_UNSIGNED_INT,geom.triangles);
+#endif
     }
     if (geom.quads.getSize()>0) {
+#ifdef GALE_USE_VBO
         glDrawElements(GL_QUADS,geom.quads.getSize(),GL_UNSIGNED_INT,indices_ptr);
         indices_ptr+=geom.quads.getSize();
+#else
+        glDrawElements(GL_QUADS,geom.quads.getSize(),GL_UNSIGNED_INT,geom.quads);
+#endif
     }
 
     // As polygons do not have a fixed number of vertices, each one has its own
     // index array instead of a single array for all the primitive's vertices.
     for (int i=0;i<geom.polygons.getSize();++i) {
         if (geom.polygons[i].getSize()>0) {
+#ifdef GALE_USE_VBO
             glDrawElements(GL_POLYGON,geom.polygons[i].getSize(),GL_UNSIGNED_INT,indices_ptr);
             indices_ptr+=geom.polygons[i].getSize();
+#else
+            glDrawElements(GL_POLYGON,geom.polygons[i].getSize(),GL_UNSIGNED_INT,geom.polygons[i]);
+#endif
         }
     }
 }

@@ -45,16 +45,23 @@ void Mesh::Preparer::compile(Mesh const* mesh)
     quads.clear();
     polygons.clear();
 
+    size_t size=m_mesh->vertices.getSize()*sizeof(VectorArray::Type);
+
+#ifdef GALE_USE_VBO
     // Allocate uninitialized GPU memory for the vertices and normals.
-    wrapgl::GLsizeiptrARB size=m_mesh->vertices.getSize()*sizeof(VectorArray::Type);
     arrays.setData(size*2,NULL);
 
     // Copy the vertices to the GPU.
     VectorArray::Type* arrays_ptr=static_cast<VectorArray::Type*>(arrays.map(GL_READ_WRITE_ARB));
     memcpy(arrays_ptr,m_mesh->vertices.data(),size);
 
-    // Map the GPU memory for the normals and initialize it to 0.
     arrays_ptr+=m_mesh->vertices.getSize();
+#else
+    normals.setSize(m_mesh->vertices.getSize());
+    VectorArray::Type* arrays_ptr=normals;
+#endif
+
+    // Initialize the memory for the normals to 0.
     memset(arrays_ptr,0,size);
 
     if (m_mesh->vertices.getSize()<=0) {
@@ -176,11 +183,12 @@ void Mesh::Preparer::compile(Mesh const* mesh)
         }
     }
 
-    // Normalize the accumulated face "normals".
+    // Normalize the accumulated face "normals" (there are as many normals as vertices).
     for (int i=0;i<m_mesh->vertices.getSize();++i) {
         arrays_ptr[i].normalize();
     }
 
+#ifdef GALE_USE_VBO
     arrays.unmap();
 
     // Allocate uninitialized GPU memory for the indices.
@@ -211,6 +219,7 @@ void Mesh::Preparer::compile(Mesh const* mesh)
     }
 
     indices.unmap();
+#endif
 }
 
 } // namespace model

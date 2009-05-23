@@ -561,11 +561,17 @@ Mesh* Mesh::Factory::Normals(Preparer const& geom,float scale)
     // Copy the vertices to the normal mesh.
     memcpy(m->vertices,geom.getMesh()->vertices,n*sizeof(VectorArray::Type));
 
-    VectorArray::Type* normals_ptr=static_cast<VectorArray::Type*>(geom.arrays.map(GL_READ_ONLY_ARB))+n;
+    VectorArray::Type const* vertices_ptr=m->vertices;
+
+#ifdef GALE_USE_VBO
+    VectorArray::Type const* normals_ptr=static_cast<VectorArray::Type*>(geom.arrays.map(GL_READ_ONLY_ARB))+n;
+#else
+    VectorArray::Type const* normals_ptr=geom.normals;
+#endif
 
     for (int i=0,k=n;i<n;++i,++k) {
         // Calculate the endpoints by pointing from the vertex into the normal direction.
-        m->vertices[k]=m->vertices[i]+normals_ptr[i]*scale;
+        m->vertices[k]=(*vertices_ptr++)+(*normals_ptr++)*scale;
 
         // Set the start- and endpoints to be their respective neighbors.
         m->neighbors[i].setSize(1);
@@ -574,7 +580,9 @@ Mesh* Mesh::Factory::Normals(Preparer const& geom,float scale)
         m->neighbors[k]=i;
     }
 
+#ifdef GALE_USE_VBO
     geom.arrays.unmap();
+#endif
 
     return m;
 }
