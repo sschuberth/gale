@@ -293,21 +293,23 @@ struct Mesh
 
         AABB box; ///< The axis-aligned bounding box.
 
-        // Work around a Doxygen bug that causes to find no matching class
-        // member for orbit(int ai,int bi,IndexArray &polygon) if IndexArray is
-        // already used here.
-        /// \cond DOXYGEN_IGNORE
-        IndexArray points;    ///< Array of vertex indices describing points.
-        IndexArray lines;     ///< Array of vertex indices describing lines.
-        IndexArray triangles; ///< Array of vertex indices describing triangles.
-        IndexArray quads;     ///< Array of vertex indices describing quadrilaterals.
-        /// \endcond
+        /// Names for the primitives stored in the indices table.
+        enum PrimitiveIndices {
+            PI_POINTS,    ///< The first array of indices describes points.
+            PI_LINES,     ///< The second array of indices describes lines.
+            PI_TRIANGLES, ///< The third array of indices describes triangles.
+            PI_QUADS,     ///< The third array of indices describes quadrilaterals.
+            PI_COUNT      ///< Special entry to name the number of enum entries.
+        };
 
-        IndexTable polygons;  ///< Table of vertex indices describing polygons.
+        static GLenum const GL_PRIM_TYPE[PI_COUNT]; ///< The primitive types as stored in the indices table.
+
+        IndexTable indices;  ///< Table of vertex indices describing primitives.
+        IndexTable polygons; ///< Table of vertex indices describing polygons.
 
 #ifdef GALE_USE_VBO
-        wrapgl::ArrayBufferObject arrays;  ///< Vertices and normals on the GPU.
-        wrapgl::IndexBufferObject indices; ///< Primitive indices on the GPU.
+        wrapgl::ArrayBufferObject vbo_arrays;  ///< Vertices and normals on the GPU.
+        wrapgl::IndexBufferObject vbo_indices; ///< Primitive indices on the GPU.
 #else
         VectorArray normals; ///< Array of vertex normals.
 #endif

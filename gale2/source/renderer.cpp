@@ -45,7 +45,7 @@ void Renderer::draw(Mesh::Preparer const& geom)
     glEnableClientState(GL_NORMAL_ARRAY);
 
 #ifdef GALE_USE_VBO
-    geom.arrays.makeCurrent();
+    geom.vbo_arrays.makeCurrent();
     Mesh::VectorArray::Type const* arrays_ptr=NULL;
 
     glVertexPointer(3,GL_FLOAT,0,arrays_ptr);
@@ -53,7 +53,7 @@ void Renderer::draw(Mesh::Preparer const& geom)
 
     glNormalPointer(GL_FLOAT,0,arrays_ptr);
 
-    geom.indices.makeCurrent();
+    geom.vbo_indices.makeCurrent();
     Mesh::IndexArray::Type const* indices_ptr=NULL;
 #else
     glVertexPointer(3,GL_FLOAT,0,geom.getMesh()->vertices);
@@ -61,37 +61,15 @@ void Renderer::draw(Mesh::Preparer const& geom)
 #endif
 
     // Render the different indexed primitives, if any.
-    if (geom.points.getSize()>0) {
+    for (int i=0;i<G_ARRAY_LENGTH(Mesh::Preparer::GL_PRIM_TYPE);++i) {
+        if (geom.indices[i].getSize()>0) {
 #ifdef GALE_USE_VBO
-        glDrawElements(GL_POINTS,geom.points.getSize(),GL_UNSIGNED_INT,indices_ptr);
-        indices_ptr+=geom.points.getSize();
+            glDrawElements(Mesh::Preparer::GL_PRIM_TYPE[i],geom.indices[i].getSize(),GL_UNSIGNED_INT,indices_ptr);
+            indices_ptr+=geom.indices[i].getSize();
 #else
-        glDrawElements(GL_POINTS,geom.points.getSize(),GL_UNSIGNED_INT,geom.points);
+            glDrawElements(Mesh::Preparer::GL_PRIM_TYPE[i],geom.indices[i].getSize(),GL_UNSIGNED_INT,geom.indices[i]);
 #endif
-    }
-    if (geom.lines.getSize()>0) {
-#ifdef GALE_USE_VBO
-        glDrawElements(GL_LINES,geom.lines.getSize(),GL_UNSIGNED_INT,indices_ptr);
-        indices_ptr+=geom.lines.getSize();
-#else
-        glDrawElements(GL_LINES,geom.lines.getSize(),GL_UNSIGNED_INT,geom.lines);
-#endif
-    }
-    if (geom.triangles.getSize()>0) {
-#ifdef GALE_USE_VBO
-        glDrawElements(GL_TRIANGLES,geom.triangles.getSize(),GL_UNSIGNED_INT,indices_ptr);
-        indices_ptr+=geom.triangles.getSize();
-#else
-        glDrawElements(GL_TRIANGLES,geom.triangles.getSize(),GL_UNSIGNED_INT,geom.triangles);
-#endif
-    }
-    if (geom.quads.getSize()>0) {
-#ifdef GALE_USE_VBO
-        glDrawElements(GL_QUADS,geom.quads.getSize(),GL_UNSIGNED_INT,indices_ptr);
-        indices_ptr+=geom.quads.getSize();
-#else
-        glDrawElements(GL_QUADS,geom.quads.getSize(),GL_UNSIGNED_INT,geom.quads);
-#endif
+        }
     }
 
     // As polygons do not have a fixed number of vertices, each one has its own

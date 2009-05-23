@@ -31,6 +31,13 @@ namespace gale {
 
 namespace model {
 
+GLenum const Mesh::Preparer::GL_PRIM_TYPE[PI_COUNT]={
+    GL_POINTS,
+    GL_LINES,
+    GL_TRIANGLES,
+    GL_QUADS
+};
+
 void Mesh::Preparer::compile(Mesh const* mesh)
 {
     m_mesh=mesh;
@@ -39,20 +46,17 @@ void Mesh::Preparer::compile(Mesh const* mesh)
     }
 
     // Clear all indices as they will be rebuilt now.
-    points.clear();
-    lines.clear();
-    triangles.clear();
-    quads.clear();
+    indices.clear();
     polygons.clear();
 
     size_t size=m_mesh->vertices.getSize()*sizeof(VectorArray::Type);
 
 #ifdef GALE_USE_VBO
     // Allocate uninitialized GPU memory for the vertices and normals.
-    arrays.setData(size*2,NULL);
+    vbo_arrays.setData(size*2,NULL);
 
     // Copy the vertices to the GPU.
-    VectorArray::Type* arrays_ptr=static_cast<VectorArray::Type*>(arrays.map(GL_READ_WRITE_ARB));
+    VectorArray::Type* arrays_ptr=static_cast<VectorArray::Type*>(vbo_arrays.map(GL_READ_WRITE_ARB));
     memcpy(arrays_ptr,m_mesh->vertices.data(),size);
 
     arrays_ptr+=m_mesh->vertices.getSize();
@@ -71,6 +75,7 @@ void Mesh::Preparer::compile(Mesh const* mesh)
 
     box.min=box.max=m_mesh->vertices[0];
 
+    indices.setSize(G_ARRAY_LENGTH(GL_PRIM_TYPE));
     IndexArray polygon;
 
     for (int vi=0;vi<m_mesh->vertices.getSize();++vi) {
@@ -102,14 +107,14 @@ void Mesh::Preparer::compile(Mesh const* mesh)
         // Check for non-face primitives.
         if (vn.getSize()==0) {
             // This is just a point with an empty neighborhood.
-            points.insert(vi);
+            indices[PI_POINTS].insert(vi);
             continue;
         }
 
         if (vn.getSize()==1) {
             // This is just a line with a single neighbor.
-            lines.insert(vi);
-            lines.insert(vn[0]);
+            indices[PI_LINES].insert(vi);
+            indices[PI_LINES].insert(vn[0]);
             continue;
         }
 
@@ -139,7 +144,7 @@ void Mesh::Preparer::compile(Mesh const* mesh)
             Vec3f normal=(a-v)^(b-v);
 
             if (o==3) {
-                triangles.insert(polygon);
+                indices[PI_TRIANGLES].insert(polygon);
 
                 // Accumulate the "normal" for all face vertices.
                 arrays_ptr[polygon[0]]+=normal;
@@ -154,7 +159,7 @@ void Mesh::Preparer::compile(Mesh const* mesh)
                 }
 
                 if (o==4) {
-                    quads.insert(polygon);
+                    indices[PI_QUADS].insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
                     arrays_ptr[polygon[0]]+=normal;
@@ -189,36 +194,32 @@ void Mesh::Preparer::compile(Mesh const* mesh)
     }
 
 #ifdef GALE_USE_VBO
-    arrays.unmap();
+    vbo_arrays.unmap();
 
     // Allocate uninitialized GPU memory for the indices.
-    size=points.getSize()+lines.getSize()+triangles.getSize()+quads.getSize();
+    size=0;
+    for (int i=0;i<G_ARRAY_LENGTH(GL_PRIM_TYPE);++i) {
+        size+=indices[i].getSize();
+    }
     for (int i=0;i<polygons.getSize();++i) {
         size+=polygons[i].getSize();
     }
-    indices.setData(size*sizeof(IndexArray::Type),NULL);
+    vbo_indices.setData(size*sizeof(IndexArray::Type),NULL);
 
     // Copy the indices to the GPU.
-    IndexArray::Type* indices_ptr=static_cast<IndexArray::Type*>(indices.map(GL_WRITE_ONLY_ARB));
+    IndexArray::Type* indices_ptr=static_cast<IndexArray::Type*>(vbo_indices.map(GL_WRITE_ONLY_ARB));
 
-    memcpy(indices_ptr,points.data(),points.getSize()*sizeof(IndexArray::Type));
-    indices_ptr+=points.getSize();
-
-    memcpy(indices_ptr,lines.data(),lines.getSize()*sizeof(IndexArray::Type));
-    indices_ptr+=lines.getSize();
-
-    memcpy(indices_ptr,triangles.data(),triangles.getSize()*sizeof(IndexArray::Type));
-    indices_ptr+=triangles.getSize();
-
-    memcpy(indices_ptr,quads.data(),quads.getSize()*sizeof(IndexArray::Type));
-    indices_ptr+=quads.getSize();
+    for (int i=0;i<G_ARRAY_LENGTH(GL_PRIM_TYPE);++i) {
+        memcpy(indices_ptr,indices[i].data(),indices[i].getSize()*sizeof(IndexArray::Type));
+        indices_ptr+=indices[i].getSize();
+    }
 
     for (int i=0;i<polygons.getSize();++i) {
         memcpy(indices_ptr,polygons[i].data(),polygons[i].getSize()*sizeof(IndexArray::Type));
         indices_ptr+=polygons[i].getSize();
     }
 
-    indices.unmap();
+    vbo_indices.unmap();
 #endif
 }
 
