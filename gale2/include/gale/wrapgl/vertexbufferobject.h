@@ -150,13 +150,15 @@ class VertexBufferObject:public Bindable<T,VertexBufferObject<T> >
     /// Destroys the OpenGL object identified by \a handle. If the object is
     /// currently bound, the default object becomes current.
     static void destroyObject(GLuint handle) {
-        glDeleteBuffersARB(1,&handle);
-        G_ASSERT_OPENGL
+        if (glDeleteBuffersARB) {
+            glDeleteBuffersARB(1,&handle);
+            G_ASSERT_OPENGL
+        }
     }
 
     /// Checks whether the given object \a handle is valid.
     static bool isValidObject(GLuint handle) {
-        GLboolean result=glIsBufferARB(handle);
+        GLboolean result=glIsBufferARB && glIsBufferARB(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
     }

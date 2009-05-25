@@ -70,13 +70,15 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
     /// Destroys the OpenGL object identified by \a handle. If the object is
     /// currently bound, the default object becomes current.
     static void destroyObject(GLuint handle) {
-        glDeleteVertexArrays(1,&handle);
-        G_ASSERT_OPENGL
+        if (glDeleteVertexArrays) {
+            glDeleteVertexArrays(1,&handle);
+            G_ASSERT_OPENGL
+        }
     }
 
     /// Checks whether the given object \a handle is valid.
     static bool isValidObject(GLuint handle) {
-        GLboolean result=glIsVertexArray(handle);
+        GLboolean result=glIsVertexArray && glIsVertexArray(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
     }
