@@ -57,7 +57,9 @@ class Bindable
     }
 
     /// Creates a new (initially unbound) OpenGL object.
-    Bindable() {
+    Bindable()
+    :   m_is_new(true)
+    {
         I::createObject(m_handle);
     }
 
@@ -70,6 +72,12 @@ class Bindable
     /// Binds this object to the OpenGL state, making it the current one.
     void makeCurrent() const {
         I::setCurrent(m_handle);
+        m_is_new=false;
+    }
+
+    /// Returns whether the object was never made current yet.
+    bool isNew() const {
+        return m_is_new;
     }
 
     /// Checks whether this object's handle is valid.
@@ -78,6 +86,8 @@ class Bindable
     }
 
   protected:
+
+    bool mutable m_is_new; ///< Indicates whether the object was never made current yet.
 
     GLuint m_handle; ///< The handle identifying the object.
 };
