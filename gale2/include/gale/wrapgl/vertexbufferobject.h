@@ -131,6 +131,7 @@ class VertexBufferObject:public Bindable<T,VertexBufferObject<T> >
         makeCurrent();
         GLvoid* data;
         glGetBufferPointervARB(T,GL_BUFFER_MAP_POINTER_ARB,&data);
+        G_ASSERT_OPENGL
         return data;
     }
 
@@ -143,8 +144,8 @@ class VertexBufferObject:public Bindable<T,VertexBufferObject<T> >
         handle=0;
         if (GLEX_ARB_vertex_buffer_object || GLEX_ARB_vertex_buffer_object_init()) {
             glGenBuffersARB(1,&handle);
+            G_ASSERT_OPENGL
         }
-        G_ASSERT_OPENGL
     }
 
     /// Destroys the OpenGL object identified by \a handle. If the object is
@@ -170,6 +171,7 @@ class VertexBufferObject:public Bindable<T,VertexBufferObject<T> >
         makeCurrent();
         GLint value;
         glGetBufferParameterivARB(T,name,&value);
+        G_ASSERT_OPENGL
         return value;
     }
 };

@@ -63,8 +63,8 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
         handle=0;
         if (GLEX_ARB_vertex_array_object || GLEX_ARB_vertex_array_object_init()) {
             glGenVertexArrays(1,&handle);
+            G_ASSERT_OPENGL
         }
-        G_ASSERT_OPENGL
     }
 
     /// Destroys the OpenGL object identified by \a handle. If the object is
