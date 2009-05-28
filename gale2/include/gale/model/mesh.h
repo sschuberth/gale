@@ -36,6 +36,7 @@
 #include "../math/hmatrix4.h"
 
 #ifdef GALE_USE_VBO
+    #include "../wrapgl/vertexarrayobject.h"
     #include "../wrapgl/vertexbufferobject.h"
 #endif
 
@@ -310,6 +311,8 @@ struct Mesh
 #ifdef GALE_USE_VBO
         wrapgl::ArrayBufferObject vbo_arrays;  ///< Vertices and normals on the GPU.
         wrapgl::IndexBufferObject vbo_indices; ///< Primitive indices on the GPU.
+
+        wrapgl::VertexArrayObject vao; ///< Bindable state vector for the render arrays.
 #else
         VectorArray normals; ///< Array of vertex normals.
 #endif

@@ -40,22 +40,36 @@ void Renderer::draw(Mesh::Preparer const& geom)
         return;
     }
 
+#ifdef GALE_USE_VBO
+    bool vao_is_new=geom.vao.isNew();
+
+    if (geom.vao.isValid()) {
+        // This alters the VAO's "new" state.
+        geom.vao.makeCurrent();
+    }
+
+    if (vao_is_new || !geom.vao.isValid()) {
+        // Set-up the arrays to be indexed.
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+
+        geom.vbo_arrays.makeCurrent();
+
+        Mesh::VectorArray::Type const* arrays_ptr=NULL;
+        glVertexPointer(3,GL_FLOAT,0,arrays_ptr);
+
+        arrays_ptr+=geom.getMesh()->vertices.getSize();
+        glNormalPointer(GL_FLOAT,0,arrays_ptr);
+
+        geom.vbo_indices.makeCurrent();
+    }
+
+    Mesh::IndexArray::Type const* indices_ptr=NULL;
+#else
     // Set-up the arrays to be indexed.
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
 
-#ifdef GALE_USE_VBO
-    geom.vbo_arrays.makeCurrent();
-    Mesh::VectorArray::Type const* arrays_ptr=NULL;
-
-    glVertexPointer(3,GL_FLOAT,0,arrays_ptr);
-    arrays_ptr+=geom.getMesh()->vertices.getSize();
-
-    glNormalPointer(GL_FLOAT,0,arrays_ptr);
-
-    geom.vbo_indices.makeCurrent();
-    Mesh::IndexArray::Type const* indices_ptr=NULL;
-#else
     glVertexPointer(3,GL_FLOAT,0,geom.getMesh()->vertices);
     glNormalPointer(GL_FLOAT,0,geom.normals);
 #endif
@@ -84,6 +98,13 @@ void Renderer::draw(Mesh::Preparer const& geom)
 #endif
         }
     }
+
+#ifdef GALE_USE_VBO
+    if (geom.vao.isValid()) {
+        // Make sure no other changes accidently modify the state vector.
+        geom.vao.setCurrent(0);
+    }
+#endif
 }
 
 void Renderer::draw(AABB const& box)
