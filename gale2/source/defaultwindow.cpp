@@ -48,6 +48,8 @@ void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
 
     if (event!=ME_BUTTON_NONE) {
         if (event&ME_BUTTON_LEFT) {
+            // Note: This introduces rounding errors if called many times with
+            // small mouse cursor position changes.
             HMat4f m=m_camera.getModelview();
             m=HMat4f::Factory::Rotation(m.getUpVector(),-mouse_diff_x*Constd::DEG_TO_RAD()*0.5)*m;
             m=HMat4f::Factory::Rotation(m.getRightVector(),-mouse_diff_y*Constd::DEG_TO_RAD()*0.5)*m;
