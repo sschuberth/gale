@@ -138,6 +138,7 @@ LRESULT DefaultWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
                     glGetString(GL_RENDERER),
                     glGetString(GL_VERSION)
                 );
+                G_ASSERT_OPENGL
                 MessageBox(windowHandle(),buffer,_T("About OpenGL"),MB_OK);
                 break;
             }

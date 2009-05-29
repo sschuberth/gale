@@ -51,14 +51,17 @@ void Renderer::draw(Mesh::Preparer const& geom)
         // Set-up the arrays to be indexed.
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_NORMAL_ARRAY);
+        G_ASSERT_OPENGL
 
         geom.vbo_arrays.makeCurrent();
 
         Mesh::VectorArray::Type const* arrays_ptr=NULL;
         glVertexPointer(3,GL_FLOAT,0,arrays_ptr);
+        G_ASSERT_OPENGL
 
         arrays_ptr+=geom.getMesh()->vertices.getSize();
         glNormalPointer(GL_FLOAT,0,arrays_ptr);
+        G_ASSERT_OPENGL
 
         geom.vbo_indices.makeCurrent();
     }
@@ -68,9 +71,11 @@ void Renderer::draw(Mesh::Preparer const& geom)
     // Set-up the arrays to be indexed.
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
+    G_ASSERT_OPENGL
 
     glVertexPointer(3,GL_FLOAT,0,geom.getMesh()->vertices);
     glNormalPointer(GL_FLOAT,0,geom.normals);
+    G_ASSERT_OPENGL
 #endif
 
     // Render the different indexed primitives, if any.
@@ -82,6 +87,7 @@ void Renderer::draw(Mesh::Preparer const& geom)
 #else
             glDrawElements(Mesh::Preparer::GL_PRIM_TYPE[i],geom.indices[i].getSize(),GL_UNSIGNED_INT,geom.indices[i]);
 #endif
+            G_ASSERT_OPENGL
         }
     }
 
@@ -95,6 +101,7 @@ void Renderer::draw(Mesh::Preparer const& geom)
 #else
             glDrawElements(GL_POLYGON,geom.polygons[i].getSize(),GL_UNSIGNED_INT,geom.polygons[i]);
 #endif
+            G_ASSERT_OPENGL
         }
     }
 
@@ -119,6 +126,7 @@ void Renderer::draw(AABB const& box)
         glVertex3fv(v[6]);
         glVertex3fv(v[2]);
     glEnd();
+    G_ASSERT_OPENGL
 
     // "Front" face outline.
     glBegin(GL_LINE_LOOP);
@@ -127,6 +135,7 @@ void Renderer::draw(AABB const& box)
         glVertex3fv(v[7]);
         glVertex3fv(v[3]);
     glEnd();
+    G_ASSERT_OPENGL
 
     // Lines connecting "back" and "front" faces.
     glBegin(GL_LINES);
@@ -142,6 +151,7 @@ void Renderer::draw(AABB const& box)
         glVertex3fv(v[2]);
         glVertex3fv(v[3]);
     glEnd();
+    G_ASSERT_OPENGL
 }
 
 void Renderer::draw(Camera const& camera)
@@ -197,6 +207,7 @@ void Renderer::draw(Camera const& camera)
         glVertex3fv(cone[7]);
         glVertex3fv(cone[4]);
     glEnd();
+    G_ASSERT_OPENGL
 
     // Draw the remaining frustum lines.
     glBegin(GL_LINES);
@@ -209,6 +220,7 @@ void Renderer::draw(Camera const& camera)
         glVertex3fv(cone[3]);
         glVertex3fv(cone[7]);
     glEnd();
+    G_ASSERT_OPENGL
 }
 
 } // namespace wrapgl

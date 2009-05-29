@@ -81,6 +81,7 @@ class DefaultWindow:public RenderWindow
         // Free any OpenGL resources, else tools like gDEBugger will report
         // graphic memory leaks.
         glDeleteLists(m_logo,1);
+        G_ASSERT_OPENGL
     }
 
     /// Adjusts the camera if the window size changes.

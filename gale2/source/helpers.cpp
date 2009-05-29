@@ -36,23 +36,29 @@ void pushOrtho2D()
     // Save the current matrix mode.
     GLint matrix_mode;
     glGetIntegerv(GL_MATRIX_MODE,&matrix_mode);
+    G_ASSERT_OPENGL
 
-    // Set the modelview to identity.
+    // Save the original modelview matrix, then set the current one to identity.
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
+    G_ASSERT_OPENGL
 
-    // Set the projection matrix to map each raster position to a screen pixel.
+    // Save the original projection matrix, then set the current one to identity.
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
+    G_ASSERT_OPENGL
 
+    // Set the projection matrix to map each raster position to a screen pixel.
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT,viewport);
     glOrtho(viewport[0],viewport[2],viewport[1],viewport[3],-1,1);
+    G_ASSERT_OPENGL
 
-    // Restore the matrix mode.
+    // Restore the original matrix mode.
     glMatrixMode(matrix_mode);
+    G_ASSERT_OPENGL
 }
 
 void popOrtho2D()
@@ -60,16 +66,21 @@ void popOrtho2D()
     // Save the current matrix mode.
     GLint matrix_mode;
     glGetIntegerv(GL_MATRIX_MODE,&matrix_mode);
+    G_ASSERT_OPENGL
 
-    // Restore the projection and modelview matrices.
+    // Restore the original projection matrix.
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
+    G_ASSERT_OPENGL
 
+    // Restore the original modelview matrix.
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+    G_ASSERT_OPENGL
 
-    // Restore the matrix mode.
+    // Restore the original matrix mode.
     glMatrixMode(matrix_mode);
+    G_ASSERT_OPENGL
 }
 
 GLuint drawLogo()
@@ -106,16 +117,20 @@ GLuint drawLogo()
         glPushAttrib(GL_COLOR_BUFFER_BIT);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+        G_ASSERT_OPENGL
 
         glPushAttrib(GL_POLYGON_BIT);
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        G_ASSERT_OPENGL
 
         glPushAttrib(GL_ENABLE_BIT);
         glEnable(GL_CULL_FACE);
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LIGHTING);
+        G_ASSERT_OPENGL
 
         glColor3fv(math::Col3f::WHITE());
+        G_ASSERT_OPENGL
 
         // Render the cubes.
         model::Mesh::Preparer preparer;
@@ -124,15 +139,19 @@ GLuint drawLogo()
         preparer.compile(cube);
 
         glTranslatef(1,0,0);
+        G_ASSERT_OPENGL
         Renderer::draw(preparer);
 
         glTranslatef(-1,1,0);
+        G_ASSERT_OPENGL
         Renderer::draw(preparer);
 
         glTranslatef(0,-1,1);
+        G_ASSERT_OPENGL
         Renderer::draw(preparer);
 
         glTranslatef(0,0,-1);
+        G_ASSERT_OPENGL
 
         delete cube;
 
@@ -161,10 +180,12 @@ GLuint drawLogo()
         glVertex3fv(n+r);
 
         glEnd();
+        G_ASSERT_OPENGL
 
         glPopAttrib();
         glPopAttrib();
         glPopAttrib();
+        G_ASSERT_OPENGL
 
         // Complete the display list.
         glEndList();
