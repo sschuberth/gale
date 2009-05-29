@@ -220,6 +220,9 @@ void Mesh::Preparer::compile(Mesh const* mesh)
     }
 
     vbo_indices.unmap();
+
+    // Mark the Vertex Array Object's contents as invalid.
+    vao.setValidState(false);
 #endif
 }
 

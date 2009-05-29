@@ -41,14 +41,13 @@ void Renderer::draw(Mesh::Preparer const& geom)
     }
 
 #ifdef GALE_USE_VBO
-    bool vao_is_new=geom.vao.isNew();
-
-    if (geom.vao.isValid()) {
-        // This alters the VAO's "new" state.
+    if (geom.vao.isValidHandle()) {
         geom.vao.makeCurrent();
     }
 
-    if (vao_is_new || !geom.vao.isValid()) {
+    if (!geom.vao.isValidState() || !geom.vao.isValidHandle()) {
+        geom.vao.setValidState(true);
+
         // Set-up the arrays to be indexed.
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_NORMAL_ARRAY);
@@ -100,7 +99,7 @@ void Renderer::draw(Mesh::Preparer const& geom)
     }
 
 #ifdef GALE_USE_VBO
-    if (geom.vao.isValid()) {
+    if (geom.vao.isValidHandle()) {
         // Make sure no other changes accidently modify the state vector.
         geom.vao.setCurrent(0);
     }
