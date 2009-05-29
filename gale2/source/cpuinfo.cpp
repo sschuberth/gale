@@ -103,10 +103,9 @@ CPUInfo::CPUInfo()
 
 #ifdef G_COMP_MSVC
 
-        // TODO: Find a solution to clear ECX for G_ARCH_X86_64.
-        __asm {
-            xor ecx,ecx
-        }
+        // Dirty trick to get the ECX register cleared as MSVC 8.0 does not
+        // support inline assembly on the x86-64 architecture.
+        __cpuid(info,0x80000007);
 
         __cpuid(info,0x00000004);
         m_std_cache_params=info[0];
