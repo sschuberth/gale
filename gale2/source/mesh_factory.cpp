@@ -372,6 +372,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
         ++vi;
     }
 
+    // Reset the index of the vertex currently being dealt with.
     vi=0;
 
     // Calculate the vertex neighbors.
@@ -392,6 +393,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
 
             int n=0,biwc;
 
+            // Add the predecessor on the contour as a neighbor.
             biwc=bi+WRAP_C(ci-1);
             vn[n++]=biwc;
 
@@ -402,7 +404,17 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                     // just turn partial neighbors into mutual neighbors here.
                     for (int cA=0;cA<contour.getSize();++cA) {
                         if (m->neighbors[cA].find(vi)>=0) {
-                            vn[n++]=cA;
+                            // If there is a wrap-around in the neighbor indices,
+                            // swap them.
+                            unsigned int& pn=vn[n-1];
+                            if (pn==0 && cA==contour.getSize()-1) {
+                                vn[n]=pn;
+                                pn=cA;
+                            }
+                            else {
+                                vn[n]=cA;
+                            }
+                            ++n;
                         }
                     }
                 }
@@ -417,14 +429,15 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                 vn[n++]=vi+contour.getSize();
             }
 
+            // Add the successor on the contour as a neighbor.
             biwc=bi+WRAP_C(ci+1);
             vn[n++]=biwc;
 
             // Is this the first vertex on the path?
             if (pi==0) {
                 if (closed) {
-                    // It is not easy to find the transformed neighbors of a
-                    // closed path, so just connect to the closest ones.
+                    // It is unclear how to determine the transformed neighbors
+                    // of a closed path, so just connect to the closest ones.
                     Vec3f const& v=m->vertices[vi];
 
                     // Determine the index of the closest end cut face vertex
