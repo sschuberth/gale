@@ -30,12 +30,12 @@
 
 #ifdef G_ARCH_X86_64
     // Use 64-bit wide instructions.
-    #define EMIT0(ins)     STRINGIZER(ins##q\n\t)
-    #define EMIT1(ins,reg) STRINGIZER(ins##q %%r##reg\n\t)
+    #define EMIT_0(ins)     STRINGIZER(ins##q\n\t)
+    #define EMIT_1(ins,reg) STRINGIZER(ins##q %%r##reg\n\t)
 #else
     // Use 32-bit wide instructions.
-    #define EMIT0(ins)     STRINGIZER(ins##l\n\t)
-    #define EMIT1(ins,reg) STRINGIZER(ins##l %%e##reg\n\t)
+    #define EMIT_0(ins)     STRINGIZER(ins##l\n\t)
+    #define EMIT_1(ins,reg) STRINGIZER(ins##l %%e##reg\n\t)
 #endif
 
 namespace gale {
@@ -84,10 +84,10 @@ CPUInfo::CPUInfo()
         __asm__(
             "xorl %%eax,%%eax\n\t"
             "incl %%eax\n\t"
-            EMIT1(push,bx)
+            EMIT_1(push,bx)
             "cpuid\n\t"
             "movl %%ebx,%%eax\n\t"
-            EMIT1(pop,bx)
+            EMIT_1(pop,bx)
             : "=a" (m_std_misc_info)       /* Output  */
             , "=d" (m_std_feat_flags_edx)
             , "=c" (m_std_feat_flags_ecx)
@@ -116,9 +116,9 @@ CPUInfo::CPUInfo()
         __asm__(
             "movl $0x00000004,%%eax\n\t"
             "xorl %%ecx,%%ecx\n\t"
-            EMIT1(push,bx)
+            EMIT_1(push,bx)
             "cpuid\n\t"
-            EMIT1(pop,bx)
+            EMIT_1(pop,bx)
             : "=a" (m_std_cache_params)  /* Output  */
             :                            /* Input   */
             : "%ecx", "%edx", "cc"       /* Clobber */
@@ -145,9 +145,9 @@ CPUInfo::CPUInfo()
 
         __asm__(
             "movl $0x80000001,%%eax\n\t"
-            EMIT1(push,bx)
+            EMIT_1(push,bx)
             "cpuid\n\t"
-            EMIT1(pop,bx)
+            EMIT_1(pop,bx)
             : "=d" (m_ext_feat_flags_edx)  /* Output  */
             , "=c" (m_ext_feat_flags_ecx)
             :                              /* Input   */
@@ -169,9 +169,9 @@ CPUInfo::CPUInfo()
 
         __asm__(
             "movl $0x80000008,%%eax\n\t"
-            EMIT1(push,bx)
+            EMIT_1(push,bx)
             "cpuid\n\t"
-            EMIT1(pop,bx)
+            EMIT_1(pop,bx)
             : "=c" (m_ext_address_sizes)  /* Output  */
             :                             /* Input   */
             : "%eax", "%edx"              /* Clobber */
@@ -261,14 +261,14 @@ bool CPUInfo::hasCPUID() const
     unsigned int eax;
 
     __asm__(
-        EMIT0(pushf)
-        EMIT1(pop,ax)
+        EMIT_0(pushf)
+        EMIT_1(pop,ax)
         "xorl $0x00200000,%%eax\n\t"
         "movl %%eax,%%ecx\n\t"
-        EMIT1(push,ax)
-        EMIT0(popf)
-        EMIT0(pushf)
-        EMIT1(pop,ax)
+        EMIT_1(push,ax)
+        EMIT_0(popf)
+        EMIT_0(pushf)
+        EMIT_1(pop,ax)
         "cmpl %%ecx,%%eax\n\t"
         "sete %%cl\n\t"
         "movzxl %%cl,%%eax\n\t"
@@ -286,10 +286,10 @@ unsigned int CPUInfo::maxCPUIDStdFunc()
 
     __asm__(
         "xorl %%eax,%%eax\n\t"
-        EMIT1(push,bx)
+        EMIT_1(push,bx)
         "cpuid\n\t"
         "movl %%ebx,%%esi\n\t"
-        EMIT1(pop,bx)
+        EMIT_1(pop,bx)
         : "=a" (eax),
         , "=S" (*(unsigned int*)m_vendor)
         , "=d" (*(unsigned int*)(m_vendor+4))
@@ -307,11 +307,11 @@ unsigned int CPUInfo::maxCPUIDExtFunc() const
 
     __asm__(
         "movl $0x80000000,%%eax\n\t"
-        EMIT1(push,ax)
-        EMIT1(push,bx)
+        EMIT_1(push,ax)
+        EMIT_1(push,bx)
         "cpuid\n\t"
-        EMIT1(pop,bx)
-        EMIT1(pop,cx)
+        EMIT_1(pop,bx)
+        EMIT_1(pop,cx)
         "subl %%ecx,%%eax\n\t"
         : "=a" (eax)            /* Output  */
         :                       /* Input   */
