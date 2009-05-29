@@ -106,6 +106,7 @@ CPUInfo::CPUInfo()
         // Dirty trick to get the ECX register cleared as MSVC 8.0 does not
         // support inline assembly on the x86-64 architecture.
         __cpuid(info,0x80000007);
+        G_ASSERT(info[2]==0);
 
         __cpuid(info,0x00000004);
         m_std_cache_params=info[0];
