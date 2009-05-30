@@ -40,7 +40,8 @@ namespace wrapgl {
 #include "GLEX_ARB_vertex_buffer_object.h"
 
 /**
- * This is a bindable OpenGL object implementation for Vertex Buffer Objects, see
+ * This is a bindable OpenGL object implementation for Vertex Buffer Objects of
+ * target type \c T, see
  * <http://www.opengl.org/registry/specs/ARB/vertex_buffer_object.txt>
  */
 template<GLenum T,GLenum B>
