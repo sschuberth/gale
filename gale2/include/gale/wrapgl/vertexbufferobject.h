@@ -43,8 +43,8 @@ namespace wrapgl {
  * This is a bindable OpenGL object implementation for Vertex Buffer Objects, see
  * <http://www.opengl.org/registry/specs/ARB/vertex_buffer_object.txt>
  */
-template<GLenum T>
-class VertexBufferObject:public Bindable<T,VertexBufferObject<T> >
+template<GLenum T,GLenum B>
+class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 {
     template<GLenum B,class I> friend class Bindable;
 
@@ -181,8 +181,8 @@ class VertexBufferObject:public Bindable<T,VertexBufferObject<T> >
  */
 //@{
 
-typedef VertexBufferObject<GL_ARRAY_BUFFER_ARB> ArrayBufferObject;
-typedef VertexBufferObject<GL_ELEMENT_ARRAY_BUFFER_ARB> IndexBufferObject;
+typedef VertexBufferObject<GL_ARRAY_BUFFER_ARB,GL_ARRAY_BUFFER_BINDING_ARB> ArrayBufferObject;
+typedef VertexBufferObject<GL_ELEMENT_ARRAY_BUFFER_ARB,GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB> IndexBufferObject;
 
 //@}
 
