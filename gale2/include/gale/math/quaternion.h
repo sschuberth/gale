@@ -114,13 +114,13 @@ class Quaternion
     /// Creates a quaternion that matches the rotation represented by the given
     /// normalized rotation \a axis vector and rotation \a angle in radians.
     Quaternion(Vec const& axis,double const angle) {
-        setFromAxisAngle(axis,angle);
+        setAxisAngle(axis,angle);
     }
 
     /// Creates a quaternion that matches the rotation represented by the given
     /// homogeneous matrix \a m, which needs to be orthonormalized.
     Quaternion(HMat const& m) {
-        setFromMatrix(m);
+        setMatrix(m);
     }
 
     //@}
@@ -457,7 +457,7 @@ class Quaternion
 
     /// Sets this quaternion to match the rotation represented by the given
     /// normalized rotation \a axis vector and rotation \a angle in radians.
-    void setFromAxisAngle(Vec const& axis,double const angle) {
+    void setAxisAngle(Vec const& axis,double const angle) {
         double half=0.5*angle;
         real=T(::cos(half));
         imag=T(::sin(half))*axis;
@@ -466,7 +466,7 @@ class Quaternion
     /// Returns a rotation \a axis vector and rotation \a angle in radians that
     /// match the rotation represented by this quaternion, which needs to be
     /// normalized.
-    void toAxisAngle(Vec& axis,double& angle) {
+    void getAxisAngle(Vec& axis,double& angle) {
         T dot=imag.length2();
 
         if (dot>Numerics<T>::ZERO_TOLERANCE()) {
@@ -481,7 +481,7 @@ class Quaternion
 
     /// Sets this quaternion to match the rotation represented by the given
     /// homogeneous matrix \a m, which needs to be orthonormalized.
-    void setFromMatrix(HMat const& m) {
+    void setMatrix(HMat const& m) {
         T trace=m(0,0)+m(1,1)+m(2,2);
 
         if (trace>0) {
@@ -519,7 +519,7 @@ class Quaternion
 
     /// Returns a homogeneous matrix \a m that matches the rotation represented
     /// by this quaternion, which needs to be normalized.
-    void toMatrix(HMat& m) const {
+    void getMatrix(HMat& m) const {
         T x,y,z;
         T wx,wy,wz,xx,xy,xz,yy,yz,zz;
 

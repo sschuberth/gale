@@ -100,7 +100,7 @@ class TestWindow:public DefaultWindow
         glColor3f(0.5f,0.5f,0.5f);
 
         for (int i=0;i<4;++i) {
-            m_kf[i].toMatrix(m);
+            m_kf[i].getMatrix(m);
             m.setPositionVector(Vec3f(CATHETUS*(1.0f-((i+1)&2)),CATHETUS*(1.0f-(i&2)),0));
             glPushMatrix();
             glMultMatrixf(m);
@@ -111,7 +111,7 @@ class TestWindow:public DefaultWindow
         // Draw the interpolated cube.
         glColor3f(1.0f,1.0f,1.0f);
 
-        m_k.toMatrix(m);
+        m_k.getMatrix(m);
         m.setPositionVector(m_p);
         glPushMatrix();
         glMultMatrixf(m);

@@ -61,7 +61,7 @@ class AttributeList
     }
 
     /// Returns the number of entries in the list, i.e. 0 if the list is empty.
-    int getSize() const {
+    int size() const {
         return m_size;
     }
 
