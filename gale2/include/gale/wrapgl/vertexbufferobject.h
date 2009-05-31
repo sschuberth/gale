@@ -65,7 +65,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Copies the \a size number of bytes, optionally starting at \a offset,
     /// from the object's contents to \a data.
-    void getData(GLsizeiptrARB size,void* data,GLintptrARB offset=0) const {
+    void getData(GLsizeiptrARB size,GLvoid* data,GLintptrARB offset=0) const {
         makeCurrent();
         glGetBufferSubDataARB(T,offset,size,data);
         G_ASSERT_OPENGL
@@ -73,7 +73,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Initializes or sets the object's storage to the \a size number of bytes
     /// pointed to by \a data. Optionally defines a usage pattern for the data.
-    void setData(GLsizeiptrARB size,void const* data,GLenum usage=GL_STATIC_DRAW_ARB) const {
+    void setData(GLsizeiptrARB size,GLvoid const* data,GLenum usage=GL_STATIC_DRAW_ARB) const {
         makeCurrent();
         glBufferDataARB(T,size,data,usage);
         G_ASSERT_OPENGL
@@ -81,7 +81,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Modifies the object's storage to the \a size number of bytes pointed to
     /// by \a data, optionally starting at the given \a offset.
-    void setData(GLsizeiptrARB size,void const* data,GLintptrARB offset) const {
+    void setData(GLsizeiptrARB size,GLvoid const* data,GLintptrARB offset) const {
         makeCurrent();
         glBufferSubDataARB(T,offset,size,data);
         G_ASSERT_OPENGL
