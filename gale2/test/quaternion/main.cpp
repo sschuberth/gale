@@ -16,7 +16,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow(_T("test_slerp"),800,600)
+    :   DefaultWindow(_T("test_quaternion"),800,600)
     ,   m_pause(false)
     ,   m_cubic(true)
     {
