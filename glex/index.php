@@ -52,31 +52,37 @@ if (empty($error)) {
         echo '<div style="height: 32px"></div>';
 
         // writeMacroHeader
-        echo '<table style="width: 70%">';
-            drawTableBorder('t','white',FALSE,2);
-            showSourceCode($p);
-            drawTableBorder('b','white',FALSE,2);
-        echo '</table>';
+        if (!empty($p)) {
+            echo '<table style="width: 70%">';
+                drawTableBorder('t','white',FALSE,2);
+                showSourceCode($p);
+                drawTableBorder('b','white',FALSE,2);
+            echo '</table>';
 
-        echo '<div style="height: 16px"></div>';
+            echo '<div style="height: 16px"></div>';
+        }
 
         // writePrototypeHeader
-        echo '<table style="width: 70%">';
-            drawTableBorder('t','white',FALSE,2);
-            showSourceCode($h);
-            drawTableBorder('b','white',FALSE,2);
-        echo '</table>';
+        if (!empty($h)) {
+            echo '<table style="width: 70%">';
+                drawTableBorder('t','white',FALSE,2);
+                showSourceCode($h);
+                drawTableBorder('b','white',FALSE,2);
+            echo '</table>';
 
-        echo '<div style="height: 16px"></div>';
+            echo '<div style="height: 16px"></div>';
+        }
 
         // writeInitializationCode
-        echo '<table style="width: 70%">';
-            drawTableBorder('t','white',FALSE,2);
-            showSourceCode($c);
-            drawTableBorder('b','white',FALSE,2);
-        echo '</table>';
+        if (!empty($c)) {
+            echo '<table style="width: 70%">';
+                drawTableBorder('t','white',FALSE,2);
+                showSourceCode($c);
+                drawTableBorder('b','white',FALSE,2);
+            echo '</table>';
 
-        echo '<div style="height: 16px"></div>';
+            echo '<div style="height: 16px"></div>';
+        }
 
         // GLEX_globals.h
         echo '<table style="width: 70%">';

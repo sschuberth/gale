@@ -97,15 +97,30 @@ $extension=GLEX_PREFIX.$struct['Name'];
 if ($cmdline) {
     echo 'Writing macro header ...';
     $p=writeMacroHeader($extension,$procs);
-    echo ' saved as "'.$p."\".\n";
+    if (empty($p)) {
+        echo " skipped empty file.\n";
+    }
+    else {
+        echo ' saved as "'.$p."\".\n";
+    }
 
     echo 'Writing prototype header ...';
     $h=writePrototypeHeader($extension,$procs,$tokens);
-    echo ' saved as "'.$h."\".\n";
+    if (empty($h)) {
+        echo " skipped empty file.\n";
+    }
+    else {
+        echo ' saved as "'.$h."\".\n";
+    }
 
     echo 'Writing initialization code ...';
     $c=writeInitializationCode($extension);
-    echo ' saved as "'.$c."\".\n";
+    if (empty($c)) {
+        echo " skipped empty file.\n";
+    }
+    else {
+        echo ' saved as "'.$c."\".\n";
+    }
 
     $g='GLEX_globals.h';
     if (file_exists($g)===FALSE) {

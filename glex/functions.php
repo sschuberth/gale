@@ -11,8 +11,7 @@ function getFunctionsDate() {
 }
 
 /*
- * Parsing Oddities
- * ----------------
+ * Examples for parsing oddities:
  *
  * Non-standard section caption for new procedures and functions, incl. a
  * trailing colon:
@@ -181,12 +180,11 @@ function writeMacroHeader($extension,$procs) {
     if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
     }
-    $handle=fopen($file,'w');
 
     $i=0;
     foreach ($matches_proc as $procedure) {
         if ($i++>0) {
-            fwrite($handle,"\n");
+            $contents.="\n";
         }
 
         list($type,$name,$arguments)=$procedure;
@@ -195,16 +193,18 @@ function writeMacroHeader($extension,$procs) {
         $type_pad=str_pad($type,$type_length_max+1);
         $name_pad=str_pad($name,$name_length_max+1);
 
-        //$arguments_pad=str_pad('('.$arguments.')',$arguments_length_max+2);
-        //fwrite($handle,GLEX_PREFIX."PROC( $type_pad, $name_pad, $arguments_pad );\n");
-        fwrite($handle,GLEX_PREFIX."PROC( $type_pad, $name_pad, ($arguments) );\n");
+        $contents.=GLEX_PREFIX."PROC( $type_pad, $name_pad, ($arguments) );\n";
 
-        fwrite($handle,"#ifndef $name\n");
-        fwrite($handle,"    #define $name_pad".GLEX_PREFIX."$name\n");
-        fwrite($handle,"#endif\n");
+        $contents.="#ifndef $name\n";
+        $contents.="    #define $name_pad".GLEX_PREFIX."$name\n";
+        $contents.="#endif\n";
     }
 
-    fclose($handle);
+    if (empty($contents)) {
+        return $contents;
+    }
+
+    file_put_contents($file,$contents);
 
     return $file;
 }
@@ -275,75 +275,80 @@ function writePrototypeHeader($extension,$procs,$tokens) {
     if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
     }
-    $handle=fopen($file,'w');
 
     $guard=strtoupper(strtr(basename($file),'.','_'));
 
     // Write the inclusion guard header.
-    fwrite($handle,"#ifndef $guard\n");
-    fwrite($handle,"#define $guard\n\n");
+    $contents.="#ifndef $guard\n";
+    $contents.="#define $guard\n\n";
 
     $ignore=strtoupper($extension).'_IGNORE';
 
-    fwrite($handle,"#ifdef __linux\n");
-    fwrite($handle,"    // TODO: Linux support.\n");
+    $contents.="#ifdef __linux\n";
+    $contents.="    // TODO: Linux support.\n";
     if (strpos($guard,"_WGL_")!==FALSE) {
-        fwrite($handle,"\n    // Ignore WGL extensions under Linux.\n");
-        fwrite($handle,"    #define $ignore\n");
+        $contents.="\n    // Ignore WGL extensions under Linux.\n";
+        $contents.="    #define $ignore\n";
     }
-    fwrite($handle,"#endif\n\n");
+    $contents.="#endif\n\n";
 
-    fwrite($handle,"#ifdef _WIN32\n");
-    fwrite($handle,"    #ifndef WIN32_LEAN_AND_MEAN\n");
-    fwrite($handle,"        #define WIN32_LEAN_AND_MEAN 1\n");
-    fwrite($handle,"    #endif\n");
-    fwrite($handle,"    #include <windows.h>\n");
+    $contents.="#ifdef _WIN32\n";
+    $contents.="    #ifndef WIN32_LEAN_AND_MEAN\n";
+    $contents.="        #define WIN32_LEAN_AND_MEAN 1\n";
+    $contents.="    #endif\n";
+    $contents.="    #include <windows.h>\n";
     if (strpos($guard,"_GLX_")!==FALSE) {
-        fwrite($handle,"\n    // Ignore GLX extensions under Windows.\n");
-        fwrite($handle,"    #define $ignore\n");
+        $contents.="\n    // Ignore GLX extensions under Windows.\n";
+        $contents.="    #define $ignore\n";
     }
-    fwrite($handle,"#endif\n\n");
+    $contents.="#endif\n\n";
 
-    fwrite($handle,"#ifndef $ignore\n\n");
+    $contents.="#ifndef $ignore\n\n";
 
-    fwrite($handle,"#include <GL/gl.h>\n");
-    fwrite($handle,"#include \"GLEX_globals.h\"\n\n");
+    $contents.="#include <GL/gl.h>\n";
+    $contents.="#include \"GLEX_globals.h\"\n\n";
 
     extractTokensToString($tokens,$defines);
     if (!empty($defines)) {
-        fwrite($handle,"// List the defined tokens introduced by this extension.\n");
-        fwrite($handle,$defines);
+        $contents.="// List the defined tokens introduced by this extension.\n";
+        $contents.=$defines;
     }
 
     extractTypesToString($procs,$types);
     if (!empty($types)) {
-        fwrite($handle,"// List the data types introduced by this extension.\n");
-        fwrite($handle,$types);
+        $contents.="// List the data types introduced by this extension.\n";
+        $contents.=$types;
     }
 
-    fwrite($handle,"#ifdef __cplusplus\n");
-    fwrite($handle,"extern \"C\"\n{\n");
-    fwrite($handle,"#endif\n\n");
+    if (file_exists($extension.'_procs.h')) {
+        $contents.="#ifdef __cplusplus\n";
+        $contents.="extern \"C\"\n{\n";
+        $contents.="#endif\n\n";
 
-    fwrite($handle,'extern GLboolean '.$extension."_init(void);\n");
-    fwrite($handle,"extern GLboolean $extension;\n\n");
+        $contents.='extern GLboolean '.$extension."_init(void);\n";
+        $contents.="extern GLboolean $extension;\n\n";
 
-    // Write the code that generates the prototype definitions.
-    fwrite($handle,"// List the pointer prototypes for all functions of this extension.\n");
-    fwrite($handle,'#define '.GLEX_PREFIX.'PROC(t,n,a) extern t (APIENTRY *'.GLEX_PREFIX."##n) a\n");
-    fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
-    fwrite($handle,'#undef '.GLEX_PREFIX."PROC\n\n");
+        // Write the code that generates the prototype definitions.
+        $contents.="// List the pointer prototypes for all functions of this extension.\n";
+        $contents.='#define '.GLEX_PREFIX.'PROC(t,n,a) extern t (APIENTRY *'.GLEX_PREFIX."##n) a\n";
+        $contents.='    #include "'.$extension.'_procs.h"'."\n";
+        $contents.='#undef '.GLEX_PREFIX."PROC\n\n";
 
-    fwrite($handle,"#ifdef __cplusplus\n");
-    fwrite($handle,"} // extern \"C\"\n");
-    fwrite($handle,"#endif\n\n");
+        $contents.="#ifdef __cplusplus\n";
+        $contents.="} // extern \"C\"\n";
+        $contents.="#endif\n\n";
+    }
 
-    fwrite($handle,"#endif // $ignore\n\n");
+    $contents.="#endif // $ignore\n\n";
 
     // Write the inclusion guard footer.
-    fwrite($handle,"#endif // $guard\n");
+    $contents.="#endif // $guard\n";
 
-    fclose($handle);
+    if (empty($contents)) {
+        return $contents;
+    }
+
+    file_put_contents($file,$contents);
 
     return $file;
 }
@@ -351,40 +356,47 @@ function writePrototypeHeader($extension,$procs,$tokens) {
 function writeInitializationCode($extension) {
     global $cmdline;
 
+    if (!file_exists($extension.'_procs.h')) {
+        return $contents;
+    }
+
     $file=$extension.'.c';
     if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
     }
-    $handle=fopen($file,'w');
 
-    fwrite($handle,'#include "'.$extension.'.h"'."\n\n");
+    $contents.='#include "'.$extension.'.h"'."\n\n";
 
     $ignore=strtoupper($extension).'_IGNORE';
-    fwrite($handle,"#ifndef $ignore\n\n");
+    $contents.="#ifndef $ignore\n\n";
 
     // Write the code that generates the function pointer variables.
-    fwrite($handle,"// Initialize all function pointers to 0.\n");
-    fwrite($handle,'#define '.GLEX_PREFIX.'PROC(t,n,a) t (APIENTRY *'.GLEX_PREFIX."##n) a=0\n");
-    fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
-    fwrite($handle,'#undef '.GLEX_PREFIX."PROC\n\n");
+    $contents.="// Initialize all function pointers to 0.\n";
+    $contents.='#define '.GLEX_PREFIX.'PROC(t,n,a) t (APIENTRY *'.GLEX_PREFIX."##n) a=0\n";
+    $contents.='    #include "'.$extension.'_procs.h"'."\n";
+    $contents.='#undef '.GLEX_PREFIX."PROC\n\n";
 
-    fwrite($handle,"GLboolean $extension=GL_FALSE;\n\n");
+    $contents.="GLboolean $extension=GL_FALSE;\n\n";
 
     // Write the code that initializes the function pointer variables.
-    fwrite($handle,"// Get the addresses for all functions of this extension.\n");
-    fwrite($handle,'GLboolean '.$extension."_init(void)\n{\n");
-    fwrite($handle,"    $extension=GL_TRUE;\n\n");
+    $contents.="// Get the addresses for all functions of this extension.\n";
+    $contents.='GLboolean '.$extension."_init(void)\n{\n";
+    $contents.="    $extension=GL_TRUE;\n\n";
 
-    fwrite($handle,'#define '.GLEX_PREFIX."PROC(t,n,a) $extension&=((*((PROC*)&".GLEX_PREFIX."##n)=wglGetProcAddress(#n))!=0)\n");
-    fwrite($handle,'    #include "'.$extension.'_procs.h"'."\n");
-    fwrite($handle,'#undef '.GLEX_PREFIX."PROC\n\n");
+    $contents.='#define '.GLEX_PREFIX."PROC(t,n,a) $extension&=((*((PROC*)&".GLEX_PREFIX."##n)=wglGetProcAddress(#n))!=0)\n";
+    $contents.='    #include "'.$extension.'_procs.h"'."\n";
+    $contents.='#undef '.GLEX_PREFIX."PROC\n\n";
 
-    fwrite($handle,"    return $extension;\n");
-    fwrite($handle,"}\n\n");
+    $contents.="    return $extension;\n";
+    $contents.="}\n\n";
 
-    fwrite($handle,"#endif // $ignore\n");
+    $contents.="#endif // $ignore\n";
 
-    fclose($handle);
+    if (empty($contents)) {
+        return $contents;
+    }
+
+    file_put_contents($file,$contents);
 
     return $file;
 }
