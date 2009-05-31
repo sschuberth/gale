@@ -428,6 +428,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     void setHSV(float const h,float const s,float const v) {
         G_ASSERT(N>=3)
         HSV2RGB(m_h=h,m_s=s,m_v=v,Base::data()[0],Base::data()[1],Base::data()[2]);
+        m_hsv_outdated=false;
     }
 
     /// Assigns new values to the hue, saturation, value and alpha channels.
@@ -435,6 +436,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         G_ASSERT(N>=4)
         HSV2RGB(m_h=h,m_s=s,m_v=v,Base::data()[0],Base::data()[1],Base::data()[2]);
         Base::data()[3]=a;
+        m_hsv_outdated=false;
     }
 
     /// Returns the hue channel.
