@@ -59,19 +59,19 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     }
 
     /**
-     * \name Methods to operate on the object's data
+     * \name Methods to operate on the buffer's data
      */
     //@{
 
     /// Copies the \a size number of bytes, optionally starting at \a offset,
-    /// from the object's contents to \a data.
+    /// from the buffer's contents to \a data.
     void getData(GLsizeiptrARB size,GLvoid* data,GLintptrARB offset=0) const {
         makeCurrent();
         glGetBufferSubDataARB(T,offset,size,data);
         G_ASSERT_OPENGL
     }
 
-    /// Initializes or sets the object's storage to the \a size number of bytes
+    /// Initializes or sets the buffer's storage to the \a size number of bytes
     /// pointed to by \a data. Optionally defines a usage pattern for the data.
     void setData(GLsizeiptrARB size,GLvoid const* data,GLenum usage=GL_STATIC_DRAW_ARB) const {
         makeCurrent();
@@ -79,7 +79,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
         G_ASSERT_OPENGL
     }
 
-    /// Modifies the object's storage to the \a size number of bytes pointed to
+    /// Modifies the buffer's storage to the \a size number of bytes pointed to
     /// by \a data, optionally starting at the given \a offset.
     void setData(GLsizeiptrARB size,GLvoid const* data,GLintptrARB offset) const {
         makeCurrent();
@@ -87,28 +87,28 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
         G_ASSERT_OPENGL
     }
 
-    /// Returns the size of the object's storage.
+    /// Returns the size of the buffer's storage.
     GLsizeiptrARB getSize() const {
         return static_cast<GLsizeiptrARB>(getParameter(GL_BUFFER_SIZE_ARB));
     }
 
-    /// Returns the usage type of the object's storage.
+    /// Returns the usage type of the buffer's storage.
     GLenum getUsageType() const {
         return static_cast<GLenum>(getParameter(GL_BUFFER_USAGE_ARB));
     }
 
-    /// Returns the access type of the object's storage.
+    /// Returns the access type of the buffer's storage.
     GLenum getAccessType() const {
         return static_cast<GLenum>(getParameter(GL_BUFFER_ACCESS_ARB));
     }
 
-    /// Returns whether the object's storage is currently mapped to client
+    /// Returns whether the buffer's storage is currently mapped to client
     /// memory.
     bool isMapped() const {
         return getParameter(GL_BUFFER_MAPPED_ARB)!=GL_FALSE;
     }
 
-    /// Maps the object's storage to client memory for direct access using the
+    /// Maps the buffer's storage to client memory for direct access using the
     /// optionally specified \a access type, and returns the pointer.
     void* map(GLenum access=GL_WRITE_ONLY_ARB) const {
         makeCurrent();
@@ -117,7 +117,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
         return data;
     }
 
-    /// Unmaps the object's storage from client memory, returns \c true on
+    /// Unmaps the buffer's storage from client memory, returns \c true on
     /// success, \c false otherwise.
     bool unmap() const {
         makeCurrent();
@@ -126,7 +126,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
         return result!=GL_FALSE;
     }
 
-    /// If the object's storage is currently mapped to client memory, returns
+    /// If the buffer's storage is currently mapped to client memory, returns
     /// the pointer to it, or \c NULL otherwise.
     void* getBufferPointer() const {
         makeCurrent();
