@@ -1,5 +1,6 @@
 ARB/framebuffer_object.txt
 ARB/multisample.txt
+ARB/pixel_buffer_object.txt
 ARB/vertex_array_object.txt
 ARB/vertex_buffer_object.txt
 ARB/wgl_create_context.txt
