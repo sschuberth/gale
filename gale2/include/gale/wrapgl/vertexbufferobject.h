@@ -128,7 +128,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// If the object's storage is currently mapped to client memory, returns
     /// the pointer to it, or \c NULL otherwise.
-    void* getMappedData() const {
+    void* getBufferPointer() const {
         makeCurrent();
         GLvoid* data;
         glGetBufferPointervARB(T,GL_BUFFER_MAP_POINTER_ARB,&data);
