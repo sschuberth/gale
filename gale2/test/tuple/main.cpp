@@ -17,7 +17,7 @@ using gale::meta::OpCmpEqual;
 
 using namespace std;
 
-RandomEcuyerf r;
+RandomEcuyerf re;
 
 void test_tuple();
 void test_vector();
@@ -64,6 +64,9 @@ int main()
 
 void test_tuple()
 {
+    cout << "*** tuple tests ***"
+         << endl;
+
 #ifdef GALE_USE_SSE
     cout << "Check SIMD implementation ..."
          << endl;
@@ -120,21 +123,21 @@ void test_tuple()
 
     cout << "Check construction of objects ..."
          << endl;
-    Tuple<2,int> t2i_a(1,2),t2i_b(r.random(),r.random());
+    Tuple<2,int> t2i_a(1,2),t2i_b(re.random(),re.random());
 
     Tuple<3,float> t3f_a(3.0f,4.0f,5.0f);
     Tuple<3,float> t3f_b(
-        static_cast<float>(r.random0N(1000.0f)),
-        static_cast<float>(r.random0N(1000.0f)),
-        static_cast<float>(r.random0N(1000.0f))
+        static_cast<float>(re.random0N(1000.0f)),
+        static_cast<float>(re.random0N(1000.0f)),
+        static_cast<float>(re.random0N(1000.0f))
     );
 
     Tuple<4,double> t4d_a(5.0,6.0,7.0,8.0);
     Tuple<4,double> t4d_b(
-        static_cast<double>(r.random0N(1000.0)),
-        static_cast<double>(r.random0N(1000.0)),
-        static_cast<double>(r.random0N(1000.0)),
-        static_cast<double>(r.random0N(1000.0))
+        static_cast<double>(re.random0N(1000.0)),
+        static_cast<double>(re.random0N(1000.0)),
+        static_cast<double>(re.random0N(1000.0)),
+        static_cast<double>(re.random0N(1000.0))
     );
 
     cout << t2i_a << ", " << t2i_b << endl;
@@ -259,9 +262,9 @@ void test_tuple()
          << endl;
     {
         Tuple<3,float> tmp(
-            static_cast<float>(r.random0N(1000.0f)),
-            static_cast<float>(r.random0N(1000.0f)),
-            static_cast<float>(r.random0N(1000.0f))
+            static_cast<float>(re.random0N(1000.0f)),
+            static_cast<float>(re.random0N(1000.0f)),
+            static_cast<float>(re.random0N(1000.0f))
         );
 
         Tuple<3,float> res=((t3f_a+t3f_b)-t3f_b)*tmp;
@@ -317,6 +320,9 @@ void test_tuple()
 
 void test_vector()
 {
+    cout << "*** vector tests ***"
+         << endl;
+
     double s;
     Timer t;
     unsigned int ms;
@@ -324,7 +330,7 @@ void test_vector()
     Vec4d n(Vec4d::ZERO());
     Vec4d x(Vec4d::X()),y(Vec4d::Y()),z(Vec4d::Z()),w(Vec4d::W());
 
-    cout << "Check predefined constants ..."
+    cout << "Check predefined vector constants ..."
          << endl;
     assert(n[0]==0);
     assert(n[1]==0);
@@ -415,6 +421,11 @@ void test_vector()
 
 void test_color()
 {
+    cout << "*** color tests ***"
+         << endl;
+
+    cout << "Check predefined color constants ..."
+         << endl;
     Col3d black=Col3d::BLACK();
     static Col3d const col3d(Col3d::MIN_INTENSITY(),Col3d::MIN_INTENSITY(),Col3d::MIN_INTENSITY());
     assert(col3d==black);
@@ -447,6 +458,8 @@ void test_color()
     static Col3ub const col3ub(Col3ub::MAX_INTENSITY(),Col3ub::MAX_INTENSITY(),Col3ub::MAX_INTENSITY());
     assert(col3ub==white);
 
+    cout << "Check color inversion ..."
+         << endl;
     assert(white.inverse()==Col3ub::BLACK());
 
     Col4f white4=Col4f::WHITE();
@@ -454,4 +467,23 @@ void test_color()
     Col4f black4=Col4f::BLACK();
     black4.setA(0.5);
     assert(!white4==black4);
+
+    cout << "Check color conversion ..."
+         << endl;
+    Col3ub conv;
+    Col3ub::Type r,g,b;
+    float h,s,v;
+    for (int i=0;i<1000;++i) {
+        r=re.random(255);
+        g=re.random(255);
+        b=re.random(255);
+        conv.setRGB(r,g,b);
+        h=conv.getH();
+        s=conv.getS();
+        v=conv.getV();
+        conv.setHSV(h,s,v);
+        assert(OpCmpEqual::evaluate(r,conv.getR(),Col3ub::Type(1)));
+        assert(OpCmpEqual::evaluate(g,conv.getG(),Col3ub::Type(1)));
+        assert(OpCmpEqual::evaluate(b,conv.getB(),Col3ub::Type(1)));
+    }
 }
