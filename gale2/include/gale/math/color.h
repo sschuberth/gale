@@ -294,6 +294,9 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     explicit Color(unsigned int mask)
     :   m_hsv_outdated(true)
     {
+        // Do not allow colors with less than 3 elements.
+        G_ASSERT(N>=3)
+
         meta::LoopFwd<N,meta::OpAssign>
             ::iterateIndexMask(Base::data(),mask,Model::MAX_INTENSITY(),Model::MIN_INTENSITY());
     }
@@ -319,6 +322,9 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     Color(Color<N,U> const& v)
     :   m_hsv_outdated(true)
     {
+        // Do not allow colors with less than 3 elements.
+        G_ASSERT(N>=3)
+
         meta::LoopFwd<N,meta::OpAssign>::iterate(Base::data(),v.data());
     }
 
@@ -331,7 +337,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Assigns new values to the red, green and blue channels.
     void setRGB(T const r,T const g,T const b) {
-        G_ASSERT(N>=3)
         Base::data()[0]=r;
         Base::data()[1]=g;
         Base::data()[2]=b;
@@ -382,19 +387,16 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns the blue channel.
     T getB() {
-        G_ASSERT(N>=3)
         return Base::data()[2];
     }
 
     /// Returns a constant reference to the blue channel.
     T const& getB() const {
-        G_ASSERT(N>=3)
         return Base::data()[2];
     }
 
     /// Assigns a new value to the blue channel.
     void setB(T const b) {
-        G_ASSERT(N>=3)
         Base::data()[2]=b;
         m_hsv_outdated=true;
     }
@@ -426,7 +428,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Assigns new values to the hue, saturation and value channels.
     void setHSV(float const h,float const s,float const v) {
-        G_ASSERT(N>=3)
         HSV2RGB(m_h=h,m_s=s,m_v=v,Base::data()[0],Base::data()[1],Base::data()[2]);
         m_hsv_outdated=false;
     }
@@ -465,14 +466,12 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns the value channel.
     float getV() {
-        G_ASSERT(N>=3)
         updateHSV();
         return m_v;
     }
 
     /// Assigns a new value to the value channel.
     void setV(float const v) {
-        G_ASSERT(N>=3)
         updateHSV();
         HSV2RGB(m_h,m_s,m_v=v,Base::data()[0],Base::data()[1],Base::data()[2]);
     }
@@ -508,8 +507,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns a blend of 5 colors that match this color to form a \a palette.
     void blend(Color (&palette)[5]) {
-        G_ASSERT(N>=3)
-
         updateHSV();
 
         float h,s,v;
