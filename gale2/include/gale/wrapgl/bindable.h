@@ -69,6 +69,11 @@ class Bindable
         I::destroyObject(m_handle);
     }
 
+    /// Returns this object's handle.
+    GLuint handle() const {
+        return m_handle;
+    }
+
     /// Binds this object to the OpenGL state, making it the current one.
     void makeCurrent() const {
         I::setCurrent(m_handle);
