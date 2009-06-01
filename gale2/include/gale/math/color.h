@@ -337,19 +337,13 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Assigns new values to the red, green and blue channels.
     void setRGB(T const r,T const g,T const b) {
-        Base::data()[0]=r;
-        Base::data()[1]=g;
-        Base::data()[2]=b;
+        set(r,g,b);
         m_hsv_outdated=true;
     }
 
     /// Assigns new values to the red, green, blue and alpha channels.
     void setRGBA(T const r,T const g,T const b,T const a) {
-        G_ASSERT(N>=4)
-        Base::data()[0]=r;
-        Base::data()[1]=g;
-        Base::data()[2]=b;
-        Base::data()[3]=a;
+        set(r,g,b,a);
         m_hsv_outdated=true;
     }
 

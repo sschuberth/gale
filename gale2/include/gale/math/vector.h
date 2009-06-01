@@ -147,29 +147,6 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
      */
     //@{
 
-    /// Assigns new values to the x- and y-components.
-    void set(T const x,T const y) {
-        Base::data()[0]=x;
-        Base::data()[1]=y;
-    }
-
-    /// Assigns new values to the x-, y- and z-components.
-    void set(T const x,T const y,T const z) {
-        G_ASSERT(N>=3)
-        Base::data()[0]=x;
-        Base::data()[1]=y;
-        Base::data()[2]=z;
-    }
-
-    /// Assigns new values to the x-, y-, z- and w-components.
-    void set(T const x,T const y,T const z,T const w) {
-        G_ASSERT(N>=4)
-        Base::data()[0]=x;
-        Base::data()[1]=y;
-        Base::data()[2]=z;
-        Base::data()[3]=w;
-    }
-
     /// Returns the x-component.
     T getX() {
         return Base::data()[0];

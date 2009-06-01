@@ -126,6 +126,30 @@ class TupleBase
         return data();
     }
 
+    /// Assigns new values to the first two tuple elements.
+    void set(T const e0,T const e1) {
+        G_ASSERT(N>=2)
+        m_data[0]=e0;
+        m_data[1]=e1;
+    }
+
+    /// Assigns new values to the first three tuple elements.
+    void set(T const e0,T const e1,T const e2) {
+        G_ASSERT(N>=3)
+        m_data[0]=e0;
+        m_data[1]=e1;
+        m_data[2]=e2;
+    }
+
+    /// Assigns new values to the first four tuple elements.
+    void set(T const e0,T const e1,T const e2,T const e3) {
+        G_ASSERT(N>=4)
+        m_data[0]=e0;
+        m_data[1]=e1;
+        m_data[2]=e2;
+        m_data[3]=e3;
+    }
+
     //@}
 
     /**
