@@ -51,6 +51,9 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
   public:
 
+    /// Class constant for external access to the target type.
+    static GLenum const TARGET=T;
+
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.
     static void setCurrent(GLuint const handle) {
