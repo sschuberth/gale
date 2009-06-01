@@ -127,6 +127,8 @@ GLuint drawLogo()
         glEnable(GL_CULL_FACE);
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_1D);
+        glDisable(GL_TEXTURE_2D);
         G_ASSERT_OPENGL
 
         glColor3fv(math::Col3f::WHITE());
