@@ -291,7 +291,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// depending on the bits set in \a mask. Bit 0 maps to the first channel,
     /// bit 1 to second one and so on. This constructor is required to
     /// initialize the static class constants.
-    explicit Color(unsigned int mask)
+    explicit Color(unsigned int const mask)
     :   m_hsv_outdated(true)
     {
         // Do not allow colors with less than 3 elements.
@@ -533,6 +533,8 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
             palette[2].setH(m_h+150);
             palette[2].setS(clamp(m_s-50,0.0f,100.0f));
+
+            // Overwrite the previously set value.
             palette[2].setV(clamp(m_v+20,0.0f,100.0f));
         }
         else if (m_h>=60 && m_h<180) {

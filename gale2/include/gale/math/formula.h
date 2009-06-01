@@ -45,7 +45,7 @@ struct Formula
 
     /// The call operator to be overloaded with the formula. Defaults to
     /// evaluating the identity.
-    virtual float operator()(float x) const {
+    virtual float operator()(float const x) const {
         return x;
     }
 };
@@ -56,11 +56,11 @@ struct Formula
 struct Constantformula:public Formula
 {
     /// Initializing constructor for the formula's constant parameters.
-    Constantformula(float constant)
+    Constantformula(float const constant)
     :   constant(constant) {}
 
     /// Evaluator for the formula.
-    float operator()(float x) const {
+    float operator()(float const x) const {
         UNREFERENCED_PARAMETER(x);
         return constant;
     }
@@ -78,11 +78,11 @@ struct Constantformula:public Formula
 struct Superformula:public Formula
 {
     /// Initializing constructor for the formula's constant parameters.
-    Superformula(float m,float n1,float n2,float n3,float a=1.0,float b=1.0)
+    Superformula(float const m,float const n1,float const n2,float const n3,float const a=1.0,float const b=1.0)
     :   m(m),n1(n1),n2(n2),n3(n3),a(a),b(b) {}
 
     /// Evaluator for the formula.
-    float operator()(float x) const {
+    float operator()(float const x) const {
         float ta=::cos(m*x/4.0f)/a;
         ta=::pow(::abs(ta),n2);
         float tb=::sin(m*x/4.0f)/b;

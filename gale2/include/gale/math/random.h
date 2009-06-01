@@ -73,7 +73,7 @@ class RandomBase
     }
 
     /// Initializes the generator with the given seed value.
-    RandomBase(g_uint32 seed) {
+    RandomBase(g_uint32 const seed) {
         init(seed);
     }
 
@@ -85,7 +85,7 @@ class RandomBase
     //@{
 
     /// Sets the generator seed to the given value.
-    void init(g_uint32 seed) {
+    void init(g_uint32 const seed) {
         m_impl.init(seed);
     }
 

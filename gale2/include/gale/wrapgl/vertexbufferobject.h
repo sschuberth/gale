@@ -53,7 +53,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.
-    static void setCurrent(GLuint handle) {
+    static void setCurrent(GLuint const handle) {
         glBindBufferARB(T,handle);
         G_ASSERT_OPENGL
     }
@@ -65,7 +65,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Copies the \a size number of bytes, optionally starting at \a offset,
     /// from the buffer's contents to \a data.
-    void getData(GLsizeiptrARB size,GLvoid* data,GLintptrARB offset=0) const {
+    void getData(GLsizeiptrARB const size,GLvoid* data,GLintptrARB const offset=0) const {
         makeCurrent();
         glGetBufferSubDataARB(T,offset,size,data);
         G_ASSERT_OPENGL
@@ -73,7 +73,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Initializes or sets the buffer's storage to the \a size number of bytes
     /// pointed to by \a data. Optionally defines a usage pattern for the data.
-    void setData(GLsizeiptrARB size,GLvoid const* data,GLenum usage=GL_STATIC_DRAW_ARB) const {
+    void setData(GLsizeiptrARB const size,GLvoid const* data,GLenum const usage=GL_STATIC_DRAW_ARB) const {
         makeCurrent();
         glBufferDataARB(T,size,data,usage);
         G_ASSERT_OPENGL
@@ -81,7 +81,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Modifies the buffer's storage to the \a size number of bytes pointed to
     /// by \a data, optionally starting at the given \a offset.
-    void setData(GLsizeiptrARB size,GLvoid const* data,GLintptrARB offset) const {
+    void setData(GLsizeiptrARB const size,GLvoid const* data,GLintptrARB const offset) const {
         makeCurrent();
         glBufferSubDataARB(T,offset,size,data);
         G_ASSERT_OPENGL
@@ -110,7 +110,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Maps the buffer's storage to client memory for direct access using the
     /// optionally specified \a access type, and returns the pointer.
-    void* map(GLenum access=GL_WRITE_ONLY_ARB) const {
+    void* map(GLenum const access=GL_WRITE_ONLY_ARB) const {
         makeCurrent();
         GLvoid* data=glMapBufferARB(T,access);
         G_ASSERT_OPENGL
@@ -151,7 +151,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Destroys the OpenGL object identified by \a handle. If the object is
     /// currently bound, the default object becomes current.
-    static void destroyObject(GLuint handle) {
+    static void destroyObject(GLuint const handle) {
         if (glDeleteBuffersARB) {
             glDeleteBuffersARB(1,&handle);
             G_ASSERT_OPENGL
@@ -159,7 +159,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     }
 
     /// Checks whether the given object \a handle is valid.
-    static bool isValidObject(GLuint handle) {
+    static bool isValidObject(GLuint const handle) {
         GLboolean result=glIsBufferARB && glIsBufferARB(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
@@ -168,7 +168,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
   private:
 
     /// Returns the buffer parameter specified by \a name.
-    GLint getParameter(GLenum name) const {
+    GLint getParameter(GLenum const name) const {
         makeCurrent();
         GLint value;
         glGetBufferParameterivARB(T,name,&value);

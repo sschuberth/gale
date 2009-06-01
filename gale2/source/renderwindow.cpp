@@ -34,7 +34,7 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeListi const* pixel_attr)
+RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr)
 :   m_close_requested(false)
 ,   m_timeout(0)
 {
@@ -158,7 +158,7 @@ void RenderWindow::processEvents()
     }
 }
 
-LRESULT RenderWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
+LRESULT RenderWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     switch (uMsg) {
         // This is sent to a window after its size has changed.

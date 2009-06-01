@@ -64,7 +64,7 @@ class DefaultWindow:public RenderWindow
     };
 
     /// Creates a window with reasonable defaults set.
-    DefaultWindow(LPCTSTR title,int client_width=500,int client_height=500)
+    DefaultWindow(LPCTSTR title,int const client_width=500,int const client_height=500)
     :   RenderWindow(title,client_width,client_height)
     ,   m_camera(this)
     ,   m_logo(0)
@@ -132,7 +132,7 @@ class DefaultWindow:public RenderWindow
     static UINT_PTR const ID_ABOUT_DLG=0x00AB;
 
     /// Handles window messages and forwards them to the event handlers.
-    LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
+    LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
 
     wrapgl::Camera m_camera; ///< The window's default camera.
 

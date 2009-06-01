@@ -64,7 +64,7 @@ RenderSurface::~RenderSurface()
     G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL))
 }
 
-bool RenderSurface::create(int pixel_format,int width,int height,LPCTSTR title)
+bool RenderSurface::create(int pixel_format,int const width,int const height,LPCTSTR title)
 {
     // Create a default window and get its device context.
     m_window=CreateWindow(
@@ -141,7 +141,7 @@ void RenderSurface::destroy()
     }
 }
 
-LRESULT RenderSurface::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
+LRESULT RenderSurface::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     switch (uMsg) {
         // This is sent to a window after it is removed from screen.

@@ -85,7 +85,7 @@ class Bindable
     }
 
     /// Sets whether the object currently represents a valid state vector.
-    void setValidState(bool state) const {
+    void setValidState(bool const state) const {
         m_valid_state=state;
     }
 

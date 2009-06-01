@@ -128,7 +128,7 @@ class Camera
     /// looks down the negative z-axis. Optionally, the camera's vertical field
     /// of view and clipping plane distances can be specified as \a fov,
     /// \a clip_near and \a clip_far.
-    Camera(RenderSurface const* surface=NULL,double fov=math::Constd::PI()*0.25,double clip_near=0.001,double clip_far=1000.0)
+    Camera(RenderSurface const* surface=NULL,double const fov=math::Constd::PI()*0.25,double const clip_near=0.001,double const clip_far=1000.0)
     :   m_surface(surface)
     ,   m_frustum(*this)
     ,   m_screen_changed(false)
@@ -193,7 +193,7 @@ class Camera
     }
 
     /// Sets the vertical field of view the camera should use.
-    void setFOV(double fov) {
+    void setFOV(double const fov) {
         m_fov=fov;
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
     }
@@ -204,7 +204,7 @@ class Camera
     }
 
     /// Sets the near clipping plane distance the camera should use.
-    void setNearClipping(double clip_near) {
+    void setNearClipping(double const clip_near) {
         m_clip_near=clip_near;
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
     }
@@ -215,7 +215,7 @@ class Camera
     }
 
     /// Sets the far clipping plane distance the camera should use.
-    void setFarClipping(double clip_far) {
+    void setFarClipping(double const clip_far) {
         m_clip_far=clip_far;
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
     }

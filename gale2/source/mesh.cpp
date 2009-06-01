@@ -31,7 +31,7 @@ namespace gale {
 
 namespace model {
 
-int Mesh::nextTo(int xi,int vi,int steps) const
+int Mesh::nextTo(int const xi,int const vi,int const steps) const
 {
     // Search v's neighborhood for x, and return x' successor.
     IndexArray const& vn=neighbors[vi];
@@ -49,7 +49,7 @@ int Mesh::nextTo(int xi,int vi,int steps) const
     return n;
 }
 
-int Mesh::prevTo(int xi,int vi,int steps) const
+int Mesh::prevTo(int const xi,int const vi,int const steps) const
 {
     // Search v's neighborhood for x, and return x' predecessor.
     IndexArray const& vn=neighbors[vi];
@@ -100,12 +100,12 @@ int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
     return polygon.getSize();
 }
 
-int Mesh::insert(int ai,int bi,Vec3f const& x)
+int Mesh::insert(int const ai,int const bi,Vec3f const& x)
 {
     // Add a new vertex at index xi.
     int xi=vertices.insert(x);
 
-    unsigned int xn[]={ai,bi};
+    unsigned int const xn[]={ai,bi};
     neighbors.insert(xn);
 
     int n;
@@ -127,7 +127,7 @@ int Mesh::insert(int ai,int bi,Vec3f const& x)
     return xi;
 }
 
-void Mesh::splice(int ai,int xi,int vi,bool after)
+void Mesh::splice(int const ai,int const xi,int const vi,bool const after)
 {
     // Insert ai after or before xi in vi's neighborhood.
     IndexArray& vn=neighbors[vi];
@@ -137,7 +137,7 @@ void Mesh::splice(int ai,int xi,int vi,bool after)
     }
 }
 
-void Mesh::erase(int xi,int vi)
+void Mesh::erase(int const xi,int const vi)
 {
     // Remove xi from vi's neighborhood.
     IndexArray& vn=neighbors[vi];

@@ -35,7 +35,7 @@ namespace model {
  * Interpolating subdivision schemes
  */
 
-void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float scale)
+void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float const scale)
 {
     while (steps-->0) {
         Mesh orig=mesh;
@@ -120,7 +120,7 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
  * Approximating subdivision schemes
  */
 
-void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
+void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
 {
     while (steps-->0) {
         Mesh orig=mesh;
@@ -174,7 +174,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool move)
     }
 }
 
-void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool move)
+void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 {
     while (steps-->0) {
         Mesh orig=mesh;
@@ -448,7 +448,7 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
  * Helper methods
  */
 
-void Mesh::Subdivider::assignNeighbors(Mesh const& orig,Mesh& mesh,int x0i)
+void Mesh::Subdivider::assignNeighbors(Mesh const& orig,Mesh& mesh,int const x0i)
 {
     for (int vi=x0i;vi<orig.vertices.getSize();++vi) {
         IndexArray& vn=mesh.neighbors[vi];

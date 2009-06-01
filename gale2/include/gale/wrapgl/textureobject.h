@@ -53,7 +53,7 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
 
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.
-    static void setCurrent(GLuint handle) {
+    static void setCurrent(GLuint const handle) {
         glBindTexture(T,handle);
         G_ASSERT_OPENGL
     }
@@ -66,35 +66,35 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
     /// Copies the texture in given \a data_format and \a data_type to the host
     /// memory location pointed to by \a data. Optionally selects a specific
     /// mipmap \a level.
-    void getData(GLvoid* data,GLenum data_format,GLenum data_type,GLint level=0) {
+    void getData(GLvoid* data,GLenum const data_format,GLenum const data_type,GLint const level=0) {
         makeCurrent();
         glGetTexImage(TARGET,level,data_format,data_type,data);
         G_ASSERT_OPENGL
     }
 
     /// Returns the floating-point parameter specified by \a name into \a values.
-    void getParameter(GLenum name,GLfloat* values) const {
+    void getParameter(GLenum const name,GLfloat* values) const {
         makeCurrent();
         glGetTexParameterfv(T,name,values);
         G_ASSERT_OPENGL
     }
 
     /// Sets the floating-point parameter specified by \a name to \a values.
-    void setParameter(GLenum name,GLfloat const* values) const {
+    void setParameter(GLenum const name,GLfloat const* values) const {
         makeCurrent();
         glTexParameterfv(T,name,values);
         G_ASSERT_OPENGL
     }
 
     /// Returns the integer parameter specified by \a name into \a values.
-    void getParameter(GLenum name,GLint* values) const {
+    void getParameter(GLenum const name,GLint* values) const {
         makeCurrent();
         glGetTexParameteriv(T,name,values);
         G_ASSERT_OPENGL
     }
 
     /// Sets the integer parameter specified by \a name to \a values.
-    void setParameter(GLenum name,GLint const* values) const {
+    void setParameter(GLenum const name,GLint const* values) const {
         makeCurrent();
         glTexParameteriv(T,name,values);
         G_ASSERT_OPENGL
@@ -108,7 +108,7 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
     }
 
     /// Sets the priority requesting to make the texture resident.
-    void setPriority(GLclampf priority) const {
+    void setPriority(GLclampf const priority) const {
         makeCurrent();
         glPrioritizeTextures(1,&m_handle,priority);
         G_ASSERT_OPENGL
@@ -131,13 +131,13 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
 
     /// Destroys the OpenGL object identified by \a handle. If the object is
     /// currently bound, the default object becomes current.
-    static void destroyObject(GLuint handle) {
+    static void destroyObject(GLuint const handle) {
         glDeleteTextures(1,&handle);
         G_ASSERT_OPENGL
     }
 
     /// Checks whether the given object \a handle is valid.
-    static bool isValidObject(GLuint handle) {
+    static bool isValidObject(GLuint const handle) {
         GLboolean result=glIsTexture(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
@@ -171,7 +171,7 @@ class Texture1D:public TextureObject<GL_TEXTURE_1D,GL_TEXTURE_BINDING_1D>,public
     /// \a data_type in host memory and are to be used as the given \a format
     /// in OpenGL. Optionally, \a mipmap \a level and a \a border may be
     /// specified.
-    void setData(GLsizei width,GLvoid const* data,GLenum data_format,GLenum data_type,GLint format,GLint level=0,bool border=false) const {
+    void setData(GLsizei const width,GLvoid const* data,GLenum const data_format,GLenum const data_type,GLint const format,GLint const level=0,bool const border=false) const {
         makeCurrent();
         glTexImage1D(TARGET,level,format,width,border,data_format,data_type,data);
         G_ASSERT_OPENGL
@@ -195,7 +195,7 @@ class Texture2D:public TextureObject<GL_TEXTURE_2D,GL_TEXTURE_BINDING_2D>,public
     /// \a data_format and \a data_type in host memory and are to be used as the
     /// given \a format in OpenGL. Optionally, \a mipmap \a level and a
     /// \a border may be specified.
-    void setData(GLsizei width,GLsizei height,GLvoid const* data,GLenum data_format,GLenum data_type,GLint format,GLint level=0,bool border=false) const {
+    void setData(GLsizei const width,GLsizei const height,GLvoid const* data,GLenum const data_format,GLenum const data_type,GLint const format,GLint const level=0,bool const border=false) const {
         makeCurrent();
         glTexImage2D(TARGET,level,format,width,height,border,data_format,data_type,data);
         G_ASSERT_OPENGL

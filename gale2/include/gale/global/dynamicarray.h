@@ -59,7 +59,7 @@ class DynamicArray
     //@{
 
     /// Creates an empty array without any memory allocated.
-    DynamicArray(int size=0,int capacity=0)
+    DynamicArray(int const size=0,int const capacity=0)
     :   m_data(NULL)
     ,   m_size(0)
     ,   m_capacity(0)
@@ -356,7 +356,7 @@ class DynamicArray
 
     /// Inserts an \a item into a sorted array. If \a forced, the item will also
     /// be inserted if it already exists, resulting in multiple occurrences.
-    void insertSorted(T const& item,bool forced=false) {
+    void insertSorted(T const& item,bool const forced=false) {
         int index;
         if (!findSorted(item,index) || forced) {
             insert(item,index);

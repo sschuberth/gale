@@ -59,7 +59,7 @@ class RenderWindow:public RenderSurface
     /// \a width and \a height, and a pixel format determined by \a pixel_attr.
     /// The window will be hidden initially, but it will become the current
     /// rendering context.
-    RenderWindow(LPCTSTR title,int width,int height,global::AttributeListi const* pixel_attr=NULL);
+    RenderWindow(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL);
 
     /// Frees the window resources.
     ~RenderWindow() {
@@ -73,7 +73,7 @@ class RenderWindow:public RenderSurface
 
     /// Sets the current \a timeout value in seconds. Any non-positive value
     /// (which includes 0) disables the timeout handler.
-    void setTimeout(double timeout) {
+    void setTimeout(double const timeout) {
         m_timeout=timeout;
     }
 
@@ -112,7 +112,7 @@ class RenderWindow:public RenderSurface
   protected:
 
     /// Handles window messages and forwards them to the event handlers.
-    LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
+    LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
 
     bool m_close_requested; ///< Indicates whether the window should be closed.
 

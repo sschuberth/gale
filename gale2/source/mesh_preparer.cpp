@@ -38,7 +38,7 @@ GLenum const Mesh::Preparer::GL_PRIM_TYPE[PI_COUNT]={
     GL_QUADS
 };
 
-void Mesh::Preparer::compile(Mesh const* mesh)
+void Mesh::Preparer::compile(Mesh const* const mesh)
 {
     m_mesh=mesh;
     if (!m_mesh) {

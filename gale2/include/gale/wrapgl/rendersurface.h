@@ -118,14 +118,14 @@ class RenderSurface
     /// \a pixel_format which is attached to an initially hidden window with the
     /// given \a width, \a height and \a title. No rendering context is created
     /// yet to allow creating one using OpenGL extensions.
-    bool create(int pixel_format=0,int width=0,int height=0,LPCTSTR title=NULL);
+    bool create(int pixel_format=0,int const width=0,int const height=0,LPCTSTR title=NULL);
 
     /// Destroys the render surface, i.e. frees all resources except the window
     /// class, so the method can be used by derived classes.
     void destroy();
 
     /// Handles window messages and forwards them to the event handlers.
-    virtual LRESULT handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam);
+    virtual LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
 
     static int s_instances;  ///< Counter for the number of instances.
     static ATOM s_atom;      ///< Identifier for the registered window class.

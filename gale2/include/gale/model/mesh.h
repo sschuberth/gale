@@ -74,11 +74,11 @@ struct Mesh
         {
             /// Returns an array of vectors on an ellipse with width \a w and
             /// height \a h, divided into \a segs segments.
-            static void Ellipse(VectorArray& shape,int segs,float w,float h);
+            static void Ellipse(VectorArray& shape,int const segs,float const w,float const h);
 
             /// Returns an array of vectors as calculated by the Superformula,
             /// see <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape/>.
-            static void Supershape(VectorArray& shape,int segs,float m,float n1,float n2,float n3,float a=1.0,float b=1.0);
+            static void Supershape(VectorArray& shape,int const segs,float const m,float const n1,float const n2,float const n3,float const a=1.0,float const b=1.0);
         };
 
         /**
@@ -112,7 +112,7 @@ struct Mesh
 
         /// Returns a uniformly tesselated sphere of radius \a r, created using
         /// a number of polyhedral subdivision \a steps from an Icosahedron.
-        static Mesh* Sphere(float r,int steps);
+        static Mesh* Sphere(float const r,int const steps);
 
         /**
          * \name Ellipse-based meshes
@@ -123,7 +123,7 @@ struct Mesh
         /// Returns a torus with outer radius \a r1 and inner radius \a r2. The
         /// outer and inner circles are divided into \a r1_segs and \a r2_segs
         /// segments respectively.
-        static Mesh* Torus(float r1,float r2,int r1_segs,int r2_segs);
+        static Mesh* Torus(float const r1,float const r2,int const r1_segs,int const r2_segs);
 
         /// Returns a torus knot with outer radius \a r1 and inner radius \a r2.
         /// The outer and inner circles are consist of \a r1_segs and \a r2_segs
@@ -131,13 +131,13 @@ struct Mesh
         /// the whole knot, which is obtained by looping through the hole \a p
         /// times with \a q revolutions before joining its ends, where \a p and
         /// \a q have to be relatively prime.
-        static Mesh* TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w,float h,int p,int q);
+        static Mesh* TorusKnot(float const r1,float const r2,int const r1_segs,int const r2_segs,float const w,float const h,int const p,int const q);
 
         /// Returns a Möbius Strip with an outer radius width \a r1w and height
         /// \a r1h, and inner radius width \a r2w and height \a r2h, where the
         /// inner and outer ellipses are divided into \a r1_segs and \a r2_segs
         /// segments respectively.
-        static Mesh* MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1_segs,int r2_segs);
+        static Mesh* MoebiusStrip(float const r1w,float const r1h,float const r2w,float const r2h,int const r1_segs,int const r2_segs);
 
         //@}
 
@@ -151,12 +151,12 @@ struct Mesh
         /// Generates a mesh's surface by calculating the spherical product of
         /// the formulas \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs
         /// samples, respectively.
-        static Mesh* SphericalProduct(math::Formula const& r1,int r1_segs,math::Formula const& r2,int r2_segs);
+        static Mesh* SphericalProduct(math::Formula const& r1,int const r1_segs,math::Formula const& r2,int const r2_segs);
 
         /// Generates a mesh's surface by calculating the toroidal product of
         /// the formulas \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs
         /// samples, respectively.
-        static Mesh* ToroidalProduct(math::Formula const& r1,int r1_segs,math::Formula const& r2,int r2_segs);
+        static Mesh* ToroidalProduct(math::Formula const& r1,int const r1_segs,math::Formula const& r2,int const r2_segs);
 
         //@}
 
@@ -173,18 +173,18 @@ struct Mesh
         /// Generates a mesh by extruding the line loop defined by \a contour
         /// along the given \a path. If \a close is \c true, the end of the path
         /// is connected to its beginning, else cut faces are created.
-        static Mesh* Extrude(VectorArray const& path,VectorArray const& contour,bool closed=true,MatrixArray const* trans=NULL);
+        static Mesh* Extrude(VectorArray const& path,VectorArray const& contour,bool const closed=true,MatrixArray const* const trans=NULL);
 
         /// Generates a mesh's surface by calculating a product of the formulas
         /// \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs samples,
         /// respectively. The product is altered by \a fm and \a fa which define
         /// multiplicative and additive terms for the product calculation.
-        static Mesh* FunctionalProduct(math::Formula const& r1,int r1_segs,math::Formula const& r2,int r2_segs,math::Formula const& fm,math::Formula const& fa);
+        static Mesh* FunctionalProduct(math::Formula const& r1,int const r1_segs,math::Formula const& r2,int const r2_segs,math::Formula const& fm,math::Formula const& fa);
 
         /// Generates a mesh consisting of lines only that represent the
         /// compiled mesh's vertex normals stored in the \a renderer, optionally
         /// with the given \a scale applied.
-        static Mesh* Normals(Preparer const& geom,float scale=1.0f);
+        static Mesh* Normals(Preparer const& geom,float const scale=1.0f);
 
         //@}
 
@@ -192,7 +192,7 @@ struct Mesh
 
         /// Makes all vertices in the given \a mesh neighbors that have the
         /// specified \a distance, up to the specified vertex \a valence.
-        static void populateNeighborhood(Mesh* mesh,float distance,int valence);
+        static void populateNeighborhood(Mesh* const mesh,float distance,int const valence);
     };
 
     /// Class to subdivide meshes using different algorithms, for an overview
@@ -214,11 +214,11 @@ struct Mesh
 
         /// Divides the triangular faces of a mesh into further triangles. If
         /// \a scale is non-zero, the new vertices are scaled to have that length.
-        static void Polyhedral(Mesh& mesh,int steps,float scale);
+        static void Polyhedral(Mesh& mesh,int steps,float const scale);
 
         /// Convenience wrapper for use with a function pointer that calls
         /// Polyhedral() with \a scale set to \c 0.
-        static void Polyhedral(Mesh& mesh,int steps=1) {
+        static void Polyhedral(Mesh& mesh,int const steps=1) {
             Polyhedral(mesh,steps,0.0f);
         }
 
@@ -237,21 +237,21 @@ struct Mesh
 
         /// Divides the triangular faces of a mesh as described by C. T. Loop in
         /// <http://research.microsoft.com/~cloop/thesis.pdf>.
-        static void Loop(Mesh& mesh,int steps,bool move);
+        static void Loop(Mesh& mesh,int steps,bool const move);
 
         /// Convenience wrapper for use with a function pointer that calls
         /// Loop() with \a move set to \c true.
-        static void Loop(Mesh& mesh,int steps=1) {
+        static void Loop(Mesh& mesh,int const steps=1) {
             Loop(mesh,steps,true);
         }
 
         /// Divides the triangular faces of a mesh as described by L. Kobbelt in
         /// <http://www.graphics.rwth-aachen.de/uploads/media/sqrt3.pdf>.
-        static void Sqrt3(Mesh& mesh,int steps,bool move);
+        static void Sqrt3(Mesh& mesh,int steps,bool const move);
 
         /// Convenience wrapper for use with a function pointer that calls
         /// Sqrt3() with \a move set to \c true.
-        static void Sqrt3(Mesh& mesh,int steps=1) {
+        static void Sqrt3(Mesh& mesh,int const steps=1) {
             Sqrt3(mesh,steps,true);
         }
 
@@ -271,7 +271,7 @@ struct Mesh
         /// subdivision step. Starting from vertex index \a x0i, neighbors
         /// missing in the original mesh \a orig are inserted into the given
         /// \a mesh, which usually is a copy of \a orig.
-        static void assignNeighbors(Mesh const& orig,Mesh& mesh,int x0i);
+        static void assignNeighbors(Mesh const& orig,Mesh& mesh,int const x0i);
     };
 
     /// Class to prepare a mesh for rendering.
@@ -285,7 +285,7 @@ struct Mesh
 
         /// Generates the primitive index arrays from the mesh data structure
         /// and calculates vertex normals from averaged face normals.
-        void compile(Mesh const* mesh);
+        void compile(Mesh const* const mesh);
 
         /// Returns a pointer to the last compiled mesh.
         Mesh const* getMesh() const {
@@ -323,7 +323,7 @@ struct Mesh
     };
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.
-    Mesh(int num_vertices=0)
+    Mesh(int const num_vertices=0)
     :   vertices(num_vertices),neighbors(num_vertices) {}
 
     /// Creates a mesh, copying the vertices from the given dynamic \a vertex_array.
@@ -347,12 +347,12 @@ struct Mesh
     /// Returns the index of the vertex following \a xi in the neighborhood of
     /// \a vi, both given as indices into the vertex array. Optionally, this is
     /// repeated the given number of \a steps.
-    int nextTo(int xi,int vi,int steps=1) const;
+    int nextTo(int const xi,int const vi,int const steps=1) const;
 
     /// Returns the index of the vertex preceding \a xi in the neighborhood of
     /// \a vi, both given as indices into the vertex array. Optionally, this is
     /// repeated the given number of \a steps.
-    int prevTo(int xi,int vi,int steps=1) const;
+    int prevTo(int const xi,int const vi,int const steps=1) const;
 
     /// Given an oriented edge from \a ai to \a bi, returns the number of
     /// vertices that make up the edge's face, and their indices in \a polygon.
@@ -367,13 +367,13 @@ struct Mesh
 
     /// Inserts a new vertex \a x on the edge between \a ai and \a bi and
     /// returns its index in the vertex array.
-    int insert(int ai,int bi,math::Vec3f const& x);
+    int insert(int const ai,int const bi,math::Vec3f const& x);
 
     /// Inserts \a ai after or before \a xi in the neighborhood of \a vi.
-    void splice(int ai,int xi,int vi,bool after=true);
+    void splice(int const ai,int const xi,int const vi,bool const after=true);
 
     /// Removes \a xi from the neighborhood of \a vi.
-    void erase(int xi,int vi);
+    void erase(int const xi,int const vi);
 
     //@}
 

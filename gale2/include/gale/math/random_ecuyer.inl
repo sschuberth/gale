@@ -37,7 +37,7 @@ struct RandomEcuyerImpl
     //@{
 
     /// Initializes the random generator with the given \a seed value.
-    void init(g_uint32 seed) {
+    void init(g_uint32 const seed) {
         // Generate the internal seeds needed for the generator state using a
         // Linear Congruential Generator. The only condition, stated at the end
         // of the 1999 L'Ecuyer paper, is that the seeds must be greater than 1,

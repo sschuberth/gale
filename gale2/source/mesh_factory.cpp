@@ -31,7 +31,7 @@ namespace gale {
 
 namespace model {
 
-void Mesh::Factory::Shape::Ellipse(VectorArray& shape,int segs,float w,float h)
+void Mesh::Factory::Shape::Ellipse(VectorArray& shape,int const segs,float const w,float const h)
 {
     shape.setSize(segs);
 
@@ -45,7 +45,7 @@ void Mesh::Factory::Shape::Ellipse(VectorArray& shape,int segs,float w,float h)
     }
 }
 
-void Mesh::Factory::Shape::Supershape(VectorArray& shape,int segs,float m,float n1,float n2,float n3,float a,float b)
+void Mesh::Factory::Shape::Supershape(VectorArray& shape,int const segs,float const m,float const n1,float const n2,float const n3,float const a,float const b)
 {
     math::Superformula f(m,n1,n2,n3,a,b);
 
@@ -218,7 +218,7 @@ Mesh* Mesh::Factory::Dodecahedron()
     return m;
 }
 
-Mesh* Mesh::Factory::Sphere(float r,int steps)
+Mesh* Mesh::Factory::Sphere(float const r,int const steps)
 {
     Mesh* m=Icosahedron();
 
@@ -234,7 +234,7 @@ Mesh* Mesh::Factory::Sphere(float r,int steps)
     return m;
 }
 
-Mesh* Mesh::Factory::Torus(float r1,float r2,int r1_segs,int r2_segs)
+Mesh* Mesh::Factory::Torus(float const r1,float const r2,int const r1_segs,int const r2_segs)
 {
     // Calculate points on the path.
     VectorArray path;
@@ -248,7 +248,7 @@ Mesh* Mesh::Factory::Torus(float r1,float r2,int r1_segs,int r2_segs)
     return Extrude(path,contour);
 }
 
-Mesh* Mesh::Factory::TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w,float h,int p,int q)
+Mesh* Mesh::Factory::TorusKnot(float const r1,float const r2,int const r1_segs,int const r2_segs,float const w,float const h,int const p,int const q)
 {
     // Calculate points on the path.
     VectorArray path(r1_segs);
@@ -276,7 +276,7 @@ Mesh* Mesh::Factory::TorusKnot(float r1,float r2,int r1_segs,int r2_segs,float w
     return Extrude(path,contour);
 }
 
-Mesh* Mesh::Factory::MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1_segs,int r2_segs)
+Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2w,float const r2h,int const r1_segs,int const r2_segs)
 {
     // Calculate points on the path.
     VectorArray path;
@@ -295,17 +295,17 @@ Mesh* Mesh::Factory::MoebiusStrip(float r1w,float r1h,float r2w,float r2h,int r1
     return Extrude(path,contour,true,&rotation);
 }
 
-Mesh* Mesh::Factory::SphericalProduct(Formula const& r1,int r1_segs,Formula const& r2,int r2_segs)
+Mesh* Mesh::Factory::SphericalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
 {
     return FunctionalProduct(r1,r1_segs,r2,r2_segs,Formula(),Constantformula(0));
 }
 
-Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int r1_segs,Formula const& r2,int r2_segs)
+Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
 {
     return FunctionalProduct(r1,r1_segs,r2,r2_segs,Constantformula(1),Formula());
 }
 
-Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,bool closed,MatrixArray const* trans)
+Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,bool const closed,MatrixArray const* const trans)
 {
     if (path.getSize()<2 || contour.getSize()<3) {
         return NULL;
@@ -326,10 +326,10 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
     // Calculate the vertex positions.
     for (int pi=0;pi<path.getSize();++pi) {
         // Pointer to p's predecessor along the path.
-        Vec3f const* a=(p==pA)?(closed?pO:p):p-1;
+        Vec3f const* const a=(p==pA)?(closed?pO:p):p-1;
 
         // Pointer to p's successor along the path.
-        Vec3f const* b=(p==pO)?(closed?pA:p):p+1;
+        Vec3f const* const b=(p==pO)?(closed?pA:p):p+1;
 
         // Calculate the Frenet frame in p.
         Vec3f tangent=~(*b-*a);
@@ -490,7 +490,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
     return m;
 }
 
-Mesh* Mesh::Factory::FunctionalProduct(Formula const& r1,int r1_segs,Formula const& r2,int r2_segs,Formula const& fm,Formula const& fa)
+Mesh* Mesh::Factory::FunctionalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs,Formula const& fm,Formula const& fa)
 {
     // Perform some sanity checks.
     if (r1_segs<4 || r2_segs<2) {
@@ -560,7 +560,7 @@ Mesh* Mesh::Factory::FunctionalProduct(Formula const& r1,int r1_segs,Formula con
     return m;
 }
 
-Mesh* Mesh::Factory::Normals(Preparer const& geom,float scale)
+Mesh* Mesh::Factory::Normals(Preparer const& geom,float const scale)
 {
     if (!geom.getMesh()) {
         return NULL;
@@ -600,7 +600,7 @@ Mesh* Mesh::Factory::Normals(Preparer const& geom,float scale)
     return m;
 }
 
-void Mesh::Factory::populateNeighborhood(Mesh* mesh,float distance,int valence)
+void Mesh::Factory::populateNeighborhood(Mesh* const mesh,float distance,int const valence)
 {
     // Square the distance so we can compare it to the (cheaper) squared length.
     distance*=distance;

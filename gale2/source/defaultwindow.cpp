@@ -72,7 +72,7 @@ void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
     mouse_prev_y=y;
 }
 
-LRESULT DefaultWindow::handleMessage(UINT uMsg,WPARAM wParam,LPARAM lParam)
+LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     static bool capture=false;
 

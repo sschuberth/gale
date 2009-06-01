@@ -51,7 +51,7 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
 
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.
-    static void setCurrent(GLuint handle) {
+    static void setCurrent(GLuint const handle) {
         glBindVertexArray(handle);
         G_ASSERT_OPENGL
     }
@@ -69,7 +69,7 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
 
     /// Destroys the OpenGL object identified by \a handle. If the object is
     /// currently bound, the default object becomes current.
-    static void destroyObject(GLuint handle) {
+    static void destroyObject(GLuint const handle) {
         if (glDeleteVertexArrays) {
             glDeleteVertexArrays(1,&handle);
             G_ASSERT_OPENGL
@@ -77,7 +77,7 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
     }
 
     /// Checks whether the given object \a handle is valid.
-    static bool isValidObject(GLuint handle) {
+    static bool isValidObject(GLuint const handle) {
         GLboolean result=glIsVertexArray && glIsVertexArray(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
