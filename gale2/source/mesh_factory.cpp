@@ -295,14 +295,63 @@ Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2
     return Extrude(path,contour,true,&rotation);
 }
 
+/**
+ * Helper formula to combine the spherical and toroidal product into a single formula.
+ */
+struct ProductFormula:public FormulaR2R3
+{
+    /// Initializes with the product formulas \a r1 and \a r2. \a fm and \a fa
+    /// define the multiplicative and additive terms for the product calculation.
+    ProductFormula(Formula const& r1,Formula const& r2,Formula const& fm,Formula const& fa)
+    :   r1(r1)
+    ,   r2(r2)
+    ,   fm(fm)
+    ,   fa(fa)
+    {}
+
+    /// Evaluates the functional product for the given angles theta and phi
+    /// encoded as the first and second components of \a v.
+    Vec3f operator()(Vec2f const& v) const {
+        float r1t=r1(v.getX()),r2p=r2(v.getY());
+        float ct=::cos(v.getX()),cp=::cos(v.getY());
+        float st=::sin(v.getX()),sp=::sin(v.getY());
+        float r2pcp=r2p*cp;
+
+        float x=r1t*ct * fm(r2pcp) + fa(r2pcp*ct);
+        float y=r1t*st * fm(r2pcp) + fa(r2pcp*st);
+
+        float z=r2p*sp;
+
+        return Vec3f(x,y,z);
+    }
+
+    Formula const& r1; ///< First product formula.
+    Formula const& r2; ///< Second product formula.
+
+    Formula const& fm; ///< Multiplicative term formula.
+    Formula const& fa; ///< Additive term formula.
+};
+
 Mesh* Mesh::Factory::SphericalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
 {
-    return FunctionalProduct(r1,r1_segs,r2,r2_segs,Formula(),ConstantFormula(0));
+    Formula fm;
+    ConstantFormula fa(0);
+
+    ProductFormula eval(r1,r2,fm,fa);
+
+    // -PI <= theta <= PI, -PI/2 <= phi <= PI/2
+    return SphericalEvaluator(eval,-Constf::PI(),Constf::PI(),r1_segs,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs);
 }
 
 Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
 {
-    return FunctionalProduct(r1,r1_segs,r2,r2_segs,ConstantFormula(1),Formula());
+    ConstantFormula fm(1);
+    Formula fa;
+
+    ProductFormula eval(r1,r2,fm,fa);
+
+    // -PI <= theta <= PI, -PI/2 <= phi <= PI/2
+    return SphericalEvaluator(eval,-Constf::PI(),Constf::PI(),r1_segs,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs);
 }
 
 Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,bool const closed,MatrixArray const* const trans)
@@ -389,12 +438,12 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             IndexArray& vn=m->neighbors[vi];
             vn.setSize(6);
 
-#define WRAP_C(x) wrap(x,contour.getSize())
+#define WRAP_CON(x) wrap(x,contour.getSize())
 
             int n=0,biwc;
 
             // Add the predecessor on the contour as a neighbor.
-            biwc=bi+WRAP_C(ci-1);
+            biwc=bi+WRAP_CON(ci-1);
             vn[n++]=biwc;
 
             // Is this the last vertex on the path?
@@ -430,7 +479,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
             }
 
             // Add the successor on the contour as a neighbor.
-            biwc=bi+WRAP_C(ci+1);
+            biwc=bi+WRAP_CON(ci+1);
             vn[n++]=biwc;
 
             // Is this the first vertex on the path?
@@ -467,7 +516,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                     }
 
                     biwc=mn%contour.getSize();
-                    vn[n++]=mn-biwc+WRAP_C(biwc+1);
+                    vn[n++]=mn-biwc+WRAP_CON(biwc+1);
                     vn[n++]=mn;
                 }
                 else {
@@ -481,7 +530,7 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
                 vn[n++]=vi-contour.getSize();
             }
 
-#undef WRAP_C
+#undef WRAP_CON
 
             ++vi;
         }
@@ -490,61 +539,62 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
     return m;
 }
 
-Mesh* Mesh::Factory::FunctionalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs,Formula const& fm,Formula const& fa)
+Mesh* Mesh::Factory::SphericalEvaluator(
+    FormulaR2R3 const& eval
+,   float const theta_min
+,   float const theta_max
+,   int const theta_steps
+,   float const phi_min
+,   float const phi_max
+,   int const phi_steps
+)
 {
     // Perform some sanity checks.
-    if (r1_segs<4 || r2_segs<2) {
+    if (theta_steps<4 || phi_steps<2) {
         return NULL;
     }
 
     // Create an empty mesh with the required number of vertices.
-    Mesh* m=new Mesh(r1_segs*r2_segs);
+    Mesh* m=new Mesh(theta_steps*phi_steps);
 
     // Index of the vertex currently being calculated.
     int vi=0;
 
-    for (int longitude=0;longitude<r1_segs;++longitude) {
-        // -PI <= theta <= PI
-        float theta=2*Constf::PI()/r1_segs*longitude-Constf::PI();
+    float theta_delta=(theta_max-theta_min)/theta_steps;
+    float phi_delta=(phi_max-phi_min)/phi_steps;
+
+    Vec2f theta_phi;
+
+    for (int longitude=0;longitude<theta_steps;++longitude) {
+        theta_phi.setX(theta_min+longitude*theta_delta);
 
         // Current "base" vertex on the contour.
         int bi=vi;
 
-        for (int latitude=0;latitude<r2_segs;++latitude) {
-            // -PI/2 <= phi <= PI/2
-            float phi=Constf::PI()/r2_segs*latitude-Constf::PI()*0.5f;
+        for (int latitude=0;latitude<phi_steps;++latitude) {
+            theta_phi.setY(phi_min+latitude*phi_delta);
 
             // Calculate the vertex position.
-            float r1t=r1(theta),r2p=r2(phi);
-            float ct=::cos(theta),cp=::cos(phi);
-            float st=::sin(theta),sp=::sin(phi);
-            float r2pcp=r2p*cp;
-
-            float x=r1t*ct * fm(r2pcp) + fa(r2pcp*ct);
-            float y=r1t*st * fm(r2pcp) + fa(r2pcp*st);
-
-            float z=r2p*sp;
-
-            m->vertices[vi]=Vec3f(x,y,z);
+            m->vertices[vi]=eval(theta_phi);
 
             // Calculate the vertex neighborhood.
             IndexArray& vn=m->neighbors[vi];
             vn.setSize(6);
 
-#define WRAP_LAT(x) wrap(x,r2_segs)
+#define WRAP_LAT(x) wrap(x,phi_steps)
 
             vn[0]=bi+WRAP_LAT(latitude-1);
-            vn[1]=vn[0]+r2_segs;
-            vn[2]=vi+r2_segs;
-            if (longitude==r1_segs-1) {
+            vn[1]=vn[0]+phi_steps;
+            vn[2]=vi+phi_steps;
+            if (longitude==theta_steps-1) {
                 // Wrap around in longitude direction.
                 vn[1]-=m->vertices.getSize();
                 vn[2]-=m->vertices.getSize();
             }
 
             vn[3]=bi+WRAP_LAT(latitude+1);
-            vn[4]=vn[3]-r2_segs;
-            vn[5]=vi-r2_segs;
+            vn[4]=vn[3]-phi_steps;
+            vn[5]=vi-phi_steps;
             if (longitude==0) {
                 // Wrap around in longitude direction.
                 vn[4]+=m->vertices.getSize();

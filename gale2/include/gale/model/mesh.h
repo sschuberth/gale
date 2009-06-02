@@ -175,11 +175,19 @@ struct Mesh
         /// is connected to its beginning, else cut faces are created.
         static Mesh* Extrude(VectorArray const& path,VectorArray const& contour,bool const closed=true,MatrixArray const* const trans=NULL);
 
-        /// Generates a mesh's surface by calculating a product of the formulas
-        /// \a r1 and \a r2, evaluated at \a r1_segs and \a r2_segs samples,
-        /// respectively. The product is altered by \a fm and \a fa which define
-        /// multiplicative and additive terms for the product calculation.
-        static Mesh* FunctionalProduct(math::Formula const& r1,int const r1_segs,math::Formula const& r2,int const r2_segs,math::Formula const& fm,math::Formula const& fa);
+        /// Generates a mesh's surface by calculating \a eval at every point on
+        /// the grid of size \a theta_steps by \a phi_steps which is defined by
+        /// walking from \a theta_min to \a theta_max in longitudal direction
+        /// and from \a phi_min to \a phi_max in latitudal direction.
+        static Mesh* SphericalEvaluator(
+            math::FormulaR2R3 const& eval
+        ,   float const theta_min
+        ,   float const theta_max
+        ,   int const theta_steps
+        ,   float const phi_min
+        ,   float const phi_max
+        ,   int const phi_steps
+        );
 
         /// Generates a mesh consisting of lines only that represent the
         /// compiled mesh's vertex normals stored in the \a renderer, optionally
