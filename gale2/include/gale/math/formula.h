@@ -31,12 +31,14 @@
  * Mathematical formulas
  */
 
+#include "vector.h"
+
 namespace gale {
 
 namespace math {
 
 /**
- * Functor base class for implementing formulas.
+ * Functor base class for implementing formulas that map R1 to R1.
  */
 struct Formula
 {
@@ -44,9 +46,24 @@ struct Formula
     virtual ~Formula() {}
 
     /// The call operator to be overloaded with the formula. Defaults to
-    /// evaluating the identity.
+    /// evaluating to \a x, i.e. the identity.
     virtual float operator()(float const x) const {
         return x;
+    }
+};
+
+/**
+ * Functor base class for implementing formulas that map R2 to R3.
+ */
+struct FormulaR2R3
+{
+    /// Define a virtual destructor, as we have a virtual method.
+    virtual ~FormulaR2R3() {}
+
+    /// The call operator to be overloaded with the formula. Defaults to
+    /// extending \a v with 0 as the third component.
+    virtual Vec3f operator()(Vec2f const& v) const {
+        return Vec3f(v.getX(),v.getY(),0);
     }
 };
 
