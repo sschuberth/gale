@@ -282,8 +282,8 @@ class TestWindow:public DefaultWindow
             case '7': {
                 delete m_mesh;
 
-                static Superformula r1(7.0f,0.2f,1.7f,1.7f);
-                static Superformula r2(7.0f,0.2f,1.7f,1.7f);
+                static SuperFormula r1(7.0f,0.2f,1.7f,1.7f);
+                static SuperFormula r2(7.0f,0.2f,1.7f,1.7f);
                 m_mesh=Mesh::Factory::SphericalProduct(r1,60,r2,30);
 
                 puts("Spherical Supershape mesh.");
@@ -296,8 +296,8 @@ class TestWindow:public DefaultWindow
             case '8': {
                 delete m_mesh;
 
-                static Superformula r1(6.0f,-0.68f,22.77f,0.75f,1.99f,0.64f);
-                static Superformula r2(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
+                static SuperFormula r1(6.0f,-0.68f,22.77f,0.75f,1.99f,0.64f);
+                static SuperFormula r2(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
                 m_mesh=Mesh::Factory::ToroidalProduct(r1,40,r2,20);
 
                 puts("Toroidal Supershape mesh.");

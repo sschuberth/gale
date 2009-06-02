@@ -53,10 +53,10 @@ struct Formula
 /**
  * Functor for a constant formula.
  */
-struct Constantformula:public Formula
+struct ConstantFormula:public Formula
 {
     /// Initializing constructor for the formula's constant parameters.
-    Constantformula(float const constant)
+    ConstantFormula(float const constant)
     :   constant(constant) {}
 
     /// Evaluator for the formula.
@@ -75,10 +75,10 @@ struct Constantformula:public Formula
  * Functor for the generalized Superformula as described by J. Gielis, see
  * <http://mathworld.wolfram.com/Superellipse.html>.
  */
-struct Superformula:public Formula
+struct SuperFormula:public Formula
 {
     /// Initializing constructor for the formula's constant parameters.
-    Superformula(float const m,float const n1,float const n2,float const n3,float const a=1.0,float const b=1.0)
+    SuperFormula(float const m,float const n1,float const n2,float const n3,float const a=1.0,float const b=1.0)
     :   m(m),n1(n1),n2(n2),n3(n3),a(a),b(b) {}
 
     /// Evaluator for the formula.

@@ -47,7 +47,7 @@ void Mesh::Factory::Shape::Ellipse(VectorArray& shape,int const segs,float const
 
 void Mesh::Factory::Shape::Supershape(VectorArray& shape,int const segs,float const m,float const n1,float const n2,float const n3,float const a,float const b)
 {
-    math::Superformula f(m,n1,n2,n3,a,b);
+    math::SuperFormula f(m,n1,n2,n3,a,b);
 
     shape.setSize(segs);
 
@@ -297,12 +297,12 @@ Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2
 
 Mesh* Mesh::Factory::SphericalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
 {
-    return FunctionalProduct(r1,r1_segs,r2,r2_segs,Formula(),Constantformula(0));
+    return FunctionalProduct(r1,r1_segs,r2,r2_segs,Formula(),ConstantFormula(0));
 }
 
 Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
 {
-    return FunctionalProduct(r1,r1_segs,r2,r2_segs,Constantformula(1),Formula());
+    return FunctionalProduct(r1,r1_segs,r2,r2_segs,ConstantFormula(1),Formula());
 }
 
 Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,bool const closed,MatrixArray const* const trans)
