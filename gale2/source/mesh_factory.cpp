@@ -245,7 +245,7 @@ Mesh* Mesh::Factory::Torus(float const r1,float const r2,int const r1_segs,int c
     Shape::Ellipse(contour,r2_segs,r2,r2);
 
     // Extrude the contour along the path.
-    return Extrude(path,contour);
+    return Extruder(path,contour);
 }
 
 Mesh* Mesh::Factory::TorusKnot(float const r1,float const r2,int const r1_segs,int const r2_segs,float const w,float const h,int const p,int const q)
@@ -273,7 +273,7 @@ Mesh* Mesh::Factory::TorusKnot(float const r1,float const r2,int const r1_segs,i
     Shape::Ellipse(contour,r2_segs,r2,r2);
 
     // Extrude the contour along the path.
-    return Extrude(path,contour);
+    return Extruder(path,contour);
 }
 
 Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2w,float const r2h,int const r1_segs,int const r2_segs)
@@ -292,7 +292,7 @@ Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2
     }
 
     // Extrude the contour along the path.
-    return Extrude(path,contour,true,&rotation);
+    return Extruder(path,contour,true,&rotation);
 }
 
 /**
@@ -339,8 +339,8 @@ Mesh* Mesh::Factory::SphericalProduct(Formula const& r1,int const r1_segs,Formul
 
     ProductFormula eval(r1,r2,fm,fa);
 
-    // -PI <= theta <= PI, -PI/2 <= phi <= PI/2
-    return SphericalEvaluator(eval,-Constf::PI(),Constf::PI(),r1_segs,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs);
+    // Longitude: -PI <= theta <= PI, Latitude: -PI/2 <= phi <= PI/2.
+    return GridMapper(eval,-Constf::PI(),Constf::PI(),r1_segs,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs);
 }
 
 Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
@@ -350,11 +350,11 @@ Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int const r1_segs,Formula
 
     ProductFormula eval(r1,r2,fm,fa);
 
-    // -PI <= theta <= PI, -PI/2 <= phi <= PI/2
-    return SphericalEvaluator(eval,-Constf::PI(),Constf::PI(),r1_segs,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs);
+    // Longitude: -PI <= theta <= PI, Latitude: -PI/2 <= phi <= PI/2.
+    return GridMapper(eval,-Constf::PI(),Constf::PI(),r1_segs,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs);
 }
 
-Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,bool const closed,MatrixArray const* const trans)
+Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour,bool const closed,MatrixArray const* const trans)
 {
     if (path.getSize()<2 || contour.getSize()<3) {
         return NULL;
@@ -539,64 +539,64 @@ Mesh* Mesh::Factory::Extrude(VectorArray const& path,VectorArray const& contour,
     return m;
 }
 
-Mesh* Mesh::Factory::SphericalEvaluator(
+Mesh* Mesh::Factory::GridMapper(
     FormulaR2R3 const& eval
-,   float const theta_min
-,   float const theta_max
-,   int const theta_steps
-,   float const phi_min
-,   float const phi_max
-,   int const phi_steps
+,   float const s_min
+,   float const s_max
+,   int const s_steps
+,   float const t_min
+,   float const t_max
+,   int const t_steps
 )
 {
     // Perform some sanity checks.
-    if (theta_steps<4 || phi_steps<2) {
+    if (s_steps<4 || t_steps<2) {
         return NULL;
     }
 
     // Create an empty mesh with the required number of vertices.
-    Mesh* m=new Mesh(theta_steps*phi_steps);
+    Mesh* m=new Mesh(s_steps*t_steps);
 
     // Index of the vertex currently being calculated.
     int vi=0;
 
-    float theta_delta=(theta_max-theta_min)/theta_steps;
-    float phi_delta=(phi_max-phi_min)/phi_steps;
+    float s_delta=(s_max-s_min)/s_steps;
+    float t_delta=(t_max-t_min)/t_steps;
 
-    Vec2f theta_phi;
+    Vec2f st;
 
-    for (int longitude=0;longitude<theta_steps;++longitude) {
-        theta_phi.setX(theta_min+longitude*theta_delta);
+    for (int s=0;s<s_steps;++s) {
+        st.setX(s_min+s*s_delta);
 
-        // Current "base" vertex on the contour.
+        // Current "base" vertex on the grid.
         int bi=vi;
 
-        for (int latitude=0;latitude<phi_steps;++latitude) {
-            theta_phi.setY(phi_min+latitude*phi_delta);
+        for (int t=0;t<t_steps;++t) {
+            st.setY(t_min+t*t_delta);
 
             // Calculate the vertex position.
-            m->vertices[vi]=eval(theta_phi);
+            m->vertices[vi]=eval(st);
 
             // Calculate the vertex neighborhood.
             IndexArray& vn=m->neighbors[vi];
             vn.setSize(6);
 
-#define WRAP_LAT(x) wrap(x,phi_steps)
+#define WRAP_LAT(x) wrap(x,t_steps)
 
-            vn[0]=bi+WRAP_LAT(latitude-1);
-            vn[1]=vn[0]+phi_steps;
-            vn[2]=vi+phi_steps;
-            if (longitude==theta_steps-1) {
-                // Wrap around in longitude direction.
+            vn[0]=bi+WRAP_LAT(t-1);
+            vn[1]=vn[0]+t_steps;
+            vn[2]=vi+t_steps;
+            if (s==s_steps-1) {
+                // Wrap around in x-direction.
                 vn[1]-=m->vertices.getSize();
                 vn[2]-=m->vertices.getSize();
             }
 
-            vn[3]=bi+WRAP_LAT(latitude+1);
-            vn[4]=vn[3]-phi_steps;
-            vn[5]=vi-phi_steps;
-            if (longitude==0) {
-                // Wrap around in longitude direction.
+            vn[3]=bi+WRAP_LAT(t+1);
+            vn[4]=vn[3]-t_steps;
+            vn[5]=vi-t_steps;
+            if (s==0) {
+                // Wrap around in x-direction.
                 vn[4]+=m->vertices.getSize();
                 vn[5]+=m->vertices.getSize();
             }

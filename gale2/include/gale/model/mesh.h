@@ -173,20 +173,20 @@ struct Mesh
         /// Generates a mesh by extruding the line loop defined by \a contour
         /// along the given \a path. If \a close is \c true, the end of the path
         /// is connected to its beginning, else cut faces are created.
-        static Mesh* Extrude(VectorArray const& path,VectorArray const& contour,bool const closed=true,MatrixArray const* const trans=NULL);
+        static Mesh* Extruder(VectorArray const& path,VectorArray const& contour,bool const closed=true,MatrixArray const* const trans=NULL);
 
         /// Generates a mesh's surface by calculating \a eval at every point on
-        /// the grid of size \a theta_steps by \a phi_steps which is defined by
-        /// walking from \a theta_min to \a theta_max in longitudal direction
-        /// and from \a phi_min to \a phi_max in latitudal direction.
-        static Mesh* SphericalEvaluator(
+        /// the grid of size \a s_steps by \a t_steps which is defined by
+        /// walking from \a s_min to \a s_max in x-direction and from \a t_min
+        /// to \a t_max in y-direction.
+        static Mesh* GridMapper(
             math::FormulaR2R3 const& eval
-        ,   float const theta_min
-        ,   float const theta_max
-        ,   int const theta_steps
-        ,   float const phi_min
-        ,   float const phi_max
-        ,   int const phi_steps
+        ,   float const s_min
+        ,   float const s_max
+        ,   int const s_steps
+        ,   float const t_min
+        ,   float const t_max
+        ,   int const t_steps
         );
 
         /// Generates a mesh consisting of lines only that represent the
