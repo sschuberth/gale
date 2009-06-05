@@ -184,9 +184,12 @@ struct Mesh
         ,   float const s_min
         ,   float const s_max
         ,   int const s_steps
+        ,   bool const s_closed
         ,   float const t_min
         ,   float const t_max
         ,   int const t_steps
+        ,   bool const t_closed
+        ,   bool const reverse=false
         );
 
         /// Generates a mesh consisting of lines only that represent the

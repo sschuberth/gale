@@ -340,7 +340,7 @@ Mesh* Mesh::Factory::SphericalProduct(Formula const& r1,int const r1_segs,Formul
     ProductFormula eval(r1,r2,fm,fa);
 
     // Longitude: -PI <= theta <= PI, Latitude: -PI/2 <= phi <= PI/2.
-    return GridMapper(eval,-Constf::PI(),Constf::PI(),r1_segs,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs);
+    return GridMapper(eval,-Constf::PI(),Constf::PI(),r1_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs,true);
 }
 
 Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
@@ -351,7 +351,7 @@ Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int const r1_segs,Formula
     ProductFormula eval(r1,r2,fm,fa);
 
     // Longitude: -PI <= theta <= PI, Latitude: -PI/2 <= phi <= PI/2.
-    return GridMapper(eval,-Constf::PI(),Constf::PI(),r1_segs,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs);
+    return GridMapper(eval,-Constf::PI(),Constf::PI(),r1_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs,true);
 }
 
 Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour,bool const closed,MatrixArray const* const trans)
@@ -438,12 +438,12 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
             IndexArray& vn=m->neighbors[vi];
             vn.setSize(6);
 
-#define WRAP_CON(x) wrap(x,contour.getSize())
+#define WRAP_C(x) wrap(x,contour.getSize())
 
             int n=0,biwc;
 
             // Add the predecessor on the contour as a neighbor.
-            biwc=bi+WRAP_CON(ci-1);
+            biwc=bi+WRAP_C(ci-1);
             vn[n++]=biwc;
 
             // Is this the last vertex on the path?
@@ -479,7 +479,7 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
             }
 
             // Add the successor on the contour as a neighbor.
-            biwc=bi+WRAP_CON(ci+1);
+            biwc=bi+WRAP_C(ci+1);
             vn[n++]=biwc;
 
             // Is this the first vertex on the path?
@@ -516,7 +516,7 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
                     }
 
                     biwc=mn%contour.getSize();
-                    vn[n++]=mn-biwc+WRAP_CON(biwc+1);
+                    vn[n++]=mn-biwc+WRAP_C(biwc+1);
                     vn[n++]=mn;
                 }
                 else {
@@ -530,7 +530,7 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
                 vn[n++]=vi-contour.getSize();
             }
 
-#undef WRAP_CON
+#undef WRAP_C
 
             ++vi;
         }
@@ -544,9 +544,12 @@ Mesh* Mesh::Factory::GridMapper(
 ,   float const s_min
 ,   float const s_max
 ,   int const s_steps
+,   bool const s_closed
 ,   float const t_min
 ,   float const t_max
 ,   int const t_steps
+,   bool const t_closed
+,   bool const reverse
 )
 {
     // Perform some sanity checks.
@@ -581,63 +584,53 @@ Mesh* Mesh::Factory::GridMapper(
             IndexArray& vn=m->neighbors[vi];
             vn.setSize(6);
 
-#define WRAP_LAT(x) wrap(x,t_steps)
+// Wrap around in y-direction.
+#define WRAP_T(t) wrap(t,t_steps)
 
-//bool s_closed=true;
-bool s_closed=false;
-
-//bool t_closed=true;
-bool t_closed=false;
-
-bool ccw=true;
+// Wrap around in x-direction.
+#define WRAP_V(s) wrap(s,m->vertices.getSize())
 
             int n=0;
-            bool border=false;
 
-            vn[n++]=bi+WRAP_LAT(t-1);
-            vn[n++]=vn[n-1]+t_steps;
-            vn[n++]=vi+t_steps;
-            if (s==s_steps-1) {
-                border=true;
+            bool t_border=(t==0);
 
-                if (s_closed) {
-                    // Wrap around in x-direction.
-                    vn[n-1]-=m->vertices.getSize();
-                    vn[n-2]-=m->vertices.getSize();
-                }
-                else {
-                    n-=2;
-                }
+            if (!t_border || t_closed) {
+                vn[n++]=bi+WRAP_T(t-1);
             }
 
-            vn[n++]=bi+WRAP_LAT(t+1);
-            vn[n++]=vn[n-1]-t_steps;
-            vn[n++]=vi-t_steps;
-            if (s==0) {
-                border=true;
-
-                if (s_closed) {
-                    // Wrap around in x-direction.
-                    vn[n-1]+=m->vertices.getSize();
-                    vn[n-2]+=m->vertices.getSize();
+            if (s!=s_steps-1 || s_closed) {
+                if (!t_border || t_closed) {
+                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])+t_steps);
                 }
-                else {
-                    n-=2;
-                }
+                vn[n++]=WRAP_V(vi+t_steps);
             }
 
-            if (!s_closed && border) {
-                vn.setSize(n);
+            t_border=(t==t_steps-1);
+
+            if (!t_border || t_closed) {
+                vn[n++]=bi+WRAP_T(t+1);
             }
 
-            if (ccw) {
+            if (s!=0 || s_closed) {
+                if (!t_border || t_closed) {
+                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])-t_steps);
+                }
+                vn[n++]=WRAP_V(vi-t_steps);
+            }
+
+            // Adjust to the real number of neighbors.
+            vn.setSize(n);
+
+            if (reverse) {
                 IndexArray tmp(vn);
                 for (int i=0;--n>=0;++i) {
                     vn[n]=tmp[i];
                 }
             }
 
-#undef WRAP_LAT
+#undef WRAP_V
+
+#undef WRAP_T
 
             ++vi;
         }
