@@ -583,22 +583,58 @@ Mesh* Mesh::Factory::GridMapper(
 
 #define WRAP_LAT(x) wrap(x,t_steps)
 
-            vn[0]=bi+WRAP_LAT(t-1);
-            vn[1]=vn[0]+t_steps;
-            vn[2]=vi+t_steps;
+//bool s_closed=true;
+bool s_closed=false;
+
+//bool t_closed=true;
+bool t_closed=false;
+
+bool ccw=true;
+
+            int n=0;
+            bool border=false;
+
+            vn[n++]=bi+WRAP_LAT(t-1);
+            vn[n++]=vn[n-1]+t_steps;
+            vn[n++]=vi+t_steps;
             if (s==s_steps-1) {
-                // Wrap around in x-direction.
-                vn[1]-=m->vertices.getSize();
-                vn[2]-=m->vertices.getSize();
+                border=true;
+
+                if (s_closed) {
+                    // Wrap around in x-direction.
+                    vn[n-1]-=m->vertices.getSize();
+                    vn[n-2]-=m->vertices.getSize();
+                }
+                else {
+                    n-=2;
+                }
             }
 
-            vn[3]=bi+WRAP_LAT(t+1);
-            vn[4]=vn[3]-t_steps;
-            vn[5]=vi-t_steps;
+            vn[n++]=bi+WRAP_LAT(t+1);
+            vn[n++]=vn[n-1]-t_steps;
+            vn[n++]=vi-t_steps;
             if (s==0) {
-                // Wrap around in x-direction.
-                vn[4]+=m->vertices.getSize();
-                vn[5]+=m->vertices.getSize();
+                border=true;
+
+                if (s_closed) {
+                    // Wrap around in x-direction.
+                    vn[n-1]+=m->vertices.getSize();
+                    vn[n-2]+=m->vertices.getSize();
+                }
+                else {
+                    n-=2;
+                }
+            }
+
+            if (!s_closed && border) {
+                vn.setSize(n);
+            }
+
+            if (ccw) {
+                IndexArray tmp(vn);
+                for (int i=0;--n>=0;++i) {
+                    vn[n]=tmp[i];
+                }
             }
 
 #undef WRAP_LAT
