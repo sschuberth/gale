@@ -69,7 +69,7 @@ struct Mesh
     {
       public:
 
-        /// %Factory methods to create some shapes, e.g. for use as extrusion contours.
+        /// Methods to create shapes, e.g. for use as extrusion contours.
         struct Shape
         {
             /// Returns an array of vectors on an ellipse with width \a w and
@@ -83,8 +83,8 @@ struct Mesh
 
         /**
          * \name Platonic Solids
-         * %Factory methods to create the five Platonic Solids, each with unit
-         * edge length, see <http://mathworld.wolfram.com/PlatonicSolid.html>.
+         * Methods to create the five Platonic Solids, each with unit edge
+         * length, see <http://mathworld.wolfram.com/PlatonicSolid.html>.
          */
         //@{
 
@@ -116,7 +116,7 @@ struct Mesh
 
         /**
          * \name Ellipse-based meshes
-         * %Factory methods to create meshes that are based on extruded ellipses.
+         * Methods to create meshes that are based on extruded ellipses.
          */
         //@{
 
@@ -142,9 +142,20 @@ struct Mesh
         //@}
 
         /**
+         * \name Miscellaneous surfaces
+         * Methods creating meshes mainly by wrapping a surface grid in space.
+         */
+        //@{
+
+        /// See <http://local.wasp.uwa.edu.au/~pbourke/geometry/shell/>.
+        static Mesh* Shell(int const s_steps,int const t_steps,float const r1,float const r2,float const h,int const n);
+
+        //@}
+
+        /**
          * \name Product meshes
-         * %Factory methods based on multiplying formulas to yield a 3D composite,
-         * see e.g. <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape3d/>.
+         * Methods based on multiplying formulas to yield a 3D composite, see
+         * e.g. <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape3d/>.
          */
         //@{
 
@@ -162,8 +173,8 @@ struct Mesh
 
         /**
          * \name Helper and debug meshes
-         * %Factory methods to create meshes that are not particularly useful
-         * on their own, but are used by other factory methods or for debugging.
+         * Methods to create meshes that are not particularly useful on their
+         * own, but are used by other factory methods or for debugging.
          */
         //@{
 

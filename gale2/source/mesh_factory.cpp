@@ -295,6 +295,40 @@ Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2
     return Extruder(path,contour,true,&rotation);
 }
 
+Mesh* Mesh::Factory::Shell(int const s_steps,int const t_steps,float const r1,float const r2,float const h,int const n)
+{
+    struct Formula:public FormulaR2R3
+    {
+        Formula(float const r1,float const r2,float const h,int const n)
+        :   a(r2),b(r1),c(h)
+        ,   n(n)
+        {}
+
+        Vec3f operator()(Vec2f const& v) const {
+            float const& s=v.getX();
+            float const& t=v.getY();
+
+            float const top=t/(2*Constf::PI());
+            float const at=a*(1-top);
+            float const cnt=::cos(n*t);
+            float const snt=::sin(n*t);
+
+            return Vec3f(
+                at*cnt*(1+::cos(s))+c*cnt
+            ,   at*snt*(1+::cos(s))+c*snt
+            ,   b*top+at*::sin(s)
+            );
+        }
+
+        float const a,b,c;
+        int const n;
+    };
+
+    Formula f(r1,r2,h,n);
+
+    return GridMapper(f,0,2*Constf::PI(),s_steps,true,0,2*Constf::PI(),t_steps,false,true);
+}
+
 /**
  * Helper formula to combine the spherical and toroidal product into a single formula.
  */
@@ -303,10 +337,8 @@ struct ProductFormula:public FormulaR2R3
     /// Initializes with the product formulas \a r1 and \a r2. \a fm and \a fa
     /// define the multiplicative and additive terms for the product calculation.
     ProductFormula(Formula const& r1,Formula const& r2,Formula const& fm,Formula const& fa)
-    :   r1(r1)
-    ,   r2(r2)
-    ,   fm(fm)
-    ,   fa(fa)
+    :   r1(r1),r2(r2)
+    ,   fm(fm),fa(fa)
     {}
 
     /// Evaluates the functional product for the given angles theta and phi
