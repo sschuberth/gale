@@ -69,12 +69,12 @@ Mesh* Mesh::Factory::Tetrahedron()
 
     static Vec3f const vertices[]={
         // Vertices on the lower edge, which is orthogonal to the upper edge.
-        Vec3f(-a,-a,+a),
-        Vec3f(+a,-a,-a),
+        Vec3f(-a,-a,+a)
+    ,   Vec3f(+a,-a,-a)
 
         // Vertices on the upper edge, which is orthogonal to the lower edge.
-        Vec3f(+a,+a,+a),
-        Vec3f(-a,+a,-a)
+    ,   Vec3f(+a,+a,+a)
+    ,   Vec3f(-a,+a,-a)
     };
 
     // Create a mesh from the static arrays.
@@ -95,14 +95,14 @@ Mesh* Mesh::Factory::Octahedron()
 
     static Vec3f const vertices[]={
         // Top and bottom vertices.
-        Vec3f( 0,+a, 0),
-        Vec3f( 0,-a, 0),
+        Vec3f( 0,+a, 0)
+    ,   Vec3f( 0,-a, 0)
 
         // Square base vertices.
-        Vec3f(+b, 0,+b),
-        Vec3f(+b, 0,-b),
-        Vec3f(-b, 0,-b),
-        Vec3f(-b, 0,+b)
+    ,   Vec3f(+b, 0,+b)
+    ,   Vec3f(+b, 0,-b)
+    ,   Vec3f(-b, 0,-b)
+    ,   Vec3f(-b, 0,+b)
     };
 
     // Create a mesh from the static arrays.
@@ -122,16 +122,16 @@ Mesh* Mesh::Factory::Hexahedron()
 
     static Vec3f const vertices[]={
         // Front face vertices.
-        Vec3f(+a,+a,+a),
-        Vec3f(-a,+a,+a),
-        Vec3f(-a,-a,+a),
-        Vec3f(+a,-a,+a),
+        Vec3f(+a,+a,+a)
+    ,   Vec3f(-a,+a,+a)
+    ,   Vec3f(-a,-a,+a)
+    ,   Vec3f(+a,-a,+a)
 
         // Back face vertices.
-        Vec3f(-a,+a,-a),
-        Vec3f(+a,+a,-a),
-        Vec3f(+a,-a,-a),
-        Vec3f(-a,-a,-a)
+    ,   Vec3f(-a,+a,-a)
+    ,   Vec3f(+a,+a,-a)
+    ,   Vec3f(+a,-a,-a)
+    ,   Vec3f(-a,-a,-a)
     };
 
     // Create a mesh from the static vertex array. Due to the different
@@ -152,18 +152,18 @@ Mesh* Mesh::Factory::Icosahedron()
     static float const b=1.0f/(2.0f*Constf::GOLDEN_RATIO());
 
     static Vec3f const vertices[]={
-        Vec3f( 0,-b,+a),
-        Vec3f(-b,-a, 0),
-        Vec3f(+b,-a, 0),
-        Vec3f( 0,-b,-a),
-        Vec3f( 0,+b,-a),
-        Vec3f(+a, 0,-b),
-        Vec3f(-a, 0,-b),
-        Vec3f( 0,+b,+a),
-        Vec3f(-a, 0,+b),
-        Vec3f(+a, 0,+b),
-        Vec3f(-b,+a, 0),
-        Vec3f(+b,+a, 0)
+        Vec3f( 0,-b,+a)
+    ,   Vec3f(-b,-a, 0)
+    ,   Vec3f(+b,-a, 0)
+    ,   Vec3f( 0,-b,-a)
+    ,   Vec3f( 0,+b,-a)
+    ,   Vec3f(+a, 0,-b)
+    ,   Vec3f(-a, 0,-b)
+    ,   Vec3f( 0,+b,+a)
+    ,   Vec3f(-a, 0,+b)
+    ,   Vec3f(+a, 0,+b)
+    ,   Vec3f(-b,+a, 0)
+    ,   Vec3f(+b,+a, 0)
     };
 
     // Create a mesh from the static vertex array. Instead of hard-coding the
@@ -185,26 +185,26 @@ Mesh* Mesh::Factory::Dodecahedron()
     static float const c=(2.0f-Constf::GOLDEN_RATIO())*0.5f;
 
     static Vec3f const vertices[]={
-        Vec3f(-c, 0,-a),
-        Vec3f(+c, 0,-a),
-        Vec3f(+b,-b,-b),
-        Vec3f( 0,-a,-c),
-        Vec3f(-b,-b,-b),
-        Vec3f(-b,+b,-b),
-        Vec3f( 0,+a,-c),
-        Vec3f(+b,+b,-b),
-        Vec3f(-c, 0,+a),
-        Vec3f(+c, 0,+a),
-        Vec3f(+b,+b,+b),
-        Vec3f( 0,+a,+c),
-        Vec3f(-b,+b,+b),
-        Vec3f(-b,-b,+b),
-        Vec3f( 0,-a,+c),
-        Vec3f(+b,-b,+b),
-        Vec3f(-a,-c, 0),
-        Vec3f(+a,-c, 0),
-        Vec3f(+a,+c, 0),
-        Vec3f(-a,+c, 0)
+        Vec3f(-c, 0,-a)
+    ,   Vec3f(+c, 0,-a)
+    ,   Vec3f(+b,-b,-b)
+    ,   Vec3f( 0,-a,-c)
+    ,   Vec3f(-b,-b,-b)
+    ,   Vec3f(-b,+b,-b)
+    ,   Vec3f( 0,+a,-c)
+    ,   Vec3f(+b,+b,-b)
+    ,   Vec3f(-c, 0,+a)
+    ,   Vec3f(+c, 0,+a)
+    ,   Vec3f(+b,+b,+b)
+    ,   Vec3f( 0,+a,+c)
+    ,   Vec3f(-b,+b,+b)
+    ,   Vec3f(-b,-b,+b)
+    ,   Vec3f( 0,-a,+c)
+    ,   Vec3f(+b,-b,+b)
+    ,   Vec3f(-a,-c, 0)
+    ,   Vec3f(+a,-c, 0)
+    ,   Vec3f(+a,+c, 0)
+    ,   Vec3f(-a,+c, 0)
     };
 
     // Create a mesh from the static vertex array. Instead of hard-coding the

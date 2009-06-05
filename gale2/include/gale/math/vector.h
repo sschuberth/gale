@@ -256,17 +256,17 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     Vector cross(Vector const& v) const {
         G_ASSERT(N==3)
         return Vector(
-            Base::data()[1]*v.data()[2] - Base::data()[2]*v.data()[1],
-            Base::data()[2]*v.data()[0] - Base::data()[0]*v.data()[2],
-            Base::data()[0]*v.data()[1] - Base::data()[1]*v.data()[0]
+            Base::data()[1]*v.data()[2] - Base::data()[2]*v.data()[1]
+        ,   Base::data()[2]*v.data()[0] - Base::data()[0]*v.data()[2]
+        ,   Base::data()[0]*v.data()[1] - Base::data()[1]*v.data()[0]
         );
     }
 
     /// Calculates the dot product between this vector and vector \a v.
     T dot(Vector const& v) const {
         return meta::LoopFwd<N,meta::OpCalcProd>::iterateCombAdd(
-            Base::data(),
-            v.data()
+            Base::data()
+        ,   v.data()
         );
     }
 
@@ -334,8 +334,8 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// Returns whether this vector is collinear to vector \a v.
     bool isCollinear(Vector const& v) const {
         return meta::OpCmpEqual::evaluate(
-            (v^(*this)).length2(),
-            T(0)
+            (v^(*this)).length2()
+        ,   T(0)
         );
     }
 

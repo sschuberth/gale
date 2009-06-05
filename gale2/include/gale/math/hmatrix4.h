@@ -73,10 +73,10 @@ class HMatrix4
             double s=::sin(angle),c=::cos(angle);
 
             return HMatrix4(
-                Vec::X(),
-                Vec(0, T( c), T( s)),
-                Vec(0, T(-s), T( c)),
-                Vec::ZERO()
+                Vec::X()
+            ,   Vec(0, T( c), T( s))
+            ,   Vec(0, T(-s), T( c))
+            ,   Vec::ZERO()
             );
         }
 
@@ -86,10 +86,10 @@ class HMatrix4
             double s=::sin(angle),c=::cos(angle);
 
             return HMatrix4(
-                Vec(T( c), 0, T(-s)),
-                Vec::Y(),
-                Vec(T( s), 0, T( c)),
-                Vec::ZERO()
+                Vec(T( c), 0, T(-s))
+            ,   Vec::Y()
+            ,   Vec(T( s), 0, T( c))
+            ,   Vec::ZERO()
             );
         }
 
@@ -99,10 +99,10 @@ class HMatrix4
             double s=::sin(angle),c=::cos(angle);
 
             return HMatrix4(
-                Vec(T( c), T( s), 0),
-                Vec(T(-s), T( c), 0),
-                Vec::Z(),
-                Vec::ZERO()
+                Vec(T( c), T( s), 0)
+            ,   Vec(T(-s), T( c), 0)
+            ,   Vec::Z()
+            ,   Vec::ZERO()
             );
         }
 
@@ -114,10 +114,10 @@ class HMatrix4
             double xc=c*axis.getX(),yc=c*axis.getY(),zc=c*axis.getZ();
 
             return HMatrix4(
-                Vec(T(1-c + xc*axis.getX()), T( zs + xc*axis.getY()), T(-ys + xc*axis.getZ())),
-                Vec(T(-zs + yc*axis.getX()), T(1-c + yc*axis.getY()), T( xs + yc*axis.getZ())),
-                Vec(T( ys + zc*axis.getX()), T(-xs + zc*axis.getY()), T(1-c + zc*axis.getZ())),
-                Vec::ZERO()
+                Vec(T(1-c + xc*axis.getX()), T( zs + xc*axis.getY()), T(-ys + xc*axis.getZ()))
+            ,   Vec(T(-zs + yc*axis.getX()), T(1-c + yc*axis.getY()), T( xs + yc*axis.getZ()))
+            ,   Vec(T( ys + zc*axis.getX()), T(-xs + zc*axis.getY()), T(1-c + zc*axis.getZ()))
+            ,   Vec::ZERO()
             );
         }
 
@@ -125,10 +125,10 @@ class HMatrix4
         /// optionally scaled by \a factor.
         static HMatrix4 Translation(Vec const& direction,T const factor=1) {
             return HMatrix4(
-                Vec::X(),
-                Vec::Y(),
-                Vec::Z(),
-                direction*factor
+                Vec::X()
+            ,   Vec::Y()
+            ,   Vec::Z()
+            ,   direction*factor
             );
         }
 
@@ -136,10 +136,10 @@ class HMatrix4
         /// and \a z axes.
         static HMatrix4 Scaling(T const x,T const y,T const z) {
             return HMatrix4(
-                Vec(x,0,0),
-                Vec(0,y,0),
-                Vec(0,0,z),
-                Vec::ZERO()
+                Vec(x,0,0)
+            ,   Vec(0,y,0)
+            ,   Vec(0,0,z)
+            ,   Vec::ZERO()
             );
         }
 
@@ -150,10 +150,10 @@ class HMatrix4
             T aa=a*a,bb=b*b,cc=c*c;
 
             return HMatrix4(
-                Vec(bb+cc,  -a*b,  -a*c),
-                Vec( -b*a, aa+cc,  -b*c),
-                Vec( -c*a,  -c*b, aa+bb),
-                Vec::ZERO()
+                Vec(bb+cc,  -a*b,  -a*c)
+            ,   Vec( -b*a, aa+cc,  -b*c)
+            ,   Vec( -c*a,  -c*b, aa+bb)
+            ,   Vec::ZERO()
             );
         }
     };
@@ -400,9 +400,9 @@ class HMatrix4
     Vec multFromLeftTo(Vec const& v) const {
         // 9 scalar multiplications, 9 scalar additions (includes translation).
         return Vec(
-            c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0],
-            c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1],
-            c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2]
+            c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]
+        ,   c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]
+        ,   c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2]
         );
     }
 
@@ -413,9 +413,9 @@ class HMatrix4
         T v4=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + m_c3w;
         T s=v4 ? T(1)/v4 : T(1);
         return Vec(
-            s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2]),
-            s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2]),
-            s*(v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2])
+            s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2])
+        ,   s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2])
+        ,   s*(v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2])
         );
     }
 

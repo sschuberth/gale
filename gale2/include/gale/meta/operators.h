@@ -157,8 +157,10 @@ struct OpCmpEqual
     /// depending on the precision of data type \a T.
     template<typename T>
     static G_INLINE bool evaluate(
-      T const& a,T const& b,
-      T const& tolerance=math::Numerics<T>::ZERO_TOLERANCE())
+        T const& a
+    ,   T const& b
+    ,   T const& tolerance=math::Numerics<T>::ZERO_TOLERANCE()
+    )
     {
         // Note that the tolerance may be 0 for integral types!
         return math::abs(b-a)<=tolerance;

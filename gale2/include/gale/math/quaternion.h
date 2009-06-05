@@ -207,8 +207,8 @@ class Quaternion
     friend Quaternion operator*(Quaternion const& q,Quaternion const& r) {
         // 16 scalar multiplications, 12 scalar additions.
         return Quaternion(
-            q.real*r.real-(q.imag%r.imag),
-            q.real*r.imag+q.imag*r.real+(q.imag^r.imag)
+            q.real*r.real-(q.imag%r.imag)
+        ,   q.real*r.imag+q.imag*r.real+(q.imag^r.imag)
         );
     }
 
@@ -381,8 +381,8 @@ class Quaternion
     /// For performance reasons, \a s is not clamped to [0,1].
     friend Quaternion nlerp(Quaternion const& q,Quaternion const& r,double const s) {
         return ~Quaternion(
-            T(q.real+s*(r.real-q.real)),
-            lerp(q.imag,r.imag,s)
+            T(q.real+s*(r.real-q.real))
+        ,   lerp(q.imag,r.imag,s)
         );
     }
 
@@ -441,9 +441,13 @@ class Quaternion
     /// Optionally, an \a interpolator may be specified. For performance
     /// reasons, \a s is not clamped to [0,1].
     friend Quaternion squad(
-      Quaternion const& q,Quaternion const& r,double const s,
-      Quaternion const& a,Quaternion const& b,
-      Interpolator const interpolator=Quaternion::slerp)
+        Quaternion const& q
+    ,   Quaternion const& r
+    ,   double const s
+    ,   Quaternion const& a
+    ,   Quaternion const& b
+    ,   Interpolator const interpolator=Quaternion::slerp
+    )
     {
         return interpolator(interpolator(q,r,s),interpolator(a,b,s),2*s*(1-s));
     }

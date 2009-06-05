@@ -134,11 +134,11 @@ LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
             if (wParam==ID_ABOUT_DLG) {
                 TCHAR buffer[512];
                 wsprintf(
-                    buffer,
-                    _T("Vendor: %s\nRenderer: %s\nVersion: %s"),
-                    glGetString(GL_VENDOR),
-                    glGetString(GL_RENDERER),
-                    glGetString(GL_VERSION)
+                    buffer
+                ,   _T("Vendor: %s\nRenderer: %s\nVersion: %s")
+                ,   glGetString(GL_VENDOR)
+                ,   glGetString(GL_RENDERER)
+                ,   glGetString(GL_VERSION)
                 );
                 G_ASSERT_OPENGL
                 MessageBox(windowHandle(),buffer,_T("About OpenGL"),MB_OK);

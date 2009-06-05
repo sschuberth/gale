@@ -190,9 +190,9 @@ class RandomBase
     /// Returns a random orthonormalized 4x4 homogeneous matrix.
     HMatrix4<T> randomHMat4() {
         HMatrix4<T> m(
-            randomVec3(),
-            randomVec3(),
             randomVec3()
+        ,   randomVec3()
+        ,   randomVec3()
         );
         return m.orthonormalize();
     }

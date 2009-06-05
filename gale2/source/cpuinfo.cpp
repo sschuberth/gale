@@ -290,7 +290,7 @@ unsigned int CPUInfo::maxCPUIDStdFunc()
         "cpuid\n\t"
         "movl %%ebx,%%esi\n\t"
         EMIT_1(pop,bx)
-        : "=a" (eax),
+        : "=a" (eax)
         , "=S" (*(unsigned int*)m_vendor)
         , "=d" (*(unsigned int*)(m_vendor+4))
         , "=c" (*(unsigned int*)(m_vendor+8))  /* Output  */

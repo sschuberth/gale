@@ -68,17 +68,17 @@ bool RenderSurface::create(int pixel_format,int const width,int const height,LPC
 {
     // Create a default window and get its device context.
     m_window=CreateWindow(
-    /* lpClassName  */ MAKEINTATOM(s_atom),
-    /* lpWindowName */ title,
-    /* dwStyle      */ WS_OVERLAPPEDWINDOW,
-    /* x            */ CW_USEDEFAULT,
-    /* y            */ 0,
-    /* nWidth       */ width,
-    /* nHeight      */ height,
-    /* hWndParent   */ HWND_DESKTOP,
-    /* hMenu        */ NULL,
-    /* hInstance    */ NULL,
-    /* lpParam      */ this
+        MAKEINTATOM(s_atom) // lpClassName
+    ,   title               // lpWindowName
+    ,   WS_OVERLAPPEDWINDOW // dwStyle
+    ,   CW_USEDEFAULT       // x
+    ,   0                   // y
+    ,   width               // nWidth
+    ,   height              // nHeight
+    ,   HWND_DESKTOP        // hWndParent
+    ,   NULL                // hMenu
+    ,   NULL                // hInstance
+    ,   this                // lpParam
     );
 
     if (m_window) {

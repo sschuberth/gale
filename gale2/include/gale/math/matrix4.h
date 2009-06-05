@@ -73,12 +73,13 @@ class Matrix4
         /// \a clip_top being mapped to the lower left and upper right window
         /// corners respectively.
         static Matrix4 OrthographicProjection(
-          double const clip_left,
-          double const clip_right,
-          double const clip_bottom,
-          double const clip_top,
-          double const clip_near=-1.0,
-          double const clip_far=1.0)
+            double const clip_left
+        ,   double const clip_right
+        ,   double const clip_bottom
+        ,   double const clip_top
+        ,   double const clip_near=-1.0
+        ,   double const clip_far=1.0
+        )
         {
             // Right plus / minus left clipping values.
             double rpl=clip_right+clip_left;
@@ -93,10 +94,10 @@ class Matrix4
             double fmn=clip_far-clip_near;
 
             return Matrix4(
-                Vec( 2.0/rml,      0.0,      0.0, 0.0),
-                Vec(     0.0,  2.0/tmb,      0.0, 0.0),
-                Vec(     0.0,      0.0, -2.0/fmn, 0.0),
-                Vec(-rpl/rml, -tpb/tmb, -fpn/fmn, 1.0)
+                Vec( 2.0/rml,      0.0,      0.0, 0.0)
+            ,   Vec(     0.0,  2.0/tmb,      0.0, 0.0)
+            ,   Vec(     0.0,      0.0, -2.0/fmn, 0.0)
+            ,   Vec(-rpl/rml, -tpb/tmb, -fpn/fmn, 1.0)
             );
         }
 
@@ -104,11 +105,12 @@ class Matrix4
         /// \a view_width and \a view_height, a vertical field of view of \a fov
         /// and clipping planes located at \a clip_near and \a clip_far.
         static Matrix4 PerspectiveProjection(
-          int const view_width,
-          int const view_height,
-          double const fov=Constd::PI()*0.25,
-          double const clip_near=0.001,
-          double const clip_far=1000.0)
+            int const view_width
+        ,   int const view_height
+        ,   double const fov=Constd::PI()*0.25
+        ,   double const clip_near=0.001
+        ,   double const clip_far=1000.0
+        )
         {
             // For details, see the gluPerspective() documentation in the OpenGL SDK.
             double f=1.0/::tan(fov*0.5);
@@ -119,10 +121,10 @@ class Matrix4
             double p=clip_near*clip_far;
 
             return Matrix4(
-                Vec(f/a, 0.0,     0.0,  0.0),
-                Vec(0.0,   f,     0.0,  0.0),
-                Vec(0.0, 0.0,     s/d, -1.0),
-                Vec(0.0, 0.0, 2.0*p/d,  0.0)
+                Vec(f/a, 0.0,     0.0,  0.0)
+            ,   Vec(0.0,   f,     0.0,  0.0)
+            ,   Vec(0.0, 0.0,     s/d, -1.0)
+            ,   Vec(0.0, 0.0, 2.0*p/d,  0.0)
             );
         }
     };
@@ -283,10 +285,10 @@ class Matrix4
     Vec multFromLeftTo(Vec const& v) const {
         // 16 scalar multiplications, 12 scalar additions.
         return Vec(
-            c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]*v[3],
-            c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]*v[3],
-            c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2]*v[3],
-            c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3]*v[3]
+            c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]*v[3]
+        ,   c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]*v[3]
+        ,   c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2]*v[3]
+        ,   c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3]*v[3]
         );
     }
 
@@ -295,10 +297,10 @@ class Matrix4
     Vec multFromRightTo(Vec const& v) const {
         // 16 scalar multiplications, 12 scalar additions.
         return Vec(
-            v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + v[3]*c0[3],
-            v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + v[3]*c1[3],
-            v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2] + v[3]*c2[3],
-            v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + v[3]*c3[3]
+            v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + v[3]*c0[3]
+        ,   v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + v[3]*c1[3]
+        ,   v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2] + v[3]*c2[3]
+        ,   v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + v[3]*c3[3]
         );
     }
 
@@ -309,9 +311,9 @@ class Matrix4
         T v4 = c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3];
         T  s = v4 ? T(1)/v4 : T(1);
         return Vec(
-            s*(c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]),
-            s*(c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]),
-            s*(c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2])
+            s*(c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0])
+        ,   s*(c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1])
+        ,   s*(c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2])
         );
     }
 
@@ -322,9 +324,9 @@ class Matrix4
         T v4 = v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + c3[3];
         T  s = v4 ? T(1)/v4 : T(1);
         return Vec(
-            s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + c0[3]),
-            s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + c1[3]),
-            s*(v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2] + c2[3])
+            s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + c0[3])
+        ,   s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + c1[3])
+        ,   s*(v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2] + c2[3])
         );
     }
 
@@ -440,28 +442,28 @@ class Matrix4
 
         return Matrix4(
             Vec(
-                + c1[1]*b5 - c2[1]*b4 + c3[1]*b3,
-                - c0[1]*b5 + c2[1]*b2 - c3[1]*b1,
-                + c0[1]*b4 - c1[1]*b2 + c3[1]*b0,
-                - c0[1]*b3 + c1[1]*b1 - c2[1]*b0
+                + c1[1]*b5 - c2[1]*b4 + c3[1]*b3
+            ,   - c0[1]*b5 + c2[1]*b2 - c3[1]*b1
+            ,   + c0[1]*b4 - c1[1]*b2 + c3[1]*b0
+            ,   - c0[1]*b3 + c1[1]*b1 - c2[1]*b0
             ),
             Vec(
-                - c1[0]*b5 + c2[0]*b4 - c3[0]*b3,
-                + c0[0]*b5 - c2[0]*b2 + c3[0]*b1,
-                - c0[0]*b4 + c1[0]*b2 - c3[0]*b0,
-                + c0[0]*b3 - c1[0]*b1 + c2[0]*b0
+                - c1[0]*b5 + c2[0]*b4 - c3[0]*b3
+            ,   + c0[0]*b5 - c2[0]*b2 + c3[0]*b1
+            ,   - c0[0]*b4 + c1[0]*b2 - c3[0]*b0
+            ,   + c0[0]*b3 - c1[0]*b1 + c2[0]*b0
             ),
             Vec(
-                + c1[3]*a5 - c2[3]*a4 + c3[3]*a3,
-                - c0[3]*a5 + c2[3]*a2 - c3[3]*a1,
-                + c0[3]*a4 - c1[3]*a2 + c3[3]*a0,
-                - c0[3]*a3 + c1[3]*a1 - c2[3]*a0
+                + c1[3]*a5 - c2[3]*a4 + c3[3]*a3
+            ,   - c0[3]*a5 + c2[3]*a2 - c3[3]*a1
+            ,   + c0[3]*a4 - c1[3]*a2 + c3[3]*a0
+            ,   - c0[3]*a3 + c1[3]*a1 - c2[3]*a0
             ),
             Vec(
-                - c1[2]*a5 + c2[2]*a4 - c3[2]*a3,
-                + c0[2]*a5 - c2[2]*a2 + c3[2]*a1,
-                - c0[2]*a4 + c1[2]*a2 - c3[2]*a0,
-                + c0[2]*a3 - c1[2]*a1 + c2[2]*a0
+                - c1[2]*a5 + c2[2]*a4 - c3[2]*a3
+            ,   + c0[2]*a5 - c2[2]*a2 + c3[2]*a1
+            ,   - c0[2]*a4 + c1[2]*a2 - c3[2]*a0
+            ,   + c0[2]*a3 - c1[2]*a1 + c2[2]*a0
             )
         );
     }

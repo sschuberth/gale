@@ -428,10 +428,10 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
                 // Prepare that the base mesh's vertices will be deleted and
                 // reduce the indices by the base mesh vertex count.
                 unsigned int tn[]={
-                    mesh.prevTo(vi,pi)                 - x0i,
-                    mesh.nextTo(vi,mesh.nextTo(ti,vi)) - x0i,
-                    mesh.nextTo(mesh.nextTo(ti,vi),vi) - x0i,
-                    mesh.prevTo(pi,vi)                 - x0i
+                    mesh.prevTo(vi,pi)                 - x0i
+                ,   mesh.nextTo(vi,mesh.nextTo(ti,vi)) - x0i
+                ,   mesh.nextTo(mesh.nextTo(ti,vi),vi) - x0i
+                ,   mesh.prevTo(pi,vi)                 - x0i
                 };
 
                 mesh.neighbors.insert(tn);

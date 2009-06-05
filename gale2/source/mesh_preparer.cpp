@@ -32,10 +32,10 @@ namespace gale {
 namespace model {
 
 GLenum const Mesh::Preparer::GL_PRIM_TYPE[PI_COUNT]={
-    GL_POINTS,
-    GL_LINES,
-    GL_TRIANGLES,
-    GL_QUADS
+    GL_POINTS
+,   GL_LINES
+,   GL_TRIANGLES
+,   GL_QUADS
 };
 
 void Mesh::Preparer::compile(Mesh const* const mesh)

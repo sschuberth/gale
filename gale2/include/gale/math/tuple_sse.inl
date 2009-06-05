@@ -238,10 +238,10 @@ class TupleBase<4,float,C>
     friend C lerp(C const& t,C const& u,float const s) {
         C tmp;
         tmp.m_simd=_mm_add_ps(
-            t.m_simd,
-            _mm_mul_ps(
-                _mm_sub_ps(u.m_simd,t.m_simd),
-                _mm_set_ps1(s)
+            t.m_simd
+        ,   _mm_mul_ps(
+                _mm_sub_ps(u.m_simd,t.m_simd)
+            ,   _mm_set_ps1(s)
             )
         );
         return tmp;
