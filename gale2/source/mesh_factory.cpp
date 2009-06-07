@@ -295,6 +295,32 @@ Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2
     return Extruder(path,contour,true,&rotation);
 }
 
+Mesh* Mesh::Factory::Apple(int const s_steps,int const t_steps)
+{
+    struct Formula:FormulaR2R3
+    {
+        Vec3f operator()(Vec2f const& w) const {
+            float const& u=w.getX();
+            float const& v=w.getY();
+
+            float const cv=::cos(v);
+            float const sv=::sin(v);
+
+            float const f=(4.0f+3.8f*cv);
+
+            return Vec3f(
+                ::cos(u)*f
+            ,   ::sin(u)*f
+            ,   (cv+sv-1.0f)*(1.0f+sv)*::log(1.0f-Constf::PI()*v/10.0f)+7.5f*sv
+            );
+        }
+    };
+
+    Formula f;
+
+    return GridMapper(f,0,2*Constf::PI(),s_steps,true,-Constf::PI(),Constf::PI(),t_steps,true);
+}
+
 Mesh* Mesh::Factory::Shell(int const s_steps,int const t_steps,float const r1,float const r2,float const h,int const n)
 {
     struct Formula:public FormulaR2R3
@@ -310,13 +336,17 @@ Mesh* Mesh::Factory::Shell(int const s_steps,int const t_steps,float const r1,fl
 
             float const top=t/(2*Constf::PI());
             float const at=a*(1-top);
+
             float const cnt=::cos(n*t);
             float const snt=::sin(n*t);
 
+            float const cs=::cos(s);
+            float const ss=::sin(s);
+
             return Vec3f(
-                at*cnt*(1+::cos(s))+c*cnt
-            ,   at*snt*(1+::cos(s))+c*snt
-            ,   b*top+at*::sin(s)
+                at*cnt*(1+cs)+c*cnt
+            ,   at*snt*(1+cs)+c*snt
+            ,   b*top+at*ss
             );
         }
 

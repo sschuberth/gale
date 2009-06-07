@@ -147,6 +147,9 @@ struct Mesh
          */
         //@{
 
+        /// See <http://local.wasp.uwa.edu.au/~pbourke/geometry/apple/>.
+        static Mesh* Apple(int const s_steps,int const t_steps);
+
         /// See <http://local.wasp.uwa.edu.au/~pbourke/geometry/shell/>.
         static Mesh* Shell(int const s_steps,int const t_steps,float const r1,float const r2,float const h,int const n);
 
