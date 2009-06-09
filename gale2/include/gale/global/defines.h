@@ -232,6 +232,16 @@
     #undef G_INLINE
 #endif
 
+/**
+ * \def G_NO_VTABLE
+ * Compiler-specific keyword definition to force a class to have no virtual
+ * function table.
+ */
+
+#ifdef G_NO_VTABLE
+    #undef G_NO_VTABLE
+#endif
+
 #ifdef G_COMP_GNUC
     #define G_INLINE inline __attribute__ ((always_inline))
     #define G_NO_VTABLE
