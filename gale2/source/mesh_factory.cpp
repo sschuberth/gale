@@ -605,30 +605,34 @@ Mesh* Mesh::Factory::GridMapper(
     FormulaR2R3 const& eval
 ,   float const s_min
 ,   float const s_max
-,   int const s_steps
+,   int s_steps
 ,   bool const s_closed
 ,   float const t_min
 ,   float const t_max
-,   int const t_steps
+,   int t_steps
 ,   bool const t_closed
 ,   bool const reverse
 )
 {
+    float s_delta=(s_max-s_min)/s_steps;
+    float t_delta=(t_max-t_min)/t_steps;
+
+    s_steps+=static_cast<int>(!s_closed);
+    t_steps+=static_cast<int>(!t_closed);
+
     // Perform some sanity checks.
-    if (s_steps<4 || t_steps<2) {
+    if (s_steps<2 || t_steps<2) {
         return NULL;
     }
 
     // Create an empty mesh with the required number of vertices.
     Mesh* m=new Mesh(s_steps*t_steps);
 
+    // Current grid coordinate.
+    Vec2f st;
+
     // Index of the vertex currently being calculated.
     int vi=0;
-
-    float s_delta=(s_max-s_min)/s_steps;
-    float t_delta=(t_max-t_min)/t_steps;
-
-    Vec2f st;
 
     for (int s=0;s<s_steps;++s) {
         st.setX(s_min+s*s_delta);
