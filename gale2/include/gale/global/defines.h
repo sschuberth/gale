@@ -234,10 +234,13 @@
 
 #ifdef G_COMP_GNUC
     #define G_INLINE inline __attribute__ ((always_inline))
+    #define G_NO_VTABLE
 #elif defined(G_COMP_MSVC)
     #define G_INLINE __forceinline
+    #define G_NO_VTABLE _declspec(novtable)
 #else
     #define G_INLINE inline
+    #define G_NO_VTABLE
 #endif
 
 #endif // DEFINES_H

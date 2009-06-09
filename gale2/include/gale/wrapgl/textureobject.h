@@ -148,7 +148,7 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
  * Minimal common interface for texture information. This is required as the
  * template texture classes do not share a common base class otherwise.
  */
-struct TextureInfo
+struct G_NO_VTABLE TextureInfo
 {
     /// Returns the target the texture is bound to.
     virtual GLenum target() const=0;
