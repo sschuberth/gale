@@ -26,7 +26,7 @@ class TestWindow:public DefaultWindow
         static int step=2;
 
         m_value+=step;
-        if ((m_value<=0)||(m_value>=100)) {
+        if (m_value<=0 || m_value>=100) {
             if (step<0) {
                 m_value=0;
             }
@@ -93,7 +93,7 @@ class TestWindow:public DefaultWindow
 
             glEnable(GL_BLEND);
 
-            m_rand.init(0);
+            m_rand.init(0xdeadbeef);
 
             Col4ub color;
             color.setV(100);
