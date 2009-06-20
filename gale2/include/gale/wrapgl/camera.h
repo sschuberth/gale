@@ -156,7 +156,7 @@ class Camera
     void makeCurrent(bool const force=false);
 
     /**
-     * \name Projection related methods
+     * \name Screen space related methods
      */
     //@{
 
@@ -177,8 +177,6 @@ class Camera
         m_screen.width=width;
         m_screen.height=height;
         m_screen_changed=true;
-
-        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
     }
 
     /// Returns whether the screen space has changed since the camera was last
@@ -186,6 +184,37 @@ class Camera
     bool hasScreenSpaceChanged() const {
         return m_screen_changed;
     }
+
+    //@}
+
+    /**
+     * \name Projection related methods
+     */
+    //@{
+
+    /// Returns the current projection matrix.
+    math::Mat4d const& getProjection() const {
+        return m_projection;
+    }
+
+    /// Sets the projection matrix.
+    void setProjection(math::Mat4d const& projection) {
+        m_projection=projection;
+        m_projection_changed=true;
+    }
+
+    /// Returns whether the projection matrix has changed since the camera was
+    /// last made current.
+    bool hasProjectionChanged() const {
+        return m_projection_changed;
+    }
+
+    //@}
+
+    /**
+     * \name Perspective projection related methods
+     */
+    //@{
 
     /// Returns the camera's current vertical field of view.
     double getFOV() const {
@@ -218,23 +247,6 @@ class Camera
     void setFarClipping(double const clip_far) {
         m_clip_far=clip_far;
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
-    }
-
-    /// Returns the current projection matrix.
-    math::Mat4d const& getProjection() const {
-        return m_projection;
-    }
-
-    /// Sets the projection matrix.
-    void setProjection(math::Mat4d const& projection) {
-        m_projection=projection;
-        m_projection_changed=true;
-    }
-
-    /// Returns whether the projection matrix has changed since the camera was
-    /// last made current.
-    bool hasProjectionChanged() const {
-        return m_projection_changed;
     }
 
     //@}
