@@ -37,6 +37,8 @@ namespace gale {
 
 namespace wrapgl {
 
+#include "GLEX_EXT_texture3D.h"
+
 /**
  * This is a bindable OpenGL object implementation for Texture Objects of target
  * type \c T.
@@ -198,6 +200,30 @@ class Texture2D:public TextureObject<GL_TEXTURE_2D,GL_TEXTURE_BINDING_2D>,public
     void setData(GLsizei const width,GLsizei const height,GLvoid const* data,GLenum const data_format,GLenum const data_type,GLint const format,GLint const level=0,bool const border=false) const {
         makeCurrent();
         glTexImage2D(TARGET,level,format,width,height,border,data_format,data_type,data);
+        G_ASSERT_OPENGL
+    }
+};
+
+/**
+ * A class representing a three-dimensional texture.
+ */
+class Texture3D:public TextureObject<GL_TEXTURE_3D_EXT,GL_TEXTURE_BINDING_3D_EXT>,public TextureInfo
+{
+  public:
+
+    /// Returns the target the texture is bound to.
+    GLenum target() const {
+        return TARGET;
+    }
+
+    /// Initializes or sets a texture of the given \a width, \a height and
+    /// \a depth to the contents pointed to by \a data. The contents have the
+    /// given \a data_format and \a data_type in host memory and are to be used
+    /// as the given \a format in OpenGL. Optionally, \a mipmap \a level and a
+    /// \a border may be specified.
+    void setData(GLsizei const width,GLsizei const height,GLsizei const depth,GLvoid const* data,GLenum const data_format,GLenum const data_type,GLint const format,GLint const level=0,bool const border=false) const {
+        makeCurrent();
+        glTexImage3DEXT(TARGET,level,format,width,height,depth,border,data_format,data_type,data);
         G_ASSERT_OPENGL
     }
 };
