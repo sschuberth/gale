@@ -70,7 +70,7 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
     /// mipmap \a level.
     void getData(GLvoid* data,GLenum const data_format,GLenum const data_type,GLint const level=0) {
         makeCurrent();
-        glGetTexImage(TARGET,level,data_format,data_type,data);
+        glGetTexImage(T,level,data_format,data_type,data);
         G_ASSERT_OPENGL
     }
 
