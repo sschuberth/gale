@@ -45,13 +45,13 @@ namespace system {
 CPUInfo& CPU=CPUInfo::the();
 
 CPUInfo::CPUInfo()
-:   m_std_misc_info(0)
-,   m_std_cache_params(0)
-,   m_ext_address_sizes(0)
-,   m_std_feat_flags_edx(0)
-,   m_std_feat_flags_ecx(0)
-,   m_ext_feat_flags_edx(0)
-,   m_ext_feat_flags_ecx(0)
+:   m_00000001_ebx(0)
+,   m_00000004_eax(0)
+,   m_80000008_ecx(0)
+,   m_00000001_edx(0)
+,   m_00000001_ecx(0)
+,   m_80000001_edx(0)
+,   m_80000001_ecx(0)
 {
     // Null-terminate the vendor string.
     m_vendor[0]=m_vendor[3*4]='\0';
@@ -75,9 +75,9 @@ CPUInfo::CPUInfo()
 #ifdef G_COMP_MSVC
 
         __cpuid(info,0x00000001);
-        m_std_misc_info=info[1];
-        m_std_feat_flags_edx=info[3];
-        m_std_feat_flags_ecx=info[2];
+        m_00000001_ebx=info[1];
+        m_00000001_edx=info[3];
+        m_00000001_ecx=info[2];
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
@@ -88,11 +88,11 @@ CPUInfo::CPUInfo()
             "cpuid\n\t"
             "movl %%ebx,%%eax\n\t"
             EMIT_1(pop,bx)
-            : "=a" (m_std_misc_info)       /* Output  */
-            , "=d" (m_std_feat_flags_edx)
-            , "=c" (m_std_feat_flags_ecx)
-            :                              /* Input   */
-            : "cc"                         /* Clobber */
+            : "=a" (m_00000001_ebx)  /* Output  */
+            , "=d" (m_00000001_edx)
+            , "=c" (m_00000001_ecx)
+            :                        /* Input   */
+            : "cc"                   /* Clobber */
         );
 
 #endif // G_COMP_MSVC
@@ -109,7 +109,7 @@ CPUInfo::CPUInfo()
         G_ASSERT(info[2]==0);
 
         __cpuid(info,0x00000004);
-        m_std_cache_params=info[0];
+        m_00000004_eax=info[0];
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
@@ -119,9 +119,9 @@ CPUInfo::CPUInfo()
             EMIT_1(push,bx)
             "cpuid\n\t"
             EMIT_1(pop,bx)
-            : "=a" (m_std_cache_params)  /* Output  */
-            :                            /* Input   */
-            : "%ecx", "%edx", "cc"       /* Clobber */
+            : "=a" (m_00000004_eax)  /* Output  */
+            :                        /* Input   */
+            : "%ecx", "%edx", "cc"   /* Clobber */
         );
 
 #endif // G_COMP_MSVC
@@ -138,8 +138,8 @@ CPUInfo::CPUInfo()
 #ifdef G_COMP_MSVC
 
         __cpuid(info,0x80000001);
-        m_ext_feat_flags_edx=info[3];
-        m_ext_feat_flags_ecx=info[2];
+        m_80000001_edx=info[3];
+        m_80000001_ecx=info[2];
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
@@ -148,10 +148,10 @@ CPUInfo::CPUInfo()
             EMIT_1(push,bx)
             "cpuid\n\t"
             EMIT_1(pop,bx)
-            : "=d" (m_ext_feat_flags_edx)  /* Output  */
-            , "=c" (m_ext_feat_flags_ecx)
-            :                              /* Input   */
-            : "%eax"                       /* Clobber */
+            : "=d" (m_80000001_edx)  /* Output  */
+            , "=c" (m_80000001_ecx)
+            :                        /* Input   */
+            : "%eax"                 /* Clobber */
         );
 
 #endif // G_COMP_MSVC
@@ -163,7 +163,7 @@ CPUInfo::CPUInfo()
 #ifdef G_COMP_MSVC
 
         __cpuid(info,0x80000008);
-        m_ext_address_sizes=info[2];
+        m_80000008_ecx=info[2];
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
@@ -172,9 +172,9 @@ CPUInfo::CPUInfo()
             EMIT_1(push,bx)
             "cpuid\n\t"
             EMIT_1(pop,bx)
-            : "=c" (m_ext_address_sizes)  /* Output  */
-            :                             /* Input   */
-            : "%eax", "%edx"              /* Clobber */
+            : "=c" (m_80000008_ecx)  /* Output  */
+            :                        /* Input   */
+            : "%eax", "%edx"         /* Clobber */
         );
 
 #endif // G_COMP_MSVC

@@ -69,7 +69,8 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// Checks for the presence of the CPUID instruction.
     bool hasCPUID() const;
 
-    /// Returns the highest standard function number supported.
+    /// Returns the highest standard function number supported and fills out the
+    /// vendor string information.
     unsigned int maxCPUIDStdFunc();
 
     /// Returns the highest extended function number supported.
@@ -174,7 +175,8 @@ class CPUInfo:public global::Singleton<CPUInfo>
     //@}
 
     /**
-     * \name Methods to determine the number of processing units
+     * \name Methods to determine the number of processing units, see
+     * <http://cache-www.intel.com/cd/00/00/27/66/276611_276611.txt>
      */
     //@{
 
@@ -183,66 +185,60 @@ class CPUInfo:public global::Singleton<CPUInfo>
         unsigned int count=1;
 
 #ifdef G_OS_LINUX
-        // Get the number of "online" processors. This also counts multiple
-        // cores, but what we want here is the number of CPUs (i.e. sockets)!
-        // Note: HT-enabled single-socket, single-core machines return 1 here!
+
+        // Get the number of "online" processors. This counts processor cores,
+        // but not logical processors.
         count=sysconf(_SC_NPROCESSORS_ONLN);
 
-        if (coresPerProcessor()) {
-            count/=coresPerProcessor();
-        }
 #elif defined G_OS_WINDOWS
+
         SYSTEM_INFO info;
         GetSystemInfo(&info);
 
-        // This also counts multiple cores and logical processors ...
+        // This counts all logical processors including processor cores.
         count=info.dwNumberOfProcessors;
 
-        // ... but what we want is the number of CPUs (i.e. sockets)!
-        if (coresPerProcessor()) {
-            count/=coresPerProcessor();
-        }
+        // Divide by the number of logical processors per processor core.
+        count/=logicalProcsPerCore();
 
-        if (hasHTT()) {
-            if (threadsPerCore()) {
-                count/=threadsPerCore();
-            }
-        }
 #endif
 
-        return count<1?1:count;
-    }
-
-    /// Returns the number of cores per processor.
-    unsigned int coresPerProcessor() const {
-        unsigned int count=1;
-
-        if (isIntel()) {
-            count=((m_std_cache_params&0xfc000000UL)>>26)+1;
-        }
-        else if (isAMD()) {
-            if (hasHTT() && hasCmpLegacy()) {
-                // This method to determine the number of cores is deprecated
-                // but we use it if it is supported.
-                count=(m_std_misc_info&0x00ff0000UL)>>16;
-            }
-            else {
-                count=(m_ext_address_sizes&0x000000ffUL)+1;
-            }
-        }
+        // Divide by the number of processor cores per physical processor.
+        count/=coresPerPhysicalProc();
 
         return count<1?1:count;
     }
 
-    /// Returns the number of hardware threads per core.
-    unsigned int threadsPerCore() const {
+    /// Returns the number of processor cores per physical processor.
+    unsigned int coresPerPhysicalProc() const {
         unsigned int count=1;
 
-        if (hasHTT() && (isIntel() || !hasCmpLegacy())) {
-            count=(m_std_misc_info&0x00ff0000UL)>>16;
-            if (coresPerProcessor()) {
-                count/=coresPerProcessor();
+        if (hasHTT()) {
+            if (isIntel()) {
+                // Get the maximum number of processor cores per physical processor.
+                count=((m_00000004_eax&0xfc000000UL)>>26)+1;
+
+                // Divide by the number of logical processors per processor core.
+                count/=logicalProcsPerCore();
             }
+            else if (isAMD()) {
+                count=(m_80000008_ecx&0x000000ffUL)+1;
+            }
+        }
+
+        return count<1?1:count;
+    }
+
+    /// Returns the number of logical processors per processor core.
+    unsigned int logicalProcsPerCore() const {
+        unsigned int count=1;
+
+        if (isIntel() && hasHTT()) {
+            // Get the maximum number of logical processors per physical processor.
+            count=(m_00000001_ebx&0x00ff0000UL)>>16;
+
+            // Divide by the maximum number of processor cores per physical processor.
+            count/=((m_00000004_eax&0xfc000000UL)>>26)+1;
         }
 
         return count<1?1:count;
@@ -259,54 +255,54 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Returns whether the processor contains an on-chip Floating-Point Unit.
     bool hasFPU() const {
-        return (m_std_feat_flags_edx&(1<<0))!=0;
+        return (m_00000001_edx&(1<<0))!=0;
     }
 
     /// Returns whether Virtual-8086 Mode Extensions are supported.
     bool hasVME() const {
-        return (m_std_feat_flags_edx&(1<<1))!=0;
+        return (m_00000001_edx&(1<<1))!=0;
     }
 
     /// Returns whether Debugging Extensions like I/O breakpoints are supported.
     bool hasDE() const {
-        return (m_std_feat_flags_edx&(1<<2))!=0;
+        return (m_00000001_edx&(1<<2))!=0;
     }
 
     /// Returns whether the processor supports the 4-MiB Page Size Extension.
     bool hasPSE() const {
-        return (m_std_feat_flags_edx&(1<<3))!=0;
+        return (m_00000001_edx&(1<<3))!=0;
     }
 
     /// Returns whether a Time-Stamp Counter is available.
     bool hasTSC() const {
-        return (m_std_feat_flags_edx&(1<<4))!=0;
+        return (m_00000001_edx&(1<<4))!=0;
     }
 
     /// Returns whether Model Specific Registers are implemented.
     bool hasMSR() const {
-        return (m_std_feat_flags_edx&(1<<5))!=0;
+        return (m_00000001_edx&(1<<5))!=0;
     }
 
     /// Returns whether the Physical Address Extension (more than 32 bits) is
     /// supported.
     bool hasPAE() const {
-        return (m_std_feat_flags_edx&(1<<6))!=0;
+        return (m_00000001_edx&(1<<6))!=0;
     }
 
     /// Returns whether the processor supports the Machine Check Exception.
     bool hasMCE() const {
-        return (m_std_feat_flags_edx&(1<<7))!=0;
+        return (m_00000001_edx&(1<<7))!=0;
     }
 
     /// Returns whether the CMPXCHG8B instruction is supported.
     bool hasCX8() const {
-        return (m_std_feat_flags_edx&(1<<8))!=0;
+        return (m_00000001_edx&(1<<8))!=0;
     }
 
     /// Returns whether an Advanced Programmable Interrupt Controller is
     /// available and enabled.
     bool hasAPIC() const {
-        return (m_std_feat_flags_edx&(1<<9))!=0;
+        return (m_00000001_edx&(1<<9))!=0;
     }
 
     // Bit 10 is reserved (on Intel and AMD).
@@ -314,50 +310,50 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// Returns whether the processor supports the fast system call (SYSENTER /
     /// SYSEXIT) instructions.
     bool hasSEP() const {
-        return (m_std_feat_flags_edx&(1<<11))!=0;
+        return (m_00000001_edx&(1<<11))!=0;
     }
 
     /// Returns whether the processor supports the Memory Type Range Registers.
     bool hasMTRR() const {
-        return (m_std_feat_flags_edx&(1<<12))!=0;
+        return (m_00000001_edx&(1<<12))!=0;
     }
 
     /// Returns whether the Page Global Extensions are supported in the page
     /// directory / table entries.
     bool hasPGE() const {
-        return (m_std_feat_flags_edx&(1<<13))!=0;
+        return (m_00000001_edx&(1<<13))!=0;
     }
 
     /// Returns whether the Machine Check Architecture is supported.
     bool hasMCA() const {
-        return (m_std_feat_flags_edx&(1<<14))!=0;
+        return (m_00000001_edx&(1<<14))!=0;
     }
 
     /// Returns whether the processor supports conditional move instructions.
     bool hasCMOV() const {
-        return (m_std_feat_flags_edx&(1<<15))!=0;
+        return (m_00000001_edx&(1<<15))!=0;
     }
 
     /// Returns whether the processor supports the Page Attribute Table.
     bool hasPAT() const {
-        return (m_std_feat_flags_edx&(1<<16))!=0;
+        return (m_00000001_edx&(1<<16))!=0;
     }
 
     /// Returns whether the processor allows the Page Size Extension to address
     /// physical memory beyond 4 GiB.
     bool hasPSE36() const {
-        return (m_std_feat_flags_edx&(1<<17))!=0;
+        return (m_00000001_edx&(1<<17))!=0;
     }
 
     /// Returns whether the processor has a 96-bit serial number (reserved on
     /// AMD).
     bool hasPSN() const {
-        return (m_std_feat_flags_edx&(1<<18))!=0;
+        return (m_00000001_edx&(1<<18))!=0;
     }
 
     /// Returns whether the CLFLUSH instruction is supported.
     bool hasCLFSH() const {
-        return (m_std_feat_flags_edx&(1<<19))!=0;
+        return (m_00000001_edx&(1<<19))!=0;
     }
 
     // Bit 20 is reserved (on Intel and AMD).
@@ -365,69 +361,68 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// Returns whether the processor is able to write a history of branch
     /// addresses into a Debug Store (reserved on AMD).
     bool hasDS() const {
-        return (m_std_feat_flags_edx&(1<<21))!=0;
+        return (m_00000001_edx&(1<<21))!=0;
     }
 
     /// Returns whether the processor implements temperature monitoring and
     /// performance modulation under software control (reserved on AMD).
     bool hasACPI() const {
-        return (m_std_feat_flags_edx&(1<<22))!=0;
+        return (m_00000001_edx&(1<<22))!=0;
     }
 
     /// Returns whether the processor supports the MMX instruction set.
     bool hasMMX() const {
-        return (m_std_feat_flags_edx&(1<<23))!=0;
+        return (m_00000001_edx&(1<<23))!=0;
     }
 
     /// Returns whether the fast floating-point save and restore instructions
     /// (FXSAVE / FXRSTOR) are supported.
     bool hasFXSR() const {
-        return (m_std_feat_flags_edx&(1<<24))!=0;
+        return (m_00000001_edx&(1<<24))!=0;
     }
 
     /// Returns whether the Streaming SIMD Extension instruction set is
     /// supported.
     bool hasSSE() const {
-        return (m_std_feat_flags_edx&(1<<25))!=0;
+        return (m_00000001_edx&(1<<25))!=0;
     }
 
     /// Returns whether the Streaming SIMD Extension 2 instruction set is
     /// supported.
     bool hasSSE2() const {
-        return (m_std_feat_flags_edx&(1<<26))!=0;
+        return (m_00000001_edx&(1<<26))!=0;
     }
 
     /// Returns whether the processor supports Self-Snooping of its cache to
     /// manage conflicting memory types (reserved on AMD).
     bool hasSS() const {
-        return (m_std_feat_flags_edx&(1<<27))!=0;
+        return (m_00000001_edx&(1<<27))!=0;
     }
 
-    /// Returns whether Hyper-Threading Technology capability is present,
-    /// allowing the processor to operate as multiple logical units (because
-    /// there is either more than one hardware thread per core or more than one
-    /// core per processor available).
+    /// Returns whether Multi-Threading capability is present, allowing the
+    /// processor to operate as multiple logical units (because there either is
+    /// Hyper-Threading Technology or more than one core per processor available).
     bool hasHTT() const {
-        return (m_std_feat_flags_edx&(1<<28))!=0;
+        return (m_00000001_edx&(1<<28))!=0;
     }
 
     /// Returns whether the processor implements the Thermal Monitor automatic
     /// thermal control circuit (reserved on AMD).
     bool hasTM() const {
-        return (m_std_feat_flags_edx&(1<<29))!=0;
+        return (m_00000001_edx&(1<<29))!=0;
     }
 
     /// Returns whether the processor has capabilities of the Intel Itanium
     /// processor family and is currently operating in IA32 emulation mode
     /// (reserved on AMD).
     bool hasIA64() const {
-        return (m_std_feat_flags_edx&(1<<30))!=0;
+        return (m_00000001_edx&(1<<30))!=0;
     }
 
     /// Returns whether the processor supports returning from stop-clock state
     /// to handle interrupts (reserved on AMD).
     bool hasPBE() const {
-        return (m_std_feat_flags_edx&(1<<31))!=0;
+        return (m_00000001_edx&(1<<31))!=0;
     }
 
     /* Features returned in the ECX register */
@@ -435,77 +430,135 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// Returns whether the Streaming SIMD Extension 3 instruction set is
     /// supported.
     bool hasSSE3() const {
-        return (m_std_feat_flags_ecx&(1<<0))!=0;
+        return (m_00000001_ecx&(1<<0))!=0;
     }
 
-    // Bits 1 and 2 are reserved (on Intel and AMD).
+    // Bit 1 is reserved (on Intel and AMD).
+
+    /// Returns whether the processor has the ability to write a history of the
+    /// 64-bit branch to and from addresses into a memory buffer (reserved on AMD).
+    bool hasDTES64() const {
+        return (m_00000001_ecx&(1<<2))!=0;
+    }
 
     /// Returns whether the processor supports the MONITOR and MWAIT
-    /// instructions (reserved on AMD).
+    /// instructions.
     bool hasMONITOR() const {
-        return (m_std_feat_flags_ecx&(1<<3))!=0;
+        return (m_00000001_ecx&(1<<3))!=0;
     }
 
     /// Returns whether the processor supports extensions to the Debug Store
     /// to allow for branch message storage qualified by CPL (reserved on AMD).
     bool hasDSCPL() const {
-        return (m_std_feat_flags_ecx&(1<<4))!=0;
+        return (m_00000001_ecx&(1<<4))!=0;
     }
 
     /// Returns whether the processor supports Intel Virtualization Technology
     /// (reserved on AMD).
     bool hasVMX() const {
-        return (m_std_feat_flags_ecx&(1<<5))!=0;
+        return (m_00000001_ecx&(1<<5))!=0;
     }
 
-    // Bit 6 is reserved (on Intel and AMD).
+    /// Returns whether the processor supports Intel Trusted Execution
+    /// Technology (reserved on AMD).
+    bool hasSMX() const {
+        return (m_00000001_ecx&(1<<6))!=0;
+    }
 
     /// Returns whether the processor implements second generation Intel
     /// SpeedStep Technology (reserved on AMD).
     bool hasEST() const {
-        return (m_std_feat_flags_ecx&(1<<7))!=0;
+        return (m_00000001_ecx&(1<<7))!=0;
     }
 
     /// Returns whether the processor implements the Thermal Monitor 2
     /// automatic thermal control circuit (reserved on AMD).
     bool hasTM2() const {
-        return (m_std_feat_flags_ecx&(1<<8))!=0;
+        return (m_00000001_ecx&(1<<8))!=0;
     }
 
     /// Returns whether the processor supports the Supplemental Streaming SIMD
-    /// Extension 3 instructions (reserved on AMD).
+    /// Extension 3 instructions.
     bool hasSSSE3() const {
-        return (m_std_feat_flags_ecx&(1<<9))!=0;
+        return (m_00000001_ecx&(1<<9))!=0;
     }
 
     /// Returns whether the L1 data cache mode can be set to either adaptive
     /// mode or shared mode by the BIOS (reserved on AMD).
     bool hasCID() const {
-        return (m_std_feat_flags_ecx&(1<<10))!=0;
+        return (m_00000001_ecx&(1<<10))!=0;
     }
 
     // Bits 11 and 12 are reserved (on Intel and AMD).
 
     /// Returns whether the CMPXCHG16B instruction is supported.
     bool hasCX16() const {
-        return (m_std_feat_flags_ecx&(1<<13))!=0;
+        return (m_00000001_ecx&(1<<13))!=0;
     }
 
     /// Returns whether the processor supports to disable sending Task Priority
     /// messages (reserved on AMD).
     bool hasTPR() const {
-        return (m_std_feat_flags_ecx&(1<<14))!=0;
+        return (m_00000001_ecx&(1<<14))!=0;
     }
 
-    // Bits 15 to 17 are reserved (on Intel and AMD).
+    /// Returns whether the processor has performance monitoring and debug
+    /// capabilities (reserved on AMD).
+    bool hasPDCM() const {
+        return (m_00000001_ecx&(1<<15))!=0;
+    }
+
+    // Bits 16 and 17 are reserved (on Intel and AMD).
 
     /// Returns whether the processor supports Direct Cache Access to prefetch
     /// data from a memory mapped device (reserved on AMD).
     bool hasDCA() const {
-        return (m_std_feat_flags_ecx&(1<<18))!=0;
+        return (m_00000001_ecx&(1<<18))!=0;
     }
 
-    // Bits 19 to 31 are reserved (on Intel and AMD).
+    /// Returns whether the processor supports the Streaming SIMD Extensions 4.1
+    /// instructions.
+    bool hasSSE41() const {
+        return (m_00000001_ecx&(1<<19))!=0;
+    }
+
+    /// Returns whether the processor supports the Streaming SIMD Extensions 4.2
+    /// instructions (reserved on AMD).
+    bool hasSSE42() const {
+        return (m_00000001_ecx&(1<<20))!=0;
+    }
+
+    /// Returns whether the processor supports the x2APIC feature (reserved on AMD).
+    bool hasX2APIC() const {
+        return (m_00000001_ecx&(1<<21))!=0;
+    }
+
+    /// Returns whether the processor supports the MOVBE instruction (reserved
+    /// on AMD).
+    bool hasMOVBE() const {
+        return (m_00000001_ecx&(1<<22))!=0;
+    }
+
+    /// Returns whether the processor supports the POPCNT instruction.
+    bool hasPOPCNT() const {
+        return (m_00000001_ecx&(1<<23))!=0;
+    }
+
+    // Bits 24 and 25 are reserved (on Intel and AMD).
+
+    /// Returns whether the processor supports the XSAVE / XRSTOR extended
+    /// states feature (reserved on AMD).
+    bool hasXSAVE() const {
+        return (m_00000001_ecx&(1<<26))!=0;
+    }
+
+    /// Returns whether the processor was enabled by the OS to support extended
+    /// state management using XSAVE / XRSTOR (reserved on AMD).
+    bool hasOSXSAVE() const {
+        return (m_00000001_ecx&(1<<27))!=0;
+    }
+
+    // Bits 28 to 31 are reserved (on Intel and AMD).
 
     //@}
 
@@ -524,7 +577,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// Returns whether the processor supports the SYSCALL and SYSRET
     /// instructions.
     bool hasSYSCALL() const {
-        return (m_ext_feat_flags_edx&(1<<11))!=0;
+        return (m_80000001_edx&(1<<11))!=0;
     }
 
     // Bits 12 to 19 are reserved on Intel but have the same meanings as in the
@@ -533,7 +586,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// Returns whether the processor supports the XD Bit to support no-execute
     /// page protection in PAE.
     bool hasXDB() const {
-        return (m_ext_feat_flags_edx&(1<<20))!=0;
+        return (m_80000001_edx&(1<<20))!=0;
     }
 
     // Bit 21 is reserved (on Intel and AMD).
@@ -541,7 +594,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// Returns whether the processor supports AMD extensions to MMX
     /// instructions (reserved on Intel).
     bool hasMMXExt() const {
-        return (m_ext_feat_flags_edx&(1<<22))!=0;
+        return (m_80000001_edx&(1<<22))!=0;
     }
 
     // Bits 23 and 24 are reserved on Intel but have the same meanings as in
@@ -550,41 +603,42 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// Returns whether the processor implements FXSAVE and FXRSTOR instruction
     /// optimizations (reserved on Intel).
     bool hasFFXSR() const {
-        return (m_ext_feat_flags_edx&(1<<25))!=0;
+        return (m_80000001_edx&(1<<25))!=0;
     }
 
     // Bit 26 is reserved (on Intel and AMD).
 
-    /// Returns whether the processor supports the RDTSCP instruction.
+    /// Returns whether the processor supports the RDTSCP instruction (reserved
+    /// on Intel).
     bool hasRDTSCP() const {
-        return (m_ext_feat_flags_edx&(1<<27))!=0;
+        return (m_80000001_edx&(1<<27))!=0;
     }
 
     // Bit 28 is reserved (on Intel and AMD).
 
-    /// Returns whether the processor supports 64-bit extensions to the IA32
+    /// Returns whether the processor supports 64-bit extensions to the IA-32
     /// (slightly different meaning on AMD).
-    bool hasEM64T() const {
-        return (m_ext_feat_flags_edx&(1<<29))!=0;
+    bool hasIntel64() const {
+        return (m_80000001_edx&(1<<29))!=0;
     }
 
     /// Returns whether the processor supports Long Mode to access 64-bit
     /// instructions and registers, running 32-bit and 16-bit programs in
     /// a compatibility sub-mode (slightly different meaning on Intel).
     bool hasAMD64() const {
-        return (m_ext_feat_flags_edx&(1<<29))!=0;
+        return (m_80000001_edx&(1<<29))!=0;
     }
 
     /// Returns whether the processor supports AMD extensions to 3DNow!
     /// instructions (reserved on Intel).
     bool has3DNowExt() const {
-        return (m_ext_feat_flags_edx&(1<<30))!=0;
+        return (m_80000001_edx&(1<<30))!=0;
     }
 
     /// Returns whether the 3DNow! instruction set is supported (reserved on
     /// Intel).
     bool has3DNow() const {
-        return (m_ext_feat_flags_edx&(1<<31))!=0;
+        return (m_80000001_edx&(1<<31))!=0;
     }
 
     /* Features returned in the ECX register */
@@ -592,29 +646,83 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// Returns whether the LAHF / SAHF instructions are supported in 64-bit
     /// sub-mode.
     bool hasLAHF() const {
-        return (m_ext_feat_flags_ecx&(1<<0))!=0;
+        return (m_80000001_ecx&(1<<0))!=0;
     }
 
     /// Returns whether the processor's legacy mode is to do multi-processing,
     /// i.e. if multiple cores are present (reserved on Intel).
     bool hasCmpLegacy() const {
-        return (m_ext_feat_flags_ecx&(1<<1))!=0;
+        return (m_80000001_ecx&(1<<1))!=0;
     }
 
     /// Returns whether the processor supports Secure Virtual Machine feature
     /// (reserved on Intel).
     bool hasSVM() const {
-        return (m_ext_feat_flags_ecx&(1<<2))!=0;
+        return (m_80000001_ecx&(1<<2))!=0;
     }
 
-    // Bit 3 is reserved (on Intel and AMD).
+    /// Returns whether the extended APIC register space is present (reserved on
+    /// Intel).
+    bool hasExtAPICSpace() const {
+        return (m_80000001_ecx&(1<<3))!=0;
+    }
 
     /// Returns whether LOCK MOV CR0 means MOV CR8 (reserved on Intel).
     bool hasAltMovCr8() const {
-        return (m_ext_feat_flags_ecx&(1<<4))!=0;
+        return (m_80000001_ecx&(1<<4))!=0;
     }
 
-    // Bits 5 to 31 are reserved (on Intel and AMD).
+    /// Returns whether advanced bit manipulation via the LZCNT instruction is
+    /// supported (reserved on Intel).
+    bool hasABM() const {
+        return (m_80000001_ecx&(1<<5))!=0;
+    }
+
+    /// Returns whether SSE4A instructions are supported (reserved on Intel).
+    bool hasSSE4A() const {
+        return (m_80000001_ecx&(1<<6))!=0;
+    }
+
+    /// Returns whether misaligned access for SSE instructions is supported
+    /// (reserved on Intel).
+    bool hasMisaligedSSE() const {
+        return (m_80000001_ecx&(1<<7))!=0;
+    }
+
+    /// Returns whether the PREFETCH and PREFETCHW instructions are supported
+    /// (reserved on Intel).
+    bool has3DNowPrefetch() const {
+        return (m_80000001_ecx&(1<<8))!=0;
+    }
+
+    /// Returns whether the OS visible work-around information is supported
+    /// (reserved on Intel).
+    bool hasOSVW() const {
+        return (m_80000001_ecx&(1<<9))!=0;
+    }
+
+    /// Returns whether instruction based sampling is supported (reserved on
+    /// Intel).
+    bool hasIBS() const {
+        return (m_80000001_ecx&(1<<10))!=0;
+    }
+
+    /// Returns whether SSE5 instructions are supported (reserved on Intel).
+    bool hasSSE5() const {
+        return (m_80000001_ecx&(1<<11))!=0;
+    }
+
+    /// Returns whether SKINIT and STGI are supported (reserved on Intel).
+    bool hasSKINIT() const {
+        return (m_80000001_ecx&(1<<12))!=0;
+    }
+
+    /// Returns whether the watchdog timer is supported (reserved on Intel).
+    bool hasWDT() const {
+        return (m_80000001_ecx&(1<<13))!=0;
+    }
+
+    // Bits 14 to 31 are reserved (on Intel and AMD).
 
     //@}
 
@@ -626,15 +734,15 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     char m_vendor[3*4+1]; ///< Stores the vendor string incl. trailing zero.
 
-    unsigned int m_std_misc_info;      ///< CPUID standard miscellaneous flags.
-    unsigned int m_std_cache_params;   ///< CPUID standard cache parameters.
-    unsigned int m_ext_address_sizes;  ///< CPUID extended address sizes.
+    unsigned int m_00000001_ebx; ///< CPUID standard miscellaneous flags.
+    unsigned int m_00000004_eax; ///< CPUID standard cache parameters.
+    unsigned int m_80000008_ecx; ///< CPUID extended address sizes.
 
-    unsigned int m_std_feat_flags_edx; ///< CPUID standard feature flags, part 1.
-    unsigned int m_std_feat_flags_ecx; ///< CPUID standard feature flags, part 2.
+    unsigned int m_00000001_edx; ///< CPUID standard feature flags, part 1.
+    unsigned int m_00000001_ecx; ///< CPUID standard feature flags, part 2.
 
-    unsigned int m_ext_feat_flags_edx; ///< CPUID extended feature flags, part 1.
-    unsigned int m_ext_feat_flags_ecx; ///< CPUID extended feature flags, part 2.
+    unsigned int m_80000001_edx; ///< CPUID extended feature flags, part 1.
+    unsigned int m_80000001_ecx; ///< CPUID extended feature flags, part 2.
 };
 
 /// For convenience, offer a predefined instance of the CPUInfo class.
