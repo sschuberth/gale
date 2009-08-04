@@ -5,8 +5,6 @@
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
 
-#include <stdlib.h>
-
 #include <ctime>
 #include <iostream>
 
@@ -56,9 +54,6 @@ int main()
     test_vector();
     test_color();
 
-#ifdef _WIN32
-    system("pause");
-#endif
     return 0;
 }
 

@@ -6,9 +6,8 @@
 
 // Enable memory leak detection, see:
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
-#ifdef _DEBUG
+#if !defined NDEBUG && !defined GALE_TINY_CODE
     #define _CRTDBG_MAP_ALLOC
-    #include <stdlib.h>
     #include <crtdbg.h>
 #endif
 
@@ -92,10 +91,9 @@ int main()
     cout << "parity: " << even << " / " << odd << endl;
     cout << unsigned int(N*(1.0/s)) << " random numbers per second" << endl << endl;
 
-    system("pause");
-
-#ifndef NDEBUG
+#if !defined NDEBUG && !defined GALE_TINY_CODE
     _CrtDumpMemoryLeaks();
 #endif
+
     return 0;
 }

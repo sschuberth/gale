@@ -1,8 +1,6 @@
 #include <gale/math/random.h>
 #include <gale/math/hmatrix4.h>
 
-#include <stdlib.h>
-
 #include <ctime>
 #include <iostream>
 
@@ -70,8 +68,5 @@ int main()
     C=A*B;
     assert(C==Mat4f::IDENTITY());
 
-#ifdef _WIN32
-    system("pause");
-#endif
     return 0;
 }

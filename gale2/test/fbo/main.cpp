@@ -79,9 +79,8 @@ class TestWindow:public DefaultWindow
 
 // Enable memory leak detection, see:
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
-#ifdef _DEBUG
+#if !defined NDEBUG && !defined GALE_TINY_CODE
     #define _CRTDBG_MAP_ALLOC
-    #include <stdlib.h>
     #include <crtdbg.h>
 #endif
 
