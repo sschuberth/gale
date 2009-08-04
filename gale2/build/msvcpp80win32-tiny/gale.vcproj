@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="gale"
 	ProjectGUID="{75EEA8D3-24FB-415A-9585-ECE5D7E1C8A2}"
 	RootNamespace="gale"
@@ -297,6 +297,18 @@
 			Name="glex"
 			>
 			<File
+				RelativePath="..\..\glex\GLEX_ARB_framebuffer_object.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glex\GLEX_ARB_framebuffer_object.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glex\GLEX_ARB_framebuffer_object_procs.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\glex\GLEX_ARB_multisample.c"
 				>
 			</File>
@@ -309,15 +321,43 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\glex\GLEX_EXT_framebuffer_object.c"
+				RelativePath="..\..\glex\GLEX_ARB_pixel_buffer_object.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\glex\GLEX_EXT_framebuffer_object.h"
+				RelativePath="..\..\glex\GLEX_ARB_vertex_array_object.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\glex\GLEX_EXT_framebuffer_object_procs.h"
+				RelativePath="..\..\glex\GLEX_ARB_vertex_array_object.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glex\GLEX_ARB_vertex_array_object_procs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glex\GLEX_ARB_vertex_buffer_object.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glex\GLEX_ARB_vertex_buffer_object.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glex\GLEX_ARB_vertex_buffer_object_procs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glex\GLEX_EXT_texture3D.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glex\GLEX_EXT_texture3D.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glex\GLEX_EXT_texture3D_procs.h"
 				>
 			</File>
 			<File
