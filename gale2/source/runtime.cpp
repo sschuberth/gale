@@ -143,7 +143,7 @@ void* __cdecl memset(void* dest,int c,size_t count)
     char* d=(char*)dest;
 
     for (size_t i=0;i<count;++i) {
-        *d++=0;
+        *d++=(char)c;
     }
 
     return dest;
@@ -241,6 +241,8 @@ void __cdecl operator delete[](void* pointer)
 void __cdecl operator delete(void* pointer,void* place)
 {
     // Do nothing, not even calling a destructor.
+    UNREFERENCED_PARAMETER(pointer);
+    UNREFERENCED_PARAMETER(place);
 }
 
 #endif // GALE_TINY_CODE
