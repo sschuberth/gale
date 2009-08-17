@@ -1,6 +1,6 @@
 @echo off
 
-call common.cmd %1
+call opengl-parse.cmd %1
 
 : (Re-)create an empty output directory.
 rmdir /s /q msvcpp90win32 2> nul
