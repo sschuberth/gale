@@ -1,6 +1,3 @@
-:: Batch File Command Reference for Windows 2000
-:: http://labmice.techtarget.com/articles/batchcmds.htm
-
 @echo off
 
 : Add the Cygwin binary directory to the PATH.
