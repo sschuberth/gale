@@ -3,4 +3,4 @@ code generated from a local copy of the OpenGL extension registry that the build
 system will download when run for the first time.
 
 The OpenGL extensions to generate source code for need to be listed in the
-"build/extensions.txt" file.
+"../build/opengl-extensions.txt" file.

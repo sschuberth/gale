@@ -25,7 +25,7 @@ if not exist "..\..\glex\registry\OpenGL.org\ARB\color_buffer_float.txt" (
 
 : List the extensions used in the project.
 echo *** Parsing required OpenGL extensions ...
-for /f %%e in (..\build\extensions.txt) do (
+for /f %%e in (..\build\opengl-extensions.txt) do (
     echo Parsing file "%%e" ...
     bash -c "export PATH=/bin && ../../glex/glex.sh spec=../../glex/registry/OpenGL.org/%%e"
 )

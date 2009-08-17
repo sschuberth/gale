@@ -13,7 +13,7 @@ echo "*** Parsing required OpenGL extensions ..."
 while read e; do
     echo "Parsing file \"${e}\" ..."
     ../../glex/glex.sh spec=../../glex/registry/OpenGL.org/${e}
-done < ../build/extensions.txt
+done < ../build/opengl-extensions.txt
 
 popd > /dev/null
 
