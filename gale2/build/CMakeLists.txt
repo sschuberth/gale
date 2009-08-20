@@ -62,20 +62,10 @@ set(CMAKE_SUPPRESS_REGENERATION "1")
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
 add_library(${project_name} STATIC ${files})
 
-if(NOT WIN32 OR CYGWIN)
-    # Get the absolute (!) path to the library we generate here, to pass it to the
-    # linker for the test programs. On Linux, this is *not* done automatically by
-    # specifying a dependency.
-    set(library_name "${LIBRARY_OUTPUT_PATH}/${CMAKE_STATIC_LIBRARY_PREFIX}${project_name}${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    get_filename_component(library_name ${library_name} ABSOLUTE)
-endif(NOT WIN32 OR CYGWIN)
-
-# List the libraries all following targets should link against.
+# Relative to CMAKE_CURRENT_SOURCE_DIR, add the demo and test projects to this
+# one by refering to their CMakeLists.txt files.
 include(FindOpenGL)
-link_libraries(${OPENGL_gl_LIBRARY} ${library_name})
 
-# Relative to CMAKE_CURRENT_SOURCE_DIR, add more projects to this one by
-# refering to their CMakeLists.txt files.
 file(GLOB demos "../demo/*")
 foreach(demo ${demos})
     get_filename_component(path "${demo}" ABSOLUTE)

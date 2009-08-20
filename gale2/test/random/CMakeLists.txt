@@ -28,4 +28,4 @@ file(GLOB_RECURSE sources "*.h" "*.cpp")
 add_executable(${name} ${sources})
 
 # Make this test executable project depend on the gale library project.
-add_dependencies(${name} gale)
+target_link_libraries(${name} gale ${OPENGL_gl_LIBRARY})
