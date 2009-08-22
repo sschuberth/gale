@@ -8,15 +8,6 @@ set(glex_root "../glex")
 
 project(${project_name})
 
-# Specify any required include directories. The specified path is interpreted as
-# relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
-# file are absolute.
-include_directories(${header_root} ${glex_root})
-
-# Specify where to put the compiled library. This is relative to
-# CMAKE_CURRENT_BINARY_DIR.
-set(LIBRARY_OUTPUT_PATH "../../lib" CACHE INTERNAL "" FORCE)
-
 # Recursively add the source code files. The specified path is relative to
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
 file(GLOB_RECURSE headers "${header_root}/*.h" "${header_root}/*.inl")
@@ -58,14 +49,21 @@ source_group(${group} FILES ${sources})
 # of the custom build step in Visual Studio that regenerates the project.
 set(CMAKE_SUPPRESS_REGENERATION "1")
 
+# Specify where to put the compiled library. This is relative to
+# CMAKE_CURRENT_BINARY_DIR.
+set(LIBRARY_OUTPUT_PATH "../../lib" CACHE INTERNAL "" FORCE)
+
 # This writes absolute paths to the generated files even if relative paths are
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
 add_library(${project_name} STATIC ${files})
 
+# Specify any required include directories. The specified path is interpreted as
+# relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
+# file are absolute.
+include_directories(${header_root} ${glex_root})
+
 # Relative to CMAKE_CURRENT_SOURCE_DIR, add the demo and test projects to this
 # one by refering to their CMakeLists.txt files.
-include(FindOpenGL)
-
 file(GLOB demos "../demo/*")
 foreach(demo ${demos})
     get_filename_component(path "${demo}" ABSOLUTE)
