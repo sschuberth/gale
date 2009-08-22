@@ -3,10 +3,11 @@
 call opengl-parse.cmd %1
 
 : (Re-)create an empty output directory.
-rmdir /s /q msvcpp90win64 2> nul
-mkdir msvcpp90win64 2> nul
+rmdir /s /q VS2008-Win64 2> nul
+mkdir VS2008-Win64 2> nul
 
 : Generate the project files in the output directory.
-pushd msvcpp90win64
+pushd VS2008-Win64
 cmake -G "Visual Studio 9 2008 Win64" ..
+if errorlevel 1 pause
 popd
