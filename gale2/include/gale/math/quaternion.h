@@ -310,13 +310,13 @@ class Quaternion
     }
 
     /// Normalizes this quaternion so its length equals 1 (if it is not very
-    /// small).
-    Quaternion& normalize() {
+    /// small). Returns the length before normalization.
+    double normalize() {
         double l=length();
         if (l>Numerics<T>::ZERO_TOLERANCE()) {
             (*this)/=T(l);
         }
-        return *this;
+        return l;
     }
 
     //@}
@@ -352,7 +352,9 @@ class Quaternion
 
     /// Returns a normalized copy of quaternion \a q.
     friend Quaternion operator~(Quaternion const& q) {
-        return Quaternion(q).normalize();
+        Quaternion tmp=q;
+        tmp.normalize();
+        return tmp;
     }
 
     /// Calculates the dot product between the quaternions \a q and \a r.

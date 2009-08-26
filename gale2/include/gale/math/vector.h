@@ -231,12 +231,13 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     }
 
     /// Normalizes this vector so its length equals 1 (if it is not very small).
-    Vector& normalize() {
+    /// Returns the length before normalization.
+    double normalize() {
         double l=length();
         if (l>Numerics<T>::ZERO_TOLERANCE()) {
             (*this)/=T(l);
         }
-        return *this;
+        return l;
     }
 
     /// Returns whether all elements equal their counterpart in \a v with regard
@@ -348,7 +349,9 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns a normalized copy of vector \a v.
     friend Vector operator~(Vector const& v) {
-        return Vector(v).normalize();
+        Vector tmp=v;
+        tmp.normalize();
+        return tmp;
     }
 
     /// Calculates the cross product between the vectors \a v and \a w.

@@ -170,7 +170,8 @@ class RandomBase
             v.setZ(random0N(2)-1);
         } while (v.length2()>1);
 
-        return v.normalize();
+        v.normalize();
+        return v;
     }
 
     /// Returns a normalized random 4-component vector.
@@ -184,7 +185,8 @@ class RandomBase
             v.setW(random0N(2)-1);
         } while (v.length2()>1);
 
-        return v.normalize();
+        v.normalize();
+        return v;
     }
 
     /// Returns a random orthonormalized 4x4 homogeneous matrix.

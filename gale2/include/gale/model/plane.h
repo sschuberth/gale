@@ -153,10 +153,12 @@ class Plane
     }
 
     /// Normalizes the plane equation so its normal vector length equals 1.
-    void normalize() {
-        double length=m_normal.length();
-        m_normal/=length;
-        m_distance/=length;
+    /// Returns the length before normalization.
+    double normalize() {
+        double l=m_normal.length();
+        m_normal/=l;
+        m_distance/=l;
+        return l;
     }
 
     //@}
