@@ -479,17 +479,17 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns an inverted copy of color \a c.
     friend Color operator!(Color const& c) {
-        return Color(c).inverse();
+        return c.inverse();
     }
 
     /// Returns the additive mix between colors \a a and \a b.
     friend Color operator&(Color const& a,Color const& b) {
-        return Color(a).mixAdd(b);
+        return a.mixAdd(b);
     }
 
     /// Returns the subtractive mix between colors \a a and \a b.
     friend Color operator|(Color const& a,Color const& b) {
-        return Color(a).mixSub(b);
+        return a.mixSub(b);
     }
 
     //@}
@@ -631,7 +631,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     //@{
 
     /// Returns the additive mix between this color and color \a c.
-    Color mixAdd(Color const& c) {
+    Color mixAdd(Color const& c) const {
         // Normalize the colors to range [0,1] and mix them.
         Color<N,double> tD(*this);
         tD-=BLACK();
@@ -656,7 +656,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     }
 
     /// Returns the subtractive mix between this color and color \a c.
-    Color mixSub(Color const& c) {
+    Color mixSub(Color const& c) const {
         Color tCMY=inverse(),cCMY=c.inverse();
         return tCMY.mixAdd(cCMY).inverse();
     }
