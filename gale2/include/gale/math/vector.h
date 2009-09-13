@@ -254,16 +254,15 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     //@{
 
     /// Calculates the cross product between this vector and vector \a v.
-    Vector cross(Vector const& v) const {
+    void crossWith(Vector const& v) {
         G_ASSERT(N==3)
-        return Vector(
-            Base::data()[1]*v.data()[2] - Base::data()[2]*v.data()[1]
-        ,   Base::data()[2]*v.data()[0] - Base::data()[0]*v.data()[2]
-        ,   Base::data()[0]*v.data()[1] - Base::data()[1]*v.data()[0]
-        );
+        T x = getY()*v.getZ() - getZ()*v.getY();
+        T y = getZ()*v.getX() - getX()*v.getZ();
+        T z = getX()*v.getY() - getY()*v.getX();
+        set(x,y,z);
     }
 
-    /// Calculates the dot product between this vector and vector \a v.
+    /// Returns the dot product between vectors \a v and \a w.
     T dot(Vector const& v) const {
         return meta::LoopFwd<N,meta::OpCalcProd>::iterateCombAdd(
             Base::data()
@@ -273,7 +272,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the cosine of the angle between this vector and vector \a v.
     T angleCosine(Vector const& v) const {
-        return (~(*this)).dot(~v);
+        return (~(*this))%(~v);
     }
 
     /// Returns the smallest angle between this vector and vector \a v in radians.
@@ -289,7 +288,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
         // Calculate the normal between the two angle vectors and project the
         // reference vector onto it.
-        Vector n=cross(v);
+        Vector n=(*this)^v;
         T d=r%n;
 
         if (d==0 && tn+vn==Vector::ZERO()) {
@@ -305,7 +304,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         if (d<0) {
             // If d is negative, r projects onto the negative direction of n,
             // i.e. it points to the other half space with respect to the
-            // plane stretched by the two angle vectors, and the angle amounts
+            // plane spanned by the two angle vectors, and the angle amounts
             // to what is missing to a full circle.
             a=2*Constd::PI()-a;
         }
@@ -316,18 +315,17 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
     /// Returns an arbitrary vector which is orthogonal to this vector.
     Vector orthoVector() const {
         // Try the x-axis to create an orthogonal vector.
-        Vector v=cross(Vector::X());
+        Vector v=(*this)^Vector::X();
 
         // If the x-axis is (almost) collinear to this vector, take the y-axis.
         if (v.length2()<=Numerics<T>::ZERO_TOLERANCE()) {
-            v=cross(Vector::Y());
+            v=(*this)^Vector::Y();
         }
 
         return v;
     }
 
-    /// Returns the orthogonal projection of this vector onto the given vector
-    /// \a v.
+    /// Returns the orthogonal projection of this vector onto the vector \a v.
     Vector orthoProjection(Vector const& v) const {
         return dot(v)/v.length2()*v;
     }
@@ -354,12 +352,16 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return tmp;
     }
 
-    /// Calculates the cross product between the vectors \a v and \a w.
+    /// Returns the cross product between vectors \a v and \a w.
     friend Vector operator^(Vector const& v,Vector const& w) {
-        return v.cross(w);
+        return Vector(
+            v.getY()*w.getZ() - v.getZ()*w.getY()
+        ,   v.getZ()*w.getX() - v.getX()*w.getZ()
+        ,   v.getX()*w.getY() - v.getY()*w.getX()
+        );
     }
 
-    /// Calculates the dot product between the vectors \a v and \a w.
+    /// Returns the dot product between vectors \a v and \a w.
     friend T operator%(Vector const& v,Vector const& w) {
         return v.dot(w);
     }
