@@ -98,19 +98,42 @@ struct BiasScale
         return *this==IDENTITY();
     }
 
-    /// Applies the transformation to a value \a x.
-    T apply(T const x) const {
+    /// Evaluates the transformation for value \a x.
+    T evaluate(T const x) const {
         return (x+bias)*scale;
     }
 
     /// Concatenates the \a other transformation to this transformation.
-    BiasScale concat(BiasScale const& other) const {
-        return BiasScale(bias+other.bias/scale,scale*other.scale);
+    void concat(BiasScale const& other) {
+        bias+=other.bias/scale;
+        scale*=other.scale;
     }
 
-    /// Returns the inverse to this transformation so that their concatenation
-    /// would be the identity transformation.
-    ScaleBias<T> inverse() const;
+    /// Inverts this transformation so that its concatenation with the original
+    /// transformation would result in no-operation.
+    void invert();
+
+    //@}
+
+    /**
+     * \name Convenience operators for named methods
+     */
+    //@{
+
+    /// Returns the concatenation of transformations \a a and \a b.
+    friend BiasScale operator&(BiasScale const& a,BiasScale const& b) {
+        BiasScale tmp=a;
+        tmp.concat(b);
+        return tmp;
+    }
+
+    /// Returns the inverse of transformation \a other so that its concatenation
+    /// with the original transformation would result in no-operation.
+    friend BiasScale operator!(BiasScale const& other) {
+        BiasScale tmp=other;
+        tmp.invert();
+        return tmp;
+    }
 
     //@}
 
@@ -179,23 +202,49 @@ struct ScaleBias
         return *this==IDENTITY();
     }
 
-    /// Applies the transformation to a value \a x.
-    T apply(T const x) const {
+    /// Evaluates the transformation for value \a x.
+    T evaluate(T const x) const {
         return x*scale+bias;
     }
 
     /// Concatenates the \a other transformation to this transformation.
-    ScaleBias concat(ScaleBias const& other) const {
-        return ScaleBias(scale*other.scale,bias*other.scale+other.bias);
+    void concat(ScaleBias const& other) {
+        scale*=other.scale;
+        bias=bias*other.scale+other.bias;
     }
 
-    /// Returns the inverse to this transformation so that their concatenation
-    /// would be the identity transformation.
-    BiasScale<T> inverse() const {
-        if (scale==0) {
-            return BiasScale<T>(-bias,1);
+    /// Inverts this transformation so its concatenation with the original
+    /// transformation would result in no-operation.
+    void invert() {
+        if (meta::OpCmpEqual::evaluate(scale,T(0))) {
+            *this=IDENTITY();
         }
-        return BiasScale<T>(-bias,T(1)/scale);
+        else {
+            bias=-bias/scale;
+            scale=T(1)/scale;
+        }
+    }
+
+    //@}
+
+    /**
+     * \name Convenience operators for named methods
+     */
+    //@{
+
+    /// Returns the concatenation of transformations \a a and \a b.
+    friend ScaleBias operator&(ScaleBias const& a,ScaleBias const& b) {
+        ScaleBias tmp=a;
+        tmp.concat(b);
+        return tmp;
+    }
+
+    /// Returns the inverse of transformation \a other so that its concatenation
+    /// with the original transformation would result in no-operation.
+    friend ScaleBias operator!(ScaleBias const& other) {
+        ScaleBias tmp=other;
+        tmp.invert();
+        return tmp;
     }
 
     //@}
@@ -212,12 +261,15 @@ inline BiasScale<T>::BiasScale(ScaleBias<T> const& other)
 }
 
 template<typename T>
-inline ScaleBias<T> BiasScale<T>::inverse() const
+inline void BiasScale<T>::invert()
 {
-    if (scale==0) {
-        return ScaleBias<T>(0,0);
+    if (meta::OpCmpEqual::evaluate(scale,T(0))) {
+        *this=IDENTITY();
     }
-    return ScaleBias<T>(T(1)/scale,-bias);
+    else {
+        scale=T(1)/scale;
+        bias=-bias/scale;
+    }
 }
 
 /**
