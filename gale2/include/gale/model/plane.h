@@ -81,7 +81,7 @@ class Plane
     /// Constructs a plane from three vectors \a a, \a b and \a c on that plane.
     Plane(math::Vec3d const& a,math::Vec3d const& b,math::Vec3d const& c) {
         m_normal=~((b-a)^(c-a));
-        m_distance=-a.dot(m_normal);
+        m_distance=-a%m_normal;
     }
 
     //@}
