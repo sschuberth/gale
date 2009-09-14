@@ -354,6 +354,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the cross product between vectors \a v and \a w.
     friend Vector operator^(Vector const& v,Vector const& w) {
+        G_ASSERT(N==3)
         return Vector(
             v.getY()*w.getZ() - v.getZ()*w.getY()
         ,   v.getZ()*w.getX() - v.getX()*w.getZ()
