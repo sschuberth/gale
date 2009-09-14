@@ -255,6 +255,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Calculates the cross product between this vector and vector \a v.
     void crossWith(Vector const& v) {
+        // 6 scalar muls/divs, 3 scalar adds/subs.
         G_ASSERT(N==3)
         T x = getY()*v.getZ() - getZ()*v.getY();
         T y = getZ()*v.getX() - getX()*v.getZ();
@@ -264,6 +265,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the dot product between vectors \a v and \a w.
     T dot(Vector const& v) const {
+        // N scalar muls/divs, N-1 scalar adds/subs.
         return meta::LoopFwd<N,meta::OpCalcProd>::iterateCombAdd(
             Base::data()
         ,   v.data()
@@ -354,6 +356,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the cross product between vectors \a v and \a w.
     friend Vector operator^(Vector const& v,Vector const& w) {
+        // 6 scalar muls/divs, 3 scalar adds/subs.
         G_ASSERT(N==3)
         return Vector(
             v.getY()*w.getZ() - v.getZ()*w.getY()
@@ -364,6 +367,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the dot product between vectors \a v and \a w.
     friend T operator%(Vector const& v,Vector const& w) {
+        // N scalar muls/divs, N-1 scalar adds/subs.
         return v.dot(w);
     }
 
