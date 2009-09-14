@@ -253,16 +253,6 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
      */
     //@{
 
-    /// Calculates the cross product between this vector and vector \a v.
-    void crossWith(Vector const& v) {
-        // 6 scalar muls/divs, 3 scalar adds/subs.
-        G_ASSERT(N==3)
-        T x = getY()*v.getZ() - getZ()*v.getY();
-        T y = getZ()*v.getX() - getX()*v.getZ();
-        T z = getX()*v.getY() - getY()*v.getX();
-        set(x,y,z);
-    }
-
     /// Returns the dot product between vectors \a v and \a w.
     T dot(Vector const& v) const {
         // N scalar muls/divs, N-1 scalar adds/subs.
@@ -314,6 +304,21 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return a;
     }
 
+    /// Returns the orthogonal projection of this vector onto the vector \a v.
+    Vector orthoProjection(Vector const& v) const {
+        return dot(v)/v.length2()*v;
+    }
+
+    /// Calculates the cross product between this vector and vector \a v.
+    void crossWith(Vector const& v) {
+        // 6 scalar muls/divs, 3 scalar adds/subs.
+        G_ASSERT(N==3)
+        T x = getY()*v.getZ() - getZ()*v.getY();
+        T y = getZ()*v.getX() - getX()*v.getZ();
+        T z = getX()*v.getY() - getY()*v.getX();
+        set(x,y,z);
+    }
+
     /// Returns an arbitrary vector which is orthogonal to this vector.
     Vector orthoVector() const {
         // Try the x-axis to create an orthogonal vector.
@@ -325,11 +330,6 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         }
 
         return v;
-    }
-
-    /// Returns the orthogonal projection of this vector onto the vector \a v.
-    Vector orthoProjection(Vector const& v) const {
-        return dot(v)/v.length2()*v;
     }
 
     /// Returns whether this vector is collinear to vector \a v.
@@ -354,6 +354,12 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         return tmp;
     }
 
+    /// Returns the dot product between vectors \a v and \a w.
+    friend T operator%(Vector const& v,Vector const& w) {
+        // N scalar muls/divs, N-1 scalar adds/subs.
+        return v.dot(w);
+    }
+
     /// Returns the cross product between vectors \a v and \a w.
     friend Vector operator^(Vector const& v,Vector const& w) {
         // 6 scalar muls/divs, 3 scalar adds/subs.
@@ -363,12 +369,6 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         ,   v.getZ()*w.getX() - v.getX()*w.getZ()
         ,   v.getX()*w.getY() - v.getY()*w.getX()
         );
-    }
-
-    /// Returns the dot product between vectors \a v and \a w.
-    friend T operator%(Vector const& v,Vector const& w) {
-        // N scalar muls/divs, N-1 scalar adds/subs.
-        return v.dot(w);
     }
 
     //@}
