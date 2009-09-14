@@ -41,7 +41,11 @@ class TupleBase<4,float,C>
 
     /// Create a tuple whose elements are either not initialized at all or
     /// initialized to 0 if \c GALE_INIT_DATA is defined.
-    TupleBase() {}
+    TupleBase() {
+#ifdef GALE_INIT_DATA
+        m_simd=_mm_setzero_ps();
+#endif
+    }
 
     /// Allows to initialize 4-tuples directly.
     TupleBase(float const e0,float const e1,float const e2,float const e3) {
@@ -65,46 +69,51 @@ class TupleBase<4,float,C>
         return m_simd.m128_f32;
     }
 
-    /// Casts \c this tuple to a pointer of type \a float. As an intended side
+    /// Casts \c this tuple to a pointer of type \c float. As an intended side
     /// effect, this also provides indexed data access.
     operator float*() {
         return data();
     }
 
-    /// Casts \c this tuple to a constant pointer of type \a float. As an
+    /// Casts \c this tuple to a constant pointer of type \c float. As an
     /// intended side effect, this also provides indexed data access.
     operator float const*() const {
         return data();
     }
 
+    /// Assigns new values to the first four tuple elements.
+    void set(float const e0,float const e1,float const e2,float const e3) {
+        m_simd=_mm_setr_ps(e0,e1,e2,e3);
+    }
+
     //@}
 
     /**
-     * \name Element-wise arithmetic operators with tuples
+     * \name Arithmetic tuple / tuple operators
      */
     //@{
 
-    /// Increments \c this tuple by another tuple \a t.
+    /// Element-wise increments \c this tuple by tuple \a t.
     C const& operator+=(C const& t) {
         m_simd=_mm_add_ps(m_simd,t.m_simd);
         return *static_cast<C*>(this);
     }
 
-    /// Decrements \c this tuple by another tuple \a t.
+    /// Element-wise decrements \c this tuple by tuple \a t.
     C const& operator-=(C const& t) {
         m_simd=_mm_sub_ps(m_simd,t.m_simd);
         return *static_cast<C*>(this);
     }
 
-    /// Multiplies \c this tuple by another tuple \a t.
+    /// Element-wise multiplies \c this tuple by tuple \a t.
     C const& operator*=(C const& t) {
         m_simd=_mm_mul_ps(m_simd,t.m_simd);
         return *static_cast<C*>(this);
     }
 
-    /// Divides \c this tuple by another tuple \a t.
+    /// Element-wise divides \c this tuple by tuple \a t.
     C const& operator/=(C const& t) {
-        // The value of t is checked downstream in OpArithReci.
+        // The value of t is checked downstream in operator/=(float s).
         return (*this)*=1/t;
     }
 
@@ -113,29 +122,29 @@ class TupleBase<4,float,C>
         return t;
     }
 
-    /// Returns the negation of tuple \a t.
+    /// Returns the element-wise negation of tuple \a t.
     friend C operator-(C const& t) {
         C tmp;
         tmp.m_simd=_mm_sub_ps(_mm_set_ps1(0),t.m_simd);
         return tmp;
     }
 
-    /// Returns the sum of tuples \a t and \a u.
+    /// Returns the element-wise sum of tuples \a t and \a u.
     friend C operator+(C const& t,C const& u) {
         return C(t)+=u;
     }
 
-    /// Returns the difference of tuples \a t and \a u.
+    /// Returns the element-wise difference of tuples \a t and \a u.
     friend C operator-(C const& t,C const& u) {
         return C(t)-=u;
     }
 
-    /// Returns the product of tuples \a t and \a u.
+    /// Returns the element-wise product of tuples \a t and \a u.
     friend C operator*(C const& t,C const& u) {
         return C(t)*=u;
     }
 
-    /// Returns the quotient of tuples \a t and \a u.
+    /// Returns the element-wise quotient of tuples \a t and \a u.
     friend C operator/(C const& t,C const& u) {
         // The value of u is checked downstream in OpArithReci.
         return C(t)/=u;
@@ -144,39 +153,39 @@ class TupleBase<4,float,C>
     //@}
 
     /**
-     * \name Element-wise arithmetic operators with scalars
+     * \name Arithmetic tuple / scalar operators
      */
     //@{
 
-    /// Multiplies \c this tuple by a scalar \a s.
+    /// Multiplies each element of \c this tuple by a scalar \a s.
     C const& operator*=(float const s) {
         m_simd=_mm_mul_ps(m_simd,_mm_set_ps1(s));
         return *static_cast<C*>(this);
     }
 
-    /// Divides \c this tuple by a scalar \a s.
+    /// Divides each element of \c this tuple by a scalar \a s.
     C const& operator/=(float const s) {
         G_ASSERT(abs(s)>Numerics<T>::ZERO_TOLERANCE())
         return (*this)*=1/s;
     }
 
-    /// Performs scalar multiplication from the right of each element.
+    /// Multiplies each element of tuple \a t by a scalar \a s from the right.
     friend C operator*(C const& t,float const s) {
         return C(t)*=s;
     }
 
-    /// Performs scalar multiplication from the left of each element.
+    /// Multiplies each element of tuple \a t by a scalar \a s from the left.
     friend C operator*(float const s,C const& t) {
         return t*s;
     }
 
-    /// Performs scalar division from the right of each element.
+    /// Divides each element of tuple \a t by a scalar \a s.
     friend C operator/(C const& t,float const s) {
         // The value of s is checked downstream in operator/=(float s).
         return C(t)/=s;
     }
 
-    /// Performs scalar division from the left of each element.
+    /// Divides a scalar \a s by each element of tuple \a t.
     friend C operator/(float const s,C const& t) {
         C tmp;
         tmp.m_simd=_mm_mul_ps(_mm_set_ps1(s),_mm_rcp_ps(t.m_simd));
@@ -210,40 +219,17 @@ class TupleBase<4,float,C>
         return meta::LoopFwd<4,meta::OpCalcMax>::iterateAbsValues(data());
     }
 
-    /// Calculates the element-wise minimum of \c this tuple and another tuple
-    /// \a t.
+    /// Calculates the element-wise minimum of \c this tuple and tuple \a t.
     C minElements(C const& t) const {
         C tmp;
         tmp.m_simd=_mm_min_ps(m_simd,t.m_simd);
         return tmp;
     }
 
-    /// Calculates the element-wise maximum of \c this tuple and another tuple
-    /// \a t.
+    /// Calculates the element-wise maximum of \c this tuple and tuple \a t.
     C maxElements(C const& t) const {
         C tmp;
         tmp.m_simd=_mm_max_ps(m_simd,t.m_simd);
-        return tmp;
-    }
-
-    //@}
-
-    /**
-     * \name Miscellaneous methods
-     */
-    //@{
-
-    /// Linearly interpolates between the tuples \a t and \a u based on a scalar
-    /// \a s. For performance reasons, \a s is not clamped to [0,1].
-    friend C lerp(C const& t,C const& u,float const s) {
-        C tmp;
-        tmp.m_simd=_mm_add_ps(
-            t.m_simd
-        ,   _mm_mul_ps(
-                _mm_sub_ps(u.m_simd,t.m_simd)
-            ,   _mm_set_ps1(s)
-            )
-        );
         return tmp;
     }
 
@@ -287,6 +273,27 @@ class TupleBase<4,float,C>
     /// in \a u.
     friend bool operator!=(C const& t,C const& u) {
         return !(t==u);
+    }
+
+    //@}
+
+    /**
+     * \name Miscellaneous methods
+     */
+    //@{
+
+    /// Linearly interpolates between the tuples \a t and \a u based on a scalar
+    /// \a s. For performance reasons, \a s is not clamped to [0,1].
+    friend C lerp(C const& t,C const& u,float const s) {
+        C tmp;
+        tmp.m_simd=_mm_add_ps(
+            t.m_simd
+        ,   _mm_mul_ps(
+                _mm_sub_ps(u.m_simd,t.m_simd)
+            ,   _mm_set_ps1(s)
+            )
+        );
+        return tmp;
     }
 
     //@}
