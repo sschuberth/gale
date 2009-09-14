@@ -14,10 +14,10 @@ int main()
     BiasScalef bs2(bs1);
     bs2.invert();
     bs1.concat(bs2);
-    G_ASSERT(bs1.isNOP());
+    assert(bs1.isNOP());
 
     BiasScalef bs3=!bs1;
-    G_ASSERT((bs1&bs3).isNOP());
+    assert((bs1&bs3).isNOP());
 
     // Testing ScaleBias.
 
@@ -26,10 +26,10 @@ int main()
     ScaleBiasf sb2(sb1);
     sb2.invert();
     sb1.concat(sb2);
-    G_ASSERT(sb1.isNOP());
+    assert(sb1.isNOP());
 
     ScaleBiasf sb3=!sb1;
-    G_ASSERT((sb1&sb3).isNOP());
+    assert((sb1&sb3).isNOP());
 
     return 0;
 }
