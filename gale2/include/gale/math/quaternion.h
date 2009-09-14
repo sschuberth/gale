@@ -205,10 +205,10 @@ class Quaternion
 
     /// Returns the product of quaternions \a q and \a r.
     friend Quaternion operator*(Quaternion const& q,Quaternion const& r) {
-        // 16 scalar multiplications, 12 scalar additions.
+        // 12 scalar muls/divs, 8 scalar adds/subs.
         return Quaternion(
-            q.real*r.real-(q.imag%r.imag)
-        ,   q.real*r.imag+q.imag*r.real+(q.imag^r.imag)
+            q.real*r.real - (q.imag%r.imag)
+        ,   q.real*r.imag + q.imag*r.real + (q.imag^r.imag)
         );
     }
 
@@ -227,8 +227,9 @@ class Quaternion
     /// Multiplies quaternion \a q with vector \a v. If the quaternion is
     /// normalized, this results in a rotation of \a v about \a q.
     friend Vec operator*(Quaternion const& q,Vec const& v) {
-        // 18 scalar multiplications, 54 scalar additions.
-        return (q*Quaternion(0,v)*q.conjugate()).imag;
+        // 18 scalar muls/divs, 11 scalar adds/subs.
+        Vec i = q.real*v + (q.imag^v);
+        return (q.imag%v)*q.imag + i*q.real - (i^q.imag);
     }
 
     //@}
@@ -334,7 +335,7 @@ class Quaternion
     /// Returns the cosine of the angle between this quaternion and quaternion
     /// \a q, which do not need to be normalized.
     T angleCosine(Quaternion const& q) const {
-        return (~(*this)).dot(~q);
+        return (~(*this))%(~q);
     }
 
     /// Returns the angle between this quaternion and quaternion \a v, which do
@@ -357,14 +358,16 @@ class Quaternion
         return tmp;
     }
 
-    /// Calculates the dot product between the quaternions \a q and \a r.
+    /// Returns the dot product between quaternions \a q and \a r.
     friend T operator%(Quaternion const& q,Quaternion const& r) {
         return q.dot(r);
     }
 
-    /// Returns an inverted copy of quaternion \a q.
+    /// Returns the inverse of quaternion \a q.
     friend Quaternion operator!(Quaternion const& q) {
-        return q.conjugate()/q.length2();
+        Quaternion tmp=q;
+        tmp.invert();
+        return tmp;
     }
 
     //@}
@@ -556,21 +559,23 @@ class Quaternion
     /// the successor \a b, which all need to be normalized.
     Quaternion tangent(Quaternion const& a,Quaternion const& b) const {
         // For normalized quaternions, the conjugate equals the inverse.
-        Quaternion inv=conjugate();
+        Quaternion inv=*this;
+        inv.conjugate();
 
         Quaternion t=T(-0.25)*(log(inv*a)+log(inv*b));
         return (*this)*exp(t);
     }
 
-    /// Returns the conjugate of this quaternion.
-    Quaternion conjugate() const {
-        return Quaternion(real,-imag);
+    /// Conjugates this quaternion, i.e. negates its imaginary part.
+    void conjugate() {
+        imag=-imag;
     }
 
     /// Inverts this quaternion; the product of a quaternion and its inverse
     /// equals the identity quaternion.
-    Quaternion& invert() {
-        return (*this)=!(*this);
+    void invert() {
+        conjugate();
+        (*this)/=length2();
     }
 
     //@}
