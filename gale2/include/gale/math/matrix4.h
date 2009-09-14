@@ -43,7 +43,7 @@ namespace math {
 /**
  * Matrix class implementation based on column vectors. The matrix is stored as
  * 4x4 numbers organized in column-major order in memory as required by OpenGL,
- * i.e. the matrix entry at row r (0 <= r <= 3) and column c (0 <= c <= 3) is
+ * i.e. the matrix entry at row r, 0 <= r <= 3, and column c, 0 <= c <= 3, is
  * located at offset i = c*4 + r.
  *
  * OpenGL example usage:
@@ -261,7 +261,7 @@ class Matrix4
     friend Matrix4 operator*(Matrix4 const& m,Matrix4 const& n) {
         Vec c0,c1,c2,c3;
 
-        // 64 scalar multiplications, 48 scalar additions.
+        // 64 scalar muls/divs, 48 scalar adds/subs.
         for (int row=3;row>=0;--row) {
             int col1=row+4,col2=row+8,col3=row+12;
             c0[row] = m[row]*n[ 0] + m[col1]*n[ 1] + m[col2]*n[ 2] + m[col3]*n[ 3];
@@ -283,7 +283,7 @@ class Matrix4
     /// Multiplies this matrix from the left to column vector \a v (resulting in
     /// a column vector).
     Vec multFromLeftTo(Vec const& v) const {
-        // 16 scalar multiplications, 12 scalar additions.
+        // 16 scalar muls/divs, 12 scalar adds/subs.
         return Vec(
             c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]*v[3]
         ,   c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]*v[3]
@@ -295,7 +295,7 @@ class Matrix4
     /// Multiplies this matrix from the right to row vector \a v (resulting in a
     /// row vector).
     Vec multFromRightTo(Vec const& v) const {
-        // 16 scalar multiplications, 12 scalar additions.
+        // 16 scalar muls/divs, 12 scalar adds/subs.
         return Vec(
             v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + v[3]*c0[3]
         ,   v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + v[3]*c1[3]
@@ -307,7 +307,7 @@ class Matrix4
     /// Multiplies this matrix from the left to column vector \a v (resulting in
     /// a column vector) using homogeneous coordinates.
     Vector<3,T> multFromLeftTo(Vector<3,T> const& v) const {
-        // 15 scalar multiplications, 12 scalar additions.
+        // 16 scalar muls/divs, 12 scalar adds/subs.
         T v4 = c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3];
         T  s = v4 ? T(1)/v4 : T(1);
         return Vec(
@@ -320,7 +320,7 @@ class Matrix4
     /// Multiplies this matrix from the right to row vector \a v (resulting in a
     /// row vector) using homogeneous coordinates.
     Vector<3,T> multFromRightTo(Vector<3,T> const& v) const {
-        // 15 scalar multiplications, 12 scalar additions.
+        // 16 scalar muls/divs, 12 scalar adds/subs.
         T v4 = v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + c3[3];
         T  s = v4 ? T(1)/v4 : T(1);
         return Vec(
@@ -469,8 +469,8 @@ class Matrix4
     }
 
     /// Inverts this matrix. Optionally returns a \a result indicating whether
-    /// the matrix' determinant is non-zero and thus the inverse is viable.
-    Matrix4& invert(bool* const result=NULL) {
+    /// the matrix' determinant is non-zero and thus the inverse exists.
+    void invert(bool* const result=NULL) {
         T det=determinant();
         bool valid=(abs(det)>Numerics<T>::ZERO_TOLERANCE());
 
@@ -481,8 +481,6 @@ class Matrix4
         if (valid) {
             *this=(1/det)*adjoint();
         }
-
-        return *this;
     }
 
     //@}
@@ -504,9 +502,11 @@ class Matrix4
         return m.multFromLeftTo(v);
     }
 
-    /// Returns an inverted copy of matrix \a m.
+    /// Returns the inverse of matrix \a m.
     friend Matrix4 operator!(Matrix4 const& m) {
-        return Matrix4(m).invert();
+        Matrix4 tmp=m;
+        tmp.invert();
+        return tmp;
     }
 
     //@}

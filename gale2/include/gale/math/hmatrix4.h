@@ -43,12 +43,12 @@ namespace math {
 /**
  * Homogeneous matrix class implementation based on column vectors. The matrix
  * is stored as 4x4 numbers organized in column-major order in memory as
- * required by OpenGL, i.e. the matrix entry at row r (0 <= r <= 3) and column
- * c (0 <= c <= 3) is located at offset i = c*4 + r.
+ * required by OpenGL, i.e. the matrix entry at row r, 0 <= r <= 3, and column
+ * c, 0 <= c <= 3, is located at offset i = c*4 + r.
  *
  * OpenGL example usage:
  * \code
- * Quatf q(Vec3f::Z(),convDegToRad(45.0));
+ * Quatf q(Vec3f::Z(),45.0f*Constf::DEG_TO_RAD());
  * HMat4f m=q.getMatrix();
  * glMultMatrixf(m);
  * \endcode
@@ -371,7 +371,7 @@ class HMatrix4
     friend HMatrix4 operator*(HMatrix4 const& m,HMatrix4 const& n) {
         Vec c0,c1,c2,c3;
 
-        // 36 scalar multiplications, 27 scalar additions (includes translation).
+        // 36 scalar muls/divs, 27 scalar adds/subs (includes translation).
         for (int row=2;row>=0;--row) {
             int col1=row+4,col2=row+8,col3=row+12;
             c0[row] = m[row]*n[ 0] + m[col1]*n[ 1] + m[col2]*n[ 2];
@@ -398,7 +398,7 @@ class HMatrix4
     /// Multiplies this matrix from the left to column vector \a v (resulting in
     /// a column vector).
     Vec multFromLeftTo(Vec const& v) const {
-        // 9 scalar multiplications, 9 scalar additions (includes translation).
+        // 9 scalar muls/divs, 9 scalar adds/subs (includes translation).
         return Vec(
             c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]
         ,   c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1]
@@ -409,7 +409,7 @@ class HMatrix4
     /// Multiplies this matrix from the right to row vector \a v (resulting in a
     /// row vector).
     Vec multFromRightTo(Vec const& v) const {
-        // 15 scalar multiplications, 9 scalar additions (includes translation).
+        // 16 scalar muls/divs, 9 scalar adds/subs (includes translation).
         T v4=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + m_c3w;
         T s=v4 ? T(1)/v4 : T(1);
         return Vec(
@@ -509,26 +509,22 @@ class HMatrix4
 
     /// Orthonormalizes this matrix using a modified Gram-Schmidt algorithm so
     /// the column vectors are orthogonal to each other and normalized.
-    HMatrix4& orthonormalize() {
+    void orthonormalize() {
         c0.normalize();
         c1=~(c1-(c1%c0)*c0);
         c2=c0^c1;
-        return *this;
     }
 
     /// Inverts this matrix. Optionally returns a \a result indicating whether
-    /// the matrix is orthonormal and thus the inverse is viable.
-    HMatrix4& invert(bool* const result=NULL) {
+    /// the matrix is orthonormal and thus the inverse exists.
+    void invert(bool* const result=NULL) {
+        bool valid=abs(determinant())>Numerics<T>::ZERO_TOLERANCE();
+
         if (result) {
-            *result=abs(c0%c1)<=Numerics<T>::ZERO_TOLERANCE()
-                 && abs(c0%c2)<=Numerics<T>::ZERO_TOLERANCE()
-                 && abs(c1%c2)<=Numerics<T>::ZERO_TOLERANCE()
-                 && meta::OpCmpEqual::evaluate(c0.length2(),T(1))
-                 && meta::OpCmpEqual::evaluate(c1.length2(),T(1))
-                 && meta::OpCmpEqual::evaluate(c2.length2(),T(1));
+            *result=valid;
         }
 
-        if (!result || *result) {
+        if (valid) {
             c3=Vec(-c3%c0,-c3%c1,-c3%c2);
 
             // Transpose the column vectors.
@@ -537,8 +533,6 @@ class HMatrix4
             tmp=(*this)(2,0); (*this)(2,0)=(*this)(0,2); (*this)(0,2)=tmp;
             tmp=(*this)(2,1); (*this)(2,1)=(*this)(1,2); (*this)(1,2)=tmp;
         }
-
-        return *this;
     }
 
     //@}
@@ -556,12 +550,16 @@ class HMatrix4
 
     /// Returns an orthonormalized copy of matrix \a m.
     friend HMatrix4 operator~(HMatrix4 const& m) {
-        return HMatrix4(m).orthonormalize();
+        HMatrix4 tmp=m;
+        tmp.orthonormalize();
+        return tmp;
     }
 
-    /// Returns an inverted copy of matrix \a m.
+    /// Returns the inverse of matrix \a m.
     friend HMatrix4 operator!(HMatrix4 const& m) {
-        return HMatrix4(m).invert();
+        HMatrix4 tmp=m;
+        tmp.invert();
+        return tmp;
     }
 
     //@}
