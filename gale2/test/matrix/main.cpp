@@ -12,6 +12,8 @@ int main()
 {
     RandomEcuyerf r;
 
+    // Homogeneous matrix tests.
+
     HMat4f m,n;
 
     m(0,0)=n(0,0)=r.random01();
@@ -58,6 +60,20 @@ int main()
     assert(projection*Vec3f::Y()==Vec3f::Y());
     assert(projection*Vec3f::Z()==Vec3f::Z());
     assert(projection*Vec3f(1,1,1)==Vec3f(0,1,1));
+
+    Vec3f axis=r.randomVec3();
+    double angle=r.random0ExclN(Constf::PI()*2);
+    Vec3f v=r.randomVec3();
+
+    m=HMat4f::Factory::Rotation(axis,angle);
+    Vec3f vrm=m*v;
+
+    Quatf q(axis,angle);
+    Vec3f vrq=q*v;
+
+    assert(vrm.equals(vrq));
+
+    // Matrix tests.
 
     Mat4f A=r.randomMat4(),B=A,C;
 
