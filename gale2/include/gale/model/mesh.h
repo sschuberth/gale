@@ -317,6 +317,31 @@ struct Mesh
             return m_mesh;
         }
 
+        /// Returns whether this mesh contains point primitives.
+        bool hasPoints() const {
+            return indices[PI_POINTS].getSize()>0;
+        }
+
+        /// Returns whether this mesh contains line primitives.
+        bool hasLines() const {
+            return indices[PI_LINES].getSize()>0;
+        }
+
+        /// Returns whether this mesh contains triangle primitives.
+        bool hasTriangles() const {
+            return indices[PI_TRIANGLES].getSize()>0;
+        }
+
+        /// Returns whether this mesh contains quadrilateral primitives.
+        bool hasQuads() const {
+            return indices[PI_QUADS].getSize()>0;
+        }
+
+        /// Returns whether this mesh contains polygon primitives.
+        bool hasPolygons() const {
+            return polygons.getSize()>0;
+        }
+
         AABB box; ///< The axis-aligned bounding box.
 
         /// Names for the primitives stored in the indices table.
