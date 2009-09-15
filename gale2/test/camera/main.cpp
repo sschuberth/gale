@@ -19,8 +19,8 @@ class TestWindow:public DefaultWindow
         m_camera.setNearClipping(0.5);
         m_camera.setFarClipping(20.0);
 
-        // Create three spectator cameras that look down the negative z-, y- and
-        // x-axes.
+        // Create three spectator cameras that look along the negative z-, y-
+        // and x-axes.
         m_view_xyz[0]=&m_camera;
         m_view_xyz[0]->approach(-5);
         for (int i=1;i<4;++i) {
@@ -63,13 +63,19 @@ class TestWindow:public DefaultWindow
     }
 
     void onResize(int width,int height) {
-        int x[]={width/2,width/2,-1,-1};
-        int y[]={0,height/2+1,height/2+1,0};
+        int x[]={width/2,width/2,0,0};
+        int y[]={0,height/2,height/2,0};
+        int w[]={(width+1)/2,(width+1)/2,width/2-1,width/2-1};
+        int h[]={height/2-1,(height+1)/2,(height+1)/2,height/2-1};
 
+        // 0 = lower right
+        // 1 = upper right
+        // 2 = upper left
+        // 3 = lower left
         for (int i=0;i<4;++i) {
             // Set the viewport rectangle.
             m_view_xyz[i]->setScreenSpaceOrigin(x[i],y[i]);
-            m_view_xyz[i]->setScreenSpaceDimensions(width/2,height/2);
+            m_view_xyz[i]->setScreenSpaceDimensions(w[i],h[i]);
         }
     }
 
