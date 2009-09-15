@@ -76,6 +76,7 @@ class TestWindow:public DefaultWindow
             // Set the viewport rectangle.
             m_view_xyz[i]->setScreenSpaceOrigin(x[i],y[i]);
             m_view_xyz[i]->setScreenSpaceDimensions(w[i],h[i]);
+            m_view_xyz[i]->setProjection(Mat4d::Factory::PerspectiveProjection(w[i],h[i]));
         }
     }
 
