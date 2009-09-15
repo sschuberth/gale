@@ -247,8 +247,11 @@ class DynamicArray
         // Adjust the size for a new object.
         setSize(m_size+1);
 
-        // Move insetted items to create a gap.
-        memmove(&m_data[position+1],&m_data[position],(m_size-position-1)*sizeof(T));
+        size_t offset=m_size-position-1;
+        if (offset>0) {
+            // Move insetted items to create a gap.
+            memmove(&m_data[position+1],&m_data[position],offset*sizeof(T));
+        }
 
         m_data[position]=item;
 
@@ -267,7 +270,10 @@ class DynamicArray
         setSize(m_size+array.m_size);
 
         // Move insetted items to create a gap.
-        memmove(&m_data[position+array.m_size],&m_data[position],(m_size-position-array.m_size)*sizeof(T));
+        size_t offset=m_size-position-array.m_size;
+        if (offset>0) {
+            memmove(&m_data[position+array.m_size],&m_data[position],offset*sizeof(T));
+        }
 
         memcpy(&m_data[position],array,array.m_size*sizeof(T));
 
@@ -287,7 +293,10 @@ class DynamicArray
         setSize(m_size+size);
 
         // Move insetted items to create a gap.
-        memmove(&m_data[position+size],&m_data[position],(m_size-position-size)*sizeof(T));
+        size_t offset=m_size-position-size;
+        if (offset>0) {
+            memmove(&m_data[position+size],&m_data[position],offset*sizeof(T));
+        }
 
         memcpy(&m_data[position],array,size*sizeof(T));
 
@@ -313,7 +322,10 @@ class DynamicArray
         }
 
         // Move abundant items to close the gap.
-        memmove(&m_data[begin],&m_data[end],(m_size-end)*sizeof(T));
+        size_t offset=m_size-end;
+        if (offset>0) {
+            memmove(&m_data[begin],&m_data[end],offset*sizeof(T));
+        }
 
         m_size-=end-begin;
     }
