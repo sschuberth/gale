@@ -16,7 +16,7 @@
     If defined, explicitly uses Vertex Buffer Objects (VBOs) for rendering. In
     recent OpenGL drivers, there does not seem to be much performance gain by
     using VBOs, however. Probably the driver internally performs optimizations
-    to use VBOs or disply lists automatically.
+    to use VBOs or display lists automatically.
 
 
 #define GALE_USE_SSE
