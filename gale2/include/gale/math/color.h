@@ -477,7 +477,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
      */
     //@{
 
-    /// Returns an inverted copy of color \a c.
+    /// Returns the inverse of color \a c.
     friend Color operator!(Color const& c) {
         return c.inverse();
     }
