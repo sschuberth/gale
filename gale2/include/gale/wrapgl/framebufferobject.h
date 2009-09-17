@@ -37,11 +37,16 @@ namespace gale {
 
 namespace wrapgl {
 
-#include "GLEX_ARB_framebuffer_object.h"
+//#include "GLEX_ARB_framebuffer_object.h"
+#include "GLEX_EXT_framebuffer_object.h"
+
+#ifdef GLEX_EXT_FRAMEBUFFER_OBJECT_H
+    #include "framebufferobjectext.h"
+#endif
 
 /**
  * This is a bindable OpenGL object implementation for Renderbuffer Objects, see
- * <http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt>
+ * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>
  */
 class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObject>
 {
@@ -61,6 +66,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
      */
     //@{
 
+#ifdef GLEX_ARB_FRAMEBUFFER_OBJECT_H
     /// Initializes or sets the object's storage to the given \a width, \a height
     /// and \a format, optionally with multi-sampling using the specified number
     /// of \a samples enabled.
@@ -69,6 +75,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
         glRenderbufferStorageMultisample(GL_RENDERBUFFER,samples,format,width,height);
         G_ASSERT_OPENGL
     }
+#endif
 
     /// Returns the width of the object's storage.
     GLsizei getWidth() const {
@@ -121,11 +128,13 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
         return static_cast<GLint>(getParameter(GL_RENDERBUFFER_STENCIL_SIZE));
     }
 
+#ifdef GLEX_ARB_FRAMEBUFFER_OBJECT_H
     /// Returns the actual (not necessarily requested) number of samples used
     /// for multi-sampling.
     GLsizei getSamples() const {
         return static_cast<GLsizei>(getParameter(GL_RENDERBUFFER_SAMPLES));
     }
+#endif
 
     //@}
 
@@ -134,10 +143,17 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
         handle=0;
+#ifdef GLEX_ARB_FRAMEBUFFER_OBJECT_H
         if (GLEX_ARB_framebuffer_object || GLEX_ARB_framebuffer_object_init()) {
             glGenRenderbuffers(1,&handle);
             G_ASSERT_OPENGL
         }
+#else
+        if (GLEX_EXT_framebuffer_object || GLEX_EXT_framebuffer_object_init()) {
+            glGenRenderbuffers(1,&handle);
+            G_ASSERT_OPENGL
+        }
+#endif
     }
 
     /// Destroys the OpenGL object identified by \a handle. If the object is
@@ -170,7 +186,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
 
 /**
  * This is a bindable OpenGL object implementation for Framebuffer Objects, see
- * <http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt>
+ * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>
  */
 class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject>
 {
@@ -285,10 +301,17 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
         handle=0;
+#ifdef GLEX_ARB_FRAMEBUFFER_OBJECT_H
         if (GLEX_ARB_framebuffer_object || GLEX_ARB_framebuffer_object_init()) {
             glGenFramebuffers(1,&handle);
             G_ASSERT_OPENGL
         }
+#else
+        if (GLEX_EXT_framebuffer_object || GLEX_EXT_framebuffer_object_init()) {
+            glGenFramebuffers(1,&handle);
+            G_ASSERT_OPENGL
+        }
+#endif
     }
 
     /// Destroys the OpenGL object identified by \a handle. If the object is
