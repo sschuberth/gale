@@ -9,19 +9,24 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow(_T("test_fbo"),800,600)
+    :   DefaultWindow(_T("test_fbo"),600,600)
     ,   m_ping_pong(0)
     {
         m_camera.setProjection(Mat4d::Factory::OrthographicProjection(0.0,1.0,0.0,1.0));
 
         // Set up the read and draw textures.
-        m_read_texture=&m_textures[m_ping_pong];
-        m_ping_pong=(m_ping_pong+1)&1;
-        m_draw_texture=&m_textures[m_ping_pong];
+        m_read_texture=&m_textures[0];
+        m_draw_texture=&m_textures[1];
 
         unsigned char* buffer=new unsigned char[256*256*3];
 
+        // Initialize the draw texture's size (and its data to 0).
         memset(buffer,0,256*256*3);
+
+        m_draw_texture->setData(256,256,buffer,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+
+        // Initialize the read texture.
         for (int y=0;y<256;++y) {
             for (int x=0;x<256;++x) {
                 if (x<0+16 || x>255-16 || y<0+16 || y>255-16) {
@@ -40,7 +45,9 @@ class TestWindow:public DefaultWindow
 
         glEnable(GL_TEXTURE_2D);
 
-        //m_frame_buffer.attach(GL_COLOR_ATTACHMENT0,*m_draw_texture);
+        m_frame_buffer.attach(GL_COLOR_ATTACHMENT0,*m_draw_texture);
+        repaint();
+        m_draw_texture->makeCurrent();
     }
 
     void onResize(int width,int height) {
