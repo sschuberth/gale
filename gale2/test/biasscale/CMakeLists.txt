@@ -10,6 +10,9 @@ project(${name})
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
 file(GLOB_RECURSE sources "*.h" "*.cpp")
 
+# Do not create the default "Source Files" group.
+source_group("" FILES ${sources})
+
 # This writes absolute paths to the generated files even if relative paths are
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
 add_executable(${name} ${sources})
