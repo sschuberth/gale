@@ -87,13 +87,11 @@ if(MSVC)
     # - Do not Optimize for Windows98
     # - Disable Image Randomization
     # - Image must be loaded at a fixed address
-    # - Set section alignment
     set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}
         /OPT:REF
         /OPT:NOWIN98
         /DYNAMICBASE:NO
         /FIXED
-        /ALIGN:16
     ")
 endif()
 
