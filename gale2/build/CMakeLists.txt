@@ -45,6 +45,57 @@ file(GLOB_RECURSE sources "${glex_root}/*.c")
 list(APPEND files ${sources})
 source_group(${group} FILES ${sources})
 
+# Set some custom compiler flags for the heavily size optimized build.
+if(MSVC)
+    # Flags specified later will override earlier flags.
+
+    # Compiler flags that are properly reflected in the IDE:
+    # - Preprocessor Definitions
+    # - Enable Intrinsic Functions
+    # - Multi-threaded Runtime Library
+    # - Disable Buffer Security Check
+    # - Enable Function-Level Linking
+    # - Disable Run-Time Type Info
+    # - Calling Convention "__fastcall"
+    set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}
+        /D GALE_TINY_CODE
+        /Oi
+        /MT
+        /GS-
+        /Gy
+        /GR-
+        /Gr
+    ")
+
+    # Compiler flags that are not properly reflected in the IDE:
+    # - Enable String Pooling
+    # - Disable C++ Exceptions
+    # - Floating Point Model
+    # - "suppress _ftol"
+    # - "omit default library name in .OBJ"
+    set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}
+        /GF
+        /EHs-c-
+        /fp:fast
+        /QIfist
+        /Zl
+    ")
+
+    # Linker flags that are not properly reflected in the IDE:
+    # - Eliminate Unreferenced Data
+    # - Do not Optimize for Windows98
+    # - Disable Image Randomization
+    # - Image must be loaded at a fixed address
+    # - Set section alignment
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}
+        /OPT:REF
+        /OPT:NOWIN98
+        /DYNAMICBASE:NO
+        /FIXED
+        /ALIGN:16
+    ")
+endif()
+
 # Avoid to include the CMakeLists.txt files themselves to the project to get rid
 # of the custom build step in Visual Studio that regenerates the project.
 set(CMAKE_SUPPRESS_REGENERATION TRUE)
