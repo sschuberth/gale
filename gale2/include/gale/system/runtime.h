@@ -41,15 +41,15 @@
 //         Set "Optimization" to "Minimize Size" (/O1)
 //         Set "Enable Intrinsic Functions" to "Yes" (/Oi)
 //     Code Generation
-//         Set "Enable C++ Exceptions" to "No" (/GX-)
+//         Set "Enable C++ Exceptions" to "No" (/EHs-c-) (/GX- deprecated since VS2005)
 //         Set "Basic Runtime Checks" to "Default"
 //         Set "Runtime Library" to "Multi-threaded" (/MT) (to avoid linker warnings)
 //         Set "Buffer Security Check" to "No" (/GS-)
 //         Set "Floating Point Model" to "Fast" (/fp:fast)
 //     Language
-//         Set "Enable Run-Time Typ Info" to "No" (/GR-)
+//         Set "Enable Run-Time Type Info" to "No" (/GR-)
 //     Command Line
-//         Specify "/QIfist" ("suppress _ftol")
+//         Specify "/QIfist" ("suppress _ftol") (deprecated)
 
 // Ignore all default libraries during linking.
 #pragma comment(linker,"/nodefaultlib")
@@ -68,9 +68,9 @@
 // Linker
 //     Optimization
 //         Set "References" to "Eliminate Unreferenced Data" (/OPT:REF)
-//         Set "Optimize for Windows98" to "No" (/OPT:NOWIN98) (not in VS2008)
+//         Set "Optimize for Windows98" to "No" (/OPT:NOWIN98) (deprecated since VS2008)
 //     Advanced
-//         Set "Randomize Base Address" to "Disable Image Randomization" (/DYNAMICBASE:NO) (in VS2008)
+//         Set "Randomized Base Address" to "Disable Image Randomization" (/DYNAMICBASE:NO) (since VS2008)
 //         Set "Fixed Base Address" to "Image must be loaded at a fixed address" (/FIXED)
 //     Command Line
 //         Specify "/ALIGN:16" (UPX will not be able to compress the output file)
