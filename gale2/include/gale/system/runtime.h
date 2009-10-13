@@ -93,9 +93,15 @@ extern "C" {
  */
 //@{
 
-/// Minimal "puts" function implementation.
+/// Replacement for various functions that print a string to stdout.
 int print(char const* str);
-#define puts(str) print(str "\n")
+
+/// Minimal "puts" function implementation.
+#define puts(str)    \
+    {                \
+        print(str);  \
+        print("\n"); \
+    }
 
 //@}
 
