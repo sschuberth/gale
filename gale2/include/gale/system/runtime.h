@@ -49,6 +49,7 @@
 //     Language
 //         Set "Enable Run-Time Type Info" to "No" (/GR-)
 //     Command Line
+//         Specify "/Gs999999" ("control stack checking calls")
 //         Specify "/QIfist" ("suppress _ftol") (deprecated)
 
 // Ignore all default libraries during linking.

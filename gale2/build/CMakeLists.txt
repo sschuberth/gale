@@ -77,6 +77,7 @@ if(MSVC)
         /GF
         /EHs-c-
         /fp:fast
+        /Gs999999
         /QIfist
         /Zl
     ")
