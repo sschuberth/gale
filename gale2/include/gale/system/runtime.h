@@ -64,6 +64,8 @@
 //     Command Line
 //         Specify "/Zl" ("omit default library name in .OBJ")
 // Linker
+//     Manifest File
+//         Set "Generate Manifest" to "No" (/MANIFEST:NO)
 //     Optimization
 //         Set "References" to "Eliminate Unreferenced Data" (/OPT:REF)
 //         Set "Optimize for Windows98" to "No" (/OPT:NOWIN98) (deprecated since VS2008)
@@ -72,9 +74,6 @@
 //         Set "Fixed Base Address" to "Image must be loaded at a fixed address" (/FIXED)
 //     Command Line
 //         Specify "/ALIGN:16" (UPX will not be able to compress the output file)
-// Manifest Tool
-//     Input and Output
-//         Set "Embed Manifest" to "No"
 
 #ifdef __cplusplus
 extern "C" {

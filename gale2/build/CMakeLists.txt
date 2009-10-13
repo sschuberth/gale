@@ -88,8 +88,10 @@ if(MSVC)
 
     # Linker flags that are properly reflected in the IDE:
     # - Ignore All Default Libraries
+    # - Do not Generate Manifest
     set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}
         /NODEFAULTLIB
+        /MANIFEST:NO
     ")
 
     # Linker flags that are not properly reflected in the IDE:
