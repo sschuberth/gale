@@ -52,6 +52,8 @@ if(MSVC)
     # Compiler flags that are properly reflected in the IDE:
     # - Preprocessor Definitions
     # - Enable Intrinsic Functions
+    # - Favor Small Code
+    # - Omit Frame Pointers
     # - Multi-threaded Runtime Library
     # - Disable Buffer Security Check
     # - Enable Function-Level Linking
@@ -60,6 +62,8 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}
         /D GALE_TINY_CODE
         /Oi
+        /Os
+        /Oy
         /MT
         /GS-
         /Gy
@@ -82,16 +86,24 @@ if(MSVC)
         /Zl
     ")
 
+    # Linker flags that are properly reflected in the IDE:
+    # - Ignore All Default Libraries
+    set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}
+        /NODEFAULTLIB
+    ")
+
     # Linker flags that are not properly reflected in the IDE:
     # - Eliminate Unreferenced Data
     # - Do not Optimize for Windows98
     # - Disable Image Randomization
     # - Image must be loaded at a fixed address
+    # - "Merge read-only data and code sections"
     set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}
         /OPT:REF
         /OPT:NOWIN98
         /DYNAMICBASE:NO
         /FIXED
+        /MERGE:.rdata=.text
     ")
 endif()
 

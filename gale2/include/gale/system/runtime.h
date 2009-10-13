@@ -52,9 +52,6 @@
 //         Specify "/Gs999999" ("control stack checking calls")
 //         Specify "/QIfist" ("suppress _ftol") (deprecated)
 
-// Ignore all default libraries during linking.
-#pragma comment(linker,"/nodefaultlib")
-
 // To further reduce the executable size, based on the "Release" mode
 // configuration, adjust the following settings from within the MSVC IDE:
 //
@@ -78,12 +75,6 @@
 // Manifest Tool
 //     Input and Output
 //         Set "Embed Manifest" to "No"
-
-// Enable global optimization, favor code size, enable frame pointer omission.
-#pragma optimize("gsy",on)
-
-// Merge the read-only data section into the .text (code) section.
-#pragma comment(linker,"/merge:.rdata=.text")
 
 #ifdef __cplusplus
 extern "C" {
