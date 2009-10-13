@@ -51,11 +51,17 @@
 //     Command Line
 //         Specify "/Gs999999" ("control stack checking calls")
 //         Specify "/QIfist" ("suppress _ftol") (deprecated)
+// Linker
+//     Input
+//         Set "Ignore All Default Libraries" to "Yes"
 
 // To further reduce the executable size, based on the "Release" mode
 // configuration, adjust the following settings from within the MSVC IDE:
 //
 // C/C++
+//     Optimization
+//         Set "Favor Size or Speed" to "Favor Small Code" (/Os)
+//         Set "Omit Frame Pointers" to "Yes" (/Oy)
 //     Code Generation
 //         Set "Enable String Pooling" to "Yes" (/GF)
 //         Set "Enable Function-Level Linking" to "Yes" (/Gy)
@@ -73,7 +79,7 @@
 //         Set "Randomized Base Address" to "Disable Image Randomization" (/DYNAMICBASE:NO) (since VS2008)
 //         Set "Fixed Base Address" to "Image must be loaded at a fixed address" (/FIXED)
 //     Command Line
-//         Specify "/ALIGN:16" (UPX will not be able to compress the output file)
+//         Specify "/MERGE:.rdata=.text" ("Merge read-only data and code sections")
 
 #ifdef __cplusplus
 extern "C" {
