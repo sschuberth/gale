@@ -2,8 +2,6 @@
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
 
-#include <iostream>
-
 // Enable memory leak detection, see:
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
 #if !defined NDEBUG && !defined GALE_TINY_CODE
@@ -15,7 +13,6 @@
 
 using namespace gale::math;
 using namespace gale::system;
-using namespace std;
 
 int main()
 {
@@ -52,10 +49,11 @@ int main()
         }
     }
 
-    cout << "random() method statistics" << endl << "----------------------" << endl << endl;
-    cout << "range: " << half0 << " / " << half1 << endl;
-    cout << "parity: " << even << " / " << odd << endl;
-    cout << unsigned int(N*(1.0/s)) << " random numbers per second" << endl << endl;
+#ifndef GALE_TINY_CODE
+    std::cout << "random() method statistics" << std::endl << "----------------------" << std::endl << std::endl;
+    std::cout << "range: " << half0 << " / " << half1 << std::endl;
+    std::cout << "parity: " << even << " / " << odd << std::endl;
+    std::cout << unsigned int(N*(1.0/s)) << " random numbers per second" << std::endl << std::endl;
 
     half0=half1=0;
     even=odd=0;
@@ -86,10 +84,11 @@ int main()
         }
     }
 
-    cout << "rand() statistics" << endl << "-----------------" << endl << endl;
-    cout << "range: " << half0 << " / " << half1 << endl;
-    cout << "parity: " << even << " / " << odd << endl;
-    cout << unsigned int(N*(1.0/s)) << " random numbers per second" << endl << endl;
+    std::cout << "rand() statistics" << std::endl << "-----------------" << std::endl << std::endl;
+    std::cout << "range: " << half0 << " / " << half1 << std::endl;
+    std::cout << "parity: " << even << " / " << odd << std::endl;
+    std::cout << unsigned int(N*(1.0/s)) << " random numbers per second" << std::endl << std::endl;
+#endif
 
 #if !defined NDEBUG && !defined GALE_TINY_CODE
     _CrtDumpMemoryLeaks();

@@ -5,15 +5,14 @@
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
 
-#include <ctime>
-#include <iostream>
-
 using namespace gale::math;
 using namespace gale::system;
 
 using gale::meta::OpCmpEqual;
 
-using namespace std;
+#ifndef GALE_TINY_CODE
+    using namespace std;
+#endif
 
 RandomEcuyerf re;
 
@@ -23,6 +22,7 @@ void test_color();
 
 int main()
 {
+#ifndef GALE_TINY_CODE
     cout << "Found "
          << CPU.processors()
          << " processor(s), "
@@ -49,6 +49,7 @@ int main()
          << ((CPU.isIntel() && CPU.hasIntel64())?" Intel64":"")
          << ((CPU.isAMD() && CPU.hasAMD64())?" AMD64":"")
          << endl;
+#endif
 
     test_tuple();
     test_vector();
@@ -59,12 +60,11 @@ int main()
 
 void test_tuple()
 {
-    cout << "*** tuple tests ***"
-         << endl;
+    puts("*** tuple tests ***");
 
 #ifdef GALE_USE_SSE
-    cout << "Check SIMD implementation ..."
-         << endl;
+    puts("Check SIMD implementation ...");
+
     float t4f_a0=2.0f,t4f_a1=3.0f,t4f_a2=5.0f,t4f_a3=7.0f;
     float t4f_b0=9.0f,t4f_b1=8.0f,t4f_b2=7.0f,t4f_b3=6.0f;
 
@@ -116,14 +116,14 @@ void test_tuple()
     assert(OpCmpEqual::evaluate(t4f_a[3],2.0f/t4f_c[3]));
 #endif
 
-    cout << "Check construction of objects ..."
-         << endl;
+    puts("Check construction of objects ...");
+
     Tuple<2,int> t2i_a(1,2),t2i_b(re.random(),re.random());
 
     Tuple<3,float> t3f_a(3.0f,4.0f,5.0f);
     Tuple<3,float> t3f_b(
         static_cast<float>(re.random0N(1000.0f))
-    ,    static_cast<float>(re.random0N(1000.0f))
+    ,   static_cast<float>(re.random0N(1000.0f))
     ,   static_cast<float>(re.random0N(1000.0f))
     );
 
@@ -135,51 +135,51 @@ void test_tuple()
     ,   static_cast<double>(re.random0N(1000.0))
     );
 
+#ifndef GALE_TINY_CODE
     cout << t2i_a << ", " << t2i_b << endl;
     cout << t3f_a << ", " << t3f_b << endl;
     cout << t4d_a << ", " << t4d_b << endl;
+#endif
 
-    cout << "Check the sizes in memory ..."
-         << endl;
+    puts("Check the sizes in memory ...");
+
     assert(sizeof(t2i_a)==2*sizeof(int));
     assert(sizeof(t3f_a)==3*sizeof(float));
     assert(sizeof(t4d_a)==4*sizeof(double));
 
-    cout << "Check implicit pointer conversion ..."
-         << endl;
+    puts("Check implicit pointer conversion ...");
+
+#ifndef GALE_TINY_CODE
     cout << t2i_a[0] << endl;
     cout << t2i_a[1] << endl;
     cout << t2i_b[0] << endl;
     cout << t2i_b[1] << endl;
+#endif
 
-    cout << "-- " << endl;
+    puts("-- ");
 
-    cout << "Check addition ..."
-         << endl;
+    puts("Check addition ...");
     {
         Tuple<2,int> tmp=t2i_a+t2i_b;
         assert(tmp[0]==t2i_a[0]+t2i_b[0]);
         assert(tmp[1]==t2i_a[1]+t2i_b[1]);
     }
 
-    cout << "Check subtraction ..."
-         << endl;
+    puts("Check subtraction ...");
     {
         Tuple<2,int> tmp=t2i_a-t2i_b;
         assert(tmp[0]==t2i_a[0]-t2i_b[0]);
         assert(tmp[1]==t2i_a[1]-t2i_b[1]);
     }
 
-    cout << "Check division (and implicitly multiplication) ..."
-         << endl;
+    puts("Check division (and implicitly multiplication) ...");
     {
         Tuple<2,int> tmp=t2i_a/t2i_b;
         assert(tmp[0]==t2i_a[0]/t2i_b[0]);
         assert(tmp[1]==t2i_a[1]/t2i_b[1]);
     }
 
-    cout << "Check division (and implicitly multiplication) by a scalar ..."
-         << endl;
+    puts("Check division (and implicitly multiplication) by a scalar ...");
     {
         float s=12.3f;
         Tuple<3,float> tmp=t3f_a/s;
@@ -188,8 +188,7 @@ void test_tuple()
         assert(OpCmpEqual::evaluate(tmp[2],t3f_a[2]/s));
     }
 
-    cout << "Check minimum element determination ..."
-         << endl;
+    puts("Check minimum element determination ...");
     {
         float tmp=t3f_b.minElement();
         assert(tmp<=t3f_b[0]);
@@ -197,8 +196,7 @@ void test_tuple()
         assert(tmp<=t3f_b[2]);
     }
 
-    cout << "Check maximum element determination ..."
-         << endl;
+    puts("Check maximum element determination ...");
     {
         double tmp=t4d_b.maxElement();
         assert(tmp>=t4d_b[0]);
@@ -207,8 +205,7 @@ void test_tuple()
         assert(tmp>=t4d_b[3]);
     }
 
-    cout << "Check unary sign operators and to get absolute min / max elements ..."
-         << endl;
+    puts("Check unary sign operators and to get absolute min / max elements ...");
     {
         Tuple<3,float> tmp1=+t3f_b;
         Tuple<3,float> tmp2=-t3f_a;
@@ -224,8 +221,7 @@ void test_tuple()
         assert(tmp_max>=fabs(tmp2[2]));
     }
 
-    cout << "Check element-wise minimum determination ..."
-         << endl;
+    puts("Check element-wise minimum determination ...");
     {
         Tuple<3,float> tmp=t3f_a.minElements(t3f_b);
         assert(tmp[0]<=t3f_a[0] && tmp[0]<=t3f_b[0]);
@@ -233,8 +229,7 @@ void test_tuple()
         assert(tmp[2]<=t3f_a[2] && tmp[2]<=t3f_b[2]);
     }
 
-    cout << "Check element-wise maximum determination ..."
-         << endl;
+    puts("Check element-wise maximum determination ...");
     {
         Tuple<3,float> tmp=t3f_a.maxElements(t3f_b);
         assert(tmp[0]>=t3f_a[0] && tmp[0]>=t3f_b[0]);
@@ -242,8 +237,7 @@ void test_tuple()
         assert(tmp[2]>=t3f_a[2] && tmp[2]>=t3f_b[2]);
     }
 
-    cout << "Check linear interpolation ..."
-         << endl;
+    puts("Check linear interpolation ...");
     {
         double const s=0.63;
         Tuple<4,double> tmp=lerp(t4d_a,t4d_b,s);
@@ -253,8 +247,7 @@ void test_tuple()
         assert(OpCmpEqual::evaluate(tmp[3],t4d_a[3]+(t4d_b[3]-t4d_a[3])*s));
     }
 
-    cout << "Check remaining vector vs. vector operators ..."
-         << endl;
+    puts("Check remaining vector vs. vector operators ...");
     {
         Tuple<3,float> tmp(
             static_cast<float>(re.random0N(1000.0f))
@@ -273,8 +266,7 @@ void test_tuple()
         assert(OpCmpEqual::evaluate(res2[2],tmp[2]/res[2]));
     }
 
-    cout << "Check remaining vector vs. scalar operators ..."
-         << endl;
+    puts("Check remaining vector vs. scalar operators ...");
     {
         float s=344.5f,t=24.6f;
 
@@ -290,8 +282,7 @@ void test_tuple()
 
     }
 
-    cout << "Check comparison operators ..."
-         << endl;
+    puts("Check comparison operators ...");
     {
         bool res_l=(t3f_a<t3f_b);
         assert(res_l==(t3f_a[0]<t3f_b[0] && t3f_a[1]<t3f_b[1] && t3f_a[2]<t3f_b[2]));
@@ -315,8 +306,7 @@ void test_tuple()
 
 void test_vector()
 {
-    cout << "*** vector tests ***"
-         << endl;
+    puts("*** vector tests ***");
 
     double s;
     Timer t;
@@ -325,8 +315,8 @@ void test_vector()
     Vec4d n(Vec4d::ZERO());
     Vec4d x(Vec4d::X()),y(Vec4d::Y()),z(Vec4d::Z()),w(Vec4d::W());
 
-    cout << "Check predefined vector constants ..."
-         << endl;
+    puts("Check predefined vector constants ...");
+
     assert(n[0]==0);
     assert(n[1]==0);
     assert(n[2]==0);
@@ -352,50 +342,52 @@ void test_vector()
     assert(w[2]==0);
     assert(w[3]==1);
 
-    cout << "Check conversion constructor ..."
-         << endl;
+    puts("Check conversion constructor ...");
+
     Vec4i a(12,34,56,78);
     Vec4d b(a);
 
-    cout << "Check access methods ..."
-         << endl;
+    puts("Check access methods ...");
+
     assert(double(a.getX())==b[0]);
     assert(double(a.getY())==b[1]);
     assert(double(a.getZ())==b[2]);
     assert(double(a.getW())==b[3]);
 
-    cout << "Check magnitude related methods ..."
-         << endl;
+    puts("Check magnitude related methods ...");
+
     b.normalize();
     assert(OpCmpEqual::evaluate(b.length2(),Vec4d::X()[0]));
 
-    cout << "Check the cross product operator ..."
-         << endl;
+    puts("Check the cross product operator ...");
+
     assert((Vec3i::X()^Vec3i::Y()).equals(Vec3i::Z()));
 
-    cout << "Check angle related methods ..."
-         << endl;
+    puts("Check angle related methods ...");
+
     double axy1=Vec3i::X().angle(Vec3i::Y());
     double axy2=Vec3i::X().orientedAngle(Vec3i::Y(),Vec3i::Z());
     assert(OpCmpEqual::evaluate(axy1,axy2));
 
-    cout << "Check getting an orthogonal vector ..."
-         << endl;
+    puts("Check getting an orthogonal vector ...");
+
     assert(Vec3f::X().orthoVector().equals(Vec3f::Z()));
     assert(Vec3f::Y().orthoVector().equals(-Vec3f::Z()));
     assert(Vec3f::Z().orthoVector().equals(Vec3f::Y()));
 
-    cout << "Check unary sign, conversion constructor and collinear methods ..."
-         << endl;
+    puts("Check unary sign, conversion constructor and collinear methods ...");
+
     assert(Vec3f::X().isCollinear(-Vec3i::X()));
 
-    cout << "Check the dot product operator ..."
-         << endl;
+    puts("Check the dot product operator ...");
+
     assert((Vec3i::X()%Vec3i::Y())==0);
     assert((Vec3i::X()%Vec3i::Z())==0);
     assert((Vec3i::Y()%Vec3i::Z())==0);
 
     t.stop(s);
+
+#ifndef GALE_TINY_CODE
     cout << "Time elapsed: " << s << " seconds." << endl;
 
     cout << "Sleeping for " << (ms=2500) << " milliseconds (timed)." << endl;
@@ -412,15 +404,15 @@ void test_vector()
     Timer::sleep(ms);
     t.stop(s);
     cout << "Time elapsed: " << s << " seconds." << endl;
+#endif
 }
 
 void test_color()
 {
-    cout << "*** color tests ***"
-         << endl;
+    puts("*** color tests ***");
 
-    cout << "Check predefined color constants ..."
-         << endl;
+    puts("Check predefined color constants ...");
+
     Col3d black=Col3d::BLACK();
     static Col3d const col3d(Col3d::MIN_INTENSITY(),Col3d::MIN_INTENSITY(),Col3d::MIN_INTENSITY());
     assert(col3d==black);
@@ -453,8 +445,8 @@ void test_color()
     static Col3ub const col3ub(Col3ub::MAX_INTENSITY(),Col3ub::MAX_INTENSITY(),Col3ub::MAX_INTENSITY());
     assert(col3ub==white);
 
-    cout << "Check color inversion ..."
-         << endl;
+    puts("Check color inversion ...");
+
     assert(white.inverse()==Col3ub::BLACK());
 
     Col4f white4=Col4f::WHITE();
@@ -463,8 +455,8 @@ void test_color()
     black4.setA(0.5);
     assert(!white4==black4);
 
-    cout << "Check color conversion ..."
-         << endl;
+    puts("Check color conversion ...");
+
     Col3ub conv;
     Col3ub::Type r,g,b;
     float h,s,v;

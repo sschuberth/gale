@@ -1,10 +1,9 @@
 #include <gale/math/random.h>
 #include <gale/math/hmatrix4.h>
 
-#include <ctime>
-#include <iostream>
-
-using namespace std;
+#ifndef GALE_TINY_CODE
+    #include <iostream>
+#endif
 
 using namespace gale::math;
 
@@ -46,7 +45,9 @@ int main()
     HMat4f a(m.c0,m.c1,m.c2,m.c3);
     m*=n;
 
-    cout << m << endl;
+#ifndef GALE_TINY_CODE
+    std::cout << m << std::endl;
+#endif
 
     assert(m==HMat4f::IDENTITY());
     assert(n*HMat4f::IDENTITY()==n);

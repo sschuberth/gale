@@ -3,6 +3,12 @@
 #include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/renderer.h>
 
+#ifndef GALE_TINY_CODE
+    #include <stdio.h>
+#else
+    #define printf print
+#endif
+
 using namespace gale::math;
 using namespace gale::model;
 using namespace gale::system;
@@ -150,19 +156,19 @@ class TestWindow:public DefaultWindow
             }
         }
 
-        std::cout << "Now using";
+        printf("Now using");
         if (m_interpolator==&nlerp) {
-            std::cout << " normalized";
+            printf(" normalized");
         }
         else if (m_interpolator==&slerp) {
-            std::cout << " spherical";
+            printf(" spherical");
         }
-        std::cout << " lerp. Cubic interpolation is turned";
+        printf(" lerp. Cubic interpolation is turned");
         if (m_cubic) {
-            std::cout << " on." << std::endl;
+            puts(" on.");
         }
         else {
-            std::cout << " off." << std::endl;
+            puts(" off.");
         }
     }
 
