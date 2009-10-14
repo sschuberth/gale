@@ -30,13 +30,14 @@ link_directories("../../lib")
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 
+target_link_libraries(${name} ${OPENGL_LIBRARIES})
 if(MSVC)
     # Crinkler gets confused by absolute paths to libraries and by having GALE
     # as both an implicit dependency and an explicit link library. So just use
     # an explicit dependency instead.
     add_dependencies(${name} gale)
 else()
-    target_link_libraries(${name} ${OPENGL_LIBRARIES} gale)
+    target_link_libraries(${name} gale)
 endif()
 
 # Specify where to put the compiled executable. This is relative to
