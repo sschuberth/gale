@@ -69,29 +69,27 @@ int print(char const* str)
 
 __declspec(noalias,restrict) void* __cdecl calloc(size_t num,size_t size)
 {
-    return HeapAlloc(GetProcessHeap(),HEAP_ZERO_MEMORY,num*size);
+    return GlobalAlloc(GMEM_FIXED|GMEM_ZEROINIT,num*size);
 }
 
 __declspec(noalias,restrict) void* __cdecl malloc(size_t size)
 {
-    return HeapAlloc(GetProcessHeap(),0,size);
+    return GlobalAlloc(GMEM_FIXED,size);
 }
 
 __declspec(noalias,restrict) void* __cdecl realloc(void* memblock,size_t size)
 {
     if (memblock) {
-        return HeapReAlloc(GetProcessHeap(),0,memblock,size);
+        return GlobalReAlloc(memblock,size,0);
     }
     else {
-        return HeapAlloc(GetProcessHeap(),0,size);
+        return GlobalAlloc(GMEM_FIXED,size);
     }
 }
 
 __declspec(noalias) void __cdecl free(void* memblock)
 {
-    if (memblock) {
-        HeapFree(GetProcessHeap(),0,memblock);
-    }
+    GlobalFree(memblock);
 }
 
 // "Enable Intrinsic Functions" (/Oi) is supposed to make memcpy and memset
