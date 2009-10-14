@@ -37,7 +37,7 @@ extern "C" {
 int _fltused=0x9875;
 
 // Forward declaration to the usual main() entry point.
-int main();
+int __cdecl main();
 
 // This is the real entry point as used by the C runtime; just call the usual
 // main() entry point and exit with its return value.
