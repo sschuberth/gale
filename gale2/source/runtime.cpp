@@ -80,7 +80,7 @@ __declspec(noalias,restrict) void* __cdecl malloc(size_t size)
 __declspec(noalias,restrict) void* __cdecl realloc(void* memblock,size_t size)
 {
     if (memblock) {
-        return GlobalReAlloc(memblock,size,0);
+        return GlobalReAlloc(memblock,size,GMEM_MOVEABLE);
     }
     else {
         return GlobalAlloc(GMEM_FIXED,size);
