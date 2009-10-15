@@ -61,7 +61,7 @@ if(MSVC)
     # - Disable Run-Time Type Info
     # - Calling Convention "__fastcall"
     set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}
-        /D GALE_TINY_CODE
+        /D GALE_TINY_CODE /D GALE_USE_SSE3
         /Oi
         /Os
         /Oy
@@ -76,7 +76,7 @@ if(MSVC)
     # - Enable String Pooling
     # - Disable C++ Exceptions
     # - Floating Point Model
-    # - "suppress _ftol"
+    # - "suppress _ftol" (NOTE: Makes casts use the current FPU rounding mode)
     # - "omit default library name in .OBJ"
     set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}
         /GF
