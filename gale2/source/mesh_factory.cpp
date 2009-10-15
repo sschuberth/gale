@@ -614,9 +614,8 @@ Mesh* Mesh::Factory::GridMapper(
 ,   bool const reverse
 )
 {
-    float s_delta=(s_max-s_min)/s_steps;
-    float t_delta=(t_max-t_min)/t_steps;
-
+    // If the grid is not closed, start and end vertices cannot be shared, so
+    // we need one more step.
     s_steps+=static_cast<int>(!s_closed);
     t_steps+=static_cast<int>(!t_closed);
 
@@ -633,6 +632,9 @@ Mesh* Mesh::Factory::GridMapper(
 
     // Index of the vertex currently being calculated.
     int vi=0;
+
+    float s_delta=(s_max-s_min)/(s_steps-1);
+    float t_delta=(t_max-t_min)/(t_steps-1);
 
     for (int s=0;s<s_steps;++s) {
         st.setX(s_min+s*s_delta);
