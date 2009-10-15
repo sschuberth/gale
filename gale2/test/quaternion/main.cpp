@@ -14,8 +14,7 @@ using namespace gale::model;
 using namespace gale::system;
 using namespace gale::wrapgl;
 
-float const CATHETUS=5.0f;
-float const RADIUS=sqrtf(2*CATHETUS*CATHETUS);
+#define CATHETUS 5.0f
 
 class TestWindow:public DefaultWindow
 {
@@ -76,6 +75,8 @@ class TestWindow:public DefaultWindow
         else {
             m_k=(*m_interpolator)(m_kf[i],m_kf[(i+1)&3],t-i);
         }
+
+        static float const RADIUS=sqrtf(2*CATHETUS*CATHETUS);
 
         double angle=2.0*M_PI*t/4.0+M_PI/4.0;
         float x=static_cast<float>(::cos(angle)*RADIUS);
