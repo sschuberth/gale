@@ -48,34 +48,37 @@ class TestWindow:public DefaultWindow
     {
         m_camera.approach(-7);
 
+        // The cast is required as "new MeshTable" seems to return "MeshCache (*)[6][5]".
+        m_meshes=reinterpret_cast<MeshTable*>(new MeshTable);
+
         // Only initialize the base meshes for the first subdivision mode, as
         // they are the same for all modes.
-        m_meshes[0][0][0].init(Mesh::Factory::Tetrahedron());
-        m_meshes[1][0][0].init(Mesh::Factory::Octahedron());
-        m_meshes[2][0][0].init(Mesh::Factory::Hexahedron());
-        m_meshes[3][0][0].init(Mesh::Factory::Icosahedron());
-        m_meshes[4][0][0].init(Mesh::Factory::Dodecahedron());
+        (*m_meshes)[0][0][0].init(Mesh::Factory::Tetrahedron());
+        (*m_meshes)[1][0][0].init(Mesh::Factory::Octahedron());
+        (*m_meshes)[2][0][0].init(Mesh::Factory::Hexahedron());
+        (*m_meshes)[3][0][0].init(Mesh::Factory::Icosahedron());
+        (*m_meshes)[4][0][0].init(Mesh::Factory::Dodecahedron());
 
-        m_meshes[5][0][0].init(Mesh::Factory::MoebiusStrip(1.2f,1.0f,0.4f,0.1f,20,10));
+        (*m_meshes)[5][0][0].init(Mesh::Factory::MoebiusStrip(1.2f,1.0f,0.4f,0.1f,20,10));
 
         SuperFormula sp_r1(7.0f,0.2f,1.7f,1.7f);
         SuperFormula sp_r2(7.0f,0.2f,1.7f,1.7f);
-        m_meshes[6][0][0].init(Mesh::Factory::SphericalProduct(sp_r1,60,sp_r2,30));
+        (*m_meshes)[6][0][0].init(Mesh::Factory::SphericalProduct(sp_r1,60,sp_r2,30));
 
         SuperFormula tp_r1(6.0f,-0.68f,22.77f,0.75f,1.99f,0.64f);
         SuperFormula tp_r2(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
-        m_meshes[7][0][0].init(Mesh::Factory::ToroidalProduct(tp_r1,40,tp_r2,20));
+        (*m_meshes)[7][0][0].init(Mesh::Factory::ToroidalProduct(tp_r1,40,tp_r2,20));
 
 #ifndef GALE_TINY_CODE
         for (int b=0;b<8;++b) {
-            int error=m_meshes[b][0][0].mesh->check();
+            int error=(*m_meshes)[b][0][0].mesh->check();
             if (error>=0) {
                 printf("DEBUG: Mesh is inconsistent at vertex %d.\n",error);
             }
 
             printf("DEBUG: Bounding box size is %f x %f.\n"
-            ,   m_meshes[b][0][0].mesh_prep.box.getWidth()
-            ,   m_meshes[b][0][0].mesh_prep.box.getHeight()
+            ,   (*m_meshes)[b][0][0].mesh_prep.box.getWidth()
+            ,   (*m_meshes)[b][0][0].mesh_prep.box.getHeight()
             );
         }
 #endif
@@ -86,10 +89,14 @@ class TestWindow:public DefaultWindow
         glEnable(GL_LIGHT0);
     }
 
+    ~TestWindow() {
+        delete [] m_meshes;
+    }
+
     void onRender() {
         // We store the base meshes only once, not for every subdivision mode.
         int mode=(m_step==0)?0:m_mode;
-        MeshCache const& mc=m_meshes[m_base][mode][m_step];
+        MeshCache const& mc=(*m_meshes)[m_base][mode][m_step];
 
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
@@ -223,7 +230,7 @@ class TestWindow:public DefaultWindow
             case 'p':
             {
                 // Check if the base mesh only consists of supported primitives.
-                MeshCache const& mc=m_meshes[m_base][0][0];
+                MeshCache const& mc=(*m_meshes)[m_base][0][0];
                 if (mc.mesh_prep.hasPoints() || mc.mesh_prep.hasLines() || mc.mesh_prep.hasQuads() || mc.mesh_prep.hasPolygons()) {
                     printf("ERROR: ");
                     printf(base_names[m_base]);
@@ -241,7 +248,7 @@ class TestWindow:public DefaultWindow
                 new_mode=4;
 
                 // Check if the base mesh only consists of supported primitives.
-                MeshCache const& mc=m_meshes[m_base][0][0];
+                MeshCache const& mc=(*m_meshes)[m_base][0][0];
                 if (mc.mesh_prep.hasPoints() || mc.mesh_prep.hasLines() || mc.mesh_prep.hasTriangles() || mc.mesh_prep.hasPolygons()) {
                     printf("ERROR: ");
                     printf(base_names[m_base]);
@@ -300,7 +307,7 @@ class TestWindow:public DefaultWindow
         }
 
         for (int s=1;s<=m_step;++s) {
-            MeshCache& mc=m_meshes[m_base][m_mode][s];
+            MeshCache& mc=(*m_meshes)[m_base][m_mode][s];
 
             if (mc.mesh!=NULL) {
                 // Skip if the mesh for this subdivision step already exists.
@@ -309,7 +316,7 @@ class TestWindow:public DefaultWindow
 
             // Perform a deep-copy of the previous mesh, and subdivide the copy.
             int mode=(s==1)?0:m_mode;
-            mc.mesh=new Mesh(*m_meshes[m_base][mode][s-1].mesh);
+            mc.mesh=new Mesh(*(*m_meshes)[m_base][mode][s-1].mesh);
             scheme_ptrs[m_mode](*mc.mesh,1);
             mc.init(mc.mesh);
 
@@ -366,7 +373,9 @@ class TestWindow:public DefaultWindow
     };
 
     // 8 base meshes, 6 subdivision modes, 5 subdivision steps.
-    MeshCache m_meshes[8][6][5];
+    typedef MeshCache MeshTable[8][6][5];
+
+    MeshTable* m_meshes;
     int m_base,m_mode,m_step;
 
     bool m_show_box,m_show_normals,m_lighting,m_culling;
