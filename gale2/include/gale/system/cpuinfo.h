@@ -71,7 +71,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Returns the highest standard function number supported and fills out the
     /// vendor string information.
-    unsigned int maxCPUIDStdFunc();
+    unsigned int maxCPUIDStdFunc() const;
 
     /// Returns the highest extended function number supported.
     unsigned int maxCPUIDExtFunc() const;
@@ -732,7 +732,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
     /// thus complete the Singleton design pattern.
     CPUInfo();
 
-    char m_vendor[3*4+1]; ///< Stores the vendor string incl. trailing zero.
+    mutable char m_vendor[3*4+1]; ///< Stores the vendor string incl. trailing zero.
 
     unsigned int m_00000001_ebx; ///< CPUID standard miscellaneous flags.
     unsigned int m_00000004_eax; ///< CPUID standard cache parameters.

@@ -227,7 +227,7 @@ __declspec(naked) bool CPUInfo::hasCPUID() const
 
 #endif // G_ARCH_X86_64
 
-unsigned int CPUInfo::maxCPUIDStdFunc()
+unsigned int CPUInfo::maxCPUIDStdFunc() const
 {
     int info[4];
     __cpuid(info,0);
