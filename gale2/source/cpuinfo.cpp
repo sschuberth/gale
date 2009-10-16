@@ -64,7 +64,7 @@ CPUInfo::CPUInfo()
     int info[4];
 #endif
 
-    if (maxCPUIDStdFunc()>=1) {
+    if (maxCPUIDStdFunc()>=0x01) {
         // Input  : EAX = 0x00000001
         //
         // Output : EAX = Processor signature
@@ -98,7 +98,7 @@ CPUInfo::CPUInfo()
 #endif // G_COMP_MSVC
     }
 
-    if (maxCPUIDStdFunc()>=4) {
+    if (maxCPUIDStdFunc()>=0x04) {
         // Required to get the number of cores on Intel processors.
 
 #ifdef G_COMP_MSVC
