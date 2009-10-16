@@ -122,17 +122,17 @@ void test_tuple()
 
     Tuple<3,float> t3f_a(3.0f,4.0f,5.0f);
     Tuple<3,float> t3f_b(
-        static_cast<float>(re.random0N(1000.0f))
-    ,   static_cast<float>(re.random0N(1000.0f))
-    ,   static_cast<float>(re.random0N(1000.0f))
+        re.random0N(1000.0f)
+    ,   re.random0N(1000.0f)
+    ,   re.random0N(1000.0f)
     );
 
     Tuple<4,double> t4d_a(5.0,6.0,7.0,8.0);
     Tuple<4,double> t4d_b(
-        static_cast<double>(re.random0N(1000.0))
-    ,   static_cast<double>(re.random0N(1000.0))
-    ,   static_cast<double>(re.random0N(1000.0))
-    ,   static_cast<double>(re.random0N(1000.0))
+        re.random0N(1000.0f)
+    ,   re.random0N(1000.0f)
+    ,   re.random0N(1000.0f)
+    ,   re.random0N(1000.0f)
     );
 
 #ifndef GALE_TINY_CODE
@@ -250,9 +250,9 @@ void test_tuple()
     puts("Check remaining vector vs. vector operators ...");
     {
         Tuple<3,float> tmp(
-            static_cast<float>(re.random0N(1000.0f))
-        ,   static_cast<float>(re.random0N(1000.0f))
-        ,   static_cast<float>(re.random0N(1000.0f))
+            re.random0N(1000.0f)
+        ,   re.random0N(1000.0f)
+        ,   re.random0N(1000.0f)
         );
 
         Tuple<3,float> res=((t3f_a+t3f_b)-t3f_b)*tmp;
@@ -279,7 +279,6 @@ void test_tuple()
         assert(OpCmpEqual::evaluate(res2[0],res[0]/t));
         assert(OpCmpEqual::evaluate(res2[1],res[1]/t));
         assert(OpCmpEqual::evaluate(res2[2],res[2]/t));
-
     }
 
     puts("Check comparison operators ...");
@@ -461,9 +460,9 @@ void test_color()
     Col3ub::Type r,g,b;
     float h,s,v;
     for (int i=0;i<1000;++i) {
-        r=re.random(255);
-        g=re.random(255);
-        b=re.random(255);
+        r=static_cast<Col3ub::Type>(re.random(255));
+        g=static_cast<Col3ub::Type>(re.random(255));
+        b=static_cast<Col3ub::Type>(re.random(255));
         conv.setRGB(r,g,b);
         h=conv.getH();
         s=conv.getS();
