@@ -34,7 +34,7 @@ int main()
          << CPU.vendorString()
          << endl;
 
-    cout << "Instruction sets:"
+    cout << "CPU flags:"
          << (CPU.hasHTT()?" HTT":"")
          << (CPU.hasMMX()?" MMX":"")
          << (CPU.hasMMXExt()?" MMXExt":"")
@@ -52,6 +52,8 @@ int main()
     test_tuple();
     test_vector();
     test_color();
+
+    puts("*** done ***");
 
     return 0;
 }
@@ -155,8 +157,6 @@ void test_tuple()
     cout << t2i_b[0] << endl;
     cout << t2i_b[1] << endl;
 #endif
-
-    puts("-- ");
 
     puts("Check addition ...");
     {
