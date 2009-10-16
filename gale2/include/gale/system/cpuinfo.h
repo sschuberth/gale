@@ -234,6 +234,8 @@ class CPUInfo:public global::Singleton<CPUInfo>
         unsigned int count=1;
 
         if (isIntel() && maxCPUIDStdFunc()>=0x0b) {
+#ifdef G_COMP_MSVC
+
             // Dirty trick to set the ECX register to 0 ("Count") as MSVC 8.0
             // does not support inline assembly on the x86-64 architecture.
             __stosd(reinterpret_cast<DWORD*>(&count),0,0);
@@ -243,6 +245,25 @@ class CPUInfo:public global::Singleton<CPUInfo>
             int info[4];
             __cpuid(info,0x0000000b);
             count=info[1]&0x0000ffff;
+
+#elif defined(G_COMP_GNUC) // G_COMP_MSVC
+
+            unsigned int m_0000000b_ebx;
+
+            __asm__(
+                "movl $0x0000000b,%%eax\n\t"
+                "xorl %%ecx,%%ecx\n\t"
+                "movl %%ebx,%%esi\n\t"
+                "cpuid\n\t"
+                "xchg %%ebx,%%esi\n\t"
+                : "=S" (m_0000000b_ebx)         /* Output  */
+                :                               /* Input   */
+                : "%eax", "%ecx", "%edx", "cc"  /* Clobber */
+            );
+
+            count=m_0000000b_ebx&0x0000ffff;
+
+#endif
         }
 
         return count<1?1:count;
