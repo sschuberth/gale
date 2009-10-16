@@ -279,7 +279,7 @@ bool CPUInfo::hasCPUID() const
     return eax;
 }
 
-unsigned int CPUInfo::maxCPUIDStdFunc()
+unsigned int CPUInfo::maxCPUIDStdFunc() const
 {
     unsigned int eax;
 
