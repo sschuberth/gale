@@ -215,11 +215,16 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
         if (hasHTT()) {
             if (isIntel()) {
-                // Get the maximum number of processor cores per physical processor.
-                count=((m_00000004_eax&0xfc000000UL)>>26)+1;
+                // Get the maximum number of logical processors per physical processor.
+                unsigned int max_lpp=(m_00000001_ebx&0x00ff0000UL)>>16;
 
-                // Divide by the number of logical processors per processor core.
-                count/=logicalProcsPerCore();
+                // Get the maximum number of processor cores per physical processor.
+                unsigned int max_cpp=((m_00000004_eax&0xfc000000UL)>>26)+1;
+
+                // Calculate the maximum number of logical processors per processor core.
+                unsigned int max_lpc=max_lpp/max_cpp;
+
+                count=max_cpp/max_lpc;
             }
             else if (isAMD()) {
                 count=(m_80000008_ecx&0x000000ffUL)+1;
