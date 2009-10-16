@@ -103,10 +103,9 @@ CPUInfo::CPUInfo()
 
 #ifdef G_COMP_MSVC
 
-        // Dirty trick to get the ECX register cleared as MSVC 8.0 does not
-        // support inline assembly on the x86-64 architecture.
-        __cpuid(info,0x80000007);
-        G_ASSERT(info[2]==0);
+        // Dirty trick to set the ECX register to 0 ("Count") as MSVC 8.0 does
+        // not support inline assembly on the x86-64 architecture.
+        __stosd(reinterpret_cast<DWORD*>(&info[0]),0,0);
 
         __cpuid(info,0x00000004);
         m_00000004_eax=info[0];
