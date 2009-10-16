@@ -14,8 +14,6 @@ using gale::meta::OpCmpEqual;
     using namespace std;
 #endif
 
-RandomEcuyerf re;
-
 void test_tuple();
 void test_vector();
 void test_color();
@@ -60,6 +58,8 @@ int main()
 
 void test_tuple()
 {
+    RandomEcuyerf re;
+
     puts("*** tuple tests ***");
 
 #ifdef GALE_USE_SSE
@@ -408,6 +408,8 @@ void test_vector()
 
 void test_color()
 {
+    RandomEcuyerf re;
+
     puts("*** color tests ***");
 
     puts("Check predefined color constants ...");
