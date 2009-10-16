@@ -233,12 +233,16 @@ class CPUInfo:public global::Singleton<CPUInfo>
     unsigned int logicalProcsPerCore() const {
         unsigned int count=1;
 
-        if (isIntel() && hasHTT()) {
-            // Get the maximum number of logical processors per physical processor.
-            count=(m_00000001_ebx&0x00ff0000UL)>>16;
+        if (isIntel() && maxCPUIDStdFunc()>=0x0b) {
+            // Dirty trick to set the ECX register to 0 ("Count") as MSVC 8.0
+            // does not support inline assembly on the x86-64 architecture.
+            __stosd(reinterpret_cast<DWORD*>(&count),0,0);
 
-            // Divide by the maximum number of processor cores per physical processor.
-            count/=((m_00000004_eax&0xfc000000UL)>>26)+1;
+            // Return the number of factory-configured logical processors
+            // at the thread level.
+            int info[4];
+            __cpuid(info,0x0000000b);
+            count=info[1]&0x0000ffff;
         }
 
         return count<1?1:count;
