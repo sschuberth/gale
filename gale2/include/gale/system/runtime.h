@@ -93,6 +93,9 @@ extern "C" {
 /// Replacement for various functions that print a string to stdout.
 int print(char const* str);
 
+/// Replacement for various functions that print an integer to stdout.
+int print_int(int num);
+
 /// Minimal "puts" function implementation.
 #define puts(str)    \
     {                \

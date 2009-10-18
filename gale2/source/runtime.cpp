@@ -27,8 +27,6 @@
 
 #include "gale/global/platform.h"
 
-static HANDLE stdout;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -43,7 +41,6 @@ int __cdecl main();
 // main() entry point and exit with its return value.
 int mainCRTStartup()
 {
-    stdout=GetStdHandle(STD_OUTPUT_HANDLE);
     ExitProcess(main());
 }
 
@@ -61,10 +58,32 @@ int print(char const* str)
     while (str[length]) {
         ++length;
     }
-    if (WriteFile(stdout,str,length,&written,NULL)==FALSE || written!=length) {
+    if (WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),str,length,&written,NULL)==FALSE || written!=length) {
         return -1;
     }
     return written;
+}
+
+int print_int(int num)
+{
+    // –2147483648
+    char buffer[11+1];
+    int pos=11;
+
+    int anum=abs(num);
+
+    buffer[pos--]='\0';
+    do {
+        buffer[pos--]='0'+static_cast<char>(anum%10);
+        anum/=10;
+    }
+    while (anum);
+
+    if (num<0) {
+        buffer[pos--]='-';
+    }
+
+    return print(&buffer[pos+1]);
 }
 
 __declspec(noalias,restrict) void* __cdecl calloc(size_t num,size_t size)
