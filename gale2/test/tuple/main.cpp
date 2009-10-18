@@ -256,9 +256,12 @@ void test_tuple()
         );
 
         Tuple<3,float> res=((t3f_a+t3f_b)-t3f_b)*tmp;
-        assert(OpCmpEqual::evaluate(res[0],(t3f_a[0]+t3f_b[0]-t3f_b[0])*tmp[0]));
+
+        // NOTE: The compiler seem to generate wrong code for the lines marked
+        // with "!" when using the "MinSizeRel" configuration.
+        assert(OpCmpEqual::evaluate(res[0],(t3f_a[0]+t3f_b[0]-t3f_b[0])*tmp[0])); // !
         assert(OpCmpEqual::evaluate(res[1],(t3f_a[1]+t3f_b[1]-t3f_b[1])*tmp[1]));
-        assert(OpCmpEqual::evaluate(res[2],(t3f_a[2]+t3f_b[2]-t3f_b[2])*tmp[2]));
+        assert(OpCmpEqual::evaluate(res[2],(t3f_a[2]+t3f_b[2]-t3f_b[2])*tmp[2])); // !
 
         Tuple<3,float> res2=tmp/res;
         assert(OpCmpEqual::evaluate(res2[0],tmp[0]/res[0]));
@@ -276,9 +279,12 @@ void test_tuple()
         assert(OpCmpEqual::evaluate(res[2],t3f_a[2]*s));
 
         Tuple<3,float> res2=res/t;
-        assert(OpCmpEqual::evaluate(res2[0],res[0]/t));
+
+        // NOTE: The compiler seem to generate wrong code for the lines marked
+        // with "!" when using the "MinSizeRel" configuration.
+        assert(OpCmpEqual::evaluate(res2[0],res[0]/t)); // !
         assert(OpCmpEqual::evaluate(res2[1],res[1]/t));
-        assert(OpCmpEqual::evaluate(res2[2],res[2]/t));
+        assert(OpCmpEqual::evaluate(res2[2],res[2]/t)); // !
     }
 
     puts("Check comparison operators ...");
