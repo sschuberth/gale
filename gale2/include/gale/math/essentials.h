@@ -661,13 +661,22 @@ inline unsigned int countLeadingZeroBits(unsigned int x)
 }
 
 /// Returns the number of set bits in \a x.
-inline unsigned int countSetBits(unsigned int x) {
+inline unsigned int countSetBits(unsigned int x)
+{
+#if defined(G_COMP_MSVC) && G_COMP_MSVC>=90000000
+
+    return __popcnt(x);
+
+#else
+
     x = ((x & 0xaaaaaaaaUL) >>  1) + (x & 0x55555555UL);
     x = ((x & 0xccccccccUL) >>  2) + (x & 0x33333333UL);
     x = ((x & 0xf0f0f0f0UL) >>  4) + (x & 0x0f0f0f0fUL);
     x = ((x & 0xff00ff00UL) >>  8) + (x & 0x00ff00ffUL);
     x = ((x & 0xffff0000UL) >> 16) + (x & 0x0000ffffUL);
     return x;
+
+#endif
 }
 
 //@}
