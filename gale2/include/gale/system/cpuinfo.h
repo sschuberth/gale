@@ -238,7 +238,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
     unsigned int logicalProcsPerCore() const {
         unsigned int count=1;
 
-        if (isIntel() && hasHTT()) {
+        if (hasHTT() && isIntel()) {
             if (maxCPUIDStdFunc()>=0x0b) {
 
 #ifdef G_COMP_MSVC
