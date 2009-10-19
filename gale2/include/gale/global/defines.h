@@ -152,7 +152,7 @@
      * Microsoft Visual C++ compiler define, see
      * <http://predef.sourceforge.net/precomp.html#sec32>.
      */
-    #define G_COMP_MSVC G_COMP_VERSION(_MSC_VER/100-6,_MSC_VER%100,_MSC_FULL_VER-_MSC_VER*10000)
+    #define G_COMP_MSVC G_COMP_VERSION(_MSC_VER/100-6,_MSC_VER%100,_MSC_FULL_VER-_MSC_VER*100000)
 #endif
 
 #ifndef G_COMP_DEFINED
@@ -160,10 +160,6 @@
 #else
     #undef G_COMP_DEFINED
 #endif
-
-/// \cond DOXYGEN_IGNORE
-#undef G_COMP_VERSION
-/// \endcond
 
 /*
  * Miscellaneous defines
