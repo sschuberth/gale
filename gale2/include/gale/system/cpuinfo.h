@@ -238,37 +238,51 @@ class CPUInfo:public global::Singleton<CPUInfo>
     unsigned int logicalProcsPerCore() const {
         unsigned int count=1;
 
-        if (isIntel() && maxCPUIDStdFunc()>=0x0b) {
+        if (isIntel() && hasHTT()) {
+            if (maxCPUIDStdFunc()>=0x0b) {
+
 #ifdef G_COMP_MSVC
 
-            // Dirty trick to set the ECX register to 0 ("Count") as MSVC 8.0
-            // does not support inline assembly on the x86-64 architecture.
-            __stosd(reinterpret_cast<DWORD*>(&count),0,0);
+                // Dirty trick to set the ECX register to 0 ("Count") as MSVC 8.0
+                // does not support inline assembly on the x86-64 architecture.
+                __stosd(reinterpret_cast<DWORD*>(&count),0,0);
 
-            // Return the number of factory-configured logical processors
-            // at the thread level.
-            int info[4];
-            __cpuid(info,0x0000000b);
-            count=info[1]&0x0000ffff;
+                // Return the number of factory-configured logical processors
+                // at the thread level.
+                int info[4];
+                __cpuid(info,0x0000000b);
+                count=info[1]&0x0000ffff;
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
-            unsigned int m_0000000b_ebx;
+                unsigned int m_0000000b_ebx;
 
-            __asm__(
-                "movl $0x0000000b,%%eax\n\t"
-                "xorl %%ecx,%%ecx\n\t"
-                "movl %%ebx,%%esi\n\t"
-                "cpuid\n\t"
-                "xchg %%ebx,%%esi\n\t"
-                : "=S" (m_0000000b_ebx)         /* Output  */
-                :                               /* Input   */
-                : "%eax", "%ecx", "%edx", "cc"  /* Clobber */
-            );
+                __asm__(
+                    "movl $0x0000000b,%%eax\n\t"
+                    "xorl %%ecx,%%ecx\n\t"
+                    "movl %%ebx,%%esi\n\t"
+                    "cpuid\n\t"
+                    "xchg %%ebx,%%esi\n\t"
+                    : "=S" (m_0000000b_ebx)         /* Output  */
+                    :                               /* Input   */
+                    : "%eax", "%ecx", "%edx", "cc"  /* Clobber */
+                );
 
-            count=m_0000000b_ebx&0x0000ffff;
+                count=m_0000000b_ebx&0x0000ffff;
 
 #endif
+
+            }
+            else {
+                // Get the maximum number of logical processors per physical processor.
+                unsigned int max_lpp=(m_00000001_ebx&0x00ff0000UL)>>16;
+
+                // Get the maximum number of processor cores per physical processor.
+                unsigned int max_cpp=((m_00000004_eax&0xfc000000UL)>>26)+1;
+
+                // Calculate the maximum number of logical processors per processor core.
+                count=max_lpp/max_cpp;
+            }
         }
 
         return count<1?1:count;

@@ -27,7 +27,7 @@ int main()
          << CPU.coresPerPhysicalProc()
          << " core(s) per processor, "
          << CPU.logicalProcsPerCore()
-         << " hardware thread(s) per core."
+         << " thread(s) per core."
          << endl;
 
     cout << "CPU vendor: "
