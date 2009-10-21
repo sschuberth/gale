@@ -117,13 +117,17 @@
  * Compiler defines
  */
 
+/**
+ * \def G_COMP_VERSION
+ * Can be used to easily compare any of the C_COMP_<compiler> defines against a
+ * specific version.
+ */
+
 #ifdef G_COMP_VERSION
     #undef G_COMP_VERSION
 #endif
 
-/// \cond DOXYGEN_IGNORE
 #define G_COMP_VERSION(major,minor,patch) ((major)*10000000 + (minor)*100000 + (patch))
-/// \endcond
 
 #ifdef __GNUC__
     #ifdef G_COMP_DEFINED
@@ -188,7 +192,7 @@
 #endif
 
 #ifdef GALE_TINY_CODE
-    #define G_ASSERT(x)
+    #define G_ASSERT(x) do { if (!(x)) ExitProcess(0); } while (1);
 #else
     #define G_ASSERT(x) assert(x);
 #endif
@@ -202,7 +206,7 @@
     #undef G_ASSERT_CALL
 #endif
 
-#if defined NDEBUG || defined GALE_TINY_CODE
+#ifdef NDEBUG
     #define G_ASSERT_CALL(x) x;
 #else
     #define G_ASSERT_CALL(x) assert(x);
@@ -228,6 +232,14 @@
     #undef G_INLINE
 #endif
 
+#ifdef G_COMP_GNUC
+    #define G_INLINE inline __attribute__ ((always_inline))
+#elif defined(G_COMP_MSVC)
+    #define G_INLINE __forceinline
+#else
+    #define G_INLINE inline
+#endif
+
 /**
  * \def G_NO_VTABLE
  * Compiler-specific keyword definition to force a class to have no virtual
@@ -239,14 +251,23 @@
 #endif
 
 #ifdef G_COMP_GNUC
-    #define G_INLINE inline __attribute__ ((always_inline))
     #define G_NO_VTABLE
 #elif defined(G_COMP_MSVC)
-    #define G_INLINE __forceinline
     #define G_NO_VTABLE _declspec(novtable)
 #else
-    #define G_INLINE inline
     #define G_NO_VTABLE
 #endif
+
+/**
+ * \def G_UNREF_PARAM
+ * Macro to mark unreferenced parameters in order to avoid compiler warnings.
+ * Works with "const" parameters.
+ */
+
+#ifdef G_UNREF_PARAM
+    #undef G_UNREF_PARAM
+#endif
+
+#define G_UNREF_PARAM(x) (void)(x);
 
 #endif // DEFINES_H
