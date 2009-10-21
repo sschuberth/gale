@@ -36,7 +36,7 @@ namespace wrapgl {
 
 void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
 {
-    UNREFERENCED_PARAMETER(wheel);
+    G_UNREF_PARAM(wheel)
 
     static int mouse_prev_x=0,mouse_prev_y=0;
 

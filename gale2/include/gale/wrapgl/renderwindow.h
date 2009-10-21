@@ -99,8 +99,8 @@ class RenderWindow:public RenderSurface
 
     /// Event handler that gets called after a window has changed its size.
     virtual void onResize(int width,int height) {
-        UNREFERENCED_PARAMETER(width);
-        UNREFERENCED_PARAMETER(height);
+        G_UNREF_PARAM(width)
+        G_UNREF_PARAM(height)
     }
 
     /// Event handler that gets called when a window portion should be painted.

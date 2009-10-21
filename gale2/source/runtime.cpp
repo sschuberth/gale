@@ -241,7 +241,7 @@ void* __cdecl operator new[](size_t bytes)
 
 void* __cdecl operator new(size_t bytes,void* place)
 {
-    UNREFERENCED_PARAMETER(bytes);
+    G_UNREF_PARAM(bytes)
     return place;
 }
 
@@ -258,8 +258,8 @@ void __cdecl operator delete[](void* pointer)
 void __cdecl operator delete(void* pointer,void* place)
 {
     // Do nothing, not even calling a destructor.
-    UNREFERENCED_PARAMETER(pointer);
-    UNREFERENCED_PARAMETER(place);
+    G_UNREF_PARAM(pointer)
+    G_UNREF_PARAM(place)
 }
 
 #endif // GALE_TINY_CODE

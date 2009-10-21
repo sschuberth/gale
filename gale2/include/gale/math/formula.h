@@ -78,7 +78,7 @@ struct ConstantFormula:public Formula
 
     /// Evaluator for the formula.
     float operator()(float const x) const {
-        UNREFERENCED_PARAMETER(x);
+        G_UNREF_PARAM(x)
         return constant;
     }
 
