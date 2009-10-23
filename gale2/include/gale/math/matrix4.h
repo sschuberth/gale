@@ -407,71 +407,25 @@ class Matrix4
 
     /// Returns the determinant of this matrix.
     T determinant() const {
-        T a0 = c0[0]*c1[1] - c1[0]*c0[1];
-        T a1 = c0[0]*c2[1] - c2[0]*c0[1];
-        T a2 = c0[0]*c3[1] - c3[0]*c0[1];
-        T a3 = c1[0]*c2[1] - c2[0]*c1[1];
-        T a4 = c1[0]*c3[1] - c3[0]*c1[1];
-        T a5 = c2[0]*c3[1] - c3[0]*c2[1];
-
-        T b0 = c0[2]*c1[3] - c1[2]*c0[3];
-        T b1 = c0[2]*c2[3] - c2[2]*c0[3];
-        T b2 = c0[2]*c3[3] - c3[2]*c0[3];
-        T b3 = c1[2]*c2[3] - c2[2]*c1[3];
-        T b4 = c1[2]*c3[3] - c3[2]*c1[3];
-        T b5 = c2[2]*c3[3] - c3[2]*c2[3];
-
-        return a0*b5 - a1*b4 + a2*b3 + a3*b2 - a4*b1 + a5*b0;
+        T a[6],b[6];
+        interim(a,b);
+        return determinant(a,b);
     }
 
     /// Returns the adjoint of this matrix.
     Matrix4 adjoint() const {
-        T a0 = c0[0]*c1[1] - c1[0]*c0[1];
-        T a1 = c0[0]*c2[1] - c2[0]*c0[1];
-        T a2 = c0[0]*c3[1] - c3[0]*c0[1];
-        T a3 = c1[0]*c2[1] - c2[0]*c1[1];
-        T a4 = c1[0]*c3[1] - c3[0]*c1[1];
-        T a5 = c2[0]*c3[1] - c3[0]*c2[1];
-
-        T b0 = c0[2]*c1[3] - c1[2]*c0[3];
-        T b1 = c0[2]*c2[3] - c2[2]*c0[3];
-        T b2 = c0[2]*c3[3] - c3[2]*c0[3];
-        T b3 = c1[2]*c2[3] - c2[2]*c1[3];
-        T b4 = c1[2]*c3[3] - c3[2]*c1[3];
-        T b5 = c2[2]*c3[3] - c3[2]*c2[3];
-
-        return Matrix4(
-            Vec(
-                + c1[1]*b5 - c2[1]*b4 + c3[1]*b3
-            ,   - c0[1]*b5 + c2[1]*b2 - c3[1]*b1
-            ,   + c0[1]*b4 - c1[1]*b2 + c3[1]*b0
-            ,   - c0[1]*b3 + c1[1]*b1 - c2[1]*b0
-            ),
-            Vec(
-                - c1[0]*b5 + c2[0]*b4 - c3[0]*b3
-            ,   + c0[0]*b5 - c2[0]*b2 + c3[0]*b1
-            ,   - c0[0]*b4 + c1[0]*b2 - c3[0]*b0
-            ,   + c0[0]*b3 - c1[0]*b1 + c2[0]*b0
-            ),
-            Vec(
-                + c1[3]*a5 - c2[3]*a4 + c3[3]*a3
-            ,   - c0[3]*a5 + c2[3]*a2 - c3[3]*a1
-            ,   + c0[3]*a4 - c1[3]*a2 + c3[3]*a0
-            ,   - c0[3]*a3 + c1[3]*a1 - c2[3]*a0
-            ),
-            Vec(
-                - c1[2]*a5 + c2[2]*a4 - c3[2]*a3
-            ,   + c0[2]*a5 - c2[2]*a2 + c3[2]*a1
-            ,   - c0[2]*a4 + c1[2]*a2 - c3[2]*a0
-            ,   + c0[2]*a3 - c1[2]*a1 + c2[2]*a0
-            )
-        );
+        T a[6],b[6];
+        interim(a,b);
+        return adjoint(a,b);
     }
 
     /// Inverts this matrix. Optionally returns a \a result indicating whether
     /// the matrix' determinant is non-zero and thus the inverse exists.
     void invert(bool* const result=NULL) {
-        T det=determinant();
+        T a[6],b[6];
+        interim(a,b);
+
+        T det=determinant(a,b);
         bool valid=(abs(det)>Numerics<T>::ZERO_TOLERANCE());
 
         if (result) {
@@ -479,7 +433,7 @@ class Matrix4
         }
 
         if (valid) {
-            *this=(1/det)*adjoint();
+            *this=(1/det)*adjoint(a,b);
         }
     }
 
@@ -531,6 +485,63 @@ class Matrix4
     //@}
 
 #endif // GALE_TINY_CODE
+
+  private:
+
+    /// Calculates interim results for determinant() and adjoint().
+    void interim(T (&a)[6],T (&b)[6]) const {
+        static unsigned int const indices[]={
+            0,  0,  0,  4,  4,  8
+        ,   5,  9, 13,  9, 13, 13
+        };
+
+        for (int i=0;i<6;++i) {
+            unsigned int o0=indices[i];
+            unsigned int o1=indices[i+6];
+
+            a[i]=(*this)[o0]*(*this)[o1] - (*this)[o1-1]*(*this)[o0+1];
+
+            o0+=2;
+            o1+=2;
+
+            b[i]=(*this)[o0]*(*this)[o1] - (*this)[o1-1]*(*this)[o0+1];
+        }
+    }
+
+    /// Returns the determinant based on the interim values in \a a and \a b.
+    T determinant(T const a[6],T const b[6]) const {
+        return a[0]*b[5] - a[1]*b[4] + a[2]*b[3] + a[3]*b[2] - a[4]*b[1] + a[5]*b[0];
+    }
+
+    /// Returns the adjoint based on the interim values in \a a and \a b.
+    Matrix4 adjoint(T const a[6],T const b[6]) const {
+        Vec v[4];
+
+        unsigned int o0=0;
+        unsigned int o1=1;
+        T const* f=b;
+
+        for (int i=0;i<2;++i) {
+            v[o0]=Vec(
+                + c1[o1]*f[5] - c2[o1]*f[4] + c3[o1]*f[3]
+            ,   - c0[o1]*f[5] + c2[o1]*f[2] - c3[o1]*f[1]
+            ,   + c0[o1]*f[4] - c1[o1]*f[2] + c3[o1]*f[0]
+            ,   - c0[o1]*f[3] + c1[o1]*f[1] - c2[o1]*f[0]
+            );
+            v[o1]=Vec(
+                - c1[o0]*f[5] + c2[o0]*f[4] - c3[o0]*f[3]
+            ,   + c0[o0]*f[5] - c2[o0]*f[2] + c3[o0]*f[1]
+            ,   - c0[o0]*f[4] + c1[o0]*f[2] - c3[o0]*f[0]
+            ,   + c0[o0]*f[3] - c1[o0]*f[1] + c2[o0]*f[0]
+            );
+
+            o0+=2;
+            o1+=2;
+            f=a;
+        }
+
+        return Matrix4(v[0],v[1],v[2],v[3]);
+    }
 
   public:
 
