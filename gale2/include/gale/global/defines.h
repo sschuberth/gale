@@ -192,7 +192,7 @@
 #endif
 
 #ifdef GALE_TINY_CODE
-    #define G_ASSERT(x) do { if (!(x)) ExitProcess(0); } while (1);
+    #define G_ASSERT(x) do { if (!(x)) ExitProcess(0); } while (0);
 #else
     #define G_ASSERT(x) assert(x);
 #endif
