@@ -81,7 +81,7 @@ void test_tuple()
 
     assert(t4f_c<=t4f_a && t4f_c<=t4f_b);
 
-    t4f_c=t4f_a.getLerp(t4f_b,0.5);
+    t4f_c=lerp(t4f_a,t4f_b,0.5f);
     assert(t4f_c[0]==(t4f_a0+t4f_b0)/2);
     assert(t4f_c[1]==(t4f_a1+t4f_b1)/2);
     assert(t4f_c[2]==(t4f_a2+t4f_b2)/2);
@@ -112,10 +112,10 @@ void test_tuple()
     assert(OpCmpEqual::evaluate(t4f_c[3],t4f_a[3]/t4f_b[3]));
 
     t4f_a=2.0f/t4f_c;
-    assert(OpCmpEqual::evaluate(t4f_a[0],2.0f/t4f_c[0]));
-    assert(OpCmpEqual::evaluate(t4f_a[1],2.0f/t4f_c[1]));
-    assert(OpCmpEqual::evaluate(t4f_a[2],2.0f/t4f_c[2]));
-    assert(OpCmpEqual::evaluate(t4f_a[3],2.0f/t4f_c[3]));
+    assert(OpCmpEqual::evaluate(t4f_a[0],2.0f/t4f_c[0],1e-03f));
+    assert(OpCmpEqual::evaluate(t4f_a[1],2.0f/t4f_c[1],1e-03f));
+    assert(OpCmpEqual::evaluate(t4f_a[2],2.0f/t4f_c[2],1e-03f));
+    assert(OpCmpEqual::evaluate(t4f_a[3],2.0f/t4f_c[3],1e-03f));
 #endif
 
     puts("Check construction of objects ...");

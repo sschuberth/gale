@@ -401,9 +401,7 @@ class TupleBase
     T m_data[N]; ///< Tightly packed array of \a N elements of type \a T.
 };
 
-#ifdef GALE_USE_SSE
-    #include "tuple_sse.inl"
-#endif
+#include "tuple_sse.inl"
 
 #pragma pack(pop)
 

@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef GALE_USE_SSE
+
 #include <xmmintrin.h>
 
 /**
@@ -165,7 +167,7 @@ class TupleBase<4,float,C>
 
     /// Divides each element of \c this tuple by a scalar \a s.
     C const& operator/=(float const s) {
-        G_ASSERT(abs(s)>Numerics<T>::ZERO_TOLERANCE())
+        G_ASSERT(abs(s)>Numerics<float>::ZERO_TOLERANCE())
         return (*this)*=1/s;
     }
 
@@ -334,3 +336,5 @@ class TupleBase<4,float,C>
 
     __m128 m_simd;   ///< SIMD data type for a 128-bit register.
 };
+
+#endif // GALE_USE_SSE
