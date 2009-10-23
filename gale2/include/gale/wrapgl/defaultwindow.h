@@ -67,7 +67,9 @@ class DefaultWindow:public RenderWindow
     DefaultWindow(LPCTSTR title,int const client_width=500,int const client_height=500)
     :   RenderWindow(title,client_width,client_height)
     ,   m_camera(this)
+#ifndef GALE_TINY_CODE
     ,   m_logo(0)
+#endif
     {
         // Add an "About" entry to the system menu.
         HMENU menu=GetSystemMenu(windowHandle(),FALSE);
@@ -78,10 +80,12 @@ class DefaultWindow:public RenderWindow
     }
 
     void onClose() {
+#ifndef GALE_TINY_CODE
         // Free any OpenGL resources, else tools like gDEBugger will report
         // graphic memory leaks.
         glDeleteLists(m_logo,1);
         G_ASSERT_OPENGL
+#endif
     }
 
     /// Adjusts the camera if the window size changes.
@@ -109,7 +113,9 @@ class DefaultWindow:public RenderWindow
     /// Overrides the default paint event handler to draw a logo.
     void onPaint() {
         onRender();
+#ifndef GALE_TINY_CODE
         m_logo=drawLogo();
+#endif
     }
 
     /// Applications that wish to benefit from extra stuff (like logos) being
@@ -136,7 +142,9 @@ class DefaultWindow:public RenderWindow
 
     wrapgl::Camera m_camera; ///< The window's default camera.
 
+#ifndef GALE_TINY_CODE
     GLuint m_logo; ///< Display list identifier of the logo.
+#endif
 };
 
 // Warning C4355: 'this' used in base member initializer list.
