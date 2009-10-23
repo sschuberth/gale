@@ -665,6 +665,7 @@ inline unsigned int countSetBits(unsigned int x)
 {
 #if defined(G_COMP_MSVC) && G_COMP_MSVC>=G_COMP_VERSION(9,0,0)
 
+    // This requires SSE 4.2 or CPUInfo::hasPOPCNT() to return true.
     return __popcnt(x);
 
 #else
