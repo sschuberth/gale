@@ -270,7 +270,7 @@ bool CPUInfo::hasCPUID() const
         EMIT_1(pop,ax)
         "cmpl %%ecx,%%eax\n\t"
         "sete %%cl\n\t"
-        "movzxl %%cl,%%eax\n\t"
+        "movzx %%cl,%%eax\n\t"
         : "=a" (eax)    /* Output  */
         :               /* Input   */
         : "%ecx", "cc"  /* Clobber */
