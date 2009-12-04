@@ -28,10 +28,15 @@
 
 /**
  * \file
- * Defines to map EXT_framebuffer_object to ARB_framebuffer_object
+ * Defines to map ARB_framebuffer_object to EXT_framebuffer_{object,blit,multisample}
  */
 
 /// \cond DOXYGEN_IGNORE
+
+/*
+ * EXT_framebuffer_object
+ */
+
 #define GL_FRAMEBUFFER                                  GL_FRAMEBUFFER_EXT
 #define GL_RENDERBUFFER                                 GL_RENDERBUFFER_EXT
 #define GL_STENCIL_INDEX1                               GL_STENCIL_INDEX1_EXT
@@ -101,6 +106,28 @@
 #define glFramebufferRenderbuffer             glFramebufferRenderbufferEXT
 #define glGetFramebufferAttachmentParameteriv glGetFramebufferAttachmentParameterivEXT
 #define glGenerateMipmap                      glGenerateMipmapEXT
+
+/*
+ * EXT_framebuffer_blit
+ */
+
+#define GL_READ_FRAMEBUFFER         GL_READ_FRAMEBUFFER_EXT
+#define GL_DRAW_FRAMEBUFFER         GL_DRAW_FRAMEBUFFER_EXT
+#define GL_DRAW_FRAMEBUFFER_BINDING GL_DRAW_FRAMEBUFFER_BINDING_EXT
+#define GL_READ_FRAMEBUFFER_BINDING GL_READ_FRAMEBUFFER_BINDING_EXT
+
+#define glBlitFramebuffer glBlitFramebufferEXT
+
+/*
+ * EXT_framebuffer_multisample
+ */
+
+#define GL_RENDERBUFFER_SAMPLES               GL_RENDERBUFFER_SAMPLES_EXT
+#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT
+#define GL_MAX_SAMPLES                        GL_MAX_SAMPLES_EXT
+
+#define glRenderbufferStorageMultisample glRenderbufferStorageMultisampleEXT
+
 /// \endcond
 
 #endif // FRAMEBUFFEROBJECTEXT_H

@@ -37,8 +37,8 @@ namespace gale {
 
 namespace wrapgl {
 
-//#include "GLEX_ARB_framebuffer_object.h"
 #include "GLEX_EXT_framebuffer_object.h"
+#include "GLEX_EXT_framebuffer_multisample.h"
 
 #ifdef GLEX_EXT_FRAMEBUFFER_OBJECT_H
     #include "framebufferobjectext.h"
@@ -66,16 +66,22 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
      */
     //@{
 
-#ifdef GLEX_ARB_FRAMEBUFFER_OBJECT_H
     /// Initializes or sets the object's storage to the given \a width, \a height
     /// and \a format, optionally with multi-sampling using the specified number
     /// of \a samples enabled.
     void setStorage(GLsizei const width,GLsizei const height,GLenum const format,GLsizei const samples=0) const {
         makeCurrent();
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER,samples,format,width,height);
+
+#if defined(GLEX_ARB_FRAMEBUFFER_OBJECT_H) || defined(GLEX_EXT_FRAMEBUFFER_MULTISAMPLE_H)
+        if (glRenderbufferStorageMultisample) {
+            glRenderbufferStorageMultisample(GL_RENDERBUFFER,samples,format,width,height);
+        }
+        else
+#endif
+        glRenderbufferStorage(GL_RENDERBUFFER,format,width,height);
+
         G_ASSERT_OPENGL
     }
-#endif
 
     /// Returns the width of the object's storage.
     GLsizei getWidth() const {
@@ -128,13 +134,15 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
         return static_cast<GLint>(getParameter(GL_RENDERBUFFER_STENCIL_SIZE));
     }
 
-#ifdef GLEX_ARB_FRAMEBUFFER_OBJECT_H
     /// Returns the actual (not necessarily requested) number of samples used
     /// for multi-sampling.
     GLsizei getSamples() const {
+#if defined(GLEX_ARB_FRAMEBUFFER_OBJECT_H) || defined(GLEX_EXT_FRAMEBUFFER_MULTISAMPLE_H)
         return static_cast<GLsizei>(getParameter(GL_RENDERBUFFER_SAMPLES));
-    }
+#else
+        return 0;
 #endif
+    }
 
     //@}
 
@@ -148,7 +156,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
             glGenRenderbuffers(1,&handle);
             G_ASSERT_OPENGL
         }
-#else
+#elif defined(GLEX_EXT_FRAMEBUFFER_OBJECT_H)
         if (GLEX_EXT_framebuffer_object || GLEX_EXT_framebuffer_object_init()) {
             glGenRenderbuffers(1,&handle);
             G_ASSERT_OPENGL
@@ -306,7 +314,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
             glGenFramebuffers(1,&handle);
             G_ASSERT_OPENGL
         }
-#else
+#elif defined(GLEX_EXT_FRAMEBUFFER_OBJECT_H)
         if (GLEX_EXT_framebuffer_object || GLEX_EXT_framebuffer_object_init()) {
             glGenFramebuffers(1,&handle);
             G_ASSERT_OPENGL
