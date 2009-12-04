@@ -49,10 +49,14 @@ class TestWindow:public DefaultWindow
         m_read_texture->setData(TEX_SIZE,TEX_SIZE,buffer,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
 
         m_draw_texture->setData(TEX_SIZE,TEX_SIZE,buffer,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
 
         delete [] buffer;
 
@@ -112,26 +116,35 @@ class TestWindow:public DefaultWindow
         static float const kc=::sin(45*Constf::DEG_TO_RAD());
 
         // Angle of the rotated border frame.
-        float ar=fmod(::abs(m_angle2-m_angle1),90)+45;
+        float ar=::fmod(::abs(m_angle2-m_angle1),90)+45;
         // Cathetus length for the rotated border frame.
         float kr=::sin(ar*Constf::DEG_TO_RAD());
         // Scaling factor to take the rotation into account.
         float fr=kc/kr;
 
-        // Scaling factor tat takes both the border size and rotation into account.
-        float f=fr*fb;
-
         // Render the previous frame.
+        glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
 
         glTranslatef(0.5,0.5,0);
-        glRotatef(m_angle2,0,0,1);
-        glScalef(f,f,1);
+        glRotatef(m_angle1,0,0,1);
+        glScalef(fb,fb,1);
+        glTranslatef(-0.5,-0.5,0);
+
+        glMatrixMode(GL_TEXTURE);
+        glPushMatrix();
+
+        glTranslatef(0.5,0.5,0);
+        glRotatef(m_angle2-m_angle1,0,0,1);
+        glScalef(1.0f/fr,1.0f/fr,1);
         glTranslatef(-0.5,-0.5,0);
 
         m_read_texture->makeCurrent();
         glRectf(0,0,1,1);
 
+        glPopMatrix();
+
+        glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
 
         // Swap read & draw textures.
