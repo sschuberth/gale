@@ -1,5 +1,7 @@
 @echo off
 
+setlocal
+
 : Add the Cygwin binary directory to the PATH.
 if "%1" == "" (
     set CYGWIN="C:\cygwin\bin"
@@ -9,7 +11,6 @@ if "%1" == "" (
 
 echo *** Assuming Cygwin to be installed at %CYGWIN% ...
 
-set OLD_PATH=%PATH%
 set PATH=%CYGWIN%;%PATH%
 
 pushd "%~dp0..\glex"
@@ -31,8 +32,3 @@ for /f %%e in (..\build\opengl-extensions.txt) do (
 )
 
 popd
-
-: Undo any changes to variables.
-set PATH=%OLD_PATH%
-set OLD_PATH=
-set CYGWIN=
