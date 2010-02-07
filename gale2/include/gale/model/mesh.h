@@ -147,10 +147,16 @@ struct Mesh
          */
         //@{
 
-        /// See <http://local.wasp.uwa.edu.au/~pbourke/geometry/apple/>.
+        /// Generates an apple consisting of \a s_sections pieces of longitude
+        /// and \a t_section pieces of latitude, for details see
+        /// <http://local.wasp.uwa.edu.au/~pbourke/geometry/apple/>.
         static Mesh* Apple(int const s_sections,int const t_sections);
 
-        /// See <http://local.wasp.uwa.edu.au/~pbourke/geometry/shell/>.
+        /// Generates a shell consisting of \a s_sections pieces around the
+        /// opening and \a t_section pieces along the side. \a r1 is the radius
+        /// of the opening, \a r2 the radius of the inner circle. The height
+        /// is given by \a h, the number of spiral turns by \a n. For details,
+        /// see <http://local.wasp.uwa.edu.au/~pbourke/geometry/shell/>.
         static Mesh* Shell(int const s_sections,int const t_sections,float const r1,float const r2,float const h,int const n);
 
         //@}
