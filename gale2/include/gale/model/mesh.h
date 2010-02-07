@@ -148,10 +148,10 @@ struct Mesh
         //@{
 
         /// See <http://local.wasp.uwa.edu.au/~pbourke/geometry/apple/>.
-        static Mesh* Apple(int const s_steps,int const t_steps);
+        static Mesh* Apple(int const s_sections,int const t_sections);
 
         /// See <http://local.wasp.uwa.edu.au/~pbourke/geometry/shell/>.
-        static Mesh* Shell(int const s_steps,int const t_steps,float const r1,float const r2,float const h,int const n);
+        static Mesh* Shell(int const s_sections,int const t_sections,float const r1,float const r2,float const h,int const n);
 
         //@}
 
@@ -190,18 +190,18 @@ struct Mesh
         static Mesh* Extruder(VectorArray const& path,VectorArray const& contour,bool const closed=true,MatrixArray const* const trans=NULL);
 
         /// Generates a mesh's surface by calculating \a eval at every point on
-        /// the grid of size \a s_steps by \a t_steps which is defined by
+        /// the grid of size \a s_sections by \a t_sections which is defined by
         /// walking from \a s_min to \a s_max in x-direction and from \a t_min
         /// to \a t_max in y-direction.
         static Mesh* GridMapper(
             math::FormulaR2R3 const& eval
         ,   float const s_min
         ,   float const s_max
-        ,   int s_steps
+        ,   int s_sections
         ,   bool const s_closed
         ,   float const t_min
         ,   float const t_max
-        ,   int t_steps
+        ,   int t_sections
         ,   bool const t_closed
         ,   bool const reverse=false
         );

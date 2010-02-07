@@ -295,7 +295,7 @@ Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2
     return Extruder(path,contour,true,&rotation);
 }
 
-Mesh* Mesh::Factory::Apple(int const s_steps,int const t_steps)
+Mesh* Mesh::Factory::Apple(int const s_sections,int const t_sections)
 {
     struct Formula:FormulaR2R3
     {
@@ -318,10 +318,10 @@ Mesh* Mesh::Factory::Apple(int const s_steps,int const t_steps)
 
     Formula f;
 
-    return GridMapper(f,0,2*Constf::PI(),s_steps,true,-Constf::PI(),Constf::PI(),t_steps,true);
+    return GridMapper(f,0,2*Constf::PI(),s_sections,true,-Constf::PI(),Constf::PI(),t_sections,true);
 }
 
-Mesh* Mesh::Factory::Shell(int const s_steps,int const t_steps,float const r1,float const r2,float const h,int const n)
+Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const r1,float const r2,float const h,int const n)
 {
     struct Formula:public FormulaR2R3
     {
@@ -356,7 +356,7 @@ Mesh* Mesh::Factory::Shell(int const s_steps,int const t_steps,float const r1,fl
 
     Formula f(r1,r2,h,n);
 
-    return GridMapper(f,0,2*Constf::PI(),s_steps,true,0,2*Constf::PI(),t_steps,false,true);
+    return GridMapper(f,0,2*Constf::PI(),s_sections,true,0,2*Constf::PI(),t_sections,false,true);
 }
 
 /**
@@ -605,27 +605,27 @@ Mesh* Mesh::Factory::GridMapper(
     FormulaR2R3 const& eval
 ,   float const s_min
 ,   float const s_max
-,   int s_steps
+,   int s_sections
 ,   bool const s_closed
 ,   float const t_min
 ,   float const t_max
-,   int t_steps
+,   int t_sections
 ,   bool const t_closed
 ,   bool const reverse
 )
 {
     // If the grid is not closed, start and end vertices cannot be shared, so
-    // we need one more step.
-    s_steps+=static_cast<int>(!s_closed);
-    t_steps+=static_cast<int>(!t_closed);
+    // we need one more section.
+    s_sections+=static_cast<int>(!s_closed);
+    t_sections+=static_cast<int>(!t_closed);
 
     // Perform some sanity checks.
-    if (s_steps<2 || t_steps<2) {
+    if (s_sections<2 || t_sections<2) {
         return NULL;
     }
 
     // Create an empty mesh with the required number of vertices.
-    Mesh* m=new Mesh(s_steps*t_steps);
+    Mesh* m=new Mesh(s_sections*t_sections);
 
     // Current grid coordinate.
     Vec2f st;
@@ -633,16 +633,16 @@ Mesh* Mesh::Factory::GridMapper(
     // Index of the vertex currently being calculated.
     int vi=0;
 
-    float s_delta=(s_max-s_min)/(s_steps-1);
-    float t_delta=(t_max-t_min)/(t_steps-1);
+    float s_delta=(s_max-s_min)/(s_sections-1);
+    float t_delta=(t_max-t_min)/(t_sections-1);
 
-    for (int s=0;s<s_steps;++s) {
+    for (int s=0;s<s_sections;++s) {
         st.setX(s_min+s*s_delta);
 
         // Current "base" vertex on the grid.
         int bi=vi;
 
-        for (int t=0;t<t_steps;++t) {
+        for (int t=0;t<t_sections;++t) {
             st.setY(t_min+t*t_delta);
 
             // Calculate the vertex position.
@@ -653,7 +653,7 @@ Mesh* Mesh::Factory::GridMapper(
             vn.setSize(6);
 
 // Wrap around in y-direction.
-#define WRAP_T(t) wrap(t,t_steps)
+#define WRAP_T(t) wrap(t,t_sections)
 
 // Wrap around in x-direction.
 #define WRAP_V(s) wrap(s,m->vertices.getSize())
@@ -666,14 +666,14 @@ Mesh* Mesh::Factory::GridMapper(
                 vn[n++]=bi+WRAP_T(t-1);
             }
 
-            if (s!=s_steps-1 || s_closed) {
+            if (s!=s_sections-1 || s_closed) {
                 if (!t_border || t_closed) {
-                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])+t_steps);
+                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])+t_sections);
                 }
-                vn[n++]=WRAP_V(vi+t_steps);
+                vn[n++]=WRAP_V(vi+t_sections);
             }
 
-            t_border=(t==t_steps-1);
+            t_border=(t==t_sections-1);
 
             if (!t_border || t_closed) {
                 vn[n++]=bi+WRAP_T(t+1);
@@ -681,9 +681,9 @@ Mesh* Mesh::Factory::GridMapper(
 
             if (s!=0 || s_closed) {
                 if (!t_border || t_closed) {
-                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])-t_steps);
+                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])-t_sections);
                 }
-                vn[n++]=WRAP_V(vi-t_steps);
+                vn[n++]=WRAP_V(vi-t_sections);
             }
 
             // Adjust to the real number of neighbors.
