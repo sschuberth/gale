@@ -21,6 +21,7 @@ static char const* base_names[]={
 ,   "Moebius Strip"
 ,   "Spherical Supershape"
 ,   "Toroidal Supershape"
+,   "Shell"
 };
 
 static char const* mode_names[]={
@@ -41,9 +42,9 @@ class TestWindow:public DefaultWindow
     ,   m_base(0)
     ,   m_mode(0)
     ,   m_step(0)
-    ,   m_show_box(true)
-    ,   m_show_normals(true)
-    ,   m_lighting(true)
+    ,   m_show_box(false)
+    ,   m_show_normals(false)
+    ,   m_lighting(false)
     ,   m_culling(true)
     {
         m_camera.approach(-7);
@@ -68,6 +69,8 @@ class TestWindow:public DefaultWindow
         SuperFormula tp_r1(6.0f,-0.68f,22.77f,0.75f,1.99f,0.64f);
         SuperFormula tp_r2(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
         (*m_meshes)[7][0][0].init(Mesh::Factory::ToroidalProduct(tp_r1,40,tp_r2,20));
+
+        (*m_meshes)[8][0][0].init(Mesh::Factory::Shell(20,80,0.4f,0.2f,2.5f,3));
 
 #ifndef GALE_TINY_CODE
         for (int b=0;b<8;++b) {
@@ -163,6 +166,7 @@ class TestWindow:public DefaultWindow
             case '6': // Moebius Strip
             case '7': // Spherical Supershape
             case '8': // Toroidal Supershape
+            case '9': // Shell
             {
                 int new_base=key-'0'-1;
                 if (m_mode==4) {
@@ -372,8 +376,8 @@ class TestWindow:public DefaultWindow
         Mesh::Preparer normals_prep;
     };
 
-    // 8 base meshes, 6 subdivision modes, 5 subdivision steps.
-    typedef MeshCache MeshTable[8][6][5];
+    // Array of base meshes, subdivision modes, and subdivision steps.
+    typedef MeshCache MeshTable[G_ARRAY_LENGTH(base_names)][G_ARRAY_LENGTH(mode_names)][5];
 
     MeshTable* m_meshes;
     int m_base,m_mode,m_step;
