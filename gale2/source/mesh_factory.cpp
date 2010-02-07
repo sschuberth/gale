@@ -326,7 +326,7 @@ Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const
     struct Formula:public FormulaR2R3
     {
         Formula(float const r1,float const r2,float const h,int const n)
-        :   a(r2),b(r1),c(h)
+        :   a(r1),b(h),c(r2)
         ,   n(n)
         {}
 
