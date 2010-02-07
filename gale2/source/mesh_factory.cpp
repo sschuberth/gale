@@ -605,27 +605,27 @@ Mesh* Mesh::Factory::GridMapper(
     FormulaR2R3 const& eval
 ,   float const s_min
 ,   float const s_max
-,   int s_sections
+,   int const s_sections
 ,   bool const s_closed
 ,   float const t_min
 ,   float const t_max
-,   int t_sections
+,   int const t_sections
 ,   bool const t_closed
 ,   bool const reverse
 )
 {
-    // If the grid is not closed, start and end vertices cannot be shared, so
-    // we need one more section.
-    s_sections+=static_cast<int>(!s_closed);
-    t_sections+=static_cast<int>(!t_closed);
-
     // Perform some sanity checks.
-    if (s_sections<2 || t_sections<2) {
+    if (s_sections<3 || t_sections<3) {
         return NULL;
     }
 
+    // If the grid is not closed, start and end vertices cannot be shared, and
+    // we need one more set of coordinates.
+    int s_coords=s_sections+static_cast<int>(!s_closed);
+    int t_coords=t_sections+static_cast<int>(!t_closed);
+
     // Create an empty mesh with the required number of vertices.
-    Mesh* m=new Mesh(s_sections*t_sections);
+    Mesh* m=new Mesh(s_coords*t_coords);
 
     // Current grid coordinate.
     Vec2f st;
@@ -633,16 +633,16 @@ Mesh* Mesh::Factory::GridMapper(
     // Index of the vertex currently being calculated.
     int vi=0;
 
-    float s_delta=(s_max-s_min)/(s_sections-1);
-    float t_delta=(t_max-t_min)/(t_sections-1);
+    float s_delta=(s_max-s_min)/s_sections;
+    float t_delta=(t_max-t_min)/t_sections;
 
-    for (int s=0;s<s_sections;++s) {
+    for (int s=0;s<s_coords;++s) {
         st.setX(s_min+s*s_delta);
 
         // Current "base" vertex on the grid.
         int bi=vi;
 
-        for (int t=0;t<t_sections;++t) {
+        for (int t=0;t<t_coords;++t) {
             st.setY(t_min+t*t_delta);
 
             // Calculate the vertex position.
@@ -653,7 +653,7 @@ Mesh* Mesh::Factory::GridMapper(
             vn.setSize(6);
 
 // Wrap around in y-direction.
-#define WRAP_T(t) wrap(t,t_sections)
+#define WRAP_T(t) wrap(t,t_coords)
 
 // Wrap around in x-direction.
 #define WRAP_V(s) wrap(s,m->vertices.getSize())
@@ -666,14 +666,14 @@ Mesh* Mesh::Factory::GridMapper(
                 vn[n++]=bi+WRAP_T(t-1);
             }
 
-            if (s!=s_sections-1 || s_closed) {
+            if (s!=s_coords-1 || s_closed) {
                 if (!t_border || t_closed) {
-                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])+t_sections);
+                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])+t_coords);
                 }
-                vn[n++]=WRAP_V(vi+t_sections);
+                vn[n++]=WRAP_V(vi+t_coords);
             }
 
-            t_border=(t==t_sections-1);
+            t_border=(t==t_coords-1);
 
             if (!t_border || t_closed) {
                 vn[n++]=bi+WRAP_T(t+1);
@@ -681,9 +681,9 @@ Mesh* Mesh::Factory::GridMapper(
 
             if (s!=0 || s_closed) {
                 if (!t_border || t_closed) {
-                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])-t_sections);
+                    vn[n++]=WRAP_V(static_cast<int>(vn[n-1])-t_coords);
                 }
-                vn[n++]=WRAP_V(vi-t_sections);
+                vn[n++]=WRAP_V(vi-t_coords);
             }
 
             // Adjust to the real number of neighbors.

@@ -197,11 +197,11 @@ struct Mesh
             math::FormulaR2R3 const& eval
         ,   float const s_min
         ,   float const s_max
-        ,   int s_sections
+        ,   int const s_sections
         ,   bool const s_closed
         ,   float const t_min
         ,   float const t_max
-        ,   int t_sections
+        ,   int const t_sections
         ,   bool const t_closed
         ,   bool const reverse=false
         );
