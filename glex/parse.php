@@ -94,6 +94,10 @@ if (empty($procs)) {
 // to initialize them.
 $extension=GLEX_PREFIX.$struct['Name'];
 
+// In case of multiple extension names (like WGL_ARB_create_context / WGL_ARB_create_context_profile)
+// use the first one.
+$extension=strtok($extension,' ');
+
 if ($cmdline) {
     echo 'Writing macro header ...';
     $p=writeMacroHeader($extension,$procs);
