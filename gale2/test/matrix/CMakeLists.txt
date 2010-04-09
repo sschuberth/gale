@@ -17,13 +17,14 @@ source_group("" FILES ${sources})
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
 add_executable(${name} ${sources})
 
-# Specify any required include directories. The specified path is interpreted as
-# relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
-# file are absolute.
+# Specify include directories for the compiler. Relative paths are converted to
+# absolute paths by appending them to CMAKE_CURRENT_SOURCE_DIR before writing
+# them to the project file.
 include_directories("../../include")
 
-# Also specify any directories in which to search for libraries to link against.
-# Relative paths are passed unchanged to the linker.
+# Specify library directories for the linker. Relative paths are converted to
+# absolute paths by appending them to CMAKE_CURRENT_SOURCE_DIR before writing
+# them to the project file. (Policy CMP0015)
 link_directories("../../lib")
 
 # Compile and link against OpenGL and GALE.
