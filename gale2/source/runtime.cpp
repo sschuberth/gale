@@ -170,10 +170,11 @@ void* __cdecl memset(void* dest,int c,size_t count)
  * Replacements for non-inline math functions
  */
 
-// When this is called, the argument is in st(0)=x.
-__declspec(naked) double __cdecl _CIacos(void)
+// Taken from http://www.cubic.org/docs/download/tnymath2.h
+__declspec(naked) double __cdecl _CIacos(/* double x */)
 {
     // acos(x) = atan(sqrt(1 - sqr(x)) / x)
+    // When this is called, the argument is in st(0)=x.
     __asm {
         sub esp,4
         fst DWORD PTR [esp]
@@ -202,10 +203,30 @@ __declspec(naked) double __cdecl _CIacos(void)
     }
 }
 
-// When this is called, the arguments are in st(0)=y and st(1)=x.
-__declspec(naked) double __cdecl _CIpow(void)
+// Taken from http://svn.reactos.org/svn/reactos/trunk/reactos/lib/sdk/crt/math/i386/fmod.c?view=markup
+__declspec(naked) double __cdecl _CIfmod(/* double x,double y */)
+{
+    // x = i * y + f, where i is an integer, f has the same sign as x, and the
+    // absolute value of f is less than the absolute value of y.
+    // When this is called, the arguments are in st(0)=y and st(1)=x.
+    __asm {
+        fxch
+
+    _fmod_remainder:
+        fprem
+        fstsw ax
+        sahf
+        jp _fmod_remainder
+
+        ret
+    }
+}
+
+// Taken from http://www.cubic.org/docs/download/tnymath2.h
+__declspec(naked) double __cdecl _CIpow(/* double x,double y */)
 {
     // pow(x,y) = exp2(log2(x) * y)
+    // When this is called, the arguments are in st(0)=y and st(1)=x.
     __asm {
         fxch
         fyl2x

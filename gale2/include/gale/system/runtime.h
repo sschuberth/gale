@@ -106,18 +106,21 @@ int print_int(int num);
 //@}
 
 /**
- * \name Replacements for non-inline math functions, see
- * <http://www.cubic.org/docs/download/tnymath2.h>
+ * \name Replacements for non-inline math functions
  */
 //@{
 
 /// Replacement for a CRT function required by MSVC to calculate the arcus
 /// cosinus of a number x. Arguments are passed in FPU registers.
-double __cdecl _CIacos(void);
+double __cdecl _CIacos(/* double x */);
+
+/// Replacement for a CRT function required by MSVC to calculate the floating-
+/// point remainder of x / y. Arguments are passed in FPU registers.
+double __cdecl _CIfmod(/* double x,double y */);
 
 /// Replacement for a CRT function required by MSVC to calculate x to the y-th
 /// power. Arguments are passed in FPU registers.
-double __cdecl _CIpow(void);
+double __cdecl _CIpow(/* double x,double y */);
 
 //@}
 
