@@ -5,7 +5,7 @@
 #ifndef GALE_TINY_CODE
     #include <stdio.h>
 #else
-    #define printf print
+    #define printf print_str
 #endif
 
 using namespace gale::math;

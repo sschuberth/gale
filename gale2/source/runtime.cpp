@@ -52,7 +52,7 @@ int mainCRTStartup()
  * Replacements for C runtime functions
  */
 
-int print(char const* str)
+int print_str(char const* str)
 {
     DWORD length=0,written;
     while (str[length]) {
@@ -83,7 +83,7 @@ int print_int(int num)
         buffer[pos--]='-';
     }
 
-    return print(&buffer[pos+1]);
+    return print_str(&buffer[pos+1]);
 }
 
 __declspec(noalias,restrict) void* __cdecl calloc(size_t num,size_t size)

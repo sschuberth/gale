@@ -91,16 +91,16 @@ extern "C" {
 //@{
 
 /// Replacement for various functions that print a string to stdout.
-int print(char const* str);
+int print_str(char const* str);
 
 /// Replacement for various functions that print an integer to stdout.
 int print_int(int num);
 
 /// Minimal "puts" function implementation.
-#define puts(str)    \
-    {                \
-        print(str);  \
-        print("\n"); \
+#define puts(str)        \
+    {                    \
+        print_str(str);  \
+        print_str("\n"); \
     }
 
 //@}
