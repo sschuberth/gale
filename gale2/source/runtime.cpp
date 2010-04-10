@@ -66,7 +66,7 @@ int print(char const* str)
 
 int print_int(int num)
 {
-    // –2147483648
+    // Longest integer string is "-2147483648".
     char buffer[11+1];
     int pos=11;
 
