@@ -217,8 +217,7 @@ __declspec(naked) double __cdecl _CIfmod(/* double x,double y */)
         sahf
         jp _fmod_remainder
 
-        fxch
-        fstp st(0)
+        fstp st(1)
 
         ret
     }
@@ -248,8 +247,7 @@ __declspec(naked) double __cdecl _CIpow(/* double x,double y */)
         fscale
 
     _pow_exit:
-        fxch
-        fstp st(0)
+        fstp st(1)
 
         ret
     }
