@@ -68,18 +68,17 @@ int print_int(int num)
 {
     // Longest integer string is "-2147483648".
     char buffer[11+1];
-    int pos=11;
-
-    int anum=abs(num);
+    int pos=11, digit;
 
     buffer[pos--]='\0';
     do {
-        buffer[pos--]='0'+static_cast<char>(anum%10);
-        anum/=10;
+        digit=num%10;
+        num/=10;
+        buffer[pos--]='0'+static_cast<char>(abs(digit));
     }
-    while (anum);
+    while (num);
 
-    if (num<0) {
+    if (digit<0) {
         buffer[pos--]='-';
     }
 
