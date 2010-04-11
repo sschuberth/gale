@@ -217,6 +217,9 @@ __declspec(naked) double __cdecl _CIfmod(/* double x,double y */)
         sahf
         jp _fmod_remainder
 
+        fxch
+        fstp st(0)
+
         ret
     }
 }
