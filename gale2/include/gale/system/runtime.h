@@ -107,19 +107,21 @@ int print_int(int num);
 
 /**
  * \name Replacements for non-inline math functions
+ * Arguments are passed on the FPU stack; they need to be popped, and the result
+ * needs to be pushed to st(0).
  */
 //@{
 
 /// Replacement for a CRT function required by MSVC to calculate the arcus
-/// cosinus of a number x. Arguments are passed in FPU registers.
+/// cosinus of a number x.
 double __cdecl _CIacos(/* double x */);
 
 /// Replacement for a CRT function required by MSVC to calculate the floating-
-/// point remainder of x / y. Arguments are passed in FPU registers.
+/// point remainder of x / y.
 double __cdecl _CIfmod(/* double x,double y */);
 
 /// Replacement for a CRT function required by MSVC to calculate x to the y-th
-/// power. Arguments are passed in FPU registers.
+/// power.
 double __cdecl _CIpow(/* double x,double y */);
 
 //@}

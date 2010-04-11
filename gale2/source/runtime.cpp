@@ -169,7 +169,7 @@ void* __cdecl memset(void* dest,int c,size_t count)
  * Replacements for non-inline math functions
  */
 
-// Taken from http://www.cubic.org/docs/download/tnymath2.h
+// Inspired by http://www.cubic.org/docs/download/tnymath2.h
 __declspec(naked) double __cdecl _CIacos(/* double x */)
 {
     // acos(x) = atan(sqrt(1 - sqr(x)) / x)
@@ -202,7 +202,7 @@ __declspec(naked) double __cdecl _CIacos(/* double x */)
     }
 }
 
-// Taken from http://svn.reactos.org/svn/reactos/trunk/reactos/lib/sdk/crt/math/i386/fmod.c?view=markup
+// Inspired by http://svn.reactos.org/svn/reactos/trunk/reactos/lib/sdk/crt/math/i386/fmod.c?view=markup
 __declspec(naked) double __cdecl _CIfmod(/* double x,double y */)
 {
     // x = i * y + f, where i is an integer, f has the same sign as x, and the
@@ -221,13 +221,19 @@ __declspec(naked) double __cdecl _CIfmod(/* double x,double y */)
     }
 }
 
-// Taken from http://www.cubic.org/docs/download/tnymath2.h
+// Inspired by http://www.xyzw.de/c190.html
 __declspec(naked) double __cdecl _CIpow(/* double x,double y */)
 {
     // pow(x,y) = exp2(log2(x) * y)
     // When this is called, the arguments are in st(0)=y and st(1)=x.
     __asm {
         fxch
+
+        ftst
+        fstsw ax
+        sahf
+        jz _pow_exit
+
         fyl2x
 
         fld1
@@ -238,6 +244,7 @@ __declspec(naked) double __cdecl _CIpow(/* double x,double y */)
         faddp st(1),st(0)
         fscale
 
+    _pow_exit:
         fxch
         fstp st(0)
 
