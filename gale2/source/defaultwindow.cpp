@@ -149,7 +149,7 @@ LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
 
         default: {
             // Handle more elementary messages in the base class.
-            return RenderWindow::handleMessage(uMsg,wParam,lParam);
+            return RenderContext::handleMessage(uMsg,wParam,lParam);
         }
     }
 

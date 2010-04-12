@@ -51,7 +51,7 @@ namespace wrapgl {
 /**
  * This class creates an on-screen window for OpenGL rendering.
  */
-class RenderWindow:public RenderSurface
+class RenderContext:public RenderSurface
 {
   public:
 
@@ -59,10 +59,10 @@ class RenderWindow:public RenderSurface
     /// \a width and \a height, and a pixel format determined by \a pixel_attr.
     /// The window will be hidden initially, but it will become the current
     /// rendering context.
-    RenderWindow(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL);
+    RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL);
 
     /// Frees the window resources.
-    ~RenderWindow() {
+    ~RenderContext() {
         RenderSurface::destroy();
     }
 

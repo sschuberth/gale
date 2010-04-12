@@ -23,7 +23,7 @@
  *
  */
 
-#include "gale/wrapgl/renderwindow.h"
+#include "gale/wrapgl/rendercontext.h"
 
 using namespace gale::global;
 
@@ -34,7 +34,7 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr)
+RenderContext::RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr)
 :   m_close_requested(false)
 ,   m_timeout(0)
 {
@@ -122,7 +122,7 @@ RenderWindow::RenderWindow(LPCTSTR title,int width,int height,global::AttributeL
     }
 }
 
-void RenderWindow::processEvents()
+void RenderContext::processEvents()
 {
     MSG msg;
 
@@ -158,7 +158,7 @@ void RenderWindow::processEvents()
     }
 }
 
-LRESULT RenderWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
+LRESULT RenderContext::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     switch (uMsg) {
         // This is sent to a window after its size has changed.
