@@ -41,10 +41,10 @@ namespace wrapgl {
 #ifdef G_OS_WINDOWS
 
 /**
- * This class serves as a base for everything that requires an OpenGL context,
- * e.g. on-screen windows or off-screen buffers. It creates a default context
- * that is used to initialize OpenGL extensions required to create a more
- * sophisticated context which replaces the default context.
+ * This class serves as a base for everything that requires an OpenGL context.
+ * It creates a surface with a (default) pixel format that a context can be
+ * attached to, e.g. a temporary one that is only used to initialize OpenGL
+ * extensions that are in turn used to create a more sophisticated context.
  */
 class RenderSurface
 {
