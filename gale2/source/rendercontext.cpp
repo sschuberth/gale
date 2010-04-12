@@ -166,6 +166,24 @@ void RenderContext::processEvents()
     }
 }
 
+bool RenderContext::toggleFullScreen(bool state)
+{
+    if (state) {
+        DEVMODE dm;
+        memset(&dm,0,sizeof(dm));
+
+        dm.dmSize=sizeof(dm);
+        dm.dmBitsPerPel=DEFAULT_COLOR_BITS;
+        dm.dmPelsWidth=dimensions().width;
+        dm.dmPelsHeight=dimensions().height;
+        dm.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
+        return ChangeDisplaySettings(&dm,CDS_FULLSCREEN)==DISP_CHANGE_SUCCESSFUL;
+    }
+    else {
+        return ChangeDisplaySettings(NULL,0)==DISP_CHANGE_SUCCESSFUL;
+    }
+}
+
 void RenderContext::destroy()
 {
     if (m_context.render) {
