@@ -59,7 +59,7 @@ class RenderContext:public RenderSurface
     /// client size of the given \a width and \a height, and a pixel format
     /// determined by \a pixel_attr. The window will be hidden initially, but it
     /// will become the current context.
-    RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL);
+    RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL,int samples=8);
 
     /// Frees the context resources.
     ~RenderContext() {

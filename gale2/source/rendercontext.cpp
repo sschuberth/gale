@@ -34,7 +34,7 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-RenderContext::RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr)
+RenderContext::RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr,int samples)
 :   m_close_requested(false)
 ,   m_timeout(0)
 {
@@ -92,7 +92,7 @@ RenderContext::RenderContext(LPCTSTR title,int width,int height,global::Attribut
         // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
         if (GLEX_ARB_multisample_init()) {
             attr.insert(WGL_SAMPLE_BUFFERS_ARB,TRUE);
-            attr.insert(WGL_SAMPLES_ARB,8);
+            attr.insert(WGL_SAMPLES_ARB,samples);
 
             GLint format_multisample=0;
             if (wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format_multisample,&count)!=FALSE) {
