@@ -80,9 +80,9 @@ RenderContext::RenderContext(LPCTSTR title,int width,int height,global::Attribut
 
         // Specify some common pixel format attributes.
         attr.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
-        attr.insert(WGL_COLOR_BITS_ARB,32);
-        attr.insert(WGL_DEPTH_BITS_ARB,24);
-        attr.insert(WGL_STENCIL_BITS_ARB,8);
+        attr.insert(WGL_COLOR_BITS_ARB,DEFAULT_COLOR_BITS);
+        attr.insert(WGL_DEPTH_BITS_ARB,DEFAULT_DEPTH_BITS);
+        attr.insert(WGL_STENCIL_BITS_ARB,DEFAULT_STENCIL_BITS);
 
         // Try to find a matching (one-based) pixel format.
         UINT count;

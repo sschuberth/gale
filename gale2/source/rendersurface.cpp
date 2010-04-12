@@ -101,9 +101,9 @@ bool RenderSurface::create(int pixel_format,int const width,int const height,LPC
 
                 // Specify some common pixel format attributes.
                 pfd.iPixelType=PFD_TYPE_RGBA;
-                pfd.cColorBits=32;
-                pfd.cDepthBits=24;
-                pfd.cStencilBits=8;
+                pfd.cColorBits=DEFAULT_COLOR_BITS;
+                pfd.cDepthBits=DEFAULT_DEPTH_BITS;
+                pfd.cStencilBits=DEFAULT_STENCIL_BITS;
 
                 // Try to find a matching (one-based) pixel format.
                 pixel_format=ChoosePixelFormat(m_context.device,&pfd);
