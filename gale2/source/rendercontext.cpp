@@ -45,7 +45,7 @@ RenderContext::RenderContext(LPCTSTR title,int width,int height,global::Attribut
     width=rect.right-rect.left;
     height=rect.bottom-rect.top;
 
-    // Create a default device context.
+    // Create a surface with a default pixel format.
     G_ASSERT_CALL(RenderSurface::create(0,width,height,title))
 
     // Create and activate a rendering context for OpenGL extension
@@ -55,12 +55,18 @@ RenderContext::RenderContext(LPCTSTR title,int width,int height,global::Attribut
 
     G_ASSERT_CALL(makeCurrent())
 
+    // Try to initialize an OpenGL extension for more sophisticated selection of a
+    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
+    GLEX_WGL_ARB_pixel_format_init();
+
+    // Try to initialize an extension required to create an OpenGL 3.0 compatible
+    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
+    GLEX_WGL_ARB_create_context_init();
+
     AttributeListi attr;
     GLint format=0;
 
-    // Try to initialize an OpenGL extension for more sophisticated selection of a
-    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
-    if (GLEX_WGL_ARB_pixel_format_init()) {
+    if (GLEX_WGL_ARB_pixel_format) {
         // If additional pixel attributes were given, copy them over.
         if (pixel_attr) {
             attr=*pixel_attr;
@@ -93,33 +99,35 @@ RenderContext::RenderContext(LPCTSTR title,int width,int height,global::Attribut
                 format=format_multisample;
             }
         }
+
+        if (format>0) {
+            // Destroy the default context and surface in order to set a custom
+            // pixel format.
+            destroy();
+            RenderSurface::destroy();
+
+            // Create a surface with a custom pixel format.
+            G_ASSERT_CALL(RenderSurface::create(format,width,height,title))
+        }
     }
 
-    // Try to initialize an extension required to create an OpenGL 3.0 compatible
-    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
-    if (GLEX_WGL_ARB_create_context_init() || format>0) {
-        // Note: The code below obviously only works for extensions that do not
-        // themselves require an OpenGL context to be active when called.
-
-        // Destroy the default context to create a more sophisticated one.
+    if (GLEX_WGL_ARB_create_context) {
+        // Destroy the default context in order to create a more sophisticated one.
         destroy();
 
-        // Create a device context with a possibly better pixel format.
-        G_ASSERT_CALL(RenderSurface::create(format,width,height,title))
-
-        // Create and activate the final rendering context.
-        if (GLEX_WGL_ARB_create_context) {
-            attr.clear();
-            attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
-            m_context.render=wglCreateContextAttribsARB(m_context.device,0,attr);
-        }
-        else {
-            m_context.render=wglCreateContext(m_context.device);
-        }
-        G_ASSERT(m_context.render)
-
-        G_ASSERT_CALL(makeCurrent())
+        // Request an OpenGL 3.0 context.
+        attr.clear();
+        attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
+        attr.insert(WGL_CONTEXT_MINOR_VERSION_ARB,0);
+        m_context.render=wglCreateContextAttribsARB(m_context.device,0,attr);
     }
+
+    if (!m_context.render) {
+        m_context.render=wglCreateContext(m_context.device);
+    }
+    G_ASSERT(m_context.render)
+
+    G_ASSERT_CALL(makeCurrent())
 }
 
 void RenderContext::processEvents()
@@ -155,6 +163,14 @@ void RenderContext::processEvents()
                 m_timer.reset();
             }
         }
+    }
+}
+
+void RenderContext::destroy()
+{
+    if (m_context.render) {
+        G_ASSERT_CALL(wglDeleteContext(m_context.render))
+        m_context.render=NULL;
     }
 }
 

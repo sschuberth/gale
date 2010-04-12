@@ -23,12 +23,12 @@
  *
  */
 
-#ifndef RENDERWINDOW_H
-#define RENDERWINDOW_H
+#ifndef RENDERCONTEXT_H
+#define RENDERCONTEXT_H
 
 /**
  * \file
- * A render window implementation
+ * A render context implementation
  */
 
 #include "../global/attributelist.h"
@@ -49,20 +49,21 @@ namespace wrapgl {
 #include "GLEX_WGL_ARB_create_context.h"
 
 /**
- * This class creates an on-screen window for OpenGL rendering.
+ * This class creates a context for OpenGL rendering.
  */
 class RenderContext:public RenderSurface
 {
   public:
 
-    /// Creates a window with the specified \a title, a client size of the given
-    /// \a width and \a height, and a pixel format determined by \a pixel_attr.
-    /// The window will be hidden initially, but it will become the current
-    /// rendering context.
+    /// Creates a context attached to window with the specified \a title, a
+    /// client size of the given \a width and \a height, and a pixel format
+    /// determined by \a pixel_attr. The window will be hidden initially, but it
+    /// will become the current context.
     RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL);
 
-    /// Frees the window resources.
+    /// Frees the context resources.
     ~RenderContext() {
+        destroy();
         RenderSurface::destroy();
     }
 
@@ -111,6 +112,9 @@ class RenderContext:public RenderSurface
 
   protected:
 
+    /// Destroys the context, but not the surface.
+    void destroy();
+
     /// Handles window messages and forwards them to the event handlers.
     LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
 
@@ -126,4 +130,4 @@ class RenderContext:public RenderSurface
 
 } // namespace gale
 
-#endif // RENDERWINDOW_H
+#endif // RENDERCONTEXT_H

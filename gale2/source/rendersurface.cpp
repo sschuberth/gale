@@ -41,7 +41,7 @@ RenderSurface::RenderSurface()
 {
     // We only need to register the window class once.
     if (!s_instances++) {
-        // Register a minimal window class used by all contexts we want to create.
+        // Register a minimal window class used by all surfaces we want to create.
         WNDCLASS cls;
         memset(&cls,0,sizeof(cls));
         cls.style=CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
@@ -125,10 +125,6 @@ bool RenderSurface::create(int pixel_format,int const width,int const height,LPC
 
 void RenderSurface::destroy()
 {
-    if (m_context.render) {
-        G_ASSERT_CALL(wglDeleteContext(m_context.render))
-        m_context.render=NULL;
-    }
     if (m_context.device) {
         G_ASSERT_CALL(ReleaseDC(m_window,m_context.device))
         m_context.device=NULL;
