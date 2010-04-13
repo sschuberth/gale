@@ -34,7 +34,7 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-RenderContext::RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr,int const samples)
+MinimalWindow::MinimalWindow(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr,int const samples)
 :   m_close_requested(false)
 ,   m_timeout(0)
 {
@@ -57,7 +57,7 @@ RenderContext::RenderContext(LPCTSTR title,int width,int height,global::Attribut
     glViewport(0,0,width,height);
 }
 
-void RenderContext::processEvents()
+void MinimalWindow::processEvents()
 {
     MSG msg;
 
@@ -93,7 +93,7 @@ void RenderContext::processEvents()
     }
 }
 
-bool RenderContext::toggleFullScreen(bool state)
+bool MinimalWindow::toggleFullScreen(bool state)
 {
     if (state) {
         SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_POPUP|WS_VISIBLE);
@@ -111,7 +111,7 @@ bool RenderContext::toggleFullScreen(bool state)
     return true;
 }
 
-LRESULT RenderContext::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
+LRESULT MinimalWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     switch (uMsg) {
         // This is sent to a window after its size has changed.

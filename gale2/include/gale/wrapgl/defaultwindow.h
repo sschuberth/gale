@@ -50,7 +50,7 @@ namespace wrapgl {
  * using the mouse to be able to easily implement applications that require
  * simple scene interaction.
  */
-class DefaultWindow:public RenderContext
+class DefaultWindow:public MinimalWindow
 {
   public:
 
@@ -65,7 +65,7 @@ class DefaultWindow:public RenderContext
 
     /// Creates a window with reasonable defaults set.
     DefaultWindow(LPCTSTR title,int const client_width=500,int const client_height=500)
-    :   RenderContext(title,client_width,client_height)
+    :   MinimalWindow(title,client_width,client_height)
     ,   m_camera(this)
 #ifndef GALE_TINY_CODE
     ,   m_logo(0)

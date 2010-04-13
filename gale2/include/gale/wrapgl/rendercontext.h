@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef RENDERCONTEXT_H
-#define RENDERCONTEXT_H
+#ifndef MINIMALWINDOW_H
+#define MINIMALWINDOW_H
 
 /**
  * \file
@@ -45,7 +45,7 @@ namespace wrapgl {
 /**
  * This class creates minimal window suitable for OpenGL rendering.
  */
-class RenderContext:public RenderSurface
+class MinimalWindow:public RenderSurface
 {
   public:
 
@@ -53,7 +53,7 @@ class RenderContext:public RenderSurface
     /// the given \a width and \a height, and a pixel format that matches
     /// \a pixel_attr. The window will be hidden initially, but it will become
     /// the current render context.
-    RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL,int const samples=8);
+    MinimalWindow(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL,int const samples=8);
 
     /// Returns the currently set timeout value in seconds.
     double getTimeout() const {
@@ -118,4 +118,4 @@ class RenderContext:public RenderSurface
 
 } // namespace gale
 
-#endif // RENDERCONTEXT_H
+#endif // MINIMALWINDOW_H
