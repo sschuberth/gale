@@ -92,9 +92,10 @@ class RenderSurface
         return wglMakeCurrent(handle.device,handle.render)!=FALSE;
     }
 
-    /// Creates a minimal render surface. Either a default pixel format or one
-    /// that matches \a pixel_attr is used. If multi-sampling is available, use
-    /// the specified number of \a samples.
+    /// Creates a minimal render surface which becomes the current render
+    /// context. Either a default pixel format or one that matches
+    /// \a pixel_attr is used. If multi-sampling is available, use the
+    /// specified number of \a samples.
     RenderSurface(global::AttributeListi const* const pixel_attr=NULL,int const samples=8);
 
     /// Destroys render surface.
