@@ -126,7 +126,8 @@ class DefaultWindow:public MinimalWindow
     /// automatically rendered should override this method instead of onPaint().
     virtual void onRender() {}
 
-    /// Captures the Escape key to quit the application.
+    /// Captures the Escape key to quit the application and Return to toggle
+    /// full-screen mode.
     virtual void onKeyEvent(char key) {
         if (key==VK_ESCAPE) {
             ExitProcess(0);
