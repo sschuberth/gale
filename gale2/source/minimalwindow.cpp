@@ -23,7 +23,7 @@
  *
  */
 
-#include "gale/wrapgl/rendercontext.h"
+#include "gale/wrapgl/minimalwindow.h"
 
 using namespace gale::global;
 

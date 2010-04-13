@@ -31,7 +31,7 @@
  * Default window and camera navigation implementations
  */
 
-#include "rendercontext.h"
+#include "minimalwindow.h"
 #include "camera.h"
 #include "helpers.h"
 
