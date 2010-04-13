@@ -169,19 +169,19 @@ void RenderContext::processEvents()
 bool RenderContext::toggleFullScreen(bool state)
 {
     if (state) {
-        DEVMODE dm;
-        memset(&dm,0,sizeof(dm));
+        SetWindowLong(windowHandle(),GWL_STYLE,WS_POPUP|WS_VISIBLE);
+        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
 
-        dm.dmSize=sizeof(dm);
-        dm.dmBitsPerPel=DEFAULT_COLOR_BITS;
-        dm.dmPelsWidth=dimensions().width;
-        dm.dmPelsHeight=dimensions().height;
-        dm.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
-        return ChangeDisplaySettings(&dm,CDS_FULLSCREEN)==DISP_CHANGE_SUCCESSFUL;
+        ShowWindow(windowHandle(),SW_MAXIMIZE);
     }
     else {
-        return ChangeDisplaySettings(NULL,0)==DISP_CHANGE_SUCCESSFUL;
+        ShowWindow(windowHandle(),SW_RESTORE);
+
+        SetWindowLong(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW|WS_VISIBLE);
+        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
     }
+
+    return true;
 }
 
 void RenderContext::destroy()

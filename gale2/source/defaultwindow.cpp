@@ -75,6 +75,7 @@ void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
 LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     static bool capture=false;
+    static bool fullscreen=false;
 
     switch (uMsg) {
         // The WM_CHAR message is posted to the window with the keyboard
@@ -82,7 +83,14 @@ LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
         // TranslateMessage function. The WM_CHAR message contains the
         // character code of the key that was pressed.
         case WM_CHAR: {
-            onKeyEvent(LOBYTE(wParam));
+            char key=LOBYTE(wParam);
+            if (key=='f') {
+                fullscreen=!fullscreen;
+                toggleFullScreen(fullscreen);
+            }
+            else {
+                onKeyEvent(key);
+            }
             break;
         }
 
