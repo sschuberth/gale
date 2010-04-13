@@ -161,11 +161,14 @@ LRESULT RenderSurface::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
 
 LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
-    // Using a dynamic_cast here would be safer, but that requires RTTI support.
+    // size_t is 4 byte on 32-bit and 8 bytes on 64-bit, just like pointers.
     size_t ptr=static_cast<size_t>(GetWindowLongPtr(hWnd,GWLP_USERDATA));
+
+    // Using a dynamic_cast here would be safer, but that requires RTTI support.
     RenderSurface *_this=reinterpret_cast<RenderSurface*>(ptr);
 
     if (uMsg==WM_CREATE) {
+        // Set the class instance's message handler.
         LPVOID params=reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;
         _this=static_cast<RenderSurface*>(params);
         ptr=reinterpret_cast<size_t>(_this);
@@ -180,6 +183,7 @@ LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wP
         return DefWindowProc(hWnd,uMsg,wParam,lParam);
     }
 
+    // Dispatch to the class instance's message handler.
     return _this->handleMessage(uMsg,wParam,lParam);
 }
 
