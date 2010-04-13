@@ -38,7 +38,7 @@ bool DefaultWindow::toggleFullScreen(bool state)
 {
     if (state) {
         SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_POPUP|WS_VISIBLE);
-        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
+        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_FRAMECHANGED);
 
         ShowWindow(windowHandle(),SW_MAXIMIZE);
     }
@@ -46,7 +46,7 @@ bool DefaultWindow::toggleFullScreen(bool state)
         ShowWindow(windowHandle(),SW_RESTORE);
 
         SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW|WS_VISIBLE);
-        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
+        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_FRAMECHANGED);
     }
 
     return true;
