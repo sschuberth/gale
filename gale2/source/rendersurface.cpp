@@ -124,7 +124,7 @@ bool RenderSurface::createDeviceContext(int pixel_format)
 {
     // Create a default window and get its device context.
     m_window=CreateWindow(
-        "edit"        // lpClassName ("edit" is the shortest of the predefined system class names)
+        "static"      // lpClassName ("edit" would be shorter, but has the wrong cursor)
     ,   NULL          // lpWindowName
     ,   WS_POPUP      // dwStyle
     ,   0             // x
