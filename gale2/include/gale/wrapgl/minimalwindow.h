@@ -76,9 +76,6 @@ class MinimalWindow:public RenderSurface
         UpdateWindow(m_window);
     }
 
-    /// Turns full screen mode on or off, returns if it was successful.
-    bool toggleFullScreen(bool state);
-
     /// Event handler that gets called when there are no messages to process.
     /// When it returns \c true a repaint will be triggered, on \c false the
     /// thread's remaining time slice will be relinquished.

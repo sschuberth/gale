@@ -67,6 +67,7 @@ class DefaultWindow:public MinimalWindow
     DefaultWindow(LPCTSTR title,int const client_width=500,int const client_height=500)
     :   MinimalWindow(title,client_width,client_height)
     ,   m_camera(this)
+    ,   m_fullscreen(false)
 #ifndef GALE_TINY_CODE
     ,   m_logo(0)
 #endif
@@ -78,6 +79,9 @@ class DefaultWindow:public MinimalWindow
             AppendMenu(menu,MF_STRING,ID_ABOUT_DLG,_T("&About ..."));
         }
     }
+
+    /// Turns full screen mode on or off, returns whether it was successful.
+    bool toggleFullScreen(bool state);
 
     void onClose() {
 #ifndef GALE_TINY_CODE
@@ -127,6 +131,10 @@ class DefaultWindow:public MinimalWindow
         if (key==VK_ESCAPE) {
             ExitProcess(0);
         }
+        else if (key==VK_RETURN) {
+            m_fullscreen=!m_fullscreen;
+            toggleFullScreen(m_fullscreen);
+        }
     }
 
     /// Translates mouse events into camera movements.
@@ -141,6 +149,7 @@ class DefaultWindow:public MinimalWindow
     LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
 
     wrapgl::Camera m_camera; ///< The window's default camera.
+    bool m_fullscreen;
 
 #ifndef GALE_TINY_CODE
     GLuint m_logo; ///< Display list identifier of the logo.

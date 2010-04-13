@@ -34,6 +34,24 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
+bool DefaultWindow::toggleFullScreen(bool state)
+{
+    if (state) {
+        SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_POPUP|WS_VISIBLE);
+        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
+
+        ShowWindow(windowHandle(),SW_MAXIMIZE);
+    }
+    else {
+        ShowWindow(windowHandle(),SW_RESTORE);
+
+        SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW|WS_VISIBLE);
+        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
+    }
+
+    return true;
+}
+
 void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
 {
     G_UNREF_PARAM(wheel)
@@ -75,7 +93,6 @@ void DefaultWindow::onMouseEvent(int x,int y,int wheel,int event)
 LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     static bool capture=false;
-    static bool fullscreen=false;
 
     switch (uMsg) {
         // The WM_CHAR message is posted to the window with the keyboard
@@ -83,14 +100,7 @@ LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
         // TranslateMessage function. The WM_CHAR message contains the
         // character code of the key that was pressed.
         case WM_CHAR: {
-            char key=LOBYTE(wParam);
-            if (key=='f') {
-                fullscreen=!fullscreen;
-                toggleFullScreen(fullscreen);
-            }
-            else {
-                onKeyEvent(key);
-            }
+            onKeyEvent(LOBYTE(wParam));
             break;
         }
 

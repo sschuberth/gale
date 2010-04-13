@@ -93,24 +93,6 @@ void MinimalWindow::processEvents()
     }
 }
 
-bool MinimalWindow::toggleFullScreen(bool state)
-{
-    if (state) {
-        SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_POPUP|WS_VISIBLE);
-        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
-
-        ShowWindow(windowHandle(),SW_MAXIMIZE);
-    }
-    else {
-        ShowWindow(windowHandle(),SW_RESTORE);
-
-        SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW|WS_VISIBLE);
-        SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
-    }
-
-    return true;
-}
-
 LRESULT MinimalWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     switch (uMsg) {
