@@ -31,8 +31,6 @@
  * A static array implementation to store attribute pairs
  */
 
-#include "defines.h"
-
 namespace gale {
 
 namespace global {
