@@ -25,7 +25,7 @@
 
 #include "gale/wrapgl/rendersurface.h"
 
-#include "gale/global/defines.h"
+using namespace gale::global;
 
 namespace gale {
 
@@ -34,54 +34,115 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-int RenderSurface::s_instances=0;
-ATOM RenderSurface::s_atom=0;
-
-RenderSurface::RenderSurface()
+RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int const samples)
 {
-    // We only need to register the window class once.
-    if (!s_instances++) {
-        // Register a minimal window class used by all surfaces we want to create.
-        WNDCLASS cls;
-        memset(&cls,0,sizeof(cls));
-        cls.style=CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
-        cls.lpfnWndProc=WindowProc;
-        cls.hCursor=LoadCursor(NULL,IDC_ARROW);
-        cls.lpszClassName=_T("G");
+    // Create a surface with a default pixel format.
+    G_ASSERT_CALL(createDeviceContext())
 
-        s_atom=RegisterClass(&cls);
-        G_ASSERT(s_atom!=0)
+    // Create and activate a rendering context for OpenGL extension initialization.
+    m_context.render=wglCreateContext(m_context.device);
+    G_ASSERT(m_context.render)
+
+    G_ASSERT_CALL(makeCurrent())
+
+    // Try to initialize an OpenGL extension for more sophisticated selection of a
+    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
+    GLEX_WGL_ARB_pixel_format_init();
+
+    // Try to initialize an extension required to create an OpenGL 3.0 compatible
+    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
+    GLEX_WGL_ARB_create_context_init();
+
+    AttributeListi attr;
+    GLint format=0;
+
+    if (GLEX_WGL_ARB_pixel_format) {
+        // If additional pixel attributes were given, copy them over.
+        if (pixel_attr) {
+            attr=*pixel_attr;
+        }
+
+        // Make sure some required attributes are specified.
+        attr.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
+        attr.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
+        attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
+        attr.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
+
+        // Specify some common pixel format attributes.
+        attr.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
+        attr.insert(WGL_COLOR_BITS_ARB,DEFAULT_COLOR_BITS);
+        attr.insert(WGL_DEPTH_BITS_ARB,DEFAULT_DEPTH_BITS);
+        attr.insert(WGL_STENCIL_BITS_ARB,DEFAULT_STENCIL_BITS);
+
+        // Try to find a matching (one-based) pixel format.
+        UINT count;
+        wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count);
+
+        // Try to get the same format with multi-sampling, see
+        // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
+        if (GLEX_ARB_multisample_init()) {
+            attr.insert(WGL_SAMPLE_BUFFERS_ARB,TRUE);
+            attr.insert(WGL_SAMPLES_ARB,samples);
+
+            GLint format_multisample=0;
+            if (wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format_multisample,&count)!=FALSE) {
+                format=format_multisample;
+            }
+        }
+
+        if (format>0) {
+            // Destroy the default surface in order to set a custom pixel format.
+            destroyRenderContext();
+            destroyDeviceContext();
+
+            // Create a surface with a custom pixel format.
+            G_ASSERT_CALL(createDeviceContext(format))
+        }
     }
+
+    if (GLEX_WGL_ARB_create_context) {
+        // Destroy the default render context in order to create a more
+        // sophisticated one.
+        destroyRenderContext();
+
+        // Request an OpenGL 3.0 context.
+        attr.clear();
+        attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
+        attr.insert(WGL_CONTEXT_MINOR_VERSION_ARB,0);
+        m_context.render=wglCreateContextAttribsARB(m_context.device,0,attr);
+    }
+
+    if (!m_context.render) {
+        m_context.render=wglCreateContext(m_context.device);
+    }
+    G_ASSERT(m_context.render)
+
+    G_ASSERT_CALL(makeCurrent())
 }
 
-RenderSurface::~RenderSurface()
-{
-    if (--s_instances>0) {
-        return;
-    }
-    G_ASSERT(s_instances==0)
-
-    G_ASSERT_CALL(UnregisterClass(MAKEINTATOM(s_atom),NULL))
-}
-
-bool RenderSurface::create(int pixel_format,int const width,int const height,LPCTSTR title)
+bool RenderSurface::createDeviceContext(int pixel_format)
 {
     // Create a default window and get its device context.
     m_window=CreateWindow(
-        MAKEINTATOM(s_atom) // lpClassName
-    ,   title               // lpWindowName
-    ,   WS_OVERLAPPEDWINDOW // dwStyle
-    ,   CW_USEDEFAULT       // x
-    ,   0                   // y
-    ,   width               // nWidth
-    ,   height              // nHeight
-    ,   HWND_DESKTOP        // hWndParent
-    ,   NULL                // hMenu
-    ,   NULL                // hInstance
-    ,   this                // lpParam
+        "edit"        // lpClassName ("edit" is the shortest of the predefined system class names)
+    ,   NULL          // lpWindowName
+    ,   WS_POPUP      // dwStyle
+    ,   0             // x
+    ,   0             // y
+    ,   0             // nWidth
+    ,   0             // nHeight
+    ,   HWND_DESKTOP  // hWndParent
+    ,   NULL          // hMenu
+    ,   NULL          // hInstance
+    ,   NULL          // lpParam
     );
 
     if (m_window) {
+        // Set the user data first and then the window procedure, so it will
+        // never be called without the class instance pointer.
+        SetWindowLongPtr(m_window,GWLP_USERDATA,(LONG_PTR)this);
+        SetWindowLongPtr(m_window,GWL_WNDPROC,(LONG_PTR)WindowProc);
+
         m_context.device=GetDC(m_window);
         if (m_context.device) {
             // If no pixel format was specified, get one.
@@ -118,12 +179,12 @@ bool RenderSurface::create(int pixel_format,int const width,int const height,LPC
         }
     }
 
-    destroy();
+    destroyDeviceContext();
 
     return false;
 }
 
-void RenderSurface::destroy()
+void RenderSurface::destroyDeviceContext()
 {
     if (m_context.device) {
         G_ASSERT_CALL(ReleaseDC(m_window,m_context.device))
@@ -134,6 +195,14 @@ void RenderSurface::destroy()
         // indicate a request to terminate the application.
         G_ASSERT_CALL(DestroyWindow(m_window))
         m_window=NULL;
+    }
+}
+
+void RenderSurface::destroyRenderContext()
+{
+    if (m_context.render) {
+        G_ASSERT_CALL(wglDeleteContext(m_context.render))
+        m_context.render=NULL;
     }
 }
 
@@ -167,21 +236,9 @@ LRESULT CALLBACK RenderSurface::WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wP
     // Using a dynamic_cast here would be safer, but that requires RTTI support.
     RenderSurface *_this=reinterpret_cast<RenderSurface*>(ptr);
 
-    if (uMsg==WM_CREATE) {
-        // Set the class instance's message handler.
-        LPVOID params=reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;
-        _this=static_cast<RenderSurface*>(params);
-        ptr=reinterpret_cast<size_t>(_this);
-#ifdef G_ARCH_X86_64
-        SetWindowLongPtr(hWnd,GWLP_USERDATA,(LONG_PTR)ptr);
-#else
-        SetWindowLongPtr(hWnd,GWLP_USERDATA,(LONG)ptr);
-#endif
-    }
-
-    if (_this==NULL) {
-        return DefWindowProc(hWnd,uMsg,wParam,lParam);
-    }
+    // Should never be NULL as we set the user data before setting the windows
+    // procedure.
+    G_ASSERT(_this)
 
     // Dispatch to the class instance's message handler.
     return _this->handleMessage(uMsg,wParam,lParam);

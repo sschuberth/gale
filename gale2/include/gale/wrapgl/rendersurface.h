@@ -28,23 +28,28 @@
 
 /**
  * \file
- * A render surface abstraction
+ * A render surface implementation
  */
 
+#include "../global/attributelist.h"
 #include "../global/platform.h"
 
 namespace gale {
 
 namespace wrapgl {
 
+#include "GLEX_ARB_multisample.h"
+
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
+#include "GLEX_WGL_ARB_pixel_format.h"
+#include "GLEX_WGL_ARB_create_context.h"
+
 /**
- * This class serves as a base for everything that requires an OpenGL context.
- * It creates a surface with a (default) pixel format that a context can be
- * attached to, e.g. a temporary one that is only used to initialize OpenGL
- * extensions that are in turn used to create a more sophisticated context.
+ * This class provides a minimal pixel surface that is suitable for OpenGL
+ * rendering. It is hidden and has no dimensions initially which predestines it
+ * for tasks such as initializing OpenGL extensions.
  */
 class RenderSurface
 {
@@ -59,7 +64,7 @@ class RenderSurface
 
     /// A context handle uniquely identifies a render surface.
     struct ContextHandle {
-        /// Constructor to simplify handle initialization.
+        /// Constructor to simplify member variable initialization.
         ContextHandle(HDC device=NULL,HGLRC render=NULL)
         :   device(device),render(render) {}
 
@@ -69,7 +74,7 @@ class RenderSurface
 
     /// Simple structure to hold the dimensions of a render surface.
     struct Dimensions {
-        /// Constructor to simplify dimensions initialization.
+        /// Constructor to simplify member variable initialization.
         Dimensions(int width=0,int height=0)
         :   width(width),height(height) {}
 
@@ -87,11 +92,16 @@ class RenderSurface
         return wglMakeCurrent(handle.device,handle.render)!=FALSE;
     }
 
-    /// Registers a common window class for all OpenGL contexts.
-    RenderSurface();
+    /// Creates a minimal render surface. Either a default pixel format or one
+    /// that matches \a pixel_attr is used. If multi-sampling is available, use
+    /// the specified number of \a samples.
+    RenderSurface(global::AttributeListi const* const pixel_attr=NULL,int const samples=8);
 
-    /// Unregisters the window class if it is not used anymore.
-    ~RenderSurface();
+    /// Destroys render surface.
+    ~RenderSurface() {
+        destroyRenderContext();
+        destroyDeviceContext();
+    }
 
     /// Returns the handle to the window associated with this render surface.
     WindowHandle const& windowHandle() const {
@@ -118,28 +128,29 @@ class RenderSurface
 
   protected:
 
-    /// Creates a minimal device context with either a default or the specified
-    /// \a pixel_format which is attached to an initially hidden window with the
-    /// given \a width, \a height and \a title. No rendering context is created
-    /// yet to allow creating one using OpenGL extensions.
-    bool create(int pixel_format=0,int const width=0,int const height=0,LPCTSTR title=NULL);
+    /// Creates a minimal device context and associated window with either a
+    /// default or the specified \a pixel_format. The window is initially hidden
+    /// and has no dimensions. No rendering context is created yet to allow
+    /// creating one using OpenGL extensions.
+    bool createDeviceContext(int pixel_format=0);
 
-    /// Destroys the render surface, i.e. frees all resources except the window
-    /// class, so the method can be used by derived classes.
-    void destroy();
+    /// Releases the device context and destroys the associated window. This is
+    /// e.g. required if another pixel format should be set for a device context
+    /// as an application can only set the pixel format of a window one time.
+    void destroyDeviceContext();
 
-    /// Handles window messages and forwards them to the event handlers.
+    /// Deletes the render context only.
+    void destroyRenderContext();
+
+    /// Handles window messages and forwards them to the event methods.
     virtual LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
-
-    static int s_instances;  ///< Counter for the number of instances.
-    static ATOM s_atom;      ///< Identifier for the registered window class.
 
     WindowHandle m_window;   ///< Handle to the window owning the OpenGL context.
     ContextHandle m_context; ///< Handle to the OpenGL context.
 
   private:
 
-    /// Forwards window messages to the window specific message handler.
+    /// Forwards window messages to the class instance's message handler.
     static LRESULT CALLBACK WindowProc(WindowHandle hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
 };
 

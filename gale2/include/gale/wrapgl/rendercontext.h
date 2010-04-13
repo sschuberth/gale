@@ -28,10 +28,9 @@
 
 /**
  * \file
- * A render context implementation
+ * An OpenGL window implementation
  */
 
-#include "../global/attributelist.h"
 #include "../system/timer.h"
 
 #include "rendersurface.h"
@@ -40,32 +39,21 @@ namespace gale {
 
 namespace wrapgl {
 
-#include "GLEX_ARB_multisample.h"
-
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-#include "GLEX_WGL_ARB_pixel_format.h"
-#include "GLEX_WGL_ARB_create_context.h"
-
 /**
- * This class creates a context for OpenGL rendering.
+ * This class creates minimal window suitable for OpenGL rendering.
  */
 class RenderContext:public RenderSurface
 {
   public:
 
-    /// Creates a context attached to window with the specified \a title, a
-    /// client size of the given \a width and \a height, and a pixel format
-    /// determined by \a pixel_attr. The window will be hidden initially, but it
-    /// will become the current context.
-    RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL,int samples=8);
-
-    /// Frees the context resources.
-    ~RenderContext() {
-        destroy();
-        RenderSurface::destroy();
-    }
+    /// Creates an OpenGL window with the specified \a title, a client size of
+    /// the given \a width and \a height, and a pixel format that matches
+    /// \a pixel_attr. The window will be hidden initially, but it will become
+    /// the current render context.
+    RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL,int const samples=8);
 
     /// Returns the currently set timeout value in seconds.
     double getTimeout() const {
@@ -115,10 +103,7 @@ class RenderContext:public RenderSurface
 
   protected:
 
-    /// Destroys the context, but not the surface.
-    void destroy();
-
-    /// Handles window messages and forwards them to the event handlers.
+    /// Handles window messages and forwards them to the event methods.
     LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
 
     bool m_close_requested; ///< Indicates whether the window should be closed.

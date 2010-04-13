@@ -34,10 +34,12 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-RenderContext::RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr,int samples)
+RenderContext::RenderContext(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr,int const samples)
 :   m_close_requested(false)
 ,   m_timeout(0)
 {
+    SetWindowText(windowHandle(),title);
+
     // Calculate the window size from the desired client area size.
     RECT rect={0,0,width,height};
     G_ASSERT_CALL(AdjustWindowRect(&rect,WS_OVERLAPPEDWINDOW,FALSE))
@@ -45,89 +47,14 @@ RenderContext::RenderContext(LPCTSTR title,int width,int height,global::Attribut
     width=rect.right-rect.left;
     height=rect.bottom-rect.top;
 
-    // Create a surface with a default pixel format.
-    G_ASSERT_CALL(RenderSurface::create(0,width,height,title))
+    // Adjust render surface's dummy window style and dimensions.
+    SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW);
+    SetWindowPos(windowHandle(),HWND_TOP,0,0,width,height,SWP_FRAMECHANGED);
 
-    // Create and activate a rendering context for OpenGL extension
-    // initialization.
-    m_context.render=wglCreateContext(m_context.device);
-    G_ASSERT(m_context.render)
-
-    G_ASSERT_CALL(makeCurrent())
-
-    // Try to initialize an OpenGL extension for more sophisticated selection of a
-    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
-    GLEX_WGL_ARB_pixel_format_init();
-
-    // Try to initialize an extension required to create an OpenGL 3.0 compatible
-    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
-    GLEX_WGL_ARB_create_context_init();
-
-    AttributeListi attr;
-    GLint format=0;
-
-    if (GLEX_WGL_ARB_pixel_format) {
-        // If additional pixel attributes were given, copy them over.
-        if (pixel_attr) {
-            attr=*pixel_attr;
-        }
-
-        // Make sure some required attributes are specified.
-        attr.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
-        attr.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
-        attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
-        attr.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
-
-        // Specify some common pixel format attributes.
-        attr.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
-        attr.insert(WGL_COLOR_BITS_ARB,DEFAULT_COLOR_BITS);
-        attr.insert(WGL_DEPTH_BITS_ARB,DEFAULT_DEPTH_BITS);
-        attr.insert(WGL_STENCIL_BITS_ARB,DEFAULT_STENCIL_BITS);
-
-        // Try to find a matching (one-based) pixel format.
-        UINT count;
-        wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count);
-
-        // Try to get a multi-sampled pixel format, see
-        // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
-        if (GLEX_ARB_multisample_init()) {
-            attr.insert(WGL_SAMPLE_BUFFERS_ARB,TRUE);
-            attr.insert(WGL_SAMPLES_ARB,samples);
-
-            GLint format_multisample=0;
-            if (wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format_multisample,&count)!=FALSE) {
-                format=format_multisample;
-            }
-        }
-
-        if (format>0) {
-            // Destroy the default context and surface in order to set a custom
-            // pixel format.
-            destroy();
-            RenderSurface::destroy();
-
-            // Create a surface with a custom pixel format.
-            G_ASSERT_CALL(RenderSurface::create(format,width,height,title))
-        }
-    }
-
-    if (GLEX_WGL_ARB_create_context) {
-        // Destroy the default context in order to create a more sophisticated one.
-        destroy();
-
-        // Request an OpenGL 3.0 context.
-        attr.clear();
-        attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
-        attr.insert(WGL_CONTEXT_MINOR_VERSION_ARB,0);
-        m_context.render=wglCreateContextAttribsARB(m_context.device,0,attr);
-    }
-
-    if (!m_context.render) {
-        m_context.render=wglCreateContext(m_context.device);
-    }
-    G_ASSERT(m_context.render)
-
-    G_ASSERT_CALL(makeCurrent())
+    // When a GL context is first attached to a window, width and height are set
+    // to the dimensions of that window, which is 0, 0 for the render surface's
+    // dummy window, so we need to adjust the viewport.
+    glViewport(0,0,width,height);
 }
 
 void RenderContext::processEvents()
@@ -169,7 +96,7 @@ void RenderContext::processEvents()
 bool RenderContext::toggleFullScreen(bool state)
 {
     if (state) {
-        SetWindowLong(windowHandle(),GWL_STYLE,WS_POPUP|WS_VISIBLE);
+        SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_POPUP|WS_VISIBLE);
         SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
 
         ShowWindow(windowHandle(),SW_MAXIMIZE);
@@ -177,19 +104,11 @@ bool RenderContext::toggleFullScreen(bool state)
     else {
         ShowWindow(windowHandle(),SW_RESTORE);
 
-        SetWindowLong(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW|WS_VISIBLE);
+        SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW|WS_VISIBLE);
         SetWindowPos(windowHandle(),HWND_TOP,0,0,0,0,SWP_FRAMECHANGED|SWP_NOSIZE);
     }
 
     return true;
-}
-
-void RenderContext::destroy()
-{
-    if (m_context.render) {
-        G_ASSERT_CALL(wglDeleteContext(m_context.render))
-        m_context.render=NULL;
-    }
 }
 
 LRESULT RenderContext::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
@@ -220,8 +139,8 @@ LRESULT RenderContext::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
         case WM_CLOSE: {
             onClose();
 
-            // Delay the call to destroy() until class destruction time so other
-            // OpenGL wrapper classes can free their resources in their
+            // Delay the call to wglDeleteContext() until class destruction time
+            // so other OpenGL wrapper classes can free their resources in their
             // destructors before the rendering context gets deleted.
             m_close_requested=true;
 
