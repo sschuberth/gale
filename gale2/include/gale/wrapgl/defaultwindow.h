@@ -137,7 +137,7 @@ class DefaultWindow:public MinimalWindow
     /// Defines a custom ID for the About dialog menu entry.
     static UINT_PTR const ID_ABOUT_DLG=0x00AB;
 
-    /// Handles window messages and forwards them to the event handlers.
+    /// Handles window messages and forwards them to the event methods.
     LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
 
     wrapgl::Camera m_camera; ///< The window's default camera.
