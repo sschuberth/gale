@@ -47,9 +47,12 @@ MinimalWindow::MinimalWindow(LPCTSTR title,int width,int height,global::Attribut
     width=rect.right-rect.left;
     height=rect.bottom-rect.top;
 
+    int x=(GetSystemMetrics(SM_CXSCREEN)-width)/2;
+    int y=(GetSystemMetrics(SM_CYSCREEN)-height)/2;
+
     // Adjust render surface's dummy window style and dimensions.
     SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW);
-    SetWindowPos(windowHandle(),HWND_TOP,0,0,width,height,SWP_FRAMECHANGED);
+    SetWindowPos(windowHandle(),HWND_TOP,x,y,width,height,SWP_FRAMECHANGED);
 
     // When a GL context is first attached to a window, width and height are set
     // to the dimensions of that window, which is 0, 0 for the render surface's
