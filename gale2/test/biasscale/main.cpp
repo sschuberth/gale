@@ -3,7 +3,7 @@
 
 using namespace gale::math;
 
-int main()
+int __cdecl main()
 {
     RandomEcuyerf r;
 

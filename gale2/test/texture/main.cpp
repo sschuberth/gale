@@ -148,7 +148,7 @@ class TestWindow:public DefaultWindow
     #include <crtdbg.h>
 #endif
 
-int main()
+int __cdecl main()
 {
     // Make sure the window is destroyed before dumping memory leaks.
     {

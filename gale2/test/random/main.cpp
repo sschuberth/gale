@@ -14,7 +14,7 @@
 using namespace gale::math;
 using namespace gale::system;
 
-int main()
+int __cdecl main()
 {
     RandomEcuyerf r;
 

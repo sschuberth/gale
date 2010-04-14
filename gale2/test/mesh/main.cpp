@@ -392,7 +392,7 @@ class TestWindow:public DefaultWindow
     #include <crtdbg.h>
 #endif
 
-int main()
+int __cdecl main()
 {
 #if !defined NDEBUG && !defined GALE_TINY_CODE
     puts("Base meshes");

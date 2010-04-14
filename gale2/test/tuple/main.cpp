@@ -18,7 +18,7 @@ void test_tuple();
 void test_vector();
 void test_color();
 
-int main()
+int __cdecl main()
 {
 #ifndef GALE_TINY_CODE
     cout << "Found "
