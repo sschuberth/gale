@@ -131,7 +131,6 @@ class Camera
     Camera(RenderSurface const* surface=NULL,double const fov=math::Constd::PI()*0.25,double const clip_near=0.001,double const clip_far=1000.0)
     :   m_surface(surface)
     ,   m_frustum(*this)
-    ,   m_screen_changed(false)
     ,   m_fov(fov)
     ,   m_clip_near(clip_near)
     ,   m_clip_far(clip_far)
@@ -140,11 +139,15 @@ class Camera
             m_screen.x=m_screen.y=0;
             m_screen.width=surface->dimensions().width;
             m_screen.height=surface->dimensions().height;
+
+            m_screen_changed=true;
         }
         else {
             // Initialize the camera screen space to the current OpenGL viewport.
             glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&m_screen));
             G_ASSERT_OPENGL
+
+            m_screen_changed=false;
         }
 
         // Set a perspective camera with no transformation by default.
@@ -160,7 +163,7 @@ class Camera
     Camera(GLint screen_x,GLint screen_y,GLsizei screen_width,GLsizei screen_height,double const fov=math::Constd::PI()*0.25,math::HMat4f const* modelview=NULL)
     :   m_surface(NULL)
     ,   m_frustum(*this)
-    ,   m_screen_changed(false)
+    ,   m_screen_changed(true)
     ,   m_fov(fov)
     ,   m_clip_near(0.001)
     ,   m_clip_far(1000.0)
