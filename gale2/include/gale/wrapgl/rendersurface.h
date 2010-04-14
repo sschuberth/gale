@@ -146,6 +146,9 @@ class RenderSurface
     /// Handles window messages and forwards them to the event methods.
     virtual LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
 
+    /// Pixel format description for the default format.
+    static PIXELFORMATDESCRIPTOR const s_pfd;
+
     WindowHandle m_window;   ///< Handle to the window owning the OpenGL context.
     ContextHandle m_context; ///< Handle to the OpenGL context.
 

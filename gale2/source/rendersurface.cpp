@@ -31,6 +31,39 @@ namespace gale {
 
 namespace wrapgl {
 
+PIXELFORMATDESCRIPTOR const RenderSurface::s_pfd={
+    sizeof(s_pfd)            // nSize
+,   1                        // nVersion
+,   PFD_DRAW_TO_WINDOW       // dwFlags
+|   PFD_SUPPORT_OPENGL
+|   PFD_GENERIC_ACCELERATED
+|   PFD_DOUBLEBUFFER
+|   PFD_SUPPORT_COMPOSITION
+,   PFD_TYPE_RGBA            // iPixelType
+,   DEFAULT_COLOR_BITS       // cColorBits
+,   0                        // cRedBits
+,   0                        // cRedShift
+,   0                        // cGreenBits
+,   0                        // cGreenShift
+,   0                        // cBlueBits
+,   0                        // cBlueShift
+,   0                        // cAlphaBits
+,   0                        // cAlphaShift
+,   0                        // cAccumBits
+,   0                        // cAccumRedBits
+,   0                        // cAccumGreenBits
+,   0                        // cAccumBlueBits
+,   0                        // cAccumAlphaBits
+,   DEFAULT_DEPTH_BITS       // cDepthBits
+,   DEFAULT_STENCIL_BITS     // cStencilBits
+,   0                        // cAuxBuffers
+,   0                        // iLayerType
+,   0                        // bReserved
+,   0                        // dwLayerMask
+,   0                        // dwVisibleMask
+,   0                        // dwDamageMask
+};
+
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
@@ -147,27 +180,9 @@ bool RenderSurface::createDeviceContext(int pixel_format)
         if (m_context.device) {
             // If no pixel format was specified, get one.
             if (pixel_format<=0) {
-                PIXELFORMATDESCRIPTOR pfd;
-                memset(&pfd,0,sizeof(pfd));
-
-                // Make sure some required attributes are specified.
-                pfd.nSize=sizeof(pfd);
-                pfd.nVersion=1;
-                pfd.dwFlags=PFD_DRAW_TO_WINDOW
-                          | PFD_SUPPORT_OPENGL
-                          | PFD_GENERIC_ACCELERATED
-                          | PFD_DOUBLEBUFFER
-                          | PFD_SUPPORT_COMPOSITION
-                ;
-
-                // Specify some common pixel format attributes.
-                pfd.iPixelType=PFD_TYPE_RGBA;
-                pfd.cColorBits=DEFAULT_COLOR_BITS;
-                pfd.cDepthBits=DEFAULT_DEPTH_BITS;
-                pfd.cStencilBits=DEFAULT_STENCIL_BITS;
 
                 // Try to find a matching (one-based) pixel format.
-                pixel_format=ChoosePixelFormat(m_context.device,&pfd);
+                pixel_format=ChoosePixelFormat(m_context.device,&s_pfd);
             }
 
             // Setting the pixel format is only allowed once per window! Passing
