@@ -315,7 +315,6 @@ void test_vector()
 
     double s;
     Timer t;
-    unsigned int ms;
 
     Vec4d n(Vec4d::ZERO());
     Vec4d x(Vec4d::X()),y(Vec4d::Y()),z(Vec4d::Z()),w(Vec4d::W());
@@ -393,6 +392,8 @@ void test_vector()
     t.stop(s);
 
 #ifndef GALE_TINY_CODE
+    unsigned int ms;
+
     cout << "Time elapsed: " << s << " seconds." << endl;
 
     cout << "Sleeping for " << (ms=2500) << " milliseconds (timed)." << endl;
