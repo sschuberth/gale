@@ -85,17 +85,25 @@ void popOrtho2D()
 
 GLuint drawLogo()
 {
-    // Apply the required camera settings.
-    Camera camera_logo;
+    // Render the logo to an area which is max. 1/6 of the current viewport dimensions.
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT,viewport);
+    GLint size=math::min(viewport[2],viewport[3])/6;
 
-    int size=math::min(camera_logo.getScreenSpace().width,camera_logo.getScreenSpace().height)/6;
-    camera_logo.setScreenSpaceDimensions(size,size);
-    camera_logo.setFOV(90*math::Constd::DEG_TO_RAD());
+    // Create an appropriate camera.
+    static float const distance=3.0f;
+    static math::Vec3f const normal(distance,distance,distance);
+    static math::HMat4f const modelview=math::HMat4f::Factory::LookAt(math::Vec3f::ZERO(),normal,math::Vec3f::Y());
 
-    float distance=3.0f;
-    math::Vec3f normal(distance,distance,distance);
-    camera_logo.setPosition(normal);
-    camera_logo.setLookTarget(math::Vec3f::ZERO());
+    static Camera camera_logo(viewport[0],viewport[1],size,size,90*math::Constd::DEG_TO_RAD(),&modelview);
+
+    if (camera_logo.getScreenSpace().x!=viewport[0] || camera_logo.getScreenSpace().y!=viewport[1]) {
+        camera_logo.setScreenSpaceOrigin(viewport[0],viewport[1]);
+    }
+
+    if (camera_logo.getScreenSpace().width!=size || camera_logo.getScreenSpace().height!=size) {
+        camera_logo.setScreenSpaceDimensions(size,size);
+    }
 
     camera_logo.makeCurrent();
 

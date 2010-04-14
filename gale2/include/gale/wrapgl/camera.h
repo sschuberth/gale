@@ -122,12 +122,12 @@ class Camera
         camera.makeCurrent();
     }
 
-    /// Constructor that initializes a perspective camera attached to the given
-    /// render \a surface. By default, its screen space matches the current
-    /// viewport and the modelview matrix is set to identity, so the camera
-    /// looks down the negative z-axis. Optionally, the camera's vertical field
-    /// of view and clipping plane distances can be specified as \a fov,
-    /// \a clip_near and \a clip_far.
+    /// Initializes a perspective camera with a screen space that matches the
+    /// dimensions of the given \a surface or, if not given, the current viewport.
+    /// The camera's vertical field of view and clipping plane distances can be
+    /// specified by \a fov, \a clip_near and \a clip_far respectively. The
+    /// modelview matrix is set to identity, so the camera looks down the
+    /// negative z-axis.
     Camera(RenderSurface const* surface=NULL,double const fov=math::Constd::PI()*0.25,double const clip_near=0.001,double const clip_far=1000.0)
     :   m_surface(surface)
     ,   m_frustum(*this)
@@ -150,6 +150,29 @@ class Camera
         // Set a perspective camera with no transformation by default.
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
         setModelview(math::HMat4f::IDENTITY());
+    }
+
+    /// Initializes a perspective camera with a screen space as given by
+    /// \a screen_x, \a screen_y, \a screen_width and \a screen_height. The
+    /// camera's vertical field of view can be specified by \a fov. It's
+    /// orientation and position is given by \a modelview or, if not given, set
+    /// to identity, so the camera looks down the negative z-axis.
+    Camera(GLint screen_x,GLint screen_y,GLsizei screen_width,GLsizei screen_height,double const fov=math::Constd::PI()*0.25,math::HMat4f const* modelview=NULL)
+    :   m_surface(NULL)
+    ,   m_frustum(*this)
+    ,   m_screen_changed(false)
+    ,   m_fov(fov)
+    ,   m_clip_near(0.001)
+    ,   m_clip_far(1000.0)
+    {
+        m_screen.x=screen_x;
+        m_screen.y=screen_y;
+        m_screen.width=screen_width;
+        m_screen.height=screen_height;
+
+        // Set a perspective camera with no transformation by default.
+        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
+        setModelview(modelview?*modelview:math::HMat4f::IDENTITY());
     }
 
     /// Returns a reference to the camera's view frustum.
@@ -295,34 +318,6 @@ class Camera
     /// Sets the camera's location to the given \a position.
     void setPosition(math::Vec3f const& position) {
         m_modelview.setPositionVector(position);
-        m_modelview_changed=true;
-    }
-
-    /// Makes the camera look at the given \a point. If \a flip is \c true, the
-    /// camera is allowed to flip in order to minimize the "right" angle between
-    /// old and new orientation.
-    void setLookTarget(math::Vec3f const& point,bool const flip=false) {
-        using namespace math;
-
-        HMat4f::Vec const& position=m_modelview.getPositionVector();
-
-        HMat4f::Vec& backward=m_modelview.getBackwardVector();
-        HMat4f::Vec& up=m_modelview.getUpVector();
-
-        HMat4f::Vec right=m_modelview.getRightVector();
-
-        backward=~(position-point);
-        right=~(up^backward);
-
-        // Flip the "right" vector if its angle to the original vector is
-        // greater than 90°.
-        if (flip && right%m_modelview.getRightVector()<0) {
-            right=-right;
-        }
-
-        up=backward^right;
-
-        m_modelview.setRightVector(right);
         m_modelview_changed=true;
     }
 
