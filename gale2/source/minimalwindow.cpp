@@ -53,11 +53,6 @@ MinimalWindow::MinimalWindow(LPCTSTR title,int width,int height,global::Attribut
     // Adjust render surface's dummy window style and dimensions.
     SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW);
     SetWindowPos(windowHandle(),HWND_TOP,x,y,width,height,SWP_FRAMECHANGED);
-
-    // When a GL context is first attached to a window, width and height are set
-    // to the dimensions of that window, which is 0, 0 for the render surface's
-    // dummy window, so we need to adjust the viewport.
-    glViewport(0,0,width,height);
 }
 
 void MinimalWindow::processEvents()
@@ -99,6 +94,17 @@ void MinimalWindow::processEvents()
 LRESULT MinimalWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     switch (uMsg) {
+        case WM_SHOWWINDOW: {
+            // Because we set our window procedure after creating the window, we
+            // miss the initial WM_CREATE and WM_SIZE messages. This means
+            // onResize() is initially not called, and the OpenGL viewport's
+            // dimensions are set to 0, 0 because that are the width and height
+            // of the render surface's dummy window. So we simply trigger a
+            // resize event when the window is shown.
+            onResize(dimensions().width,dimensions().height);
+            break;
+        }
+
         // This is sent to a window after its size has changed.
         case WM_SIZE: {
             onResize(LOWORD(lParam),HIWORD(lParam));
