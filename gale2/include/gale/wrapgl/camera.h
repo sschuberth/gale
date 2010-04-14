@@ -136,9 +136,16 @@ class Camera
     ,   m_clip_near(clip_near)
     ,   m_clip_far(clip_far)
     {
-        // Initialize the camera screen space to the current OpenGL viewport.
-        glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&m_screen));
-        G_ASSERT_OPENGL
+        if (surface) {
+            m_screen.x=m_screen.y=0;
+            m_screen.width=surface->dimensions().width;
+            m_screen.height=surface->dimensions().height;
+        }
+        else {
+            // Initialize the camera screen space to the current OpenGL viewport.
+            glGetIntegerv(GL_VIEWPORT,reinterpret_cast<GLint*>(&m_screen));
+            G_ASSERT_OPENGL
+        }
 
         // Set a perspective camera with no transformation by default.
         setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
