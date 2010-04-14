@@ -31,6 +31,9 @@ namespace gale {
 
 namespace wrapgl {
 
+// TODO: Add Linux implementation.
+#ifdef G_OS_WINDOWS
+
 PIXELFORMATDESCRIPTOR const RenderSurface::s_pfd={
     sizeof(s_pfd)            // nSize
 ,   1                        // nVersion
@@ -63,9 +66,6 @@ PIXELFORMATDESCRIPTOR const RenderSurface::s_pfd={
 ,   0                        // dwVisibleMask
 ,   0                        // dwDamageMask
 };
-
-// TODO: Add Linux implementation.
-#ifdef G_OS_WINDOWS
 
 RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int const samples)
 {
