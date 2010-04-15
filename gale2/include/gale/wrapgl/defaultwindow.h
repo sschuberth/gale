@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DEFAULTWINDOW
-#define DEFAULTWINDOW
+#ifndef DEFAULTWINDOW_H
+#define DEFAULTWINDOW_H
 
 /**
  * \file
@@ -172,4 +172,4 @@ class DefaultWindow:public MinimalWindow
 
 } // namespace gale
 
-#endif // DEFAULTWINDOW
+#endif // DEFAULTWINDOW_H
