@@ -31,6 +31,8 @@
  * Default window and camera navigation implementations
  */
 
+#include "../global/resource.h"
+
 #include "minimalwindow.h"
 #include "camera.h"
 #include "helpers.h"
@@ -72,6 +74,10 @@ class DefaultWindow:public MinimalWindow
     ,   m_logo(0)
 #endif
     {
+        HICON icon=LoadIcon(NULL,MAKEINTRESOURCE(IDI_MAINICON));
+        SendMessage(windowHandle(),WM_SETICON,ICON_BIG,(LPARAM)icon);
+        SendMessage(windowHandle(),WM_SETICON,ICON_SMALL,(LPARAM)icon);
+
         // Add an "About" entry to the system menu.
         HMENU menu=GetSystemMenu(windowHandle(),FALSE);
         if (menu) {
