@@ -74,7 +74,7 @@ class DefaultWindow:public MinimalWindow
     ,   m_logo(0)
 #endif
     {
-        HICON icon=LoadIcon(NULL,MAKEINTRESOURCE(IDI_MAINICON));
+        HICON icon=LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_MAINICON));
         SendMessage(windowHandle(),WM_SETICON,ICON_BIG,(LPARAM)icon);
         SendMessage(windowHandle(),WM_SETICON,ICON_SMALL,(LPARAM)icon);
 
