@@ -174,7 +174,7 @@ bool RenderSurface::createDeviceContext(int pixel_format)
         // Set the user data first and then the window procedure, so it will
         // never be called without the class instance pointer.
         SetWindowLongPtr(m_window,GWLP_USERDATA,(LONG_PTR)this);
-        SetWindowLongPtr(m_window,GWL_WNDPROC,(LONG_PTR)WindowProc);
+        SetWindowLongPtr(m_window,GWLP_WNDPROC,(LONG_PTR)WindowProc);
 
         m_context.device=GetDC(m_window);
         if (m_context.device) {
