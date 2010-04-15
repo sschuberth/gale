@@ -50,7 +50,7 @@ MinimalWindow::MinimalWindow(LPCTSTR title,int width,int height,global::Attribut
     int x=(GetSystemMetrics(SM_CXSCREEN)-width)/2;
     int y=(GetSystemMetrics(SM_CYSCREEN)-height)/2;
 
-    // Adjust render surface's dummy window style and dimensions.
+    // Adjust the render surface's dummy window style, position and dimensions.
     SetWindowLongPtr(windowHandle(),GWL_STYLE,WS_OVERLAPPEDWINDOW);
     SetWindowPos(windowHandle(),HWND_TOP,x,y,width,height,SWP_FRAMECHANGED);
 }
