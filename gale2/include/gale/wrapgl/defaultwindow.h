@@ -156,7 +156,7 @@ class DefaultWindow:public MinimalWindow
     LRESULT handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam);
 
     wrapgl::Camera m_camera; ///< The window's default camera.
-    bool m_fullscreen;
+    bool m_fullscreen;       ///< The current full screen state.
 
 #ifndef GALE_TINY_CODE
     GLuint m_logo; ///< Display list identifier of the logo.
