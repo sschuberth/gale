@@ -37,12 +37,14 @@ namespace gale {
 
 namespace wrapgl {
 
-#include "GLEX_EXT_framebuffer_object.h"
-#include "GLEX_EXT_framebuffer_multisample.h"
+// The ARB extension integrates EXT_framebuffer_object, EXT_framebuffer_blit,
+// EXT_framebuffer_multisample and EXT_packed_depth_stencil.
+#include "GLEX_ARB_framebuffer_object.h"
 
-#ifdef GLEX_EXT_FRAMEBUFFER_OBJECT_H
-    #include "framebufferobjectext.h"
-#endif
+#include "GLEX_EXT_framebuffer_object.h"
+#include "GLEX_EXT_framebuffer_blit.h"
+#include "GLEX_EXT_framebuffer_multisample.h"
+#include "GLEX_EXT_packed_depth_stencil.h"
 
 /**
  * This is a bindable OpenGL object implementation for Renderbuffer Objects, see
@@ -51,6 +53,7 @@ namespace wrapgl {
 class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObject>
 {
     template<GLenum B,class I> friend class Bindable;
+    friend class FrameBufferObject;
 
   public:
 
@@ -72,13 +75,12 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
     void setStorage(GLsizei const width,GLsizei const height,GLenum const format,GLsizei const samples=0) const {
         makeCurrent();
 
-#if defined(GLEX_ARB_FRAMEBUFFER_OBJECT_H) || defined(GLEX_EXT_FRAMEBUFFER_MULTISAMPLE_H)
         if (glRenderbufferStorageMultisample) {
             glRenderbufferStorageMultisample(GL_RENDERBUFFER,samples,format,width,height);
         }
-        else
-#endif
-        glRenderbufferStorage(GL_RENDERBUFFER,format,width,height);
+        else {
+            glRenderbufferStorage(GL_RENDERBUFFER,format,width,height);
+        }
 
         G_ASSERT_OPENGL
     }
@@ -137,11 +139,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
     /// Returns the actual (not necessarily requested) number of samples used
     /// for multi-sampling.
     GLsizei getSamples() const {
-#if defined(GLEX_ARB_FRAMEBUFFER_OBJECT_H) || defined(GLEX_EXT_FRAMEBUFFER_MULTISAMPLE_H)
         return static_cast<GLsizei>(getParameter(GL_RENDERBUFFER_SAMPLES));
-#else
-        return 0;
-#endif
     }
 
     //@}
@@ -150,18 +148,13 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
+        mapEXT2ARB();
+
         handle=0;
-#ifdef GLEX_ARB_FRAMEBUFFER_OBJECT_H
-        if (GLEX_ARB_framebuffer_object || GLEX_ARB_framebuffer_object_init()) {
+        if (glGenRenderbuffers) {
             glGenRenderbuffers(1,&handle);
             G_ASSERT_OPENGL
         }
-#elif defined(GLEX_EXT_FRAMEBUFFER_OBJECT_H)
-        if (GLEX_EXT_framebuffer_object || GLEX_EXT_framebuffer_object_init()) {
-            glGenRenderbuffers(1,&handle);
-            G_ASSERT_OPENGL
-        }
-#endif
     }
 
     /// Destroys the OpenGL object identified by \a handle. If the object is
@@ -181,6 +174,37 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
     }
 
   private:
+
+    /// Maps EXT_framebuffer_* function pointers to ARB_framebuffer_object function pointers.
+    static void mapEXT2ARB() {
+        if (!(GLEX_ARB_framebuffer_object || GLEX_ARB_framebuffer_object_init())) {
+            if (GLEX_EXT_framebuffer_object || GLEX_EXT_framebuffer_object_init()) {
+                glIsRenderbuffer                      = glIsRenderbufferEXT;
+                glBindRenderbuffer                    = glBindRenderbufferEXT;
+                glDeleteRenderbuffers                 = glDeleteRenderbuffersEXT;
+                glGenRenderbuffers                    = glGenRenderbuffersEXT;
+                glRenderbufferStorage                 = glRenderbufferStorageEXT;
+                glGetRenderbufferParameteriv          = glGetRenderbufferParameterivEXT;
+                glIsFramebuffer                       = glIsFramebufferEXT;
+                glBindFramebuffer                     = glBindFramebufferEXT;
+                glDeleteFramebuffers                  = glDeleteFramebuffersEXT;
+                glGenFramebuffers                     = glGenFramebuffersEXT;
+                glCheckFramebufferStatus              = glCheckFramebufferStatusEXT;
+                glFramebufferTexture1D                = glFramebufferTexture1DEXT;
+                glFramebufferTexture2D                = glFramebufferTexture2DEXT;
+                glFramebufferTexture3D                = glFramebufferTexture3DEXT;
+                glFramebufferRenderbuffer             = glFramebufferRenderbufferEXT;
+                glGetFramebufferAttachmentParameteriv = glGetFramebufferAttachmentParameterivEXT;
+                glGenerateMipmap                      = glGenerateMipmapEXT;
+            }
+            if (GLEX_EXT_framebuffer_blit || GLEX_EXT_framebuffer_blit_init()) {
+                glBlitFramebuffer                     = glBlitFramebufferEXT;
+            }
+            if (GLEX_EXT_framebuffer_multisample || GLEX_EXT_framebuffer_multisample_init()) {
+                glRenderbufferStorageMultisample      = glRenderbufferStorageMultisampleEXT;
+            }
+        }
+    }
 
     /// Returns the buffer parameter specified by \a name.
     GLint getParameter(GLenum const name) const {
@@ -308,18 +332,13 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
+        RenderBufferObject::mapEXT2ARB();
+
         handle=0;
-#ifdef GLEX_ARB_FRAMEBUFFER_OBJECT_H
-        if (GLEX_ARB_framebuffer_object || GLEX_ARB_framebuffer_object_init()) {
+        if (glGenFramebuffers) {
             glGenFramebuffers(1,&handle);
             G_ASSERT_OPENGL
         }
-#elif defined(GLEX_EXT_FRAMEBUFFER_OBJECT_H)
-        if (GLEX_EXT_framebuffer_object || GLEX_EXT_framebuffer_object_init()) {
-            glGenFramebuffers(1,&handle);
-            G_ASSERT_OPENGL
-        }
-#endif
     }
 
     /// Destroys the OpenGL object identified by \a handle. If the object is
