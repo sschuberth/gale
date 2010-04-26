@@ -78,18 +78,12 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
 
     G_ASSERT_CALL(makeCurrent())
 
-    // Try to initialize an OpenGL extension for more sophisticated selection of a
-    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
-    GLEX_WGL_ARB_pixel_format_init();
-
-    // Try to initialize an extension required to create an OpenGL 3.0 compatible
-    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
-    GLEX_WGL_ARB_create_context_init();
-
     AttributeListi attr;
     GLint format=0;
 
-    if (GLEX_WGL_ARB_pixel_format) {
+    // Try to initialize an OpenGL extension for more sophisticated selection of a
+    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
+    if (GLEX_WGL_ARB_pixel_format || GLEX_WGL_ARB_pixel_format_init()) {
         // If additional pixel attributes were given, copy them over.
         if (pixel_attr) {
             attr=*pixel_attr;
@@ -113,7 +107,7 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
 
         // Try to get the same format with multi-sampling, see
         // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
-        if (GLEX_ARB_multisample_init()) {
+        if (GLEX_ARB_multisample || GLEX_ARB_multisample_init()) {
             attr.insert(WGL_SAMPLE_BUFFERS_ARB,TRUE);
             attr.insert(WGL_SAMPLES_ARB,samples);
 
@@ -133,7 +127,9 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
         }
     }
 
-    if (GLEX_WGL_ARB_create_context) {
+    // Try to initialize an extension required to create an OpenGL 3.0 compatible
+    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
+    if (GLEX_WGL_ARB_create_context || GLEX_WGL_ARB_create_context_init()) {
         // Destroy the default render context in order to create a more
         // sophisticated one.
         destroyRenderContext();
