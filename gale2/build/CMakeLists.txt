@@ -46,6 +46,8 @@ file(GLOB_RECURSE sources "${glex_root}/*.c")
 list(APPEND files ${sources})
 source_group(${group} FILES ${sources})
 
+add_definitions(/D GALE_USE_VBO /D GALE_USE_SSE /D GALE_USE_SSE2 /D GALE_USE_SSE3)
+
 # Set some custom compiler flags for the heavily size optimized build.
 if(MSVC)
     # Flags specified later will override earlier flags.
@@ -61,7 +63,7 @@ if(MSVC)
     # - Disable Run-Time Type Info
     # - Calling Convention "__fastcall"
     set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}
-        /D GALE_TINY_CODE /D GALE_USE_SSE3
+        /D GALE_TINY_CODE
         /Oi
         /Os
         /Oy
