@@ -61,7 +61,6 @@ class Bindable
     :   m_valid_state(false)
     {
         I::createObject(m_handle);
-        G_ASSERT(m_handle)
     }
 
     /// Destroys this OpenGL object. If the object is currently bound, the
