@@ -94,6 +94,7 @@ function writeMacroHeader($extension,$procs) {
             "/(^|\W)(ushort)/",
             "/(^|\W)(int)/",
             "/(^|\W)(uint)/",
+            "/(^|\W)(handle)/",
             "/(^|\W)(sizei)/",
             "/(^|\W)(enum)/",
             "/(^|\W)(bitfield)/",
