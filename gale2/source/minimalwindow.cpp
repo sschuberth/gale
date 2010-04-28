@@ -35,7 +35,8 @@ namespace wrapgl {
 #ifdef G_OS_WINDOWS
 
 MinimalWindow::MinimalWindow(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr,int const samples)
-:   m_close_requested(false)
+:   RenderSurface(pixel_attr,samples)
+,   m_close_requested(false)
 ,   m_timeout(0)
 {
     SetWindowText(windowHandle(),title);
