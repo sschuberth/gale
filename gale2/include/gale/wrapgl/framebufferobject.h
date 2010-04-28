@@ -50,12 +50,20 @@ namespace wrapgl {
  * This is a bindable OpenGL object implementation for Renderbuffer Objects, see
  * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>
  */
-class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObject>
+class RenderBufferObject:public Bindable<RenderBufferObject>
 {
-    template<GLenum B,class I> friend class Bindable;
+    template<class I> friend class Bindable;
     friend class FrameBufferObject;
 
   public:
+
+    /// Returns the handle of the currently bound object.
+    static GLuint getCurrent() {
+        GLint param;
+        glGetIntegerv(GL_RENDERBUFFER_BINDING,&param);
+        G_ASSERT_OPENGL
+        return static_cast<GLuint>(param);
+    }
 
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.
@@ -220,11 +228,19 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
  * This is a bindable OpenGL object implementation for Framebuffer Objects, see
  * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>
  */
-class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject>
+class FrameBufferObject:public Bindable<FrameBufferObject>
 {
-    template<GLenum B,class I> friend class Bindable;
+    template<class I> friend class Bindable;
 
   public:
+
+    /// Returns the handle of the currently bound object.
+    static GLuint getCurrent() {
+        GLint param;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING,&param);
+        G_ASSERT_OPENGL
+        return static_cast<GLuint>(param);
+    }
 
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.

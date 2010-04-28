@@ -40,21 +40,12 @@ namespace wrapgl {
 
 /**
  * This is a wrapper class for all objects that can be bound to the OpenGL
- * state. The template argument \c B is the name to query the binding and \c I
- * refers to the implementation class.
+ * state. The template argument \c I refers to the implementation class.
  */
-template<GLenum B,class I>
+template<class I>
 class Bindable
 {
   public:
-
-    /// Returns the handle of the currently bound object of type \c B.
-    static GLuint getCurrent() {
-        GLint param;
-        glGetIntegerv(B,&param);
-        G_ASSERT_OPENGL
-        return static_cast<GLuint>(param);
-    }
 
     /// Creates a new (initially unbound) OpenGL object.
     Bindable()
@@ -72,6 +63,11 @@ class Bindable
     /// Returns this object's handle.
     GLuint handle() const {
         return m_handle;
+    }
+
+    /// Returns whether this object is in use as part of current OpenGL state.
+    bool isCurrent() const {
+        return I::getCurrent()==m_handle;
     }
 
     /// Binds this object to the OpenGL state, making it the current one.
