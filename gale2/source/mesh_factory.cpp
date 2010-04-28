@@ -323,6 +323,9 @@ Mesh* Mesh::Factory::Apple(int const s_sections,int const t_sections)
 
 Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const r1,float const r2,float const h,int const n)
 {
+// Warning C4512: Assignment operator could not be generated.
+#pragma warning(disable:4512)
+
     struct Formula:public FormulaR2R3
     {
         Formula(float const r1,float const r2,float const h,int const n)
@@ -354,10 +357,15 @@ Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const
         int const n;
     };
 
+#pragma warning(default:4512)
+
     Formula f(r1,r2,h,n);
 
     return GridMapper(f,0,2*Constf::PI(),s_sections,true,0,2*Constf::PI(),t_sections,false,true);
 }
+
+// Warning C4512: Assignment operator could not be generated.
+#pragma warning(disable:4512)
 
 /**
  * Helper formula to combine the spherical and toroidal product into a single formula.
@@ -394,6 +402,8 @@ struct ProductFormula:public FormulaR2R3
     Formula const& fa; ///< Additive term formula.
 };
 
+#pragma warning(default:4512)
+
 Mesh* Mesh::Factory::SphericalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
 {
     Formula fm;
@@ -415,6 +425,9 @@ Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int const r1_segs,Formula
     // Longitude: -PI <= theta <= PI, Latitude: -PI/2 <= phi <= PI/2.
     return GridMapper(eval,-Constf::PI(),Constf::PI(),r1_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs,true);
 }
+
+// Warning C4701: Potentially uninitialized local variable 'mn' used.
+#pragma warning(disable:4701)
 
 Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour,bool const closed,MatrixArray const* const trans)
 {
@@ -600,6 +613,8 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
 
     return m;
 }
+
+#pragma warning(default:4701)
 
 Mesh* Mesh::Factory::GridMapper(
     FormulaR2R3 const& eval
