@@ -14,30 +14,30 @@ if ($cmdline) {
 }
 else {
     // Use @ to suppress any errors in case optional arguments are missing.
-    @$enumspec=$_REQUEST['enumspec'];
-    @$funcspec=$_REQUEST['funcspec'];
+    @$enumspec=$_REQUEST['es'];
+    @$funcspec=$_REQUEST['fs'];
     @$tm=$_REQUEST['tm'];
     @$api=$_REQUEST['api'];
     @$debug=$_REQUEST['debug'];
 }
 
-if (empty($enumspec) || empty($funcspec) || empty($tm)) {
+if (empty($es) || empty($fs) || empty($tm)) {
     if ($cmdline) {
         // When run from the command line, show the usage information.
         exit("Usage:\n".
-             "       ".basename($argv[0])." enumspec=<enumspec> funcspec=<funcspec> tm=<typemap>\n".
+             "       ".basename($argv[0])." es=<enumspec> fs=<funcspec> tm=<typemap>\n".
              "       [api=<extension|version>] [debug=<verbosity>]\n\n".
              "Where:\n".
-             "       <enumspec> is an enumerant value specification file like\n".
-             "                   http://www.opengl.org/registry/api/enumext.spec\n\n".
-             "       <funcspec> is a function specification file like\n".
-             "                  http://www.opengl.org/registry/api/gl.spec\n\n".
-             "       <tm>       is a type map file like\n".
-             "                  http://www.opengl.org/registry/api/gl.tm\n\n".
-             "       [api]      is either an extension name like \"ARB_transpose_matrix\" or\n".
-             "                  and an API version string like \"GL_VERSION_2_0\" (optional)\n\n".
-             "       [debug]    is a debug verbosity level starting at 1, higher numbers\n".
-             "                  are more verbose (optional)\n\n"
+             "       <es>    is an enumerant value specification file like\n".
+             "               http://www.opengl.org/registry/api/enumext.spec\n\n".
+             "       <fs>    is a function specification file like\n".
+             "               http://www.opengl.org/registry/api/gl.spec\n\n".
+             "       <tm>    is a type map file like\n".
+             "               http://www.opengl.org/registry/api/gl.tm\n\n".
+             "       [api]   is either an extension name like \"ARB_transpose_matrix\" or\n".
+             "               and an API version string like \"VERSION_2_0\" (optional)\n\n".
+             "       [debug] is a debug verbosity level starting at 1, higher numbers\n".
+             "               are more verbose (optional)\n\n"
         );
     }
     else {
@@ -47,46 +47,112 @@ if (empty($enumspec) || empty($funcspec) || empty($tm)) {
     }
 }
 
+function parseFile($parser,$file,&$table) {
+    // Parse the file into an associative array.
+    $handle=@fopen($file,'r') or exit('Error: Unable to open the file "'.$file.'" for reading.');
+
+    while (!feof($handle)) {
+        $line=fgets($handle);
+
+        // Strip comments.
+        $pos=strpos($line,'#');
+        if ($pos!==FALSE) {
+            $line=substr($line,0,$pos);
+        }
+
+        $line=preg_replace('/\/\*.*\*\//','',$line);
+
+        // Remove leading and trailing whitespaces.
+        $line=trim($line);
+
+        // If the line is empty now, there is nothing to do.
+        if (empty($line)) {
+            continue;
+        }
+
+        call_user_func_array($parser,array($line,&$table));
+    }
+
+    fclose($handle);
+}
+
+function callbackEnumSpec($line,&$table) {
+    // Example:
+    // passthru: /* AttribMask */
+    if (strpos($line,'passthru:')===0) {
+        return;
+    }
+
+    // Example:
+    // VERSION_1_1 enum:
+    if (preg_match('/(.+) enum:$/',$line,$matches)) {
+        $table[$matches[1]]=array();
+        end($table);
+    }
+    // Example:
+    // 	DEPTH_BUFFER_BIT				= 0x00000100	# AttribMask
+    else if (preg_match('/(\w+)\s*=\s*(\w+)$/',$line,$matches)) {
+        $table[key($table)]['GL_'.$matches[1]]=$matches[2];
+    }
+    // Example:
+    // 	use ARB_depth_buffer_float	    DEPTH_COMPONENT32F
+    else if (preg_match('/use\s+(\w+)\s+(\w+)$/',$line,$matches)) {
+        $table[key($table)]['GL_'.$matches[2]]=$matches[1];
+    }
+}
+
+function callbackTypeMap($line,&$table) {
+    // Example:
+    // AccumOp,*,*,			    GLenum,*,*
+    $line=str_replace(array(" ","\t"),array("",""),$line);
+    $entry=explode(',',$line);
+    $table[$entry[0]]=$entry[3];
+}
+
 function parseEnumSpec($file,&$table) {
     global $debug;
+
+    if ($debug>=1) {
+        echo "*** DEBUG parseEnumSpec() *** Opening \"$file\" for reading.\n";
+    }
+
+    parseFile('callbackEnumSpec',$file,$table);
+    reset($table);
+
+    // Resolve "use" directives.
+    array_walk_recursive(
+        $table
+    ,   create_function(
+            '&$value,$key,$table'
+        ,   'if (!is_array($value)) {'.
+            '    $use=$table[$value];'.
+            '    if (!empty($use)) {'.
+            '        $value=$use[$key];'.
+            '    }'.
+            '}'
+        )
+    ,   $table
+    );
+
+    if ($debug>=2) {
+        var_dump($table);
+    }
 }
 
 function parseTypeMap($file,&$table) {
     global $debug;
 
     if ($debug>=1) {
-        echo "*** DEBUG parseTypeMap() *** Opening $file for reading.\n";
+        echo "*** DEBUG parseTypeMap() *** Opening \"$file\" for reading.\n";
     }
 
-    // Parse http://www.opengl.org/registry/api/gl.tm into an associative array.
-    $handle=@fopen($file,'r') or exit('Error: Unable to open the file "'.$file.'" for reading.');
-
-    while (!feof($handle)) {
-        // Trim any, also inner, whitespaces.
-        $line=str_replace(array(" ","\t"),array("",""),fgets($handle));
-
-        // Skip comments and empty lines right from the start.
-        if (empty($line) || $line[0]=='#') {
-            continue;
-        }
-
-        // A line looks like this:
-        // AccumOp,*,*,			    GLenum,*,*
-        $entry=explode(',',$line);
-        $table[$entry[0]]=$entry[3];
-    }
-
-    fclose($handle);
+    parseFile('callbackTypeMap',$file,$table);
 
     if ($debug>=2) {
-        echo "*** DEBUG parseTypeMap() *** BEGIN\n";
-        foreach ($table as $key => $value) {
-            echo "Map $key to $value.\n";
-        }
-        echo "*** DEBUG parseTypeMap() *** END\n";
+        var_dump($table);
     }
 }
 
-parseTypeMap($tm,$typemap);
+parseEnumSpec($es,$es_table);
 
 ?>
