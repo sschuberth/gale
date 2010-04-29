@@ -120,23 +120,61 @@ function parseEnumSpec($file,&$table) {
     reset($table);
 
     // Resolve "use" directives.
-    array_walk_recursive(
-        $table
-    ,   create_function(
-            '&$value,$key,$table'
-        ,   'if (is_array($value))'.
-            '    return;'.
-            // If $value is an extension name, get its defines.
-            '$defines=$table[$value];'.
-            'if (empty($defines))'.
-            '    return;'.
-            '$value=$defines[$key];'
-        )
-    ,   $table
-    );
+    function resolveUseDirectives(&$value,$key,$table) {
+        global $debug;
+
+        if (is_array($value)) {
+            return;
+        }
+
+        // If $value is an extension name, we get its defines, else return.
+        $defines=$table[$value];
+        if (empty($defines)) {
+            return;
+        }
+
+        // We are done if we find a value.
+        $value=$defines[$key];
+        if (!empty($value)) {
+            return;
+        }
+
+        if ($debug>=1) {
+            echo "*** DEBUG resolveUseDirectives() *** \"$key\" not found.\n";
+        }
+
+        // Try some heuristics for $key.
+        $vendors=array(
+            '3DFX','3DL'
+        ,   'AMD','APPLE','ARB','ATI'
+        ,   'EXT'
+        ,   'GREMEDY'
+        ,   'HP'
+        ,   'I3D','IBM','INGR','INTEL'
+        ,   'MESA','MESAX'
+        ,   'NV'
+        ,   'OES','OML'
+        ,   'PGI'
+        ,   'REND'
+        ,   'S3','SGI','SGIS','SGIX','SUN','SUNX'
+        ,   'WIN'
+        );
+
+        $pos=strrpos($key,'_');
+        $suffix=substr($key,$pos+1);
+        if (in_array($suffix,$vendors)) {
+            $key2=substr($key,0,$pos);
+        }
+
+        $value=$defines[$key2];
+    }
+
+    array_walk_recursive($table,'resolveUseDirectives',$table);
 
     if ($debug>=2) {
+        echo "*** DEBUG parseEnumSpec() *** BEGIN\n";
         var_dump($table);
+        echo "*** DEBUG parseEnumSpec() *** END\n";
     }
 }
 
@@ -150,7 +188,9 @@ function parseTypeMap($file,&$table) {
     parseFile('callbackTypeMap',$file,$table);
 
     if ($debug>=2) {
+        echo "*** DEBUG parseTypeMap() *** BEGIN\n";
         var_dump($table);
+        echo "*** DEBUG parseTypeMap() *** END\n";
     }
 }
 
