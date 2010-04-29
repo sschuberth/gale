@@ -167,6 +167,22 @@ function parseEnumSpec($file,&$table) {
         }
 
         $value=$defines[$key2];
+        if (!empty($value)) {
+            return;
+        }
+
+        // In case the extension name is wrong, search the whole table.
+        foreach ($table as $defines) {
+            $value=$defines[$key];
+            if (is_numeric($value)) {
+                return;
+            }
+
+            $value=$defines[$key2];
+            if (is_numeric($value)) {
+                return;
+            }
+        }
     }
 
     array_walk_recursive($table,'resolveUseDirectives',$table);
