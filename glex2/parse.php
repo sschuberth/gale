@@ -124,12 +124,13 @@ function parseEnumSpec($file,&$table) {
         $table
     ,   create_function(
             '&$value,$key,$table'
-        ,   'if (!is_array($value)) {'.
-            '    $use=$table[$value];'.
-            '    if (!empty($use)) {'.
-            '        $value=$use[$key];'.
-            '    }'.
-            '}'
+        ,   'if (is_array($value))'.
+            '    return;'.
+            // If $value is an extension name, get its defines.
+            '$defines=$table[$value];'.
+            'if (empty($defines))'.
+            '    return;'.
+            '$value=$defines[$key];'
         )
     ,   $table
     );
