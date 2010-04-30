@@ -1,6 +1,7 @@
 <?php
 
 require_once 'parse.php';
+require_once 'write.php';
 
 // To be on the safe side, assume "register_globals" is set to "off".
 $argc=$_SERVER['argc'];
@@ -50,5 +51,6 @@ if (empty($es) || empty($fs) || empty($tm)) {
 }
 
 parseEnumSpec($es,$es_table);
+writeGlobalHeaderFile($es_table,$api);
 
 ?>
