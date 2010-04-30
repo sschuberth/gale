@@ -66,7 +66,8 @@ function parseEnumSpec($file,&$table) {
     global $debug;
 
     if ($debug>=1) {
-        echo "*** DEBUG parseEnumSpec() *** Opening \"$file\" for reading.\n";
+        echo "*** DEBUG *** Entering parseEnumSpec().\n";
+        echo "*** DEBUG *** Parsing file \"$file\".\n";
     }
 
     parseFile('callbackEnumSpec',$file,$table);
@@ -87,13 +88,14 @@ function parseEnumSpec($file,&$table) {
         }
 
         // We are done if we find a value.
-        $value=$defines[$key];
-        if (!empty($value)) {
+        $res_value=$defines[$key];
+        if (!empty($res_value)) {
+            $value=$res_value;
             return;
         }
 
         if ($debug>=1) {
-            echo "*** DEBUG resolveUseDirectives() *** \"$key\" not found.\n";
+            echo "*** DEBUG *** Unable to resolve \"$key\" in \"$value\".\n";
         }
 
         // Try some heuristics for $key.
@@ -119,31 +121,43 @@ function parseEnumSpec($file,&$table) {
             $key2=substr($key,0,$pos);
         }
 
-        $value=$defines[$key2];
-        if (!empty($value)) {
+        $res_value=$defines[$key2];
+        if (!empty($res_value)) {
+            $value=$res_value;
             return;
         }
 
         // In case the extension name is wrong, search the whole table.
         foreach ($table as $defines) {
-            $value=$defines[$key];
-            if (is_numeric($value)) {
+            $res_value=$defines[$key];
+            if (is_numeric($res_value)) {
+                $value=$res_value;
                 return;
             }
 
-            $value=$defines[$key2];
-            if (is_numeric($value)) {
+            $res_value=$defines[$key2];
+            if (is_numeric($res_value)) {
+                $value=$res_value;
                 return;
             }
+        }
+
+        // We did not find a value for this enum.
+        $value='NULL';
+
+        if ($debug>=1) {
+            echo "*** DEBUG *** Ultimately did not find \"$key\".\n";
         }
     }
 
     array_walk_recursive($table,'resolveUseDirectives',$table);
 
     if ($debug>=2) {
-        echo "*** DEBUG parseEnumSpec() *** BEGIN\n";
         var_dump($table);
-        echo "*** DEBUG parseEnumSpec() *** END\n";
+    }
+
+    if ($debug>=1) {
+        echo "*** DEBUG *** Leaving parseEnumSpec().\n";
     }
 }
 
@@ -151,15 +165,18 @@ function parseTypeMap($file,&$table) {
     global $debug;
 
     if ($debug>=1) {
-        echo "*** DEBUG parseTypeMap() *** Opening \"$file\" for reading.\n";
+        echo "*** DEBUG *** Entering parseTypeMap().\n";
+        echo "*** DEBUG *** Parsing file \"$file\".\n";
     }
 
     parseFile('callbackTypeMap',$file,$table);
 
     if ($debug>=2) {
-        echo "*** DEBUG parseTypeMap() *** BEGIN\n";
         var_dump($table);
-        echo "*** DEBUG parseTypeMap() *** END\n";
+    }
+
+    if ($debug>=1) {
+        echo "*** DEBUG *** Leaving parseTypeMap().\n";
     }
 }
 
