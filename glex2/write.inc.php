@@ -66,14 +66,14 @@ function writeInitializationCode($api) {
         $name=$prefix.$api;
     }
 
-    // There is nothing to do if we have no functions to initialize.
-    if (!file_exists($name.'_procs.h')) {
-        return $contents;
-    }
-
-    $file=$name.'.c';
+    $file=$name;
     if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
+    }
+
+    // There is nothing to do if we have no functions to initialize.
+    if (!file_exists($file.'_procs.h')) {
+        return $contents;
     }
 
     $contents.="#include \"$name.h\"\n\n";
@@ -104,7 +104,7 @@ function writeInitializationCode($api) {
     $contents.="#endif // $ignore\n";
 
     if (!empty($contents)) {
-        file_put_contents($file,$contents);
+        file_put_contents($file.'.c',$contents);
     }
 }
 
