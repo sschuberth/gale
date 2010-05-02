@@ -55,11 +55,14 @@ function callbackEnumSpec($line,&$table) {
 }
 
 function callbackTypeMap($line,&$table) {
-    // Example:
+    // Examples:
     // AccumOp,*,*,			    GLenum,*,*
+    // void,*,*,			    *,*,*
     $line=str_replace(array(" ","\t"),array("",""),$line);
     $entry=explode(',',$line);
-    $table[$entry[0]]=$entry[3];
+    if ($entry[3]!='*') {
+        $table[$entry[0]]=$entry[3];
+    }
 }
 
 function parseEnumSpec($file,&$table) {
