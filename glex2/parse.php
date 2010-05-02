@@ -44,12 +44,12 @@ function callbackEnumSpec($line,&$table) {
     }
     // Example:
     // 	DEPTH_BUFFER_BIT				= 0x00000100	# AttribMask
-    else if (preg_match('/^\s*(\w+)\s*=\s*(\w+)$/',$line,$matches)) {
+    else if (preg_match('/^(\w+)\s*=\s*(\w+)$/',$line,$matches)) {
         $table[key($table)]['GL_'.$matches[1]]=$matches[2];
     }
     // Example:
     // 	use ARB_depth_buffer_float	    DEPTH_COMPONENT32F
-    else if (preg_match('/^\s*use\s+(\w+)\s+(\w+)$/',$line,$matches)) {
+    else if (preg_match('/^use\s+(\w+)\s+(\w+)$/',$line,$matches)) {
         $table[key($table)]['GL_'.$matches[2]]=$matches[1];
     }
 }
