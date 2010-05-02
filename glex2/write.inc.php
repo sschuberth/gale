@@ -54,7 +54,7 @@ function writeGlobalHeaderFile($table,$api) {
     file_put_contents($file,$contents);
 }
 
-function writeInitializationCode($api) {
+function writeInitializationCodeFile($api) {
     global $cmdline;
 
     $prefix=strtoupper(APP_NAME).'_';
@@ -72,7 +72,7 @@ function writeInitializationCode($api) {
     }
 
     // There is nothing to do if we have no functions to initialize.
-    if (!file_exists($file.'_procs.h')) {
+    if (!file_exists($file.'_funcs.h')) {
         return $contents;
     }
 
@@ -83,9 +83,9 @@ function writeInitializationCode($api) {
 
     // Write the code that generates the function pointer variables.
     $contents.="// Initialize all function pointers to 0.\n";
-    $contents.='#define '.$prefix."PROC(t,n,a) t (APIENTRY *$prefix##n) a=0\n";
-    $contents.='    #include "'.$name.'_procs.h"'."\n";
-    $contents.='#undef '.$prefix."PROC\n\n";
+    $contents.='#define '.$prefix."FUNC(t,n,a) t (APIENTRY *$prefix##n) a=0\n";
+    $contents.='    #include "'.$name.'_funcs.h"'."\n";
+    $contents.='#undef '.$prefix."FUNC\n\n";
 
     $contents.="GLboolean $name=GL_FALSE;\n\n";
 
@@ -94,9 +94,9 @@ function writeInitializationCode($api) {
     $contents.='GLboolean '.$name."_init(void)\n{\n";
     $contents.="    $name=GL_TRUE;\n\n";
 
-    $contents.='#define '.$prefix."PROC(t,n,a) $name&=((*((PROC*)&$prefix##n)=wglGetProcAddress(#n))!=0)\n";
-    $contents.='    #include "'.$name.'_procs.h"'."\n";
-    $contents.='#undef '.$prefix."PROC\n\n";
+    $contents.='#define '.$prefix."FUNC(t,n,a) $name&=((*((FUNC*)&$prefix##n)=wglGetProcAddress(#n))!=0)\n";
+    $contents.='    #include "'.$name.'_funcs.h"'."\n";
+    $contents.='#undef '.$prefix."FUNC\n\n";
 
     $contents.="    return $name;\n";
     $contents.="}\n\n";

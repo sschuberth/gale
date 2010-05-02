@@ -57,6 +57,6 @@ parseTypeMap($tm,$tm_table);
 parseFuncSpec($fs,$ts_table);
 
 //writeGlobalHeaderFile($es_table,$api);
-writeInitializationCode($api);
+writeInitializationCodeFile($api);
 
 ?>
