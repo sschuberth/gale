@@ -1,5 +1,7 @@
 <?php
 
+require_once 'constants.inc.php';
+
 function writeGlobalHeaderFile($table,$api) {
     if (empty($api)) {
         $file='glex.h';
@@ -50,6 +52,60 @@ function writeGlobalHeaderFile($table,$api) {
     $contents.="#endif // $guard\n";
 
     file_put_contents($file,$contents);
+}
+
+function writeInitializationCode($api) {
+    global $cmdline;
+
+    $prefix=strtoupper(APP_NAME).'_';
+
+    if (empty($api)) {
+        $name=strtolower(APP_NAME);
+    }
+    else {
+        $name=$prefix.$api;
+    }
+
+    // There is nothing to do if we have no functions to initialize.
+    if (!file_exists($name.'_procs.h')) {
+        return $contents;
+    }
+
+    $file=$name.'.c';
+    if (!$cmdline) {
+        $file=SERVER_TMP_DIRECTORY.$file;
+    }
+
+    $contents.="#include \"$name.h\"\n\n";
+
+    $ignore=strtoupper($name).'_IGNORE';
+    $contents.="#ifndef $ignore\n\n";
+
+    // Write the code that generates the function pointer variables.
+    $contents.="// Initialize all function pointers to 0.\n";
+    $contents.='#define '.$prefix."PROC(t,n,a) t (APIENTRY *$prefix##n) a=0\n";
+    $contents.='    #include "'.$name.'_procs.h"'."\n";
+    $contents.='#undef '.$prefix."PROC\n\n";
+
+    $contents.="GLboolean $name=GL_FALSE;\n\n";
+
+    // Write the code that initializes the function pointer variables.
+    $contents.="// Get the addresses for all functions of this API.\n";
+    $contents.='GLboolean '.$name."_init(void)\n{\n";
+    $contents.="    $name=GL_TRUE;\n\n";
+
+    $contents.='#define '.$prefix."PROC(t,n,a) $name&=((*((PROC*)&$prefix##n)=wglGetProcAddress(#n))!=0)\n";
+    $contents.='    #include "'.$name.'_procs.h"'."\n";
+    $contents.='#undef '.$prefix."PROC\n\n";
+
+    $contents.="    return $name;\n";
+    $contents.="}\n\n";
+
+    $contents.="#endif // $ignore\n";
+
+    if (!empty($contents)) {
+        file_put_contents($file,$contents);
+    }
 }
 
 ?>

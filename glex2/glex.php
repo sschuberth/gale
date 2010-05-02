@@ -50,12 +50,13 @@ if (empty($es) || empty($fs) || empty($tm)) {
     }
 }
 
+parseEnumSpec($es,$es_table);
+
 // $tm_table must be globally available for the function specification parser callback function.
 parseTypeMap($tm,$tm_table);
-
 parseFuncSpec($fs,$ts_table);
 
-//parseEnumSpec($es,$es_table);
 //writeGlobalHeaderFile($es_table,$api);
+writeInitializationCode($api);
 
 ?>
