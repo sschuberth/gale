@@ -219,11 +219,10 @@ function parseFuncSpec($file,&$table) {
     parseFile('callbackFuncSpec',$file,$tmp_table);
     reset($tmp_table);
 
-    // Create the final table using categories as keys and complete function
-    // prototypes as values.
+    // Create the final table using categories as keys and function prototypes
+    // as values.
     foreach ($tmp_table as $func => $props) {
-        $proto=$props['return'].' '.$func.'('.$props['param'].');';
-        $table[$props["category"]][]=$proto;
+        $table[$props["category"]][]=array($props['return'],$func,$props['param']);
     }
 
     if ($debug>=2) {
