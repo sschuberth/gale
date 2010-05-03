@@ -226,7 +226,11 @@ function parseFuncSpec($file,&$table) {
     // Create the final table using categories as keys and function prototypes
     // as values.
     foreach ($tmp_table as $func => $props) {
-        $table[$props["category"]][]=array($props['return'],$func,$props['param']);
+        $params=$props['param'];
+        if (empty($params)) {
+            $params='GLvoid';
+        }
+        $table[$props["category"]][]=array($props['return'],$func,$params);
     }
 
     if ($debug>=2) {
@@ -258,6 +262,9 @@ function parseTypeMap($file,&$table) {
     }
 
     parseFile('callbackTypeMap',$file,$table);
+
+    // Make sure we have this entry.
+    $table['void']='GLvoid';
 
     if ($debug>=2) {
         var_dump($table);
