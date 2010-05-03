@@ -54,61 +54,6 @@ function callbackEnumSpec($line,&$table) {
     }
 }
 
-function callbackFuncSpec($line,&$fs_table) {
-    global $tm_table;
-
-    // Examples:
-    // required-props:
-    // param:		retval retained
-    // passthru: #include <stddef.h>
-    if (preg_match('/^[\w-]+:/',$line)) {
-        return;
-    }
-
-    // Example:
-    // CullFace(mode)
-    if (preg_match('/^(\w+)\(.*\)$/',$line,$matches)) {
-        $fs_table['gl'.$matches[1]]=array();
-        end($fs_table);
-    }
-    // Examples:
-    // 	return		UInt32
-    // 	param		mask		ClearBufferMask in value
-    // 	category	VERSION_1_0		   # old: framebuf
-    else if (preg_match('/^(\w+)\s+(\w+)\s*(\w*)[\s\w]*$/',$line,$matches)) {
-        $entry=&$fs_table[key($fs_table)][$matches[1]];
-        if (!empty($entry)) {
-            // Separate multiple entries per value by commas.
-            $entry.=', ';
-        }
-        if (empty($matches[3])) {
-            $type=$tm_table[$matches[2]];
-            if (!empty($type) && $matches[1]=='return') {
-                // Translate the return type.
-                $entry.=$type;
-            }
-            else {
-                $entry.=$matches[2];
-            }
-        }
-        else {
-            // Translate the argument type and append the argument name.
-            $entry.=$tm_table[$matches[3]].' '.$matches[2];
-        }
-    }
-}
-
-function callbackTypeMap($line,&$table) {
-    // Examples:
-    // AccumOp,*,*,			    GLenum,*,*
-    // void,*,*,			    *,*,*
-    $line=str_replace(array(" ","\t"),array("",""),$line);
-    $entry=explode(',',$line);
-    if ($entry[3]!='*') {
-        $table[$entry[0]]=$entry[3];
-    }
-}
-
 function parseEnumSpec($file,&$table) {
     global $debug;
 
@@ -208,6 +153,50 @@ function parseEnumSpec($file,&$table) {
     }
 }
 
+function callbackFuncSpec($line,&$fs_table) {
+    global $tm_table;
+
+    // Examples:
+    // required-props:
+    // param:		retval retained
+    // passthru: #include <stddef.h>
+    if (preg_match('/^[\w-]+:/',$line)) {
+        return;
+    }
+
+    // Example:
+    // CullFace(mode)
+    if (preg_match('/^(\w+)\(.*\)$/',$line,$matches)) {
+        $fs_table['gl'.$matches[1]]=array();
+        end($fs_table);
+    }
+    // Examples:
+    // 	return		UInt32
+    // 	param		mask		ClearBufferMask in value
+    // 	category	VERSION_1_0		   # old: framebuf
+    else if (preg_match('/^(\w+)\s+(\w+)\s*(\w*)[\s\w]*$/',$line,$matches)) {
+        $entry=&$fs_table[key($fs_table)][$matches[1]];
+        if (!empty($entry)) {
+            // Separate multiple entries per value by commas.
+            $entry.=', ';
+        }
+        if (empty($matches[3])) {
+            $type=$tm_table[$matches[2]];
+            if (!empty($type) && $matches[1]=='return') {
+                // Translate the return type.
+                $entry.=$type;
+            }
+            else {
+                $entry.=$matches[2];
+            }
+        }
+        else {
+            // Translate the argument type and append the argument name.
+            $entry.=$tm_table[$matches[3]].' '.$matches[2];
+        }
+    }
+}
+
 function parseFuncSpec($file,&$table) {
     global $debug;
 
@@ -232,6 +221,17 @@ function parseFuncSpec($file,&$table) {
 
     if ($debug>=1) {
         echo "*** DEBUG *** Leaving parseFuncSpec().\n";
+    }
+}
+
+function callbackTypeMap($line,&$table) {
+    // Examples:
+    // AccumOp,*,*,			    GLenum,*,*
+    // void,*,*,			    *,*,*
+    $line=str_replace(array(" ","\t"),array("",""),$line);
+    $entry=explode(',',$line);
+    if ($entry[3]!='*') {
+        $table[$entry[0]]=$entry[3];
     }
 }
 
