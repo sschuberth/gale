@@ -54,9 +54,12 @@ parseEnumSpec($es,$es_table);
 
 // $tm_table must be globally available for the function specification parser callback function.
 parseTypeMap($tm,$tm_table);
-parseFuncSpec($fs,$ts_table);
+parseFuncSpec($fs,$fs_table);
 
-//writeGlobalHeaderFile($es_table,$api);
+// The function header file needs to be written first because it is checked for later.
+writeFunctionHeaderFile($fs_table,$api);
+
 writeInitializationCodeFile($api);
+//writeGlobalHeaderFile($es_table,$api);
 
 ?>

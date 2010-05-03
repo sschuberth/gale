@@ -21,6 +21,10 @@ function writeGlobalHeaderFile($table,$api) {
             return;
         }
 
+        if (!empty($contents)) {
+            $contents.="\n";
+        }
+
         $contents.="// $api\n";
 
         // Find the longest define name.
@@ -35,8 +39,6 @@ function writeGlobalHeaderFile($table,$api) {
         foreach ($defines as $name => $value) {
             $contents.='#define '.str_pad($name,$max_length).' '.$value."\n";
         }
-
-        $contents.="\n";
     }
 
     if (empty($api)) {
@@ -52,6 +54,56 @@ function writeGlobalHeaderFile($table,$api) {
     $contents.="#endif // $guard\n";
 
     file_put_contents($file,$contents);
+}
+
+function writeFunctionHeaderFile($table,$api) {
+    global $cmdline;
+
+    $prefix=strtoupper(APP_NAME).'_';
+
+    if (empty($api)) {
+        $name=strtolower(APP_NAME);
+    }
+    else {
+        $name=$prefix.$api;
+    }
+
+    $file=$name.'_funcs.inl';
+    if (!$cmdline) {
+        $file=SERVER_TMP_DIRECTORY.$file;
+    }
+
+    function writeFuncsForAPI($prefix,$funcs,$api,&$contents) {
+        if (empty($funcs)) {
+            return;
+        }
+
+        if (!empty($contents)) {
+            $contents.="\n";
+        }
+
+        $contents.="// $api\n";
+
+        foreach ($funcs as $f) {
+            $contents.="${prefix}FUNC( $f[0], $f[1], ($f[2]) );\n";
+            $contents.="#ifndef $f[1]\n";
+            $contents.="    #define $f[1] $prefix$f[1]\n";
+            $contents.="#endif\n";
+        }
+    }
+
+    if (empty($api)) {
+        foreach ($table as $api => $funcs) {
+            writeFuncsForAPI($prefix,$funcs,$api,$contents);
+        }
+    }
+    else {
+        writeFuncsForAPI($prefix,$table[$api],$api,$contents);
+    }
+
+    if (!empty($contents)) {
+        file_put_contents($file,$contents);
+    }
 }
 
 function writeInitializationCodeFile($api) {
@@ -72,7 +124,7 @@ function writeInitializationCodeFile($api) {
     }
 
     // There is nothing to do if we have no functions to initialize.
-    if (!file_exists($file.'_funcs.h')) {
+    if (!file_exists($file.'_funcs.inl')) {
         return $contents;
     }
 
@@ -83,20 +135,20 @@ function writeInitializationCodeFile($api) {
 
     // Write the code that generates the function pointer variables.
     $contents.="// Initialize all function pointers to 0.\n";
-    $contents.='#define '.$prefix."FUNC(t,n,a) t (APIENTRY *$prefix##n) a=0\n";
-    $contents.='    #include "'.$name.'_funcs.h"'."\n";
-    $contents.='#undef '.$prefix."FUNC\n\n";
+    $contents.="#define ${prefix}FUNC(t,n,a) t (APIENTRY *$prefix##n) a=0\n";
+    $contents.="    #include \"${name}_funcs.inl\"\n";
+    $contents.="#undef {$prefix}FUNC\n\n";
 
     $contents.="GLboolean $name=GL_FALSE;\n\n";
 
     // Write the code that initializes the function pointer variables.
     $contents.="// Get the addresses for all functions of this API.\n";
-    $contents.='GLboolean '.$name."_init(void)\n{\n";
+    $contents.="GLboolean ${name}_init(void)\n{\n";
     $contents.="    $name=GL_TRUE;\n\n";
 
-    $contents.='#define '.$prefix."FUNC(t,n,a) $name&=((*((FUNC*)&$prefix##n)=wglGetProcAddress(#n))!=0)\n";
-    $contents.='    #include "'.$name.'_funcs.h"'."\n";
-    $contents.='#undef '.$prefix."FUNC\n\n";
+    $contents.="#define ${prefix}FUNC(t,n,a) $name&=((*((FUNC*)&$prefix##n)=wglGetProcAddress(#n))!=0)\n";
+    $contents.="    #include \"${name}_funcs.inl\"\n";
+    $contents.="#undef ${prefix}FUNC\n\n";
 
     $contents.="    return $name;\n";
     $contents.="}\n\n";
