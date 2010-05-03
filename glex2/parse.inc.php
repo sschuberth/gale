@@ -176,10 +176,12 @@ function callbackFuncSpec($line,&$fs_table) {
     // 	category	VERSION_1_0		   # old: framebuf
     else if (preg_match('/^(\w+)\s+(\w+)\s*(\w*)[\s\w]*$/',$line,$matches)) {
         $entry=&$fs_table[key($fs_table)][$matches[1]];
+
         if (!empty($entry)) {
-            // Separate multiple entries per value by commas.
+            // Separate multiple entries per value by commas (should only happen for "param").
             $entry.=', ';
         }
+
         if (empty($matches[3])) {
             $type=$tm_table[$matches[2]];
             if (!empty($type) && $matches[1]=='return') {
@@ -191,8 +193,17 @@ function callbackFuncSpec($line,&$fs_table) {
             }
         }
         else {
-            // Translate the argument type and append the argument name.
-            $entry.=$tm_table[$matches[3]].' '.$matches[2];
+            $type=$tm_table[$matches[3]];
+            if (!empty($type) && $matches[1]=='param') {
+                // Translate the argument type.
+                $entry.=$type;
+            }
+            else {
+                $entry.=$matches[3];
+            }
+
+            // Append the argument name
+            $entry.=' '.$matches[2];
         }
     }
 }
