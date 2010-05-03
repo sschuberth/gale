@@ -174,7 +174,7 @@ function callbackFuncSpec($line,&$fs_table) {
     // 	return		UInt32
     // 	param		mask		ClearBufferMask in value
     // 	category	VERSION_1_0		   # old: framebuf
-    else if (preg_match('/^(\w+)\s+(\w+)\s*(\w*)[\s\w]*$/',$line,$matches)) {
+    else if (preg_match('/^(\w+)\s+(\w+)\s*(\w*)([\s\w\[\]]*)$/',$line,$matches)) {
         $entry=&$fs_table[key($fs_table)][$matches[1]];
 
         if (!empty($entry)) {
@@ -183,27 +183,31 @@ function callbackFuncSpec($line,&$fs_table) {
         }
 
         if (empty($matches[3])) {
+            // Translate the return type.
             $type=$tm_table[$matches[2]];
-            if (!empty($type) && $matches[1]=='return') {
-                // Translate the return type.
-                $entry.=$type;
+            if (empty($type) || $matches[1]!='return') {
+                $type=$matches[2];
             }
-            else {
-                $entry.=$matches[2];
-            }
+
+            // Append the return name
+            $entry.=$type;
         }
         else {
+            // Translate the argument type.
             $type=$tm_table[$matches[3]];
-            if (!empty($type) && $matches[1]=='param') {
-                // Translate the argument type.
-                $entry.=$type;
+            if (empty($type) || $matches[1]!='param') {
+                $type=$matches[3];
             }
-            else {
-                $entry.=$matches[3];
+
+            if (preg_match('/\barray\b/',$matches[4])) {
+                $type.='*';
+                if (preg_match('/\bin\b/',$matches[4])) {
+                    $type='const '.$type;
+                }
             }
 
             // Append the argument name
-            $entry.=' '.$matches[2];
+            $entry.=$type.' '.$matches[2];
         }
     }
 }
