@@ -173,8 +173,9 @@ function callbackFuncSpec($line,&$fs_table) {
     // Examples:
     // 	return		UInt32
     // 	param		mask		ClearBufferMask in value
+    // 	param		params		Int32 out array [COMPSIZE(pname)]
     // 	category	VERSION_1_0		   # old: framebuf
-    else if (preg_match('/^(\w+)\s+(\w+)\s*(\w*)([\s\w\[\]]*)$/',$line,$matches)) {
+    else if (preg_match('/^(\w+)\s+(\w+)\s*(\w*)(.*)$/',$line,$matches)) {
         $entry=&$fs_table[key($fs_table)][$matches[1]];
 
         if (!empty($entry)) {
