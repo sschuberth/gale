@@ -200,7 +200,7 @@ function writeInitializationCodeFile($api) {
     $contents.="GLboolean ${namespace}_init(void)\n{\n";
     $contents.="    $namespace=GL_TRUE;\n\n";
 
-    $contents.="#define ${prefix}FUNC(t,n,a) $namespace&=((*((FUNC*)&$prefix##n)=wglGetProcAddress(#n))!=0)\n";
+    $contents.="#define ${prefix}FUNC(t,n,a) $namespace&=((*((PROC*)&$prefix##n)=wglGetProcAddress(#n))!=0)\n";
     $contents.="    #include \"${namespace}_funcs.inl\"\n";
     $contents.="#undef ${prefix}FUNC\n\n";
 
