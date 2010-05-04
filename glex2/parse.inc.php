@@ -134,7 +134,7 @@ function parseEnumSpec($file,&$table) {
             }
         }
 
-        // We did not find a value for this enum.
+        // We did not find a value for this define.
         $value='NULL';
 
         if ($debug>=1) {
