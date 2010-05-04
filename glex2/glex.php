@@ -59,7 +59,7 @@ parseFuncSpec($fs,$fs_table);
 // The function header file needs to be written first because it is checked for later.
 writeFunctionHeaderFile($fs_table,$api);
 
+writeEnumHeaderFile($es_table,$api);
 writeInitializationCodeFile($api);
-//writeGlobalHeaderFile($es_table,$api);
 
 ?>
