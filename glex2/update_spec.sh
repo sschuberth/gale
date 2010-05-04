@@ -7,7 +7,7 @@ wget --timestamping --directory-prefix=spec \
     http://www.opengl.org/registry/api/gl.spec \
     http://www.opengl.org/registry/api/gl.tm \
     http://www.opengl.org/registry/api/wglenumext.spec \
-    http://www.opengl.org/registry/api/wgl.spec \
+    http://www.opengl.org/registry/api/wglext.spec \
     http://www.opengl.org/registry/api/wgl.tm
 
 popd > /dev/null

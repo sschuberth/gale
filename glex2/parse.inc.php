@@ -1,11 +1,30 @@
 <?php
 
+$vendors=array(
+    '3DFX','3DL'
+,   'AMD','APPLE','ARB','ATI'
+,   'EXT'
+,   'GREMEDY'
+,   'HP'
+,   'I3D','IBM','INGR','INTEL'
+,   'MESA','MESAX'
+,   'NV'
+,   'OES','OML'
+,   'PGI'
+,   'REND'
+,   'S3','SGI','SGIS','SGIX','SUN','SUNX'
+,   'WIN'
+);
+
 function parseFile($parser,$file,&$table) {
     // Parse the file into an associative array.
     $handle=@fopen($file,'r') or exit("Error: Unable to open the file \"$file\" for reading.\n");
 
     while (!feof($handle)) {
         $line=fgets($handle);
+        if (!isset($first)) {
+            $first=$line;
+        }
 
         // Strip comments.
         $pos=strpos($line,'#');
@@ -23,13 +42,13 @@ function parseFile($parser,$file,&$table) {
             continue;
         }
 
-        call_user_func_array($parser,array($line,&$table));
+        call_user_func_array($parser,array($first,$line,&$table));
     }
 
     fclose($handle);
 }
 
-function callbackEnumSpec($line,&$table) {
+function callbackEnumSpec($first,$line,&$table) {
     // Example:
     // passthru: /* AttribMask */
     if (strpos($line,'passthru:')===0) {
@@ -45,7 +64,10 @@ function callbackEnumSpec($line,&$table) {
     // Example:
     // 	DEPTH_BUFFER_BIT				= 0x00000100	# AttribMask
     else if (preg_match('/^(\w+)\s*=\s*(\w+)$/',$line,$matches)) {
-        $table[key($table)]['GL_'.$matches[1]]=$matches[2];
+        if (strtok($matches[1],'_')!='WGL') {
+            $matches[1]='GL_'.$matches[1];
+        }
+        $table[key($table)][$matches[1]]=$matches[2];
     }
     // Example:
     // 	use ARB_depth_buffer_float	    DEPTH_COMPONENT32F
@@ -67,7 +89,7 @@ function parseEnumSpec($file,&$table) {
 
     // Resolve "use" directives.
     function resolveUseDirectives(&$value,$key,$table) {
-        global $debug;
+        global $debug,$vendors;
 
         if (is_array($value)) {
             return;
@@ -91,22 +113,6 @@ function parseEnumSpec($file,&$table) {
         }
 
         // Try some heuristics for $key.
-        $vendors=array(
-            '3DFX','3DL'
-        ,   'AMD','APPLE','ARB','ATI'
-        ,   'EXT'
-        ,   'GREMEDY'
-        ,   'HP'
-        ,   'I3D','IBM','INGR','INTEL'
-        ,   'MESA','MESAX'
-        ,   'NV'
-        ,   'OES','OML'
-        ,   'PGI'
-        ,   'REND'
-        ,   'S3','SGI','SGIS','SGIX','SUN','SUNX'
-        ,   'WIN'
-        );
-
         $pos=strrpos($key,'_');
         $suffix=substr($key,$pos+1);
         if (in_array($suffix,$vendors)) {
@@ -153,8 +159,8 @@ function parseEnumSpec($file,&$table) {
     }
 }
 
-function callbackFuncSpec($line,&$fs_table) {
-    global $tm_table;
+function callbackFuncSpec($first,$line,&$fs_table) {
+    global $tm_table,$vendors;
 
     // Examples:
     // required-props:
@@ -181,6 +187,10 @@ function callbackFuncSpec($line,&$fs_table) {
         if (!empty($entry)) {
             // Separate multiple entries per value by commas (should only happen for "param").
             $entry.=', ';
+        }
+
+        if (stripos($first,'wgl') && in_array(strtok($matches[2],'_'),$vendors)) {
+            $matches[2]='WGL_'.$matches[2];
         }
 
         if (empty($matches[3])) {
@@ -243,7 +253,7 @@ function parseFuncSpec($file,&$table) {
     }
 }
 
-function callbackTypeMap($line,&$table) {
+function callbackTypeMap($first,$line,&$table) {
     // Examples:
     // AccumOp,*,*,			    GLenum,*,*
     // void,*,*,			    *,*,*
