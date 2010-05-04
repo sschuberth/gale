@@ -5,12 +5,10 @@ require_once 'constants.inc.php';
 function writeFunctionHeaderFile($table,$api) {
     global $cmdline;
 
-    $prefix=strtoupper(APP_NAME).'_';
+    $namespace=strtoupper(APP_NAME);
+    $prefix=$namespace.'_';
 
-    if (empty($api)) {
-        $namespace=strtolower(APP_NAME);
-    }
-    else {
+    if (!empty($api)) {
         $namespace=$prefix.$api;
     }
 
@@ -55,12 +53,10 @@ function writeFunctionHeaderFile($table,$api) {
 function writeEnumHeaderFile($table,$api) {
     global $cmdline;
 
-    $prefix=strtoupper(APP_NAME).'_';
+    $namespace=strtoupper(APP_NAME);
+    $prefix=$namespace.'_';
 
-    if (empty($api)) {
-        $namespace=strtolower(APP_NAME);
-    }
-    else {
+    if (!empty($api)) {
         $namespace=$prefix.$api;
     }
 
@@ -163,12 +159,10 @@ function writeEnumHeaderFile($table,$api) {
 function writeInitializationCodeFile($api) {
     global $cmdline;
 
-    $prefix=strtoupper(APP_NAME).'_';
+    $namespace=strtoupper(APP_NAME);
+    $prefix=$namespace.'_';
 
-    if (empty($api)) {
-        $namespace=strtolower(APP_NAME);
-    }
-    else {
+    if (!empty($api)) {
         $namespace=$prefix.$api;
     }
 
