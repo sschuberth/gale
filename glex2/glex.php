@@ -56,10 +56,19 @@ parseEnumSpec($es,$es_table);
 parseTypeMap($tm,$tm_table);
 parseFuncSpec($fs,$fs_table);
 
-// The function header file needs to be written first because it is checked for later.
-writeFunctionHeaderFile($fs_table,$api);
+if ($cmdline) {
+    // The function header file needs to be written first because it is checked for later.
+    writeFunctionHeaderFile($fs_table,$api);
 
-writeEnumHeaderFile($es_table,$api);
-writeInitializationCodeFile($api);
+    writeEnumHeaderFile($es_table,$api);
+    writeInitializationCodeFile($api);
+
+    $g='GLEX_globals.h';
+    if (file_exists($g)==FALSE) {
+        echo 'Copying globals header file ...';
+        copy(dirname($argv[0]).'/'.$g,$g);
+        echo " saved as \"$g\"\n";
+    }
+}
 
 ?>
