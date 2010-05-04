@@ -184,31 +184,31 @@ function callbackFuncSpec($line,&$fs_table) {
         }
 
         if (empty($matches[3])) {
-            // Translate the return type.
-            $type=$tm_table[$matches[2]];
-            if (empty($type) || $matches[1]!='return') {
-                $type=$matches[2];
+            // Try to translate the return type.
+            $token=$tm_table[$matches[2]];
+            if (empty($token) || $matches[1]!='return') {
+                $token=$matches[2];
             }
 
             // Append the return name
-            $entry.=$type;
+            $entry.=$token;
         }
         else {
-            // Translate the argument type.
-            $type=$tm_table[$matches[3]];
-            if (empty($type) || $matches[1]!='param') {
-                $type=$matches[3];
+            // Try to translate the argument type.
+            $token=$tm_table[$matches[3]];
+            if (empty($token) || $matches[1]!='param') {
+                $token=$matches[3];
             }
 
             if (preg_match('/\barray\b/',$matches[4])) {
-                $type.='*';
+                $token.='*';
                 if (preg_match('/\bin\b/',$matches[4])) {
-                    $type='const '.$type;
+                    $token='const '.$token;
                 }
             }
 
             // Append the argument name
-            $entry.=$type.' '.$matches[2];
+            $entry.=$token.' '.$matches[2];
         }
     }
 }
@@ -231,7 +231,7 @@ function parseFuncSpec($file,&$table) {
         if (empty($params)) {
             $params='GLvoid';
         }
-        $table[$props["category"]][]=array($props['return'],$func,$params);
+        $table[$props['category']][]=array($props['return'],$func,$params);
     }
 
     if ($debug>=2) {
@@ -247,7 +247,7 @@ function callbackTypeMap($line,&$table) {
     // Examples:
     // AccumOp,*,*,			    GLenum,*,*
     // void,*,*,			    *,*,*
-    $line=str_replace(array(" ","\t"),array("",""),$line);
+    $line=str_replace(array(" ","\t"),array('',''),$line);
     $entry=explode(',',$line);
     if ($entry[3]!='*') {
         $table[$entry[0]]=$entry[3];
