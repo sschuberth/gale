@@ -170,10 +170,18 @@ function callbackFuncSpec($first,$line,&$fs_table) {
         return;
     }
 
+    $iswgl=(stripos($first,'wgl')!==FALSE);
+
     // Example:
     // CullFace(mode)
     if (preg_match('/^(\w+)\(.*\)$/',$line,$matches)) {
-        $fs_table['gl'.$matches[1]]=array();
+        if ($iswgl) {
+            $prefix='wgl';
+        }
+        else {
+            $prefix='gl';
+        }
+        $fs_table[$prefix.$matches[1]]=array();
         end($fs_table);
     }
     // Examples:
@@ -189,7 +197,7 @@ function callbackFuncSpec($first,$line,&$fs_table) {
             $entry.=', ';
         }
 
-        if (stripos($first,'wgl') && in_array(strtok($matches[2],'_'),$vendors)) {
+        if ($iswgl && in_array(strtok($matches[2],'_'),$vendors)) {
             $matches[2]='WGL_'.$matches[2];
         }
 
@@ -210,7 +218,7 @@ function callbackFuncSpec($first,$line,&$fs_table) {
                 $token=$matches[3];
             }
 
-            if (preg_match('/\barray\b/',$matches[4])) {
+            if (preg_match('/\b(array|reference)\b/',$matches[4])) {
                 $token.='*';
                 if (preg_match('/\bin\b/',$matches[4])) {
                     $token='const '.$token;
