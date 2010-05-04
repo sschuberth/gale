@@ -2,7 +2,7 @@
 
 function parseFile($parser,$file,&$table) {
     // Parse the file into an associative array.
-    $handle=@fopen($file,'r') or exit('Error: Unable to open the file "'.$file.'" for reading.');
+    $handle=@fopen($file,'r') or exit("Error: Unable to open the file \"$file\" for reading.\n");
 
     while (!feof($handle)) {
         $line=fgets($handle);
