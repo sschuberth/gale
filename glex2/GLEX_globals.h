@@ -14,4 +14,7 @@ typedef unsigned int GLhandleARB;
 typedef ptrdiff_t GLintptrARB;
 typedef ptrdiff_t GLsizeiptrARB;
 
+// Introduced by VERSION_2_0:
+typedef char GLchar;
+
 #endif // GLEX_GLOBALS_H
