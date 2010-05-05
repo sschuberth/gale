@@ -43,6 +43,8 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
+#include "GLEX_WGL_ARB_multisample.h"
+
 #include "GLEX_WGL_ARB_pixel_format.h"
 #include "GLEX_WGL_ARB_create_context.h"
 

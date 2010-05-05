@@ -15,20 +15,19 @@ set PATH=%CYGWIN%;%PATH%
 
 pushd "%~dp0..\glex"
 
-echo *** Deleting existing OpenGL extension initialization files ...
+echo *** Deleting existing OpenGL API initialization files ...
 del GLEX_*.*
 
-: Download and parse the OpenGL extension registry if needed.
-if not exist "..\..\glex\registry\OpenGL.org\ARB\color_buffer_float.txt" (
-    echo *** Generating local OpenGL registry ...
-    bash -c "export PATH=/bin && ../../glex/registry/update_registry.sh ../../glex/registry/OpenGL.org"
-)
+: Download the OpenGL specification files if needed.
+echo *** Updating OpenGL specification files ...
+bash -c "export PATH=/bin && ../../glex2/update_spec.sh"
 
-: List the extensions used in the project.
-echo *** Parsing required OpenGL extensions ...
-for /f %%e in (..\build\opengl-extensions.txt) do (
-    echo Parsing file "%%e" ...
-    bash -c "export PATH=/bin && ../../glex/glex.sh spec=../../glex/registry/OpenGL.org/%%e"
+: Read the OpenGL APIs used in the project.
+echo *** Parsing required OpenGL APIs ...
+for /f %%e in (..\build\opengl-apis.txt) do (
+    echo Parsing API "%%e" ...
+    bash -c "export PATH=/bin && ../../glex2/glex.sh es=../../glex2/spec/enumext.spec fs=../../glex2/spec/gl.spec tm=../../glex2/spec/gl.tm api=%%e"
+    bash -c "export PATH=/bin && ../../glex2/glex.sh es=../../glex2/spec/wglenumext.spec fs=../../glex2/spec/wglext.spec tm=../../glex2/spec/wgl.tm api=%%e"
 )
 
 popd
