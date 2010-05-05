@@ -46,7 +46,13 @@ function writeFunctionHeaderFile($table,$api) {
     }
 
     if (!empty($contents)) {
+        if ($debug>=1) {
+            echo "*** DEBUG *** Writing file \"$file\".\n";
+        }
         file_put_contents($file,$contents);
+    }
+    else if ($debug>=1) {
+        echo "*** DEBUG *** Skipping file \"$file\" as it is empty.\n";
     }
 
     return $contents;
@@ -156,8 +162,14 @@ function writeEnumHeaderFile($table,$api,$hasfuncs) {
     $footer.="#endif // $guard\n";
 
     if (!empty($contents)) {
+        if ($debug>=1) {
+            echo "*** DEBUG *** Writing file \"$file\".\n";
+        }
         $contents=$header.$contents.$footer;
         file_put_contents($file,$contents);
+    }
+    else if ($debug>=1) {
+        echo "*** DEBUG *** Skipping file \"$file\" as it is empty.\n";
     }
 
     return $contents;
@@ -205,6 +217,9 @@ function writeInitializationCodeFile($api) {
 
     $contents.="#endif // $ignore\n";
 
+    if ($debug>=1) {
+        echo "*** DEBUG *** Writing file \"$file\".\n";
+    }
     file_put_contents($file,$contents);
 
     return $contents;
