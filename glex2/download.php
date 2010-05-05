@@ -31,7 +31,7 @@ header('HTTP/1.0 404 Not Found');
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>glex - An OpenGL Extension Specification Parser</title>
+    <title>glex - An OpenGL Extension Specification Parser (Version 2)</title>
     <link type="text/css" href="style.css" rel="stylesheet" />
 </head>
 
