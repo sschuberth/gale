@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>glex - An OpenGL Extension Specification Parser</title>
+    <title>glex - An OpenGL Extension Specification Parser (Version 1)</title>
     <link type="text/css" href="style.css" rel="stylesheet" />
     <script type="text/javascript">
         function openWindow(URL) {
@@ -24,8 +24,9 @@
         <tr>
             <td><!-- Corner spacer --></td>
             <td style="text-align: center; background-image: url(images/title.png)">
-                <h2>glex</h2>
+                <h2>glex, Version 1</h2>
                 <h4>An OpenGL Extension Specification Parser</h4>
+                <h6>(based on *.txt specification files)</h6>
             </td>
             <td><!-- Corner spacer --></td>
         </tr>
