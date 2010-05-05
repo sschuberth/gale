@@ -2,6 +2,25 @@
 
 require_once 'constants.inc.php';
 
+function writeFuncsForAPI($prefix,$funcs,$api,&$contents) {
+    if (empty($funcs)) {
+        return;
+    }
+
+    if (!empty($contents)) {
+        $contents.="\n";
+    }
+
+    $contents.="// $api\n";
+
+    foreach ($funcs as $f) {
+        $contents.="${prefix}FUNC( $f[0], $f[1], ($f[2]) );\n";
+        $contents.="#ifndef $f[1]\n";
+        $contents.="    #define $f[1] $prefix$f[1]\n";
+        $contents.="#endif\n";
+    }
+}
+
 function writeFunctionHeaderFile($table,$api) {
     global $cmdline;
 
@@ -15,25 +34,6 @@ function writeFunctionHeaderFile($table,$api) {
     $file=$namespace.'_funcs.inl';
     if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
-    }
-
-    function writeFuncsForAPI($prefix,$funcs,$api,&$contents) {
-        if (empty($funcs)) {
-            return;
-        }
-
-        if (!empty($contents)) {
-            $contents.="\n";
-        }
-
-        $contents.="// $api\n";
-
-        foreach ($funcs as $f) {
-            $contents.="${prefix}FUNC( $f[0], $f[1], ($f[2]) );\n";
-            $contents.="#ifndef $f[1]\n";
-            $contents.="    #define $f[1] $prefix$f[1]\n";
-            $contents.="#endif\n";
-        }
     }
 
     if (empty($api)) {
@@ -50,6 +50,29 @@ function writeFunctionHeaderFile($table,$api) {
     }
 
     return $contents;
+}
+
+function writeEnumsForAPI($defines,$api,&$contents) {
+    if (empty($defines)) {
+        return;
+    }
+
+    $contents.="// $api\n";
+
+    // Find the longest define name.
+    $max_length=0;
+    foreach ($defines as $name => $value) {
+        $length=strlen($name);
+        if ($length>$max_length) {
+            $max_length=$length;
+        }
+    }
+
+    foreach ($defines as $name => $value) {
+        $contents.='#define '.str_pad($name,$max_length).' '.$value."\n";
+    }
+
+    $contents.="\n";
 }
 
 function writeEnumHeaderFile($table,$api,$hasfuncs) {
@@ -98,29 +121,6 @@ function writeEnumHeaderFile($table,$api,$hasfuncs) {
 
     $header.="#include <GL/gl.h>\n";
     $header.="#include \"${prefix}globals.h\"\n\n";
-
-    function writeEnumsForAPI($defines,$api,&$contents) {
-        if (empty($defines)) {
-            return;
-        }
-
-        $contents.="// $api\n";
-
-        // Find the longest define name.
-        $max_length=0;
-        foreach ($defines as $name => $value) {
-            $length=strlen($name);
-            if ($length>$max_length) {
-                $max_length=$length;
-            }
-        }
-
-        foreach ($defines as $name => $value) {
-            $contents.='#define '.str_pad($name,$max_length).' '.$value."\n";
-        }
-
-        $contents.="\n";
-    }
 
     if (empty($api)) {
         foreach ($table as $api => $defines) {

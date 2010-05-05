@@ -37,8 +37,9 @@ if (empty($es) || empty($fs) || empty($tm)) {
              "               http://www.opengl.org/registry/api/gl.spec\n\n".
              "       <tm>    is a type map file like\n".
              "               http://www.opengl.org/registry/api/gl.tm\n\n".
-             "       [api]   is either an extension name like \"ARB_transpose_matrix\" or\n".
-             "               and an API version string like \"VERSION_2_0\" (optional)\n\n".
+             "       [api]   is a comma separated list of extension names like\n".
+             "               \"ARB_transpose_matrix\" or version strings like \"VERSION_2_0\"\n".
+             "               (optional)\n\n".
              "       [debug] is a debug verbosity level starting at 1, higher numbers\n".
              "               are more verbose (optional)\n\n"
         );
@@ -57,15 +58,20 @@ parseTypeMap($tm,$tm_table);
 parseFuncSpec($fs,$fs_table);
 
 if ($cmdline) {
-    // The function header file needs to be written first because it is checked for later.
-    $f=writeFunctionHeaderFile($fs_table,$api);
+    $a=strtok($api,',');
+    while ($a) {
+        // The function header file needs to be written first because it is checked for later.
+        $f=writeFunctionHeaderFile($fs_table,$a);
 
-    if (!empty($f)) {
-        writeEnumHeaderFile($es_table,$api,true);
-        writeInitializationCodeFile($api);
-    }
-    else {
-        writeEnumHeaderFile($es_table,$api,false);
+        if (!empty($f)) {
+            writeEnumHeaderFile($es_table,$a,true);
+            writeInitializationCodeFile($a);
+        }
+        else {
+            writeEnumHeaderFile($es_table,$a,false);
+        }
+
+        $a=strtok(',');
     }
 
     $g='GLEX_globals.h';
