@@ -22,7 +22,7 @@ function writeFuncsForAPI($prefix,$funcs,$api,&$contents) {
 }
 
 function writeFunctionInlineFile($table,$api) {
-    global $cmdline;
+    global $cmdline,$debug;
 
     $namespace=strtoupper(APP_NAME);
     $prefix=$namespace.'_';
@@ -85,7 +85,7 @@ function writeEnumsForAPI($defines,$api,&$contents) {
 }
 
 function writeEnumHeaderFile($table,$api,$hasfuncs) {
-    global $cmdline;
+    global $cmdline,$debug;
 
     $namespace=strtoupper(APP_NAME);
     $prefix=$namespace.'_';
@@ -182,7 +182,7 @@ function writeEnumHeaderFile($table,$api,$hasfuncs) {
 }
 
 function writeInitializationCodeFile($api) {
-    global $cmdline;
+    global $cmdline,$debug;
 
     $namespace=strtoupper(APP_NAME);
     $prefix=$namespace.'_';
