@@ -74,15 +74,12 @@ while ($a) {
         echo "*** DEBUG *** Parsing API \"$a\".\n";
     }
 
-    // The function header file needs to be written first because it is checked for later.
-    $f=writeFunctionHeaderFile($fs_table,$a);
+    // The function inline file needs to be written first because its existence is checked for later.
+    $f=writeFunctionInlineFile($fs_table,$a);
 
+    $e=writeEnumHeaderFile($es_table,$a,!empty($f));
     if (!empty($f)) {
-        $e=writeEnumHeaderFile($es_table,$a,true);
         $c=writeInitializationCodeFile($a);
-    }
-    else {
-        $e=writeEnumHeaderFile($es_table,$a,false);
     }
 
     $a=strtok(',');

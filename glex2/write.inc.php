@@ -21,7 +21,7 @@ function writeFuncsForAPI($prefix,$funcs,$api,&$contents) {
     }
 }
 
-function writeFunctionHeaderFile($table,$api) {
+function writeFunctionInlineFile($table,$api) {
     global $cmdline;
 
     $namespace=strtoupper(APP_NAME);
@@ -51,8 +51,10 @@ function writeFunctionHeaderFile($table,$api) {
         }
         file_put_contents($file,$contents);
     }
-    else if ($debug>=1) {
-        echo "*** DEBUG *** Skipping file \"$file\" as it is empty.\n";
+    else {
+        if ($debug>=1) {
+            echo "*** DEBUG *** Skipping file \"$file\" as it is empty.\n";
+        }
         $file='';
     }
 
@@ -169,8 +171,10 @@ function writeEnumHeaderFile($table,$api,$hasfuncs) {
         $contents=$header.$contents.$footer;
         file_put_contents($file,$contents);
     }
-    else if ($debug>=1) {
-        echo "*** DEBUG *** Skipping file \"$file\" as it is empty.\n";
+    else {
+        if ($debug>=1) {
+            echo "*** DEBUG *** Skipping file \"$file\" as it is empty.\n";
+        }
         $file='';
     }
 
