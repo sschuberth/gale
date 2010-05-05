@@ -69,7 +69,7 @@ if ($cmdline) {
 }
 
 $a=strtok($api,',');
-while ($a) {
+do {
     if ($debug>=1) {
         echo "*** DEBUG *** Parsing API \"$a\".\n";
     }
@@ -84,6 +84,7 @@ while ($a) {
 
     $a=strtok(',');
 }
+while ($a);
 
 if ($cmdline) {
     $g='GLEX_globals.h';
