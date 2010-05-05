@@ -204,7 +204,7 @@ function writeMacroHeader($extension,$procs) {
     }
 
     if (empty($contents)) {
-        return $contents;
+        return '';
     }
 
     file_put_contents($file,$contents);
@@ -323,7 +323,7 @@ function writePrototypeHeader($extension,$procs,$tokens) {
         $contents.=$types;
     }
 
-    if (file_exists($extension.'_procs.h')) {
+    if (file_exists(substr($file,0,strrpos($file,'.')).'_procs.h')) {
         $contents.="#ifdef __cplusplus\n";
         $contents.="extern \"C\"\n{\n";
         $contents.="#endif\n\n";
@@ -348,7 +348,7 @@ function writePrototypeHeader($extension,$procs,$tokens) {
     $contents.="#endif // $guard\n";
 
     if (empty($contents)) {
-        return $contents;
+        return '';
     }
 
     file_put_contents($file,$contents);
@@ -359,13 +359,13 @@ function writePrototypeHeader($extension,$procs,$tokens) {
 function writeInitializationCode($extension) {
     global $cmdline;
 
-    if (!file_exists($extension.'_procs.h')) {
-        return $contents;
-    }
-
     $file=$extension.'.c';
     if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
+    }
+
+    if (!file_exists(substr($file,0,strrpos($file,'.')).'_procs.h')) {
+        return '';
     }
 
     $contents.='#include "'.$extension.'.h"'."\n\n";
@@ -396,7 +396,7 @@ function writeInitializationCode($extension) {
     $contents.="#endif // $ignore\n";
 
     if (empty($contents)) {
-        return $contents;
+        return '';
     }
 
     file_put_contents($file,$contents);
