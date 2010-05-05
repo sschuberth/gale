@@ -53,9 +53,10 @@ function writeFunctionHeaderFile($table,$api) {
     }
     else if ($debug>=1) {
         echo "*** DEBUG *** Skipping file \"$file\" as it is empty.\n";
+        $file='';
     }
 
-    return $contents;
+    return $file;
 }
 
 function writeEnumsForAPI($defines,$api,&$contents) {
@@ -170,9 +171,10 @@ function writeEnumHeaderFile($table,$api,$hasfuncs) {
     }
     else if ($debug>=1) {
         echo "*** DEBUG *** Skipping file \"$file\" as it is empty.\n";
+        $file='';
     }
 
-    return $contents;
+    return $file;
 }
 
 function writeInitializationCodeFile($api) {
@@ -222,7 +224,7 @@ function writeInitializationCodeFile($api) {
     }
     file_put_contents($file,$contents);
 
-    return $contents;
+    return $file;
 }
 
 ?>
