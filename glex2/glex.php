@@ -66,27 +66,29 @@ if ($cmdline) {
         $contents=file_get_contents($file);
         $api=str_replace(array("\r","\n"),array('',','),$contents);
     }
+}
 
-    $a=strtok($api,',');
-    while ($a) {
-        if ($debug>=1) {
-            echo "*** DEBUG *** Parsing API \"$a\".\n";
-        }
-
-        // The function header file needs to be written first because it is checked for later.
-        $f=writeFunctionHeaderFile($fs_table,$a);
-
-        if (!empty($f)) {
-            writeEnumHeaderFile($es_table,$a,true);
-            writeInitializationCodeFile($a);
-        }
-        else {
-            writeEnumHeaderFile($es_table,$a,false);
-        }
-
-        $a=strtok(',');
+$a=strtok($api,',');
+while ($a) {
+    if ($debug>=1) {
+        echo "*** DEBUG *** Parsing API \"$a\".\n";
     }
 
+    // The function header file needs to be written first because it is checked for later.
+    $f=writeFunctionHeaderFile($fs_table,$a);
+
+    if (!empty($f)) {
+        $e=writeEnumHeaderFile($es_table,$a,true);
+        $c=writeInitializationCodeFile($a);
+    }
+    else {
+        $e=writeEnumHeaderFile($es_table,$a,false);
+    }
+
+    $a=strtok(',');
+}
+
+if ($cmdline) {
     $g='GLEX_globals.h';
     if (file_exists($g)==FALSE) {
         if ($debug>=1) {
@@ -94,6 +96,9 @@ if ($cmdline) {
         }
         copy(dirname($argv[0]).'/'.$g,$g);
     }
+}
+else {
+    require_once 'index.php';
 }
 
 ?>
