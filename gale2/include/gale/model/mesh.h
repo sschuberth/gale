@@ -125,13 +125,13 @@ struct Mesh
         /// segments respectively.
         static Mesh* Torus(float const r1,float const r2,int const r1_segs,int const r2_segs);
 
-        /// Returns a torus knot with outer radius \a r1 and inner radius \a r2.
-        /// The outer and inner circles are consist of \a r1_segs and \a r2_segs
-        /// segments respectively. \a w and \a h specify the width and height of
-        /// the whole knot, which is obtained by looping through the hole \a p
-        /// times with \a q revolutions before joining its ends, where \a p and
-        /// \a q have to be relatively prime.
-        static Mesh* TorusKnot(float const r1,float const r2,int const r1_segs,int const r2_segs,float const w,float const h,int const p,int const q);
+        /// Returns a torus knot with knot radius \a rk and tube radius \a rt.
+        /// The tube consist of \a sp and \a sc segments along the path and
+        /// circle respectively. \a w and \a h specify the width and height of
+        /// the knot's spiral, which is obtained by looping through the hole
+        /// \a p times with \a q revolutions before joining its ends, where \a p
+        /// and \a q have to be relatively prime.
+        static Mesh* TorusKnot(float const rk,float const rt,int const sp,int const sc,int const p,int const q,float const w=1,float const h=1);
 
         /// Returns a Möbius Strip with an outer radius width \a r1w and height
         /// \a r1h, and inner radius width \a r2w and height \a r2h, where the

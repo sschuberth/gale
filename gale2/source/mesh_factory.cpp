@@ -248,20 +248,20 @@ Mesh* Mesh::Factory::Torus(float const r1,float const r2,int const r1_segs,int c
     return Extruder(path,contour);
 }
 
-Mesh* Mesh::Factory::TorusKnot(float const r1,float const r2,int const r1_segs,int const r2_segs,float const w,float const h,int const p,int const q)
+Mesh* Mesh::Factory::TorusKnot(float const rk,float const rt,int const sp,int const sc,int const p,int const q,float const w,float const h)
 {
     // Calculate points on the path.
-    VectorArray path(r1_segs);
-    for (int i=0;i<r1_segs;++i) {
-        float angle=2*Constf::PI()/r1_segs*i;
+    VectorArray path(sp);
+    for (int i=0;i<sp;++i) {
+        float angle=2*Constf::PI()/sp*i;
 
         // Calculate the cylindrical coordinates.
-        float theta=angle*p;
-        float r=r1+w*::cos(theta);
+        float theta=angle*q;
+        float r=rk+w*::cos(theta);
         float z=h*::sin(theta);
 
         // Convert to cartesian coordinates.
-        float phi=angle*q;
+        float phi=angle*p;
         float x=r*::cos(phi);
         float y=r*::sin(phi);
 
@@ -270,7 +270,7 @@ Mesh* Mesh::Factory::TorusKnot(float const r1,float const r2,int const r1_segs,i
 
     // Calculate points on the contour.
     VectorArray contour;
-    Shape::Ellipse(contour,r2_segs,r2,r2);
+    Shape::Ellipse(contour,sc,rt,rt);
 
     // Extrude the contour along the path.
     return Extruder(path,contour);
