@@ -28,7 +28,7 @@
 
 /**
  * \file
- * A wrapper for Framebuffer Objects
+ * Wrappers for Frame Buffer / Render Buffer Objects
  */
 
 #include "textureobject.h"
@@ -50,20 +50,12 @@ namespace wrapgl {
  * This is a bindable OpenGL object implementation for Renderbuffer Objects, see
  * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>
  */
-class RenderBufferObject:public Bindable<RenderBufferObject>
+class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObject>
 {
-    template<class I> friend class Bindable;
+    template<GLenum B,class I> friend class Bindable;
     friend class FrameBufferObject;
 
   public:
-
-    /// Returns the handle of the currently bound object.
-    static GLuint getCurrent() {
-        GLint param;
-        glGetIntegerv(GL_RENDERBUFFER_BINDING,&param);
-        G_ASSERT_OPENGL
-        return static_cast<GLuint>(param);
-    }
 
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.
@@ -174,8 +166,8 @@ class RenderBufferObject:public Bindable<RenderBufferObject>
         }
     }
 
-    /// Checks whether the given object \a handle is valid.
-    static bool isValidObject(GLuint const handle) {
+    /// Checks whether the \a handle is of this object's type.
+    static bool isOfType(GLuint const handle) {
         GLboolean result=glIsRenderbuffer && glIsRenderbuffer(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
@@ -228,19 +220,11 @@ class RenderBufferObject:public Bindable<RenderBufferObject>
  * This is a bindable OpenGL object implementation for Framebuffer Objects, see
  * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>
  */
-class FrameBufferObject:public Bindable<FrameBufferObject>
+class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject>
 {
-    template<class I> friend class Bindable;
+    template<GLenum B,class I> friend class Bindable;
 
   public:
-
-    /// Returns the handle of the currently bound object.
-    static GLuint getCurrent() {
-        GLint param;
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING,&param);
-        G_ASSERT_OPENGL
-        return static_cast<GLuint>(param);
-    }
 
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.
@@ -366,8 +350,8 @@ class FrameBufferObject:public Bindable<FrameBufferObject>
         }
     }
 
-    /// Checks whether the given object \a handle is valid.
-    static bool isValidObject(GLuint const handle) {
+    /// Checks whether the \a handle is of this object's type.
+    static bool isOfType(GLuint const handle) {
         GLboolean result=glIsFramebuffer && glIsFramebuffer(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;

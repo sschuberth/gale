@@ -44,22 +44,14 @@ namespace wrapgl {
  * type \c T.
  */
 template<GLenum T,GLenum B>
-class TextureObject:public Bindable<TextureObject<T,B> >
+class TextureObject:public Bindable<B,TextureObject<T,B> >
 {
-    template<class I> friend class Bindable;
+    template<GLenum B,class I> friend class Bindable;
 
   public:
 
     /// Class constant for external access to the target type.
     static GLenum const TARGET=T;
-
-    /// Returns the handle of the currently bound object of type \c B.
-    static GLuint getCurrent() {
-        GLint param;
-        glGetIntegerv(B,&param);
-        G_ASSERT_OPENGL
-        return static_cast<GLuint>(param);
-    }
 
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.
@@ -146,8 +138,8 @@ class TextureObject:public Bindable<TextureObject<T,B> >
         G_ASSERT_OPENGL
     }
 
-    /// Checks whether the given object \a handle is valid.
-    static bool isValidObject(GLuint const handle) {
+    /// Checks whether the \a handle is of this object's type.
+    static bool isOfType(GLuint const handle) {
         GLboolean result=glIsTexture(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;

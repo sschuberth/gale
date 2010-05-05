@@ -40,16 +40,25 @@ namespace wrapgl {
 
 /**
  * This is a wrapper class for all objects that can be bound to the OpenGL
- * state. The template argument \c I refers to the implementation class.
+ * state. The template argument \c B is the name to query the binding and \c I
+ * refers to the implementation class.
  */
-template<class I>
+template<GLenum B,class I>
 class Bindable
 {
   public:
 
+    /// Returns the handle of the currently bound object of type \c B.
+    static GLuint getCurrent() {
+        GLint param;
+        glGetIntegerv(B,&param);
+        G_ASSERT_OPENGL
+        return static_cast<GLuint>(param);
+    }
+
     /// Creates a new (initially unbound) OpenGL object.
     Bindable()
-    :   m_valid_state(false)
+    :   m_dirty_state(false)
     {
         I::createObject(m_handle);
     }
@@ -75,24 +84,24 @@ class Bindable
         I::setCurrent(m_handle);
     }
 
-    /// Returns whether the object currently represents a valid state vector.
-    bool isValidState() const {
-        return m_valid_state;
+    /// Returns whether the object currently is consistent.
+    bool isDirtyState() const {
+        return m_dirty_state;
     }
 
-    /// Sets whether the object currently represents a valid state vector.
-    void setValidState(bool const state) const {
-        m_valid_state=state;
+    /// Sets whether the object currently is consistent.
+    void setDirtyState(bool const state) const {
+        m_dirty_state=state;
     }
 
     /// Checks whether this object's handle is valid.
     bool isValidHandle() const {
-        return I::isValidObject(m_handle);
+        return I::isOfType(m_handle);
     }
 
   protected:
 
-    bool mutable m_valid_state; ///< Indicates whether the object currently represents a valid state vector.
+    bool mutable m_dirty_state; ///< Indicates whether the object currently represents a valid state vector.
 
     GLuint m_handle; ///< The handle identifying the object.
 };

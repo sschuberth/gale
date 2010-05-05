@@ -221,8 +221,8 @@ void Mesh::Preparer::compile(Mesh const* const mesh)
 
     vbo_indices.unmap();
 
-    // Mark the Vertex Array Object's contents as invalid.
-    vao.setValidState(false);
+    // Mark the Vertex Array Object as inconsistent.
+    vao.setDirtyState(false);
 #endif
 }
 

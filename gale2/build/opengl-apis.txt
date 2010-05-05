@@ -8,6 +8,7 @@ EXT_framebuffer_multisample
 EXT_framebuffer_object
 EXT_packed_depth_stencil
 EXT_texture3D
+VERSION_2_0
 WGL_ARB_create_context
 WGL_ARB_multisample
 WGL_ARB_pixel_format

@@ -41,26 +41,18 @@ namespace wrapgl {
 
 /**
  * This is a bindable OpenGL object implementation for Vertex Buffer Objects of
- * target type \c T and \c B being the name to query the binding, see
+ * target type \c T, see
  * <http://www.opengl.org/registry/specs/ARB/vertex_buffer_object.txt>
  */
 template<GLenum T,GLenum B>
-class VertexBufferObject:public Bindable<VertexBufferObject<T,B> >
+class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 {
-    template<class I> friend class Bindable;
+    template<GLenum B,class I> friend class Bindable;
 
   public:
 
     /// Class constant for external access to the target type.
     static GLenum const TARGET=T;
-
-    /// Returns the handle of the currently bound object of type \c B.
-    static GLuint getCurrent() {
-        GLint param;
-        glGetIntegerv(B,&param);
-        G_ASSERT_OPENGL
-        return static_cast<GLuint>(param);
-    }
 
     /// Sets the current binding to the object described by \a handle. If
     /// \a handle is 0, the current object will be unbound.
@@ -169,8 +161,8 @@ class VertexBufferObject:public Bindable<VertexBufferObject<T,B> >
         }
     }
 
-    /// Checks whether the given object \a handle is valid.
-    static bool isValidObject(GLuint const handle) {
+    /// Checks whether the \a handle is of this object's type.
+    static bool isOfType(GLuint const handle) {
         GLboolean result=glIsBufferARB && glIsBufferARB(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;

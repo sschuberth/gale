@@ -45,9 +45,7 @@ void Renderer::draw(Mesh::Preparer const& geom)
         geom.vao.makeCurrent();
     }
 
-    if (!geom.vao.isValidState() || !geom.vao.isValidHandle()) {
-        geom.vao.setValidState(true);
-
+    if (!geom.vao.isDirtyState() || !geom.vao.isValidHandle()) {
         // Set-up the arrays to be indexed.
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_NORMAL_ARRAY);
@@ -64,6 +62,9 @@ void Renderer::draw(Mesh::Preparer const& geom)
         G_ASSERT_OPENGL
 
         geom.vbo_indices.makeCurrent();
+
+        // Mark the Vertex Array Object as consistent.
+        geom.vao.setDirtyState(true);
     }
 
     Mesh::IndexArray::Type const* indices_ptr=NULL;
