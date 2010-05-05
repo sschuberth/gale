@@ -26,6 +26,8 @@ function getFunctionsDate() {
  */
 
 function parseSpecIntoArray($spec,&$struct) {
+    global $cmdline;
+
     // Parse the sections and contents of the file into an associative array
     // that represents the file structure.
     $handle=@fopen($spec,'r') or
@@ -39,7 +41,7 @@ function parseSpecIntoArray($spec,&$struct) {
         $line=rtrim(fgets($handle));
         ++$i;
 
-        if (strlen($line)>OPENGL_SPEC_MAX_CHARS_PER_LINE) {
+        if ($cmdline && strlen($line)>OPENGL_SPEC_MAX_CHARS_PER_LINE) {
             echo "Warning: Line $i exceeds the maximum of ".OPENGL_SPEC_MAX_CHARS_PER_LINE." characters.\n";
         }
 
