@@ -29,7 +29,7 @@ if (empty($es) || empty($fs) || empty($tm)) {
         // When run from the command line, show the usage information.
         exit("Usage:\n".
              "       ".basename($argv[0])." es=<enumspec> fs=<funcspec> tm=<typemap>\n".
-             "       [api=<string>[,string]] [debug=<verbosity>]\n\n".
+             "       [api=(<name>[,name]|<@file>)] [debug=<verbosity>]\n\n".
              "Where:\n".
              "       <es>    is an enumerant value specification file like\n".
              "               http://www.opengl.org/registry/api/enumext.spec\n\n".
@@ -37,9 +37,9 @@ if (empty($es) || empty($fs) || empty($tm)) {
              "               http://www.opengl.org/registry/api/gl.spec\n\n".
              "       <tm>    is a type map file like\n".
              "               http://www.opengl.org/registry/api/gl.tm\n\n".
-             "       [api]   is a comma separated list of extension names like\n".
-             "               \"ARB_transpose_matrix\" or version strings like \"VERSION_2_0\"\n".
-             "               (optional)\n\n".
+             "       [api]   is either a comma separated list of extension names like\n".
+             "               \"ARB_transpose_matrix\" and version strings like \"VERSION_2_0\"\n".
+             "               or a file name prefixed by \"@\" with one name per line (optional)\n\n".
              "       [debug] is a debug verbosity level starting at 1, higher numbers\n".
              "               are more verbose (optional)\n\n"
         );
@@ -58,8 +58,21 @@ parseTypeMap($tm,$tm_table);
 parseFuncSpec($fs,$fs_table);
 
 if ($cmdline) {
+    if ($api[0]=='@') {
+        $file=ltrim($api,'@');
+        if ($debug>=1) {
+            echo "*** DEBUG *** Reading APIs from \"$file\".\n";
+        }
+        $contents=file_get_contents($file);
+        $api=str_replace(array("\r","\n"),array('',','),$contents);
+    }
+
     $a=strtok($api,',');
     while ($a) {
+        if ($debug>=1) {
+            echo "*** DEBUG *** Parsing API \"$a\".\n";
+        }
+
         // The function header file needs to be written first because it is checked for later.
         $f=writeFunctionHeaderFile($fs_table,$a);
 
@@ -76,9 +89,10 @@ if ($cmdline) {
 
     $g='GLEX_globals.h';
     if (file_exists($g)==FALSE) {
-        echo 'Copying globals header file ...';
+        if ($debug>=1) {
+            echo "*** DEBUG *** Copying globals header file to \"$g\".\n";
+        }
         copy(dirname($argv[0]).'/'.$g,$g);
-        echo " saved as \"$g\".\n";
     }
 }
 
