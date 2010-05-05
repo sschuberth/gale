@@ -124,10 +124,10 @@ else {
             <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
             <td style="background-color: #d3e0e7; padding: 10px">
                 Enter the URL to an OpenGL extension specification text file
-                (see e.g. <a href="http://www.opengl.org/registry/">http://www.opengl.org/registry/</a>):
+                (see <a href="http://www.opengl.org/registry/">http://www.opengl.org/registry/</a>):
                 <form action="parse.php">
                     <p style="white-space: nowrap">
-                        <input type="text" size="100%" name="spec" value="<?= $spec ?>" />
+                        <input type="text" size="100%" name="spec" value="<?= empty($spec)?'http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt':$spec ?>" />
                         <input type="submit" value="Generate code" />
                         <input type="button" value="Jump to URL" onclick="openWindow(this.form.spec.value); return false" />
                     </p>
