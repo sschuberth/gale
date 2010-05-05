@@ -58,10 +58,15 @@ parseFuncSpec($fs,$fs_table);
 
 if ($cmdline) {
     // The function header file needs to be written first because it is checked for later.
-    writeFunctionHeaderFile($fs_table,$api);
+    $f=writeFunctionHeaderFile($fs_table,$api);
 
-    writeEnumHeaderFile($es_table,$api);
-    writeInitializationCodeFile($api);
+    if (!empty($f)) {
+        writeEnumHeaderFile($es_table,$api,true);
+        writeInitializationCodeFile($api);
+    }
+    else {
+        writeEnumHeaderFile($es_table,$api,false);
+    }
 
     $g='GLEX_globals.h';
     if (file_exists($g)==FALSE) {

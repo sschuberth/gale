@@ -48,9 +48,11 @@ function writeFunctionHeaderFile($table,$api) {
     if (!empty($contents)) {
         file_put_contents($file,$contents);
     }
+
+    return $contents;
 }
 
-function writeEnumHeaderFile($table,$api) {
+function writeEnumHeaderFile($table,$api,$hasfuncs) {
     global $cmdline;
 
     $namespace=strtoupper(APP_NAME);
@@ -68,34 +70,34 @@ function writeEnumHeaderFile($table,$api) {
     // Write the inclusion guard header.
     $guard=strtoupper(strtr(basename($file),'.','_'));
 
-    $contents.="#ifndef $guard\n";
-    $contents.="#define $guard\n\n";
+    $header.="#ifndef $guard\n";
+    $header.="#define $guard\n\n";
 
     $ignore=strtoupper($namespace).'_IGNORE';
 
-    $contents.="#ifdef __linux\n";
-    $contents.="    // TODO: Linux support.\n";
+    $header.="#ifdef __linux\n";
+    $header.="    // TODO: Linux support.\n";
     if (strpos($guard,'_WGL_')!==FALSE) {
-        $contents.="\n    // Ignore WGL extensions under Linux.\n";
-        $contents.="    #define $ignore\n";
+        $header.="\n    // Ignore WGL extensions under Linux.\n";
+        $header.="    #define $ignore\n";
     }
-    $contents.="#endif\n\n";
+    $header.="#endif\n\n";
 
-    $contents.="#ifdef _WIN32\n";
-    $contents.="    #ifndef WIN32_LEAN_AND_MEAN\n";
-    $contents.="        #define WIN32_LEAN_AND_MEAN 1\n";
-    $contents.="    #endif\n";
-    $contents.="    #include <windows.h>\n";
+    $header.="#ifdef _WIN32\n";
+    $header.="    #ifndef WIN32_LEAN_AND_MEAN\n";
+    $header.="        #define WIN32_LEAN_AND_MEAN 1\n";
+    $header.="    #endif\n";
+    $header.="    #include <windows.h>\n";
     if (strpos($guard,'_GLX_')!==FALSE) {
-        $contents.="\n    // Ignore GLX extensions under Windows.\n";
-        $contents.="    #define $ignore\n";
+        $header.="\n    // Ignore GLX extensions under Windows.\n";
+        $header.="    #define $ignore\n";
     }
-    $contents.="#endif\n\n";
+    $header.="#endif\n\n";
 
-    $contents.="#ifndef $ignore\n\n";
+    $header.="#ifndef $ignore\n\n";
 
-    $contents.="#include <GL/gl.h>\n";
-    $contents.="#include \"${prefix}globals.h\"\n\n";
+    $header.="#include <GL/gl.h>\n";
+    $header.="#include \"${prefix}globals.h\"\n\n";
 
     function writeEnumsForAPI($defines,$api,&$contents) {
         if (empty($defines)) {
@@ -129,7 +131,7 @@ function writeEnumHeaderFile($table,$api) {
         writeEnumsForAPI($table[$api],$api,$contents);
     }
 
-    if (file_exists(substr($file,0,strrpos($file,'.')).'_funcs.inl')) {
+    if ($hasfuncs) {
         $contents.="#ifdef __cplusplus\n";
         $contents.="extern \"C\"\n{\n";
         $contents.="#endif\n\n";
@@ -148,12 +150,17 @@ function writeEnumHeaderFile($table,$api) {
         $contents.="#endif\n\n";
     }
 
-    $contents.="#endif // $ignore\n\n";
+    $footer.="#endif // $ignore\n\n";
 
     // Write the inclusion guard footer.
-    $contents.="#endif // $guard\n";
+    $footer.="#endif // $guard\n";
 
-    file_put_contents($file,$contents);
+    if (!empty($contents)) {
+        $contents=$header.$contents.$footer;
+        file_put_contents($file,$contents);
+    }
+
+    return $contents;
 }
 
 function writeInitializationCodeFile($api) {
@@ -166,14 +173,9 @@ function writeInitializationCodeFile($api) {
         $namespace=$prefix.$api;
     }
 
-    $file=$namespace;
+    $file=$namespace.'.c';
     if (!$cmdline) {
         $file=SERVER_TMP_DIRECTORY.$file;
-    }
-
-    // There is nothing to do if we have no functions to initialize.
-    if (!file_exists($file.'_funcs.inl')) {
-        return;
     }
 
     $contents.="#include \"$namespace.h\"\n\n";
@@ -203,7 +205,9 @@ function writeInitializationCodeFile($api) {
 
     $contents.="#endif // $ignore\n";
 
-    file_put_contents($file.'.c',$contents);
+    file_put_contents($file,$contents);
+
+    return $contents;
 }
 
 ?>
