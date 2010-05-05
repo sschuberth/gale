@@ -29,7 +29,7 @@ if (empty($es) || empty($fs) || empty($tm)) {
         // When run from the command line, show the usage information.
         exit("Usage:\n".
              "       ".basename($argv[0])." es=<enumspec> fs=<funcspec> tm=<typemap>\n".
-             "       [api=<extension|version>] [debug=<verbosity>]\n\n".
+             "       [api=<string>[,string]] [debug=<verbosity>]\n\n".
              "Where:\n".
              "       <es>    is an enumerant value specification file like\n".
              "               http://www.opengl.org/registry/api/enumext.spec\n\n".
