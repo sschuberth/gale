@@ -67,7 +67,7 @@ if ($cmdline) {
     if (file_exists($g)==FALSE) {
         echo 'Copying globals header file ...';
         copy(dirname($argv[0]).'/'.$g,$g);
-        echo " saved as \"$g\"\n";
+        echo " saved as \"$g\".\n";
     }
 }
 
