@@ -1,6 +1,6 @@
 <?php
 
-require_once 'functions.php';
+require_once 'constants.inc.php';
 
 if (!empty($file)) {
     header('Content-type: text/plain');
