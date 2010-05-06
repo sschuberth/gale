@@ -14,12 +14,6 @@ using namespace gale::wrapgl;
 
 // http://prideout.net/blog/?p=22
 static char const* s_vert_shader_source=
-    "attribute vec4 Position;\n"
-    "attribute vec3 Normal;\n"
-    "\n"
-    "uniform mat4 Projection;\n"
-    "uniform mat4 Modelview;\n"
-    "uniform mat3 NormalMatrix;\n"
     "uniform vec3 DiffuseMaterial;\n"
     "\n"
     "varying vec3 EyespaceNormal;\n"
@@ -27,8 +21,8 @@ static char const* s_vert_shader_source=
     "\n"
     "void main()\n"
     "{\n"
-    "    EyespaceNormal = NormalMatrix * Normal;\n"
-    "    gl_Position = Projection * Modelview * Position;\n"
+    "    EyespaceNormal = gl_NormalMatrix * gl_Normal;\n"
+    "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
     "    Diffuse = DiffuseMaterial;\n"
     "}\n"
 ;
@@ -166,7 +160,9 @@ class TestWindow:public DefaultWindow
 
         m_camera.makeCurrent();
 
+        m_program.makeCurrent();
         Renderer::draw(m_mesh_prep);
+        m_program.setCurrent(0);
     }
 
   private:
