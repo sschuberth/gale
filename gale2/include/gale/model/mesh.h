@@ -198,7 +198,9 @@ struct Mesh
         /// Generates a mesh's surface by calculating \a eval at every point on
         /// the grid of size \a s_sections by \a t_sections which is defined by
         /// walking from \a s_min to \a s_max in x-direction and from \a t_min
-        /// to \a t_max in y-direction.
+        /// to \a t_max in y-direction. \a s_closed and \a t_closed denote
+        /// whether start and end vertices should be shared to close the mesh in
+        /// the respective direction.
         static Mesh* GridMapper(
             math::FormulaR2R3 const& eval
         ,   float const s_min
@@ -209,7 +211,6 @@ struct Mesh
         ,   float const t_max
         ,   int const t_sections
         ,   bool const t_closed
-        ,   bool const reverse=false
         );
 
         /// Generates a mesh consisting of lines only that represent the

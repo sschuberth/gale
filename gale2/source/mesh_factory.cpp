@@ -347,9 +347,9 @@ Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const
             float const ss=::sin(s);
 
             return Vec3f(
-                at*cnt*(1+cs)+c*cnt
-            ,   at*snt*(1+cs)+c*snt
-            ,   b*top+at*ss
+                at*cnt*(1+ss)+c*cnt
+            ,   at*snt*(1+ss)+c*snt
+            ,   b*top+at*cs
             );
         }
 
@@ -361,7 +361,7 @@ Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const
 
     Formula f(r1,r2,h,n);
 
-    return GridMapper(f,0,2*Constf::PI(),s_sections,true,0,2*Constf::PI(),t_sections,false,true);
+    return GridMapper(f,0,2*Constf::PI(),s_sections,true,0,2*Constf::PI(),t_sections,false);
 }
 
 // Warning C4512: Assignment operator could not be generated.
@@ -626,7 +626,6 @@ Mesh* Mesh::Factory::GridMapper(
 ,   float const t_max
 ,   int const t_sections
 ,   bool const t_closed
-,   bool const reverse
 )
 {
     // Perform some sanity checks.
@@ -703,13 +702,6 @@ Mesh* Mesh::Factory::GridMapper(
 
             // Adjust to the real number of neighbors.
             vn.setSize(n);
-
-            if (reverse) {
-                IndexArray tmp(vn);
-                for (int i=0;--n>=0;++i) {
-                    vn[n]=tmp[i];
-                }
-            }
 
 #undef WRAP_V
 
