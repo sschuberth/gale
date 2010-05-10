@@ -86,7 +86,7 @@ class ShaderObject
     }
 
     /// Returns the compile log in \a infoLog of size \a bufSize. The actual
-    /// number of characters written into \a infoLog, excluding the terminating \0,
+    /// number of characters written into \a infoLog, excluding the terminating \\0,
     /// is returned in \a length, if specified.
     void getLog(GLchar* infoLog,GLsizei bufSize,GLsizei* length=NULL) const {
         glGetShaderInfoLog(m_handle,bufSize,length,infoLog);
@@ -102,7 +102,7 @@ class ShaderObject
     }
 
     /// Returns the shader source code in \a source of size \a bufSize. The actual
-    /// number of characters written into \a source, excluding the terminating \0,
+    /// number of characters written into \a source, excluding the terminating \\0,
     /// is returned in \a length, if specified.
     void getSource(GLchar* source,GLsizei bufSize,GLsizei* length=NULL) const {
         glGetShaderSource(m_handle,bufSize,length,source);
@@ -110,7 +110,7 @@ class ShaderObject
     }
 
     /// Sets the shader source code to the array of \a strings with \a count
-    /// entries. If the \a strings are not \0 terminated, their \a lengths need
+    /// entries. If the \a strings are not \\0 terminated, their \a lengths need
     /// to be specified.
     void setSource(GLchar const** strings,GLsizei count=1,GLint const* lengths=NULL) const {
         glShaderSource(m_handle,count,strings,lengths);
@@ -175,7 +175,7 @@ class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
     }
 
     /// Returns the program log in \a infoLog of size \a bufSize. The actual
-    /// number of characters written into \a infoLog, excluding the terminating \0,
+    /// number of characters written into \a infoLog, excluding the terminating \\0,
     /// is returned in \a length, if specified.
     void getLog(GLchar* infoLog,GLsizei bufSize,GLsizei* length=NULL) const {
         glGetProgramInfoLog(m_handle,bufSize,length,infoLog);
