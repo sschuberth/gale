@@ -48,7 +48,13 @@ class TestWindow:public DefaultWindow
         }
 
         m_pattern_texture.setData(TEX_SIZE,TEX_SIZE,buffer,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
+
+        // NOTE: Enabling this filter causes garbage to be rendered to the FBO
+        // on my notebook's GeForce Go 7700 using version 179.48 drivers, but
+        // leaving it at the default of GL_NEAREST_MIPMAP_LINEAR is no option as
+        // we have no mipmaps.
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
         // Initialize the read and draw textures to 0.
@@ -175,7 +181,7 @@ class TestWindow:public DefaultWindow
         // current draw texture applied.
         m_win_camera.makeCurrent();
 
-        m_frame_buffer.setCurrent(0);
+        FrameBufferObject::setCurrent(0);
         m_draw_texture->makeCurrent();
 
         glRectf(0,0,1,1);
