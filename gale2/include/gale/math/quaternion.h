@@ -313,10 +313,9 @@ class Quaternion
     /// Normalizes this quaternion so its length equals 1 (if it is not very
     /// small). Returns the length before normalization.
     double normalize() {
-        static double const t=Numerics<T>::ZERO_TOLERANCE()*Numerics<T>::ZERO_TOLERANCE();
         double l=length2();
 
-        if (!meta::OpCmpEqual::evaluate(l,1.0) && l>t) {
+        if (!meta::OpCmpEqual::evaluate(l,1.0) && l>Numerics<T>::ZERO_TOLERANCE()*Numerics<T>::ZERO_TOLERANCE()) {
             l=::sqrt(l);
             (*this)/=T(l);
         }
