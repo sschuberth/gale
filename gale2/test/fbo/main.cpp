@@ -16,8 +16,9 @@ using namespace gale::wrapgl;
 
 class TestWindow:public DefaultWindow
 {
-    static int const TEX_SIZE    = 256;
-    static int const BORDER_SIZE =  16;
+    static int const TEX_SIZE     = 256;
+    static int const TILE_SIZE    = 8;
+    static int const BORDER_TILES = 5;
 
   public:
 
@@ -27,8 +28,7 @@ class TestWindow:public DefaultWindow
     ,   m_read_texture(&m_fbo_textures[0])
     ,   m_draw_texture(&m_fbo_textures[1])
     ,   m_ping_pong(0)
-    ,   m_angle1(0)
-    ,   m_angle2(0)
+    ,   m_angle(0)
     {
         unsigned char* buffer=new unsigned char[TEX_SIZE*TEX_SIZE*3];
 
@@ -37,8 +37,8 @@ class TestWindow:public DefaultWindow
             for (int x=0;x<TEX_SIZE;++x) {
                 int offset=(y*TEX_SIZE+x)*3;
 
-                int xc=((x%8)<4);
-                int yc=((y%8)<4);
+                int xc=((x%TILE_SIZE*2)<TILE_SIZE);
+                int yc=((y%TILE_SIZE*2)<TILE_SIZE);
                 unsigned char color=((xc+yc)&1)*255;
 
                 buffer[offset+0]=color;
@@ -99,19 +99,30 @@ class TestWindow:public DefaultWindow
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        /*
-         * Outer border frame
-         */
-
         // Introduce some color that also fades the image as it is iteratively
         // modulated to the texture color.
         glColor3ub(182,212,100);
 
-        // Render the current pattern.
+        /*
+         * Render a large rotated rectangle with the pattern texture applied.
+         * Scale the rectangle so it will always fit the viewport no matter
+         * of the rotation angle.
+         */
+
+        // Minimum opposite cathetus length.
+        static float const cath_min=::sin(45*Constf::DEG_TO_RAD());
+
+        // Current opposite cathetus length.
+        float angle=::fmod(::abs(m_angle),90)+45;
+        float cath=::sin(angle*Constf::DEG_TO_RAD());
+
+        float factor=cath_min/cath;
+
         glPushMatrix();
 
         glTranslatef(0.5,0.5,0);
-        glRotatef(m_angle1,0,0,1);
+        glRotatef(m_angle,0,0,1);
+        glScalef(factor,factor,1.0f);
         glTranslatef(-0.5,-0.5,0);
 
         m_pattern_texture.makeCurrent();
@@ -120,44 +131,23 @@ class TestWindow:public DefaultWindow
         glPopMatrix();
 
         /*
-         * Inner border frame
+         * Render a small rotated rectangle with the previous frame applied.
          */
 
-        // Scaling factor to take border size into account.
-        static float const fb=static_cast<float>(TEX_SIZE-BORDER_SIZE*2)/TEX_SIZE;
-        // Cathetus length for the original border frame.
-        static float const kc=::sin(45*Constf::DEG_TO_RAD());
+        // Calculate the the additional scaling for the border.
+        float scale=(1-static_cast<float>(BORDER_TILES)/(TEX_SIZE/TILE_SIZE));
+        factor*=scale;
 
-        // Angle of the rotated border frame.
-        float ar=::fmod(::abs(m_angle2-m_angle1),90)+45;
-        // Cathetus length for the rotated border frame.
-        float kr=::sin(ar*Constf::DEG_TO_RAD());
-        // Scaling factor to take the rotation into account.
-        float fr=kc/kr;
-
-        // Render the previous frame.
-        glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
 
         glTranslatef(0.5,0.5,0);
-        glRotatef(m_angle1,0,0,1);
-        glScalef(fb,fb,1);
-        glTranslatef(-0.5,-0.5,0);
-
-        glMatrixMode(GL_TEXTURE);
-        glPushMatrix();
-
-        glTranslatef(0.5,0.5,0);
-        glRotatef(m_angle2-m_angle1,0,0,1);
-        glScalef(1.0f/fr,1.0f/fr,1);
+        glRotatef(m_angle,0,0,1);
+        glScalef(factor,factor,1.0f);
         glTranslatef(-0.5,-0.5,0);
 
         m_read_texture->makeCurrent();
         glRectf(0,0,1,1);
 
-        glPopMatrix();
-
-        glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
 
         // Swap read & draw textures.
@@ -169,20 +159,15 @@ class TestWindow:public DefaultWindow
     }
 
     void onTimeout() {
-        static int counter1=0,counter2=10;
+        static int counter=0;
 
-        if (counter1++>=360) {
-            counter1-=360;
-        }
-        if (counter2++>=360) {
-            counter2-=360;
+        if (counter++>=360) {
+            counter-=360;
         }
 
-        float step1=::sin(counter1*Constf::DEG_TO_RAD())*4;
-        float step2=::sin(counter2*Constf::DEG_TO_RAD())*4;
+        float step1=::sin(counter*Constf::DEG_TO_RAD())*2;
 
-        m_angle1+=step1;
-        m_angle2+=step2;
+        m_angle+=step1;
     }
 
     void onRender() {
@@ -205,16 +190,14 @@ class TestWindow:public DefaultWindow
   private:
 
     Camera m_fbo_camera;
+    Texture2D m_pattern_texture;
+
     Camera& m_win_camera;
-
-    Texture2D m_pattern_texture,m_fbo_textures[2];
-    Texture2D *m_read_texture,*m_draw_texture;
-
+    Texture2D m_fbo_textures[2],*m_read_texture,*m_draw_texture;
     FrameBufferObject m_frame_buffer;
-
     int m_ping_pong;
 
-    float m_angle1,m_angle2;
+    float m_angle;
 };
 
 // Enable memory leak detection, see:
