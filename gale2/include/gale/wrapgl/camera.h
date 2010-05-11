@@ -88,7 +88,7 @@ class Camera
         ,   FACE_TOP    ///< Index of the top frustum plane.
         ,   FACE_ZNEAR  ///< Index of the near (clipping) frustum plane.
         ,   FACE_ZFAR   ///< Index of the far (clipping) frustum plane.
-        ,   FACE_COUNT  ///< Helper entry to name the number of enumerations.
+        ,   FACE_COUNT  ///< Special entry to name the number of enum entries.
         };
 
         /// (Re-)calculates the frustum planes.
