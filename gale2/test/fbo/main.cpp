@@ -26,16 +26,14 @@ class TestWindow:public DefaultWindow
         for (int y=0;y<TEX_SIZE;++y) {
             for (int x=0;x<TEX_SIZE;++x) {
                 int offset=(y*TEX_SIZE+x)*3;
-                if (x<0+BORDER_SIZE || x>=TEX_SIZE-BORDER_SIZE || y<0+BORDER_SIZE || y>=TEX_SIZE-BORDER_SIZE) {
-                    buffer[offset+0]=255;
-                    buffer[offset+1]=255;
-                    buffer[offset+2]=255;
-                }
-                else {
-                    buffer[offset+0]=0;
-                    buffer[offset+1]=0;
-                    buffer[offset+2]=0;
-                }
+
+                int xc=((x%8)<4);
+                int yc=((y%8)<4);
+                unsigned char color=((xc+yc)&1)*255;
+
+                buffer[offset+0]=color;
+                buffer[offset+1]=color;
+                buffer[offset+2]=color;
             }
         }
 
