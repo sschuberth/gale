@@ -11,6 +11,10 @@
     #define GL_CLAMP_TO_EDGE   0x812F
 #endif
 
+// Switching the draw buffer to a different color attachment should be fastest,
+// see page 29 in <http://download.nvidia.com/developer/presentations/2005/GDC/OpenGL_Day/OpenGL_FrameBuffer_Object.pdf>.
+#define SWITCH_DRAW_BUFFER
+
 using namespace gale::math;
 using namespace gale::wrapgl;
 
@@ -25,8 +29,8 @@ class TestWindow:public DefaultWindow
     TestWindow()
     :   DefaultWindow(_T("test_fbo"),600,600)
     ,   m_win_camera(m_camera)
-    ,   m_read_texture(&m_fbo_textures[0])
-    ,   m_draw_texture(&m_fbo_textures[1])
+    ,   m_draw_texture(&m_fbo_textures[0])
+    ,   m_read_texture(&m_fbo_textures[1])
     ,   m_ping_pong(0)
     ,   m_angle(0)
     {
@@ -60,19 +64,24 @@ class TestWindow:public DefaultWindow
         // Initialize the read and draw textures to 0.
         memset(buffer,0,TEX_SIZE*TEX_SIZE*3);
 
-        m_read_texture->setData(TEX_SIZE,TEX_SIZE,buffer,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_BORDER);
-
         m_draw_texture->setData(TEX_SIZE,TEX_SIZE,buffer,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_BORDER);
 
+        m_read_texture->setData(TEX_SIZE,TEX_SIZE,buffer,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_BORDER);
+
         delete [] buffer;
+
+#ifdef SWITCH_DRAW_BUFFER
+        m_frame_buffer.attach(GL_COLOR_ATTACHMENT0,*m_draw_texture);
+        m_frame_buffer.attach(GL_COLOR_ATTACHMENT1,*m_read_texture);
+#endif
 
         // Initialize OpenGL states.
         glEnable(GL_TEXTURE_2D);
@@ -101,7 +110,13 @@ class TestWindow:public DefaultWindow
         // apply the camera settings before binding the FBO.
         m_fbo_camera.makeCurrent();
 
+#ifdef SWITCH_DRAW_BUFFER
+        m_frame_buffer.makeCurrent();
+        glDrawBuffer(GL_COLOR_ATTACHMENT0+m_ping_pong);
+        G_ASSERT_OPENGL
+#else
         m_frame_buffer.attach(GL_COLOR_ATTACHMENT0,*m_draw_texture);
+#endif
 
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -157,9 +172,9 @@ class TestWindow:public DefaultWindow
         glPopMatrix();
 
         // Swap read & draw textures.
-        m_draw_texture=&m_fbo_textures[m_ping_pong];
-        m_ping_pong=(m_ping_pong+1)&1;
         m_read_texture=&m_fbo_textures[m_ping_pong];
+        m_ping_pong=(m_ping_pong+1)&1;
+        m_draw_texture=&m_fbo_textures[m_ping_pong];
 
         return true;
     }
@@ -199,7 +214,7 @@ class TestWindow:public DefaultWindow
     Texture2D m_pattern_texture;
 
     Camera& m_win_camera;
-    Texture2D m_fbo_textures[2],*m_read_texture,*m_draw_texture;
+    Texture2D m_fbo_textures[2],*m_draw_texture,*m_read_texture;
     FrameBufferObject m_frame_buffer;
     int m_ping_pong;
 
