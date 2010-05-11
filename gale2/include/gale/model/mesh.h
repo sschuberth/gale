@@ -353,11 +353,11 @@ struct Mesh
 
         /// Names for the primitives stored in the indices table.
         enum PrimitiveIndices {
-            PI_POINTS,    ///< The first array of indices describes points.
-            PI_LINES,     ///< The second array of indices describes lines.
-            PI_TRIANGLES, ///< The third array of indices describes triangles.
-            PI_QUADS,     ///< The third array of indices describes quadrilaterals.
-            PI_COUNT      ///< Special entry to name the number of enum entries.
+            PI_POINTS    ///< The first array of indices describes points.
+        ,   PI_LINES     ///< The second array of indices describes lines.
+        ,   PI_TRIANGLES ///< The third array of indices describes triangles.
+        ,   PI_QUADS     ///< The third array of indices describes quadrilaterals.
+        ,   PI_COUNT     ///< Special entry to name the number of enum entries.
         };
 
         static GLenum const GL_PRIM_TYPE[PI_COUNT]; ///< The primitive types as stored in the indices table.

@@ -82,13 +82,13 @@ class Camera
 
         /// Names for the plane array entries (as seen from the camera).
         enum Face {
-            FACE_LEFT,   ///< Index of the left frustum plane.
-            FACE_RIGHT,  ///< Index of the right frustum plane.
-            FACE_BOTTOM, ///< Index of the bottom frustum plane.
-            FACE_TOP,    ///< Index of the top frustum plane.
-            FACE_ZNEAR,  ///< Index of the near (clipping) frustum plane.
-            FACE_ZFAR,   ///< Index of the far (clipping) frustum plane.
-            FACE_COUNT   ///< Helper entry to name the number of enumerations.
+            FACE_LEFT   ///< Index of the left frustum plane.
+        ,   FACE_RIGHT  ///< Index of the right frustum plane.
+        ,   FACE_BOTTOM ///< Index of the bottom frustum plane.
+        ,   FACE_TOP    ///< Index of the top frustum plane.
+        ,   FACE_ZNEAR  ///< Index of the near (clipping) frustum plane.
+        ,   FACE_ZFAR   ///< Index of the far (clipping) frustum plane.
+        ,   FACE_COUNT  ///< Helper entry to name the number of enumerations.
         };
 
         /// (Re-)calculates the frustum planes.

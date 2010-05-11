@@ -58,11 +58,11 @@ class DefaultWindow:public MinimalWindow
 
     /// Defines bit masks for mouse events.
     enum MouseEvent {
-        ME_BUTTON_NONE   = 0,      ///< No mouse button was pressed.
-        ME_BUTTON_LEFT   = 1 << 0, ///< The left mouse button was pressed.
-        ME_BUTTON_MIDDLE = 1 << 1, ///< The middle mouse button was pressed.
-        ME_BUTTON_RIGHT  = 1 << 2, ///< The right mouse button was pressed.
-        ME_WHEEL_SCROLL  = 1 << 3  ///< The mouse wheel was scrolled.
+        ME_BUTTON_NONE   = 0      ///< No mouse button was pressed.
+    ,   ME_BUTTON_LEFT   = 1 << 0 ///< The left mouse button was pressed.
+    ,   ME_BUTTON_MIDDLE = 1 << 1 ///< The middle mouse button was pressed.
+    ,   ME_BUTTON_RIGHT  = 1 << 2 ///< The right mouse button was pressed.
+    ,   ME_WHEEL_SCROLL  = 1 << 3 ///< The mouse wheel was scrolled.
     };
 
     /// Creates a window with reasonable defaults set.
