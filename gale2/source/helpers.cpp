@@ -23,15 +23,15 @@
  *
  */
 
+#include "gale/wrapgl/helpers.h"
+
 #include "gale/math/color.h"
-#include "gale/wrapgl/camera.h"
-#include "gale/wrapgl/renderer.h"
 
 namespace gale {
 
 namespace wrapgl {
 
-void pushOrtho2D()
+void Helper::pushOrtho2D()
 {
     // Save the current matrix mode.
     GLint matrix_mode;
@@ -61,7 +61,7 @@ void pushOrtho2D()
     G_ASSERT_OPENGL
 }
 
-void popOrtho2D()
+void Helper::popOrtho2D()
 {
     // Save the current matrix mode.
     GLint matrix_mode;
@@ -83,126 +83,158 @@ void popOrtho2D()
     G_ASSERT_OPENGL
 }
 
-GLuint drawLogo()
+Logo::Logo(double const fov,float const distance)
+:   m_camera(NULL,fov)
+,   m_cube(model::Mesh::Factory::Hexahedron())
 {
-    // Render the logo to an area which is max. 1/6 of the current viewport dimensions.
+    math::Vec3f const pos(distance,distance,distance);
+
+    m_modelview=math::HMat4f::Factory::LookAt(math::Vec3f::ZERO(),pos,math::Vec3f::Y());
+    m_camera.setModelview(m_modelview);
+
+    m_list_range=glGenLists(LIST_COUNT);
+    G_ASSERT_OPENGL
+
+    // Compile the prologue display list.
+    glNewList(m_list_range+LIST_PROLOGUE,GL_COMPILE);
+    G_ASSERT_OPENGL
+
+    glPushAttrib(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    G_ASSERT_OPENGL
+
+    glPushAttrib(GL_POLYGON_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    G_ASSERT_OPENGL
+
+    glPushAttrib(GL_ENABLE_BIT);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_1D);
+    glDisable(GL_TEXTURE_2D);
+    G_ASSERT_OPENGL
+
+    glColor3fv(math::Col3f::WHITE());
+    G_ASSERT_OPENGL
+
+    glEndList();
+    G_ASSERT_OPENGL
+
+    // Compile the epilogue display list.
+    glNewList(m_list_range+LIST_EPILOGUE,GL_COMPILE);
+    G_ASSERT_OPENGL
+
+    glPopAttrib();
+    glPopAttrib();
+    glPopAttrib();
+    G_ASSERT_OPENGL
+
+    glEndList();
+    G_ASSERT_OPENGL
+
+    // Compile the frame display list.
+    glNewList(m_list_range+LIST_FRAME,GL_COMPILE);
+    G_ASSERT_OPENGL
+
+    float const scale_corner=1.8f,scale_length=1.5f;
+    math::Vec3f const r(scale_corner,0,0),t(0,scale_corner,0),l(0,0,scale_corner);
+    math::Vec3f n;
+
+    glBegin(GL_LINE_LOOP);
+
+    glVertex3fv(r);
+
+    n=(~((t-r)^pos))*scale_length;
+    glVertex3fv(n+r);
+    glVertex3fv(n+t);
+
+    glVertex3fv(t);
+
+    n=(~((l-t)^pos))*scale_length;
+    glVertex3fv(n+t);
+    glVertex3fv(n+l);
+
+    glVertex3fv(l);
+
+    n=(~((r-l)^pos))*scale_length;
+    glVertex3fv(n+l);
+    glVertex3fv(n+r);
+
+    glEnd();
+    G_ASSERT_OPENGL
+
+    glEndList();
+    G_ASSERT_OPENGL
+
+    // Prepare the mesh.
+    m_preparer.compile(m_cube);
+}
+
+void Logo::draw(Corner corner)
+{
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT,viewport);
+
     GLint size=math::min(viewport[2],viewport[3])/6;
 
-    // Create an appropriate camera.
-    static float const distance=3.0f;
-    static math::Vec3f const normal(distance,distance,distance);
-    static math::HMat4f const modelview=math::HMat4f::Factory::LookAt(math::Vec3f::ZERO(),normal,math::Vec3f::Y());
+    // Adjust the camera's screen space origin.
+    GLint x=viewport[0],y=viewport[1];
 
-    static Camera camera_logo(viewport[0],viewport[1],size,size,90*math::Constd::DEG_TO_RAD(),&modelview);
-
-    if (camera_logo.getScreenSpace().x!=viewport[0] || camera_logo.getScreenSpace().y!=viewport[1]) {
-        camera_logo.setScreenSpaceOrigin(viewport[0],viewport[1]);
+    if (corner==CORNER_LR || corner==CORNER_UR) {
+        x+=viewport[2]-size;
     }
 
-    if (camera_logo.getScreenSpace().width!=size || camera_logo.getScreenSpace().height!=size) {
-        camera_logo.setScreenSpaceDimensions(size,size);
+    if (corner==CORNER_UL || corner==CORNER_UR) {
+        y+=viewport[3]-size;
     }
 
-    camera_logo.makeCurrent();
-
-    // Prepare a display list to speed up running draw calls.
-    static GLuint list=0;
-
-    if (list>0) {
-        glCallList(list);
-        G_ASSERT_OPENGL
-    }
-    else {
-        list=glGenLists(1);
-        G_ASSERT_OPENGL
-
-        glNewList(list,GL_COMPILE_AND_EXECUTE);
-        G_ASSERT_OPENGL
-
-        // Render the logo.
-        glPushAttrib(GL_COLOR_BUFFER_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-        G_ASSERT_OPENGL
-
-        glPushAttrib(GL_POLYGON_BIT);
-        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        G_ASSERT_OPENGL
-
-        glPushAttrib(GL_ENABLE_BIT);
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_LINE_SMOOTH);
-        glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_1D);
-        glDisable(GL_TEXTURE_2D);
-        G_ASSERT_OPENGL
-
-        glColor3fv(math::Col3f::WHITE());
-        G_ASSERT_OPENGL
-
-        // Render the cubes.
-        model::Mesh::Preparer preparer;
-        model::Mesh* cube=model::Mesh::Factory::Hexahedron();
-
-        preparer.compile(cube);
-
-        glTranslatef(1,0,0);
-        G_ASSERT_OPENGL
-        Renderer::draw(preparer);
-
-        glTranslatef(-1,1,0);
-        G_ASSERT_OPENGL
-        Renderer::draw(preparer);
-
-        glTranslatef(0,-1,1);
-        G_ASSERT_OPENGL
-        Renderer::draw(preparer);
-
-        glTranslatef(0,0,-1);
-        G_ASSERT_OPENGL
-
-        delete cube;
-
-        // Render the frame.
-        float scale_corner=1.8f,scale_length=1.5f;
-        math::Vec3f r(scale_corner,0,0),t(0,scale_corner,0),l(0,0,scale_corner),n;
-
-        glBegin(GL_LINE_LOOP);
-
-        glVertex3fv(r);
-
-        n=(~((t-r)^normal))*scale_length;
-        glVertex3fv(n+r);
-        glVertex3fv(n+t);
-
-        glVertex3fv(t);
-
-        n=(~((l-t)^normal))*scale_length;
-        glVertex3fv(n+t);
-        glVertex3fv(n+l);
-
-        glVertex3fv(l);
-
-        n=(~((r-l)^normal))*scale_length;
-        glVertex3fv(n+l);
-        glVertex3fv(n+r);
-
-        glEnd();
-        G_ASSERT_OPENGL
-
-        glPopAttrib();
-        glPopAttrib();
-        glPopAttrib();
-        G_ASSERT_OPENGL
-
-        // Complete the display list.
-        glEndList();
-        G_ASSERT_OPENGL
+    if (m_camera.getScreenSpace().x!=x || m_camera.getScreenSpace().y!=y) {
+        m_camera.setScreenSpaceOrigin(x,y);
     }
 
-    return list;
+    // Adjust the camera's screen space dimensions.
+    if (m_camera.getScreenSpace().width!=size || m_camera.getScreenSpace().height!=size) {
+        m_camera.setScreenSpaceDimensions(size,size);
+        m_camera.setProjection(
+            math::Mat4d::Factory::PerspectiveProjection(
+                size,size,m_camera.getFOV(),m_camera.getNearClipping(),m_camera.getFarClipping()
+            )
+        );
+    }
+
+    m_camera.makeCurrent();
+
+    // Render the logo.
+    glCallList(m_list_range+LIST_PROLOGUE);
+    G_ASSERT_OPENGL
+
+    glCallList(m_list_range+LIST_FRAME);
+    G_ASSERT_OPENGL
+
+    glTranslatef(1,0,0);
+    Renderer::draw(m_preparer);
+
+    glTranslatef(-1,1,0);
+    Renderer::draw(m_preparer);
+
+    glTranslatef(0,-1,1);
+    Renderer::draw(m_preparer);
+
+    // Reset the transformation.
+    glTranslatef(0,0,-1);
+
+    glCallList(m_list_range+LIST_EPILOGUE);
+    G_ASSERT_OPENGL
+}
+
+Logo::~Logo ()
+{
+    delete m_cube;
+
+    glDeleteLists(m_list_range,LIST_COUNT);
+    G_ASSERT_OPENGL
 }
 
 } // namespace wrapgl

@@ -28,24 +28,74 @@
 
 /**
  * \file
- * Collection of miscellaneous OpenGL helper functions
+ * Miscellaneous helper routines
  */
+
+#include "camera.h"
+#include "renderer.h"
 
 namespace gale {
 
 namespace wrapgl {
 
-/// Saves the current modelview and projection matrices and sets an orthogonal
-/// projection that maps each raster position exactly to a screen space pixel.
-void pushOrtho2D();
+/**
+ * This class provides a collection of OpenGL helper functions.
+ */
+class Helper
+{
+  public:
 
-/// Restores the projection and modelview matrices, which were e.g. previously
-/// saved by pushOrtho2D(), from the matrix stack.
-void popOrtho2D();
+    /// Saves the current modelview and projection matrices and sets an orthogonal
+    /// projection that maps each raster position exactly to a screen space pixel.
+    static void pushOrtho2D();
 
-/// Draws a logo into the lower left viewport corner, similar to a TV logo.
-/// Returns the identifier of the created display list to delete it later.
-GLuint drawLogo();
+    /// Restores the projection and modelview matrices, which were e.g. previously
+    /// saved by pushOrtho2D(), from the matrix stack.
+    static void popOrtho2D();
+};
+
+/**
+ * A class to draw a logo into the current viewport.
+ */
+class Logo
+{
+  public:
+
+    /// Identifiers for the corner to draw the logo into.
+    enum Corner {
+        CORNER_LL ///< Lower Left
+    ,   CORNER_LR ///< Lower Right
+    ,   CORNER_UR ///< Upper Right
+    ,   CORNER_UL ///< Upper Left
+    };
+
+    /// Prepares to draw a logo with the given camera \a fov and \a distance.
+    Logo(double const fov=90*math::Constd::DEG_TO_RAD(),float const distance=3.0f);
+
+    /// Frees the logo's render resources.
+    ~Logo();
+
+    /// Draws a logo into the specified viewport \a corner, similar to a TV
+    /// overlay logo.
+    void draw(Corner corner=CORNER_LL);
+
+  private:
+
+    /// Identifiers for the display lists.
+    enum List {
+        LIST_PROLOGUE ///< Prologue display list (use before rendering).
+    ,   LIST_EPILOGUE ///< Epilogue display list (use after rendering).
+    ,   LIST_FRAME    ///< Display list to draw the logo's frame.
+    ,   LIST_COUNT    ///< Special entry to name the number of enum entries.
+    };
+
+    math::HMat4f m_modelview; ///< The camera's modelview matrix.
+    Camera m_camera;          ///< The logo's camera.
+
+    GLuint m_list_range;              ///< Start number of the range of display list IDs.
+    model::Mesh* m_cube;              ///< The mesh for rendering the cubes.
+    model::Mesh::Preparer m_preparer; ///< Preparer for the cube mesh.
+};
 
 } // namespace wrapgl
 

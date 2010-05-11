@@ -70,9 +70,6 @@ class DefaultWindow:public MinimalWindow
     :   MinimalWindow(title,client_width,client_height)
     ,   m_camera(this)
     ,   m_fullscreen(false)
-#ifndef GALE_TINY_CODE
-    ,   m_logo(0)
-#endif
     {
         HICON icon=LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_MAINICON));
         SendMessage(windowHandle(),WM_SETICON,ICON_BIG,(LPARAM)icon);
@@ -88,15 +85,6 @@ class DefaultWindow:public MinimalWindow
 
     /// Turns full screen mode on or off, returns whether it was successful.
     bool toggleFullScreen(bool state);
-
-    void onClose() {
-#ifndef GALE_TINY_CODE
-        // Free any OpenGL resources, else tools like gDEBugger will report
-        // graphic memory leaks.
-        glDeleteLists(m_logo,1);
-        G_ASSERT_OPENGL
-#endif
-    }
 
     /// Adjusts the camera if the window size changes.
     void onResize(int width,int height) {
@@ -124,7 +112,7 @@ class DefaultWindow:public MinimalWindow
     void onPaint() {
         onRender();
 #ifndef GALE_TINY_CODE
-        m_logo=drawLogo();
+        m_logo.draw();
 #endif
     }
 
@@ -159,7 +147,7 @@ class DefaultWindow:public MinimalWindow
     bool m_fullscreen;       ///< The current full screen state.
 
 #ifndef GALE_TINY_CODE
-    GLuint m_logo; ///< Display list identifier of the logo.
+    Logo m_logo; ///< The overlay logo.
 #endif
 };
 
