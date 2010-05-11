@@ -366,8 +366,8 @@ struct Mesh
         IndexTable polygons; ///< Table of vertex indices describing polygons.
 
 #ifdef GALE_USE_VBO
-        wrapgl::ArrayBufferObject vbo_arrays;  ///< Vertices and normals on the GPU.
-        wrapgl::IndexBufferObject vbo_indices; ///< Primitive indices on the GPU.
+        wrapgl::ArrayBufferObject vbo_vertnorm; ///< Vertices and normals on the GPU.
+        wrapgl::IndexBufferObject vbo_indices;  ///< Primitive and polygon indices on the GPU.
 
         wrapgl::VertexArrayObject vao; ///< Bindable state vector for the render arrays.
 #else

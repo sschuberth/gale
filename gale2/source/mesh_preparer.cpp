@@ -53,10 +53,10 @@ void Mesh::Preparer::compile(Mesh const* const mesh)
 
 #ifdef GALE_USE_VBO
     // Allocate uninitialized GPU memory for the vertices and normals.
-    vbo_arrays.setData(size*2,NULL);
+    vbo_vertnorm.setData(size*2,NULL);
 
     // Copy the vertices to the GPU.
-    VectorArray::Type* arrays_ptr=static_cast<VectorArray::Type*>(vbo_arrays.map(GL_READ_WRITE_ARB));
+    VectorArray::Type* arrays_ptr=static_cast<VectorArray::Type*>(vbo_vertnorm.map(GL_READ_WRITE_ARB));
     memcpy(arrays_ptr,m_mesh->vertices.data(),size);
 
     arrays_ptr+=m_mesh->vertices.getSize();
@@ -194,7 +194,7 @@ void Mesh::Preparer::compile(Mesh const* const mesh)
     }
 
 #ifdef GALE_USE_VBO
-    vbo_arrays.unmap();
+    vbo_vertnorm.unmap();
 
     // Allocate uninitialized GPU memory for the indices.
     size=0;

@@ -731,7 +731,7 @@ Mesh* Mesh::Factory::Normals(Preparer const& geom,float const scale)
     VectorArray::Type const* vertices_ptr=m->vertices;
 
 #ifdef GALE_USE_VBO
-    VectorArray::Type const* normals_ptr=static_cast<VectorArray::Type*>(geom.vbo_arrays.map(GL_READ_ONLY_ARB))+n;
+    VectorArray::Type const* normals_ptr=static_cast<VectorArray::Type*>(geom.vbo_vertnorm.map(GL_READ_ONLY_ARB))+n;
 #else
     VectorArray::Type const* normals_ptr=geom.normals;
 #endif
@@ -748,7 +748,7 @@ Mesh* Mesh::Factory::Normals(Preparer const& geom,float const scale)
     }
 
 #ifdef GALE_USE_VBO
-    geom.vbo_arrays.unmap();
+    geom.vbo_vertnorm.unmap();
 #endif
 
     return m;

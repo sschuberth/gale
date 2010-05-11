@@ -51,7 +51,7 @@ void Renderer::draw(Mesh::Preparer const& geom)
         glEnableClientState(GL_NORMAL_ARRAY);
         G_ASSERT_OPENGL
 
-        geom.vbo_arrays.makeCurrent();
+        geom.vbo_vertnorm.makeCurrent();
 
         Mesh::VectorArray::Type const* arrays_ptr=NULL;
         glVertexPointer(3,GL_FLOAT,0,arrays_ptr);
