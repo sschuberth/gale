@@ -1,6 +1,16 @@
 #include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/framebufferobject.h>
 
+// Defined as part of ARB_texture_border_clamp or OpenGL 1.3.
+#ifndef GL_CLAMP_TO_BORDER
+    #define GL_CLAMP_TO_BORDER 0x812D
+#endif
+
+// Defined as part of EXT_texture_edge_clamp or OpenGL 1.2.
+#ifndef GL_CLAMP_TO_EDGE
+    #define GL_CLAMP_TO_EDGE   0x812F
+#endif
+
 using namespace gale::math;
 using namespace gale::wrapgl;
 
@@ -47,14 +57,14 @@ class TestWindow:public DefaultWindow
         m_read_texture->setData(TEX_SIZE,TEX_SIZE,buffer,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_BORDER);
 
         m_draw_texture->setData(TEX_SIZE,TEX_SIZE,buffer,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_BORDER);
 
         delete [] buffer;
 
@@ -81,15 +91,20 @@ class TestWindow:public DefaultWindow
     }
 
     bool onIdle() {
+        // As FBO do not have their own rendering context as PBuffers do, we can
+        // apply the camera settings before binding the FBO.
         m_fbo_camera.makeCurrent();
 
         m_frame_buffer.attach(GL_COLOR_ATTACHMENT0,*m_draw_texture);
+
+        glClear(GL_COLOR_BUFFER_BIT);
 
         /*
          * Outer border frame
          */
 
-        // Introduce some color that fades with the iterations.
+        // Introduce some color that also fades the image as it is iteratively
+        // modulated to the texture color.
         glColor3ub(182,212,100);
 
         // Render the current pattern.
