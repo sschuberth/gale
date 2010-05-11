@@ -148,7 +148,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
-        mapEXT2ARB();
+        initFallback();
 
         handle=0;
         if (glGenRenderbuffers) {
@@ -175,36 +175,9 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
 
   private:
 
-    /// Maps EXT_framebuffer_* function pointers to ARB_framebuffer_object function pointers.
-    static void mapEXT2ARB() {
-        if (!(GLEX_ARB_framebuffer_object || GLEX_ARB_framebuffer_object_init())) {
-            if (GLEX_EXT_framebuffer_object || GLEX_EXT_framebuffer_object_init()) {
-                glIsRenderbuffer                      = glIsRenderbufferEXT;
-                glBindRenderbuffer                    = glBindRenderbufferEXT;
-                glDeleteRenderbuffers                 = glDeleteRenderbuffersEXT;
-                glGenRenderbuffers                    = glGenRenderbuffersEXT;
-                glRenderbufferStorage                 = glRenderbufferStorageEXT;
-                glGetRenderbufferParameteriv          = glGetRenderbufferParameterivEXT;
-                glIsFramebuffer                       = glIsFramebufferEXT;
-                glBindFramebuffer                     = glBindFramebufferEXT;
-                glDeleteFramebuffers                  = glDeleteFramebuffersEXT;
-                glGenFramebuffers                     = glGenFramebuffersEXT;
-                glCheckFramebufferStatus              = glCheckFramebufferStatusEXT;
-                glFramebufferTexture1D                = glFramebufferTexture1DEXT;
-                glFramebufferTexture2D                = glFramebufferTexture2DEXT;
-                glFramebufferTexture3D                = glFramebufferTexture3DEXT;
-                glFramebufferRenderbuffer             = glFramebufferRenderbufferEXT;
-                glGetFramebufferAttachmentParameteriv = glGetFramebufferAttachmentParameterivEXT;
-                glGenerateMipmap                      = glGenerateMipmapEXT;
-            }
-            if (GLEX_EXT_framebuffer_blit || GLEX_EXT_framebuffer_blit_init()) {
-                glBlitFramebuffer                     = glBlitFramebufferEXT;
-            }
-            if (GLEX_EXT_framebuffer_multisample || GLEX_EXT_framebuffer_multisample_init()) {
-                glRenderbufferStorageMultisample      = glRenderbufferStorageMultisampleEXT;
-            }
-        }
-    }
+    /// Maps ARB_framebuffer_object function pointers to EXT_framebuffer_*
+    /// function pointers as a fallback.
+    static void initFallback();
 
     /// Returns the buffer parameter specified by \a name.
     GLint getParameter(GLenum const name) const {
@@ -332,7 +305,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
-        RenderBufferObject::mapEXT2ARB();
+        RenderBufferObject::initFallback();
 
         handle=0;
         if (glGenFramebuffers) {
