@@ -29,8 +29,9 @@ class TestWindow:public DefaultWindow
         m_camera.approach(-20);
 
         // Create a cube mesh and prepare it for rendering.
-        m_cube=Mesh::Factory::Hexahedron();
-        m_cube_prep.compile(*m_cube);
+        Mesh* cube=Mesh::Factory::Hexahedron();
+        m_cube_prep.compile(*cube);
+        delete cube;
 
         // Use spherical-linear interpolation by default.
         m_interpolator=&slerp;
@@ -54,10 +55,6 @@ class TestWindow:public DefaultWindow
 
         // Initialize the animation variables.
         onIdle();
-    }
-
-    ~TestWindow() {
-        delete m_cube;
     }
 
     bool onIdle() {
@@ -175,7 +172,6 @@ class TestWindow:public DefaultWindow
 
   private:
 
-    Mesh* m_cube;
     PreparedMesh m_cube_prep;
 
     // Use a member function pointer to easily switch between the interpolation methods.

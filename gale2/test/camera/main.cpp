@@ -39,13 +39,16 @@ class TestWindow:public DefaultWindow
         m_view_xyz[3]->setModelview(m);
 
         // Create an object to view at.
-        m_mesh=Mesh::Factory::Dodecahedron();
-        m_mesh_prep.compile(*m_mesh);
+        Mesh* mesh=Mesh::Factory::Dodecahedron();
+        m_mesh_prep.compile(*mesh);
+        delete mesh;
 
-        m_mesh_normals=Mesh::Factory::Normals(m_mesh->vertices->getSize(),m_mesh->vertices->data(),m_mesh_prep.lockNormals(),0.2f);
+        mesh=Mesh::Factory::Normals(m_mesh_prep.numVertices(),m_mesh_prep.lockVertices(),m_mesh_prep.lockNormals(),0.2f);
+        m_normals_prep.compile(*mesh);
+        delete mesh;
+
         m_mesh_prep.unlockNormals();
-
-        m_normals_prep.compile(*m_mesh_normals);
+        m_mesh_prep.unlockVertices();
 
         // Set some OpenGL states.
         glEnable(GL_CULL_FACE);
@@ -56,9 +59,6 @@ class TestWindow:public DefaultWindow
     }
 
     ~TestWindow() {
-        delete m_mesh_normals;
-        delete m_mesh;
-
         for (int i=1;i<4;++i) {
             delete m_view_xyz[i];
         }
@@ -111,9 +111,6 @@ class TestWindow:public DefaultWindow
   private:
 
     Camera* m_view_xyz[4];
-
-    Mesh* m_mesh;
-    Mesh* m_mesh_normals;
 
     PreparedMesh m_mesh_prep;
     PreparedMesh m_normals_prep;

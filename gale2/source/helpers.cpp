@@ -85,7 +85,6 @@ void Helper::popOrtho2D()
 
 Logo::Logo(double const fov,float const distance)
 :   m_camera(NULL,fov)
-,   m_cube(model::Mesh::Factory::Hexahedron())
 {
     math::Vec3f const pos(distance,distance,distance);
 
@@ -169,7 +168,9 @@ Logo::Logo(double const fov,float const distance)
     G_ASSERT_OPENGL
 
     // Prepare the mesh.
-    m_cube_prep.compile(*m_cube);
+    model::Mesh* cube=model::Mesh::Factory::Hexahedron();
+    m_cube_prep.compile(*cube);
+    delete cube;
 }
 
 void Logo::draw(Corner corner)
@@ -231,8 +232,6 @@ void Logo::draw(Corner corner)
 
 Logo::~Logo ()
 {
-    delete m_cube;
-
     glDeleteLists(m_list_range,LIST_COUNT);
     G_ASSERT_OPENGL
 }

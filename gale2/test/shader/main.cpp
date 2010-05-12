@@ -99,8 +99,9 @@ class TestWindow:public DefaultWindow
         glEnable(GL_DEPTH_TEST);
 
         // Create a cube mesh and prepare it for rendering.
-        m_mesh=Mesh::Factory::TorusKnot(2.5f,0.2f,500,20,3,7);
-        m_mesh_prep.compile(*m_mesh);
+        Mesh* mesh=Mesh::Factory::TorusKnot(2.5f,0.2f,500,20,3,7);
+        m_mesh_prep.compile(*mesh);
+        delete mesh;
 
         GLchar log[4096];
 
@@ -151,10 +152,6 @@ class TestWindow:public DefaultWindow
         G_ASSERT_OPENGL
     }
 
-    ~TestWindow() {
-        delete m_mesh;
-    }
-
     void onRender() {
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
@@ -167,7 +164,6 @@ class TestWindow:public DefaultWindow
 
   private:
 
-    Mesh* m_mesh;
     PreparedMesh m_mesh_prep;
 
     ShaderObject m_vert_shader,m_frag_shader;

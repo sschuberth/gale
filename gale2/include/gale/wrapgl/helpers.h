@@ -93,7 +93,6 @@ class Logo
     Camera m_camera;          ///< The logo's camera.
 
     GLuint m_list_range;      ///< Start number of the range of display list IDs.
-    model::Mesh* m_cube;      ///< The cube mesh data.
     PreparedMesh m_cube_prep; ///< The cube mesh prepared for rendering.
 };
 
