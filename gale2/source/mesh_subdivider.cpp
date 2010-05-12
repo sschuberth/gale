@@ -39,19 +39,20 @@ void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float const scale)
 {
     while (steps-->0) {
         Mesh orig=mesh;
+        VectorArray const& ov=(*orig.vertices);
 
         // Store the index of the first new vertex.
-        int x0i=orig.vertices.getSize();
+        int x0i=orig.vertices->getSize();
 
         // Loop over all vertices in the base mesh.
         for (int vi=0;vi<x0i;++vi) {
             IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=orig.vertices[vi];
+            Vec3f const& v=ov[vi];
 
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int ui=vn[n];
-                Vec3f const& u=orig.vertices[ui];
+                Vec3f const& u=ov[ui];
 
                 // Be sure to walk each pair of vertices, i.e. edge, only once.
                 // Use the address in memory to define a relation on the
@@ -80,19 +81,20 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
 {
     while (steps-->0) {
         Mesh orig=mesh;
+        VectorArray const& ov=(*orig.vertices);
 
         // Store the index of the first new vertex.
-        int x0i=orig.vertices.getSize();
+        int x0i=orig.vertices->getSize();
 
         // Loop over all vertices in the base mesh.
         for (int vi=0;vi<x0i;++vi) {
             IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=orig.vertices[vi];
+            Vec3f const& v=ov[vi];
 
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int ui=vn[n];
-                Vec3f const& u=orig.vertices[ui];
+                Vec3f const& u=ov[ui];
 
                 // Be sure to walk each pair of vertices, i.e. edge, only once.
                 // Use the address in memory to define a relation on the
@@ -102,9 +104,9 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
                 }
 
                 Vec3f x = v*0.5f + u*0.5f
-                        + orig.vertices[orig.nextTo(ui,vi)]   * 0.125f  + orig.vertices[orig.prevTo(ui,vi)]   * 0.125f
-                        - orig.vertices[orig.nextTo(ui,vi,2)] * 0.0625f - orig.vertices[orig.prevTo(ui,vi,2)] * 0.0625f
-                        - orig.vertices[orig.nextTo(vi,ui,2)] * 0.0625f - orig.vertices[orig.prevTo(vi,ui,2)] * 0.0625f;
+                        + ov[orig.nextTo(ui,vi)]   * 0.125f  + ov[orig.prevTo(ui,vi)]   * 0.125f
+                        - ov[orig.nextTo(ui,vi,2)] * 0.0625f - ov[orig.prevTo(ui,vi,2)] * 0.0625f
+                        - ov[orig.nextTo(vi,ui,2)] * 0.0625f - ov[orig.prevTo(vi,ui,2)] * 0.0625f;
 
                 // Add a new vertex as the arithmetic average of its two neighbors.
                 mesh.insert(ui,vi,x);
@@ -124,14 +126,15 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
 {
     while (steps-->0) {
         Mesh orig=mesh;
+        VectorArray& ov=(*orig.vertices);
 
         // Store the index of the first new vertex.
-        int x0i=orig.vertices.getSize();
+        int x0i=orig.vertices->getSize();
 
         // Loop over all vertices in the base mesh.
         for (int vi=0;vi<x0i;++vi) {
             IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=orig.vertices[vi];
+            Vec3f const& v=ov[vi];
 
             // Calculate variables for moving the existing vertices.
             int valence=vn.getSize();
@@ -142,7 +145,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int ui=vn[n];
-                Vec3f const& u=orig.vertices[ui];
+                Vec3f const& u=ov[ui];
 
                 q+=u;
 
@@ -154,8 +157,8 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
                 }
 
                 Vec3f x = v*0.375f + u*0.375f
-                        + orig.vertices[orig.nextTo(ui,vi)]*0.125f
-                        + orig.vertices[orig.prevTo(ui,vi)]*0.125f;
+                        + ov[orig.nextTo(ui,vi)]*0.125f
+                        + ov[orig.prevTo(ui,vi)]*0.125f;
 
                 // Add a new vertex as calculated from its neighbors.
                 mesh.insert(ui,vi,x);
@@ -165,7 +168,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
                 q/=static_cast<float>(valence);
 
                 // Move the existing vertices.
-                mesh.vertices[vi]=lerp(q,v,weight);
+                (*mesh.vertices)[vi]=lerp(q,v,weight);
             }
         }
 
@@ -178,14 +181,15 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 {
     while (steps-->0) {
         Mesh orig=mesh;
+        VectorArray const& ov=(*orig.vertices);
 
         // Store the index of the first new vertex.
-        int x0i=orig.vertices.getSize();
+        int x0i=orig.vertices->getSize();
 
         // Loop over all vertices in the base mesh.
         for (int vi=0;vi<x0i;++vi) {
             IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=orig.vertices[vi];
+            Vec3f const& v=ov[vi];
 
             // Calculate variables for moving the existing vertices.
             int valence=vn.getSize();
@@ -193,21 +197,21 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 
             if (move) {
                 // Move the existing vertices.
-                mesh.vertices[vi]*=1.0f-weight;
+                (*mesh.vertices)[vi]*=1.0f-weight;
             }
 
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int ui=vn[n];
-                Vec3f const& u=orig.vertices[ui];
+                Vec3f const& u=ov[ui];
 
                 if (move) {
                     // Move the existing vertices.
-                    mesh.vertices[vi]+=u*(weight/valence);
+                    (*mesh.vertices)[vi]+=u*(weight/valence);
                 }
 
                 int ti=orig.nextTo(ui,vi);
-                Vec3f const& t=orig.vertices[ti];
+                Vec3f const& t=ov[ti];
 
                 // Be sure to walk each pair of vertices, i.e. edge, only once.
                 // Use the address in memory to define a relation on the
@@ -218,7 +222,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 
                 // Insert a new vertex at the base mesh's face center.
                 Vec3f c=(v+u+t)/3.0f;
-                int ci=mesh.vertices.insert(c);
+                int ci=mesh.vertices->insert(c);
 
                 // Connect the new vertex to the face vertices.
                 unsigned int cn[]={vi,ui,ti};
@@ -233,12 +237,12 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
         // Loop over all vertices in the base mesh.
         for (int vi=0;vi<x0i;++vi) {
             IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=orig.vertices[vi];
+            Vec3f const& v=ov[vi];
 
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int ui=vn[n];
-                Vec3f const& u=orig.vertices[ui];
+                Vec3f const& u=ov[ui];
 
                 // Be sure to walk each pair of vertices, i.e. edge, only once.
                 // Use the address in memory to define a relation on the
@@ -265,21 +269,22 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
 {
     while (steps-->0) {
         Mesh orig=mesh;
+        VectorArray const& ov=(*orig.vertices);
 
         // Store the index of the first new vertex.
-        int x0i=orig.vertices.getSize();
+        int x0i=orig.vertices->getSize();
 
         // Loop over all vertices in the base mesh.
         for (int vi=0;vi<x0i;++vi) {
             IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=orig.vertices[vi];
+            Vec3f const& v=ov[vi];
 
             int valence=vn.getSize();
             float beta=3.0f/(2.0f*valence);
             float gamma=1.0f/(4.0f*valence);
 
             // Move the existing vertices.
-            mesh.vertices[vi]*=1.0f-beta-gamma;
+            (*mesh.vertices)[vi]*=1.0f-beta-gamma;
 
             beta/=valence;
             gamma/=valence;
@@ -287,11 +292,11 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int pi=vn[n];
-                Vec3f const& p=orig.vertices[pi];
+                Vec3f const& p=ov[pi];
 
                 // Move the existing vertices.
-                mesh.vertices[vi]+=p*beta;
-                mesh.vertices[vi]+=orig.vertices[orig.nextTo(vi,pi)]*gamma;
+                (*mesh.vertices)[vi]+=p*beta;
+                (*mesh.vertices)[vi]+=ov[orig.nextTo(vi,pi)]*gamma;
 
                 // Be sure to walk each pair of vertices, i.e. edge, only once.
                 // Use the address in memory to define a relation on the
@@ -301,10 +306,10 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
                 }
 
                 // Insert a new vertex on each base mesh's edge.
-                Vec3f const& a=orig.vertices[orig.nextTo(pi,vi)];
-                Vec3f const& b=orig.vertices[orig.prevTo(pi,vi)];
-                Vec3f const& c=orig.vertices[orig.nextTo(vi,pi)];
-                Vec3f const& d=orig.vertices[orig.prevTo(vi,pi)];
+                Vec3f const& a=ov[orig.nextTo(pi,vi)];
+                Vec3f const& b=ov[orig.prevTo(pi,vi)];
+                Vec3f const& c=ov[orig.nextTo(vi,pi)];
+                Vec3f const& d=ov[orig.prevTo(vi,pi)];
 
                 mesh.insert(vi,pi,(v+p)*0.375f + (a+b+c+d)*0.0625f);
             }
@@ -318,7 +323,7 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
         // Loop over all vertices in the base mesh.
         for (int vi=0;vi<x0i;++vi) {
             IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=orig.vertices[vi];
+            Vec3f const& v=ov[vi];
 
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
@@ -330,27 +335,27 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
 
                 int xi=orig.prevTo(pi,vi);
                 int ai=orig.prevTo(vi,xi);
-                Vec3f const& a=orig.vertices[ai];
+                Vec3f const& a=ov[ai];
                 if (&v<&a) {
                     continue;
                 }
 
                 int yi=orig.prevTo(xi,ai);
                 int bi=orig.prevTo(ai,yi);
-                Vec3f const& b=orig.vertices[bi];
+                Vec3f const& b=ov[bi];
                 if (&v<&b) {
                     continue;
                 }
 
                 int zi=orig.prevTo(yi,bi);
                 int ci=orig.prevTo(bi,zi);
-                Vec3f const& c=orig.vertices[ci];
+                Vec3f const& c=ov[ci];
                 if (&v<&c) {
                     continue;
                 }
 
                 // Insert a new vertex at the base mesh's face center.
-                int ui=mesh.vertices.insert((v+a+b+c)*0.25f);
+                int ui=mesh.vertices->insert((v+a+b+c)*0.25f);
 
                 // Connect the new vertex to the face vertices.
                 unsigned int un[]={pi,xi,yi,zi};
@@ -371,19 +376,20 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
 
     while (steps-->0) {
         Mesh orig=mesh;
+        VectorArray const& ov=(*orig.vertices);
 
         // Store the index of the first new vertex.
-        int x0i=orig.vertices.getSize();
+        int x0i=orig.vertices->getSize();
 
         // Loop over all vertices in the base mesh.
         for (int vi=0;vi<x0i;++vi) {
             IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=orig.vertices[vi];
+            Vec3f const& v=ov[vi];
 
             // Loop over v's neighborhood.
             for (int n=0;n<vn.getSize();++n) {
                 int pi=vn[n];
-                Vec3f const& p=orig.vertices[pi];
+                Vec3f const& p=ov[pi];
 
                 int o=orig.orbit(vi,pi,polygon);
 
@@ -391,8 +397,8 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
 
                 // The orbit is a quadrilateral.
                 if (o==4) {
-                    Vec3f const& q=orig.vertices[polygon[3]];
-                    Vec3f const& r=orig.vertices[polygon[2]];
+                    Vec3f const& q=ov[polygon[3]];
+                    Vec3f const& r=ov[polygon[2]];
                     t=v*0.5625f + p*0.1875f + q*0.1875f + r*0.0625f;
                 }
                 // The orbit is an arbitrary polygon.
@@ -401,13 +407,13 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
 
                     int i=0;
                     while (++i<o) {
-                        Vec3f const& a=orig.vertices[polygon[i]];
+                        Vec3f const& a=ov[polygon[i]];
                         t+=a*((3.0f + 2.0f*::cos(2.0f*Constf::PI()*static_cast<float>(i)/o))/(4.0f*o));
                     }
                 }
 
                 // Add the new vertex ...
-                int ti=mesh.vertices.insert(t);
+                int ti=mesh.vertices->insert(t);
 
                 // ... and connect it to the mesh so it can be reached below.
                 mesh.splice(ti,pi,vi);
@@ -439,7 +445,7 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
         }
 
         // Delete all base mesh vertices and their neighborhoods.
-        mesh.vertices.remove(0,x0i);
+        mesh.vertices->remove(0,x0i);
         mesh.neighbors.remove(0,x0i);
     }
 }
@@ -450,7 +456,7 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
 
 void Mesh::Subdivider::assignNeighbors(Mesh const& orig,Mesh& mesh,int const x0i)
 {
-    for (int vi=x0i;vi<orig.vertices.getSize();++vi) {
+    for (int vi=x0i;vi<orig.vertices->getSize();++vi) {
         IndexArray& vn=mesh.neighbors[vi];
 
         // Get any neighbor of v, just pick the first one.

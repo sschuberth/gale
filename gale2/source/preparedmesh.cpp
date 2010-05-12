@@ -50,7 +50,7 @@ void PreparedMesh::compile(Mesh const* const mesh)
     indices.clear();
     polygons.clear();
 
-    size_t size=m_mesh->vertices.getSize()*sizeof(Mesh::VectorArray::Type);
+    size_t size=m_mesh->vertices->getSize()*sizeof(Mesh::VectorArray::Type);
 
 #ifdef GALE_USE_VBO
     // Allocate uninitialized GPU memory for the vertices and normals.
@@ -58,30 +58,31 @@ void PreparedMesh::compile(Mesh const* const mesh)
 
     // Copy the vertices to the GPU.
     Mesh::VectorArray::Type* arrays_ptr=reinterpret_cast<Mesh::VectorArray::Type*>(vbo_vertnorm.map(GL_READ_WRITE_ARB));
-    memcpy(arrays_ptr,m_mesh->vertices.data(),size);
+    memcpy(arrays_ptr,m_mesh->vertices->data(),size);
 
-    arrays_ptr+=m_mesh->vertices.getSize();
+    arrays_ptr+=m_mesh->vertices->getSize();
 #else
-    normals.setSize(m_mesh->vertices.getSize());
+    normals.setSize(m_mesh->vertices->getSize());
     Mesh::VectorArray::Type* arrays_ptr=normals;
 #endif
 
     // Initialize the memory for the normals to 0.
     memset(arrays_ptr,0,size);
 
-    if (m_mesh->vertices.getSize()<=0) {
+    if (m_mesh->vertices->getSize()<=0) {
         box.min=box.max=Vec3f::ZERO();
         return;
     }
 
-    box.min=box.max=m_mesh->vertices[0];
+    Mesh::VectorArray const& mv=(*m_mesh->vertices);
+    box.min=box.max=mv[0];
 
     indices.setSize(G_ARRAY_LENGTH(GL_PRIM_TYPE));
     Mesh::IndexArray polygon;
 
-    for (int vi=0;vi<m_mesh->vertices.getSize();++vi) {
+    for (int vi=0;vi<m_mesh->vertices->getSize();++vi) {
         Mesh::IndexArray const& vn=m_mesh->neighbors[vi];
-        Vec3f const& v=m_mesh->vertices[vi];
+        Vec3f const& v=mv[vi];
 
         // Update the bounding box extents.
         if (v.getX()<box.min.getX()) {
@@ -131,8 +132,8 @@ void PreparedMesh::compile(Mesh const* const mesh)
             // Make sure to walk each face only once, i.e. rule out permutations
             // of face indices. Use the address in memory to define a relation
             // on the universe of vertices.
-            Vec3f const& a=m_mesh->vertices[polygon[1]];
-            Vec3f const& b=m_mesh->vertices[polygon[2]];
+            Vec3f const& a=mv[polygon[1]];
+            Vec3f const& b=mv[polygon[2]];
             if (&v<&a || &v<&b) {
                 continue;
             }
@@ -154,7 +155,7 @@ void PreparedMesh::compile(Mesh const* const mesh)
             }
             else {
                 // More than 3 vertices require another check.
-                Vec3f const& c=m_mesh->vertices[polygon[3]];
+                Vec3f const& c=mv[polygon[3]];
                 if (&v<&c) {
                     continue;
                 }
@@ -170,7 +171,7 @@ void PreparedMesh::compile(Mesh const* const mesh)
                 }
                 else {
                     // More than 4 vertices require another check.
-                    Vec3f const& d=m_mesh->vertices[polygon[4]];
+                    Vec3f const& d=mv[polygon[4]];
                     if (&v<&d) {
                         continue;
                     }
@@ -190,7 +191,7 @@ void PreparedMesh::compile(Mesh const* const mesh)
     }
 
     // Normalize the accumulated face "normals" (there are as many normals as vertices).
-    for (int i=0;i<m_mesh->vertices.getSize();++i) {
+    for (int i=0;i<m_mesh->vertices->getSize();++i) {
         arrays_ptr[i].normalize();
     }
 

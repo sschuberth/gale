@@ -32,6 +32,7 @@
  */
 
 #include "../global/dynamicarray.h"
+#include "../global/smartpointer.h"
 #include "../math/formula.h"
 #include "../math/hmatrix4.h"
 
@@ -49,6 +50,9 @@ struct Mesh
 {
     /// Array of vectors as usable by OpenGL to specify vertices.
     typedef global::DynamicArray<math::Vec3f> VectorArray;
+
+    /// A pointer to an array of vectors that is shareable between meshes.
+    typedef global::SharedPtr<VectorArray> VectorArrayPtr;
 
     /// Array of vertex indices as usable by OpenGL.
     typedef global::DynamicArray<unsigned int> IndexArray;
@@ -299,19 +303,34 @@ struct Mesh
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.
     Mesh(int const num_vertices=0)
-    :   vertices(num_vertices),neighbors(num_vertices) {}
+    :   vertices(new VectorArray(num_vertices)),neighbors(num_vertices) {}
 
     /// Creates a mesh, copying the vertices from the given dynamic \a vertex_array.
-    Mesh(VectorArray const& vertex_array) {
-        vertices.insert(vertex_array);
+    Mesh(VectorArray const& vertex_array)
+    :   vertices(new VectorArray(vertex_array))
+    {
         neighbors.setSize(vertex_array.getSize());
     }
 
     /// Creates a mesh, copying the vertices from the given static \a vertex_array.
     template<size_t size>
-    Mesh(math::Vec3f const (&vertex_array)[size]) {
-        vertices.insert(vertex_array);
+    Mesh(math::Vec3f const (&vertex_array)[size])
+    :   vertices(new VectorArray(vertex_array))
+    {
         neighbors.setSize(size);
+    }
+
+    /// Deeply copies the \a other mesh to this mesh.
+    Mesh(Mesh const& other)
+    :   vertices(new VectorArray(*other.vertices))
+    ,   neighbors(other.neighbors)
+    {}
+
+    /// Deeply copies the \a other mesh to this mesh.
+    Mesh& operator=(Mesh const& other) {
+        *vertices=*other.vertices;
+        neighbors=other.neighbors;
+        return *this;
     }
 
     /**
@@ -356,8 +375,8 @@ struct Mesh
     /// Returns -1 on success or the vertex index causing the error.
     int check() const;
 
-    VectorArray vertices; ///< Array of vertex positions.
-    IndexTable neighbors; ///< Array of arrays of neighboring vertex indices.
+    VectorArrayPtr vertices; ///< Array of vertex positions.
+    IndexTable neighbors;    ///< Array of arrays of neighboring vertex indices.
 };
 
 } // namespace model

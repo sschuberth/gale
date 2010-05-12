@@ -74,7 +74,7 @@ void Renderer::draw(PreparedMesh const& prep)
     glEnableClientState(GL_NORMAL_ARRAY);
     G_ASSERT_OPENGL
 
-    glVertexPointer(3,GL_FLOAT,0,prep.getMesh()->vertices);
+    glVertexPointer(3,GL_FLOAT,0,prep.getMesh()->vertices->data());
     glNormalPointer(GL_FLOAT,0,prep.normals);
     G_ASSERT_OPENGL
 #endif

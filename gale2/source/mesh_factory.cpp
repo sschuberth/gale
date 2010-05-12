@@ -223,8 +223,9 @@ Mesh* Mesh::Factory::Sphere(float const r,int const steps)
     Mesh* m=Icosahedron();
 
     // Scale the base mesh's vertices to have the radius' length.
-    for (int vi=0;vi<m->vertices.getSize();++vi) {
-        m->vertices[vi]=(~m->vertices[vi])*r;
+    for (int vi=0;vi<m->vertices->getSize();++vi) {
+        Vec3f& v=(*m->vertices)[vi];
+        v=(~v)*r;
     }
 
     // Create new vertices in the middle of each edge and push them out to the
@@ -436,6 +437,7 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
     }
 
     Mesh* m=new Mesh(path.getSize()*contour.getSize()+static_cast<int>(!closed)*2);
+    VectorArray& mv=(*m->vertices);
 
     // Pointers to the first and last vectors (Alpha and Omega :-) in the path.
     Vec3f const* const pA=&path[0];
@@ -468,13 +470,13 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
 
         for (int ci=0;ci<contour.getSize();++ci) {
             // Transform the contour along the path.
-            m->vertices[vi++]=frenet*contour[ci];
+            mv[vi++]=frenet*contour[ci];
         }
     }
 
     if (!closed) {
         // Add the first path vertex as the center of the start cut face.
-        m->vertices[vi]=*pA;
+        mv[vi]=*pA;
 
         // Make all vertices of the start cut face its neighbors.
         IndexArray& nA=m->neighbors[vi];
@@ -485,13 +487,13 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
         ++vi;
 
         // Add the last path vertex as the center of the end cut face.
-        m->vertices[vi]=*pO;
+        mv[vi]=*pO;
 
         // Make all vertices of the end cut face its neighbors.
         IndexArray& nO=m->neighbors[vi];
         nO.setSize(contour.getSize());
         for (int i=0;i<nO.getSize();++i) {
-            nO[i]=m->vertices.getSize()-3-i;
+            nO[i]=m->vertices->getSize()-3-i;
         }
         ++vi;
     }
@@ -544,7 +546,7 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
                 }
                 else {
                     // Connect the end cut face vertices to the last path vertex.
-                    vn[n++]=m->vertices.getSize()-1;
+                    vn[n++]=m->vertices->getSize()-1;
                     vn.setSize(5);
                 }
             }
@@ -562,21 +564,21 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
                 if (closed) {
                     // It is unclear how to determine the transformed neighbors
                     // of a closed path, so just connect to the closest ones.
-                    Vec3f const& v=m->vertices[vi];
+                    Vec3f const& v=mv[vi];
 
                     // Determine the index of the closest end cut face vertex
                     // only for the first start cut face vertex, and simply
                     // increment the index from then on.
                     if (vi==0) {
-                        int start=m->vertices.getSize()-1;
+                        int start=m->vertices->getSize()-1;
 
                         mn=start;
-                        float md=(m->vertices[mn]-v).length2();
+                        float md=(mv[mn]-v).length2();
 
                         // Calculate the distances to the opposite cut face's vertices.
                         for (int cA=1;cA<contour.getSize();++cA) {
                             int cO=start-cA;
-                            float dA=(m->vertices[cO]-v).length2();
+                            float dA=(mv[cO]-v).length2();
                             if (dA<md) {
                                 md=dA;
                                 mn=cO;
@@ -585,7 +587,7 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
                     }
                     else {
                         ++mn;
-                        if (mn==m->vertices.getSize()) {
+                        if (mn==m->vertices->getSize()) {
                             mn-=contour.getSize();
                         }
                     }
@@ -596,7 +598,7 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
                 }
                 else {
                     // Connect the start cut face vertices to the first path vertex.
-                    vn[n++]=m->vertices.getSize()-2;
+                    vn[n++]=m->vertices->getSize()-2;
                     vn.setSize(5);
                 }
             }
@@ -660,7 +662,7 @@ Mesh* Mesh::Factory::GridMapper(
             st.setY(t_min+t*t_delta);
 
             // Calculate the vertex position.
-            m->vertices[vi]=eval(st);
+            (*m->vertices)[vi]=eval(st);
 
             // Calculate the vertex neighborhood.
             IndexArray& vn=m->neighbors[vi];
@@ -670,7 +672,7 @@ Mesh* Mesh::Factory::GridMapper(
 #define WRAP_T(t) wrap(t,t_coords)
 
 // Wrap around in x-direction.
-#define WRAP_V(s) wrap(s,m->vertices.getSize())
+#define WRAP_V(s) wrap(s,m->vertices->getSize())
 
             int n=0;
 
@@ -724,12 +726,12 @@ Mesh* Mesh::Factory::Normals(int n,Vec3f const* vertices,Vec3f const* normals,fl
     Mesh* m=new Mesh(n*2);
 
     // Copy the start-points to the normal mesh.
-    memcpy(m->vertices,vertices,n*sizeof(VectorArray::Type));
+    memcpy(m->vertices->data(),vertices,n*sizeof(VectorArray::Type));
 
     // Calculate the end-points for the normal mesh.
     for (int i=0,k=n;i<n;++i,++k) {
         // Calculate the end-point by pointing from the start-point into the normal direction.
-        m->vertices[k]=(*vertices++)+(*normals++)*scale;
+        (*m->vertices)[k]=(*vertices++)+(*normals++)*scale;
 
         // Set the start- and end-points to be their respective neighbors.
         m->neighbors[i].setSize(1);
@@ -746,9 +748,9 @@ void Mesh::Factory::populateNeighborhood(Mesh* const mesh,float distance,int con
     // Square the distance so we can compare it to the (cheaper) squared length.
     distance*=distance;
 
-    for (int i=0;i<mesh->vertices.getSize();++i) {
+    for (int i=0;i<mesh->vertices->getSize();++i) {
         // Get the reference vector, i.e. to one to determine the neighborhood of.
-        Vec3f const& r=mesh->vertices[i];
+        Vec3f const& r=(*mesh->vertices)[i];
 
         // Resize the neighbor array in advance.
         mesh->neighbors[i].setSize(valence);
@@ -757,9 +759,9 @@ void Mesh::Factory::populateNeighborhood(Mesh* const mesh,float distance,int con
         int n=0; // The current neighbor index.
         Vec3f u; // Copy of the first neighbor vertex.
 
-        for (int k=0;k<mesh->vertices.getSize(),c<valence;++k) {
+        for (int k=0;k<mesh->vertices->getSize(),c<valence;++k) {
             // Get the vector from the reference to the (possible) neighbor.
-            Vec3f v=mesh->vertices[k]-r;
+            Vec3f v=(*mesh->vertices)[k]-r;
 
             if (i==k || !meta::OpCmpEqual::evaluate(static_cast<float>(v.length2()),distance)) {
                 // Skip measuring the distance to itself or if it does not equal

@@ -365,7 +365,7 @@ class TestWindow:public DefaultWindow
             mesh=m;
             mesh_prep.compile(m);
 
-            normals=Mesh::Factory::Normals(mesh->vertices.getSize(),mesh->vertices,mesh_prep.lockNormals(),s);
+            normals=Mesh::Factory::Normals(mesh->vertices->getSize(),mesh->vertices->data(),mesh_prep.lockNormals(),s);
             mesh_prep.unlockNormals();
 
             normals_prep.compile(normals);
