@@ -354,7 +354,8 @@ class TestWindow:public DefaultWindow
     struct MeshCache {
         MeshCache()
         :   mesh(NULL)
-        ,   normals(NULL) {}
+        ,   normals(NULL)
+        {}
 
         ~MeshCache() {
             delete mesh;

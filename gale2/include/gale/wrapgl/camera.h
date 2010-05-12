@@ -70,7 +70,8 @@ class Camera
 
         /// Constructs the frustum planes for the given \a camera.
         Frustum(Camera const& camera)
-        :   m_camera(camera) {}
+        :   m_camera(camera)
+        {}
 
         /// Returns whether the given \a point is contained in the frustum.
         bool contains(math::Vec3f const& point);

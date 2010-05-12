@@ -44,7 +44,8 @@ struct ArrayInitializer
 {
     /// Constructor to initialize the iterator.
     ArrayInitializer(T* iterator)
-    :   iterator(iterator) {}
+    :   iterator(iterator)
+    {}
 
     /// Operator to assign a list of comma separated values to the array pointed
     /// to by the iterator.

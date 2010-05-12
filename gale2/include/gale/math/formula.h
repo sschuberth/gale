@@ -74,7 +74,8 @@ struct ConstantFormula:public Formula
 {
     /// Initializing constructor for the formula's constant parameters.
     ConstantFormula(float const constant)
-    :   constant(constant) {}
+    :   constant(constant)
+    {}
 
     /// Evaluator for the formula.
     float operator()(float const x) const {
@@ -96,7 +97,10 @@ struct SuperFormula:public Formula
 {
     /// Initializing constructor for the formula's constant parameters.
     SuperFormula(float const m,float const n1,float const n2,float const n3,float const a=1.0,float const b=1.0)
-    :   m(m),n1(n1),n2(n2),n3(n3),a(a),b(b) {}
+    :   m(m)
+    ,   n1(n1),n2(n2),n3(n3)
+    ,   a(a),b(b)
+    {}
 
     /// Evaluator for the formula.
     float operator()(float const x) const {

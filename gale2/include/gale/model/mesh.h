@@ -303,7 +303,9 @@ struct Mesh
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.
     Mesh(int const num_vertices=0)
-    :   vertices(new VectorArray(num_vertices)),neighbors(num_vertices) {}
+    :   vertices(new VectorArray(num_vertices))
+    ,   neighbors(num_vertices)
+    {}
 
     /// Creates a mesh, copying the vertices from the given dynamic \a vertex_array.
     Mesh(VectorArray const& vertex_array)

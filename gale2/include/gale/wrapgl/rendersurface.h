@@ -68,7 +68,9 @@ class RenderSurface
     struct ContextHandle {
         /// Constructor to simplify member variable initialization.
         ContextHandle(HDC device=NULL,HGLRC render=NULL)
-        :   device(device),render(render) {}
+        :   device(device)
+        ,   render(render)
+        {}
 
         HDC device;   ///< Handle to the device context.
         HGLRC render; ///< Handle to the render context.
@@ -78,7 +80,9 @@ class RenderSurface
     struct Dimensions {
         /// Constructor to simplify member variable initialization.
         Dimensions(int width=0,int height=0)
-        :   width(width),height(height) {}
+        :   width(width)
+        ,   height(height)
+        {}
 
         int width;  ///< Width of the render surface.
         int height; ///< Height of the render surface.

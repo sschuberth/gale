@@ -214,7 +214,8 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
     /// Initializes a framebuffer object to become the current read and draw
     /// buffer when it is bound.
     FrameBufferObject(GLenum const target=GL_FRAMEBUFFER)
-    :   m_target(target) {}
+    :   m_target(target)
+    {}
 
     /// Binds the framebuffer object to the OpenGL state as the currently set
     /// target, making it the current read and / or draw buffer.

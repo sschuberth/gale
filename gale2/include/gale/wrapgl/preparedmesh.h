@@ -49,7 +49,8 @@ class PreparedMesh
 
     /// Constructor that simply initializes the mesh to render to NULL.
     PreparedMesh()
-    :   m_mesh(NULL) {}
+    :   m_mesh(NULL)
+    {}
 
     /// Generates the primitive index arrays from the mesh data structure
     /// and calculates vertex normals from averaged face normals.
