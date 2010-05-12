@@ -57,7 +57,7 @@ void Renderer::draw(PreparedMesh const& prep)
         glVertexPointer(3,GL_FLOAT,0,arrays_ptr);
         G_ASSERT_OPENGL
 
-        arrays_ptr+=prep.getMesh()->vertices.getSize();
+        arrays_ptr+=prep.getMesh()->vertices->getSize();
         glNormalPointer(GL_FLOAT,0,arrays_ptr);
         G_ASSERT_OPENGL
 
