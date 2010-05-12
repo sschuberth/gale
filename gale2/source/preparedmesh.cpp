@@ -175,7 +175,7 @@ void PreparedMesh::compile(Mesh const* const mesh)
                         continue;
                     }
 
-                    // Note: For more than 5 vertices more checks are needed.
+                    // NOTE: For more than 5 vertices more checks are needed.
                     polygons.insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
