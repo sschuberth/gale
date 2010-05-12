@@ -56,7 +56,7 @@ void Mesh::Preparer::compile(Mesh const* const mesh)
     vbo_vertnorm.setData(size*2,NULL);
 
     // Copy the vertices to the GPU.
-    VectorArray::Type* arrays_ptr=static_cast<VectorArray::Type*>(vbo_vertnorm.map(GL_READ_WRITE_ARB));
+    VectorArray::Type* arrays_ptr=reinterpret_cast<VectorArray::Type*>(vbo_vertnorm.map(GL_READ_WRITE_ARB));
     memcpy(arrays_ptr,m_mesh->vertices.data(),size);
 
     arrays_ptr+=m_mesh->vertices.getSize();
@@ -207,7 +207,7 @@ void Mesh::Preparer::compile(Mesh const* const mesh)
     vbo_indices.setData(size*sizeof(IndexArray::Type),NULL);
 
     // Copy the indices to the GPU.
-    IndexArray::Type* indices_ptr=static_cast<IndexArray::Type*>(vbo_indices.map(GL_WRITE_ONLY_ARB));
+    IndexArray::Type* indices_ptr=reinterpret_cast<IndexArray::Type*>(vbo_indices.map(GL_WRITE_ONLY_ARB));
 
     for (int i=0;i<G_ARRAY_LENGTH(GL_PRIM_TYPE);++i) {
         memcpy(indices_ptr,indices[i].data(),indices[i].getSize()*sizeof(IndexArray::Type));

@@ -113,11 +113,11 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Maps the buffer's storage to client memory for direct access using the
     /// optionally specified \a access type, and returns the pointer.
-    void* map(GLenum const access=GL_WRITE_ONLY_ARB) const {
+    GLchar* map(GLenum const access=GL_WRITE_ONLY_ARB) const {
         makeCurrent();
         GLvoid* data=glMapBufferARB(T,access);
         G_ASSERT_OPENGL
-        return data;
+        return static_cast<GLchar*>(data);
     }
 
     /// Unmaps the buffer's storage from client memory, returns \c true on
@@ -131,12 +131,12 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// If the buffer's storage is currently mapped to client memory, returns
     /// the pointer to it, or \c NULL otherwise.
-    void* getBufferPointer() const {
+    GLchar* getBufferPointer() const {
         makeCurrent();
         GLvoid* data;
         glGetBufferPointervARB(T,GL_BUFFER_MAP_POINTER_ARB,&data);
         G_ASSERT_OPENGL
-        return data;
+        return static_cast<GLchar*>(data);
     }
 
     //@}
