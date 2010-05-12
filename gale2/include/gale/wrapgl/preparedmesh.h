@@ -60,6 +60,24 @@ class PreparedMesh
 #endif
     }
 
+    // Returns the number of vertices in the mesh.
+    int numVertices() const {
+#ifdef GALE_USE_VBO
+        return vbo_vertnorm.getSize()/2;
+#else
+        return vertices->getSize();
+#endif
+    }
+
+    // Returns the number of normals in the mesh.
+    int numNormals() const {
+#ifdef GALE_USE_VBO
+        return vbo_vertnorm.getSize()/2;
+#else
+        return normals.getSize();
+#endif
+    }
+
     /// Locks the vertices for direct access and returns a pointer to them.
     model::Mesh::VectorArray::Type* lockVertices(GLenum access=GL_READ_ONLY_ARB) {
 #ifdef GALE_USE_VBO
