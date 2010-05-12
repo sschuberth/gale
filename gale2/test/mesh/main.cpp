@@ -12,7 +12,7 @@ using namespace gale::math;
 using namespace gale::model;
 using namespace gale::wrapgl;
 
-static char const* base_names[]={
+static char const* BASE_NAMES[]={
     "Tetrahedron"
 ,   "Octahedron"
 ,   "Hexahedron"
@@ -24,7 +24,7 @@ static char const* base_names[]={
 ,   "Shell"
 };
 
-static char const* mode_names[]={
+static char const* MODE_NAMES[]={
     "Polyhedral"
 ,   "Butterfly"
 ,   "Loop"
@@ -32,6 +32,8 @@ static char const* mode_names[]={
 ,   "Catmull-Clark"
 ,   "Doo-Sabin"
 };
+
+static const int MAX_STEPS=5;
 
 class TestWindow:public DefaultWindow
 {
@@ -171,12 +173,12 @@ class TestWindow:public DefaultWindow
                 int new_base=key-'0'-1;
                 if (m_mode==4) {
                     printf("ERROR: ");
-                    printf(mode_names[m_mode]);
+                    printf(MODE_NAMES[m_mode]);
                     printf(" not supported on ");
-                    printf(base_names[new_base]);
+                    printf(BASE_NAMES[new_base]);
                     printf(", resetting to ");
                     m_mode=0;
-                    printf(mode_names[m_mode]);
+                    printf(MODE_NAMES[m_mode]);
                     puts(".");
                     m_step=0;
                 }
@@ -190,12 +192,12 @@ class TestWindow:public DefaultWindow
                 int new_base=key-'0'-1;
                 if (m_mode<4) {
                     printf("ERROR: ");
-                    printf(mode_names[m_mode]);
+                    printf(MODE_NAMES[m_mode]);
                     printf(" not supported on ");
-                    printf(base_names[new_base]);
+                    printf(BASE_NAMES[new_base]);
                     printf(", resetting to ");
                     m_mode=4;
-                    printf(mode_names[m_mode]);
+                    printf(MODE_NAMES[m_mode]);
                     puts(".");
                     m_step=0;
                 }
@@ -209,12 +211,12 @@ class TestWindow:public DefaultWindow
                 int new_base=key-'0'-1;
                 if (m_mode!=5) {
                     printf("ERROR: ");
-                    printf(mode_names[m_mode]);
+                    printf(MODE_NAMES[m_mode]);
                     printf(" not supported on ");
-                    printf(base_names[new_base]);
+                    printf(BASE_NAMES[new_base]);
                     printf(", resetting to ");
                     m_mode=5;
-                    printf(mode_names[m_mode]);
+                    printf(MODE_NAMES[m_mode]);
                     puts(".");
                     m_step=0;
                 }
@@ -237,9 +239,9 @@ class TestWindow:public DefaultWindow
                 MeshCache const& mc=(*m_meshes)[m_base][0][0];
                 if (mc.mesh_prep.hasPoints() || mc.mesh_prep.hasLines() || mc.mesh_prep.hasQuads() || mc.mesh_prep.hasPolygons()) {
                     printf("ERROR: ");
-                    printf(base_names[m_base]);
+                    printf(BASE_NAMES[m_base]);
                     printf(" mesh cannot be subdivided using ");
-                    printf(mode_names[new_mode]);
+                    printf(MODE_NAMES[new_mode]);
                     puts(".");
                 }
                 else {
@@ -255,9 +257,9 @@ class TestWindow:public DefaultWindow
                 MeshCache const& mc=(*m_meshes)[m_base][0][0];
                 if (mc.mesh_prep.hasPoints() || mc.mesh_prep.hasLines() || mc.mesh_prep.hasTriangles() || mc.mesh_prep.hasPolygons()) {
                     printf("ERROR: ");
-                    printf(base_names[m_base]);
+                    printf(BASE_NAMES[m_base]);
                     printf(" mesh cannot be subdivided using ");
-                    printf(mode_names[new_mode]);
+                    printf(MODE_NAMES[new_mode]);
                     puts(".");
                 }
                 else {
@@ -276,7 +278,7 @@ class TestWindow:public DefaultWindow
 
             // Subdivision steps.
             case '+': {
-                m_step+=(m_step<5);
+                m_step+=(m_step<MAX_STEPS);
                 break;
             }
             case '-': {
@@ -310,6 +312,7 @@ class TestWindow:public DefaultWindow
             }
         }
 
+        // Create any missing subdivision steps.
         for (int s=1;s<=m_step;++s) {
             MeshCache& mc=(*m_meshes)[m_base][m_mode][s];
 
@@ -338,9 +341,9 @@ class TestWindow:public DefaultWindow
         }
 
         printf("STATUS: ");
-        printf(base_names[m_base]);
+        printf(BASE_NAMES[m_base]);
         printf(" mesh, ");
-        printf(mode_names[m_mode]);
+        printf(MODE_NAMES[m_mode]);
         printf(" subdivision, ");
         static char buffer[]="step 0.";
         buffer[5]='0'+m_step;
@@ -380,7 +383,7 @@ class TestWindow:public DefaultWindow
     };
 
     // Array of base meshes, subdivision modes, and subdivision steps.
-    typedef MeshCache MeshTable[G_ARRAY_LENGTH(base_names)][G_ARRAY_LENGTH(mode_names)][5];
+    typedef MeshCache MeshTable[G_ARRAY_LENGTH(BASE_NAMES)][G_ARRAY_LENGTH(MODE_NAMES)][MAX_STEPS+1];
 
     MeshTable* m_meshes;
     int m_base,m_mode,m_step;
@@ -401,7 +404,7 @@ int __cdecl main()
     puts("Base meshes");
     puts("-----------");
     for (int b=0;b<8;++b) {
-        printf("%d: %s\n",b+1,base_names[b]);
+        printf("%d: %s\n",b+1,BASE_NAMES[b]);
     }
     puts("\n");
     puts("Sub-division modes");
