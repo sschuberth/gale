@@ -90,7 +90,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
         G_ASSERT_OPENGL
     }
 
-    /// Returns the size of the buffer's storage.
+    /// Returns the size of the buffer's storage in bytes.
     GLsizeiptrARB getSize() const {
         return static_cast<GLsizeiptrARB>(getParameter(GL_BUFFER_SIZE_ARB));
     }
