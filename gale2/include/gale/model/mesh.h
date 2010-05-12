@@ -377,7 +377,7 @@ struct Mesh
     /// Returns -1 on success or the vertex index causing the error.
     int check() const;
 
-    VectorArrayPtr vertices; ///< Array of vertex positions.
+    VectorArrayPtr vertices; ///< Shareable array of vertex positions.
     IndexTable neighbors;    ///< Array of arrays of neighboring vertex indices.
 };
 
