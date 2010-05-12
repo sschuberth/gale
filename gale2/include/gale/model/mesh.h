@@ -61,9 +61,6 @@ struct Mesh
     /// Array of arrays to store vertex neighbors or polygon indices.
     typedef global::DynamicArray<IndexArray> IndexTable;
 
-    /// Forward declaration for use by inner classes.
-    class Preparer;
-
     /// %Factory class to create procedural meshes.
     class Factory
     {
@@ -213,10 +210,9 @@ struct Mesh
         ,   bool const t_closed
         );
 
-        /// Generates a mesh consisting of lines only that represent the
-        /// compiled mesh's vertex normals stored in the \a renderer, optionally
-        /// with the given \a scale applied.
-        static Mesh* Normals(Preparer const& geom,float const scale=1.0f);
+        /// Generates a mesh representing the given \a normals by \a n lines starting
+        /// at the given \a vertices, optionally with the given \a scale applied.
+        static Mesh* Normals(int n,math::Vec3f const* vertices,math::Vec3f const* normals,float const scale=1.0f);
 
         //@}
 
@@ -322,6 +318,22 @@ struct Mesh
         /// Returns a pointer to the last compiled mesh.
         Mesh const* getMesh() const {
             return m_mesh;
+        }
+
+        /// Locks the normals for direct access and returns a pointer to them.
+        VectorArray::Type* lockNormals(GLenum access=GL_READ_ONLY_ARB) const {
+#ifdef GALE_USE_VBO
+            return reinterpret_cast<VectorArray::Type*>(vbo_vertnorm.map(access)+vbo_vertnorm.getSize()/2);
+#else
+            return normals;
+#endif
+        }
+
+        /// Unlocks the normals, disabling direct access to them.
+        void unlockNormals() const {
+#ifdef GALE_USE_VBO
+            vbo_vertnorm.unmap();
+#endif
         }
 
         /// Returns whether this mesh contains point primitives.

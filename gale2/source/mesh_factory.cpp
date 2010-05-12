@@ -714,42 +714,29 @@ Mesh* Mesh::Factory::GridMapper(
     return m;
 }
 
-Mesh* Mesh::Factory::Normals(Preparer const& geom,float const scale)
+Mesh* Mesh::Factory::Normals(int n,Vec3f const* vertices,Vec3f const* normals,float const scale)
 {
-    if (!geom.getMesh()) {
+    if (n<=0 || !vertices || !normals) {
         return NULL;
     }
 
-    int n=geom.getMesh()->vertices.getSize();
-
-    // Double the vertices and neighbors for the lines' endpoints.
+    // Double the vertices and neighbors for the lines' end-points.
     Mesh* m=new Mesh(n*2);
 
-    // Copy the vertices to the normal mesh.
-    memcpy(m->vertices,geom.getMesh()->vertices,n*sizeof(VectorArray::Type));
+    // Copy the start-points to the normal mesh.
+    memcpy(m->vertices,vertices,n*sizeof(VectorArray::Type));
 
-    VectorArray::Type const* vertices_ptr=m->vertices;
-
-#ifdef GALE_USE_VBO
-    VectorArray::Type const* normals_ptr=reinterpret_cast<VectorArray::Type*>(geom.vbo_vertnorm.map(GL_READ_ONLY_ARB))+n;
-#else
-    VectorArray::Type const* normals_ptr=geom.normals;
-#endif
-
+    // Calculate the end-points for the normal mesh.
     for (int i=0,k=n;i<n;++i,++k) {
-        // Calculate the endpoints by pointing from the vertex into the normal direction.
-        m->vertices[k]=(*vertices_ptr++)+(*normals_ptr++)*scale;
+        // Calculate the end-point by pointing from the start-point into the normal direction.
+        m->vertices[k]=(*vertices++)+(*normals++)*scale;
 
-        // Set the start- and endpoints to be their respective neighbors.
+        // Set the start- and end-points to be their respective neighbors.
         m->neighbors[i].setSize(1);
         m->neighbors[i]=k;
         m->neighbors[k].setSize(1);
         m->neighbors[k]=i;
     }
-
-#ifdef GALE_USE_VBO
-    geom.vbo_vertnorm.unmap();
-#endif
 
     return m;
 }
