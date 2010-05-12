@@ -28,17 +28,12 @@
 
 /**
  * \file
- * Mesh management related classes
+ * Mesh data structure management classes
  */
 
 #include "../global/dynamicarray.h"
 #include "../math/formula.h"
 #include "../math/hmatrix4.h"
-
-#ifdef GALE_USE_VBO
-    #include "../wrapgl/vertexarrayobject.h"
-    #include "../wrapgl/vertexbufferobject.h"
-#endif
 
 #include "boundingbox.h"
 
@@ -300,95 +295,6 @@ struct Mesh
         /// missing in the original mesh \a orig are inserted into the given
         /// \a mesh, which usually is a copy of \a orig.
         static void assignNeighbors(Mesh const& orig,Mesh& mesh,int const x0i);
-    };
-
-    /// Class to prepare a mesh for rendering.
-    class Preparer
-    {
-      public:
-
-        /// Constructor that simply initializes the mesh to render to NULL.
-        Preparer()
-        :   m_mesh(NULL) {}
-
-        /// Generates the primitive index arrays from the mesh data structure
-        /// and calculates vertex normals from averaged face normals.
-        void compile(Mesh const* const mesh);
-
-        /// Returns a pointer to the last compiled mesh.
-        Mesh const* getMesh() const {
-            return m_mesh;
-        }
-
-        /// Locks the normals for direct access and returns a pointer to them.
-        VectorArray::Type* lockNormals(GLenum access=GL_READ_ONLY_ARB) const {
-#ifdef GALE_USE_VBO
-            return reinterpret_cast<VectorArray::Type*>(vbo_vertnorm.map(access)+vbo_vertnorm.getSize()/2);
-#else
-            return normals;
-#endif
-        }
-
-        /// Unlocks the normals, disabling direct access to them.
-        void unlockNormals() const {
-#ifdef GALE_USE_VBO
-            vbo_vertnorm.unmap();
-#endif
-        }
-
-        /// Returns whether this mesh contains point primitives.
-        bool hasPoints() const {
-            return indices[PI_POINTS].getSize()>0;
-        }
-
-        /// Returns whether this mesh contains line primitives.
-        bool hasLines() const {
-            return indices[PI_LINES].getSize()>0;
-        }
-
-        /// Returns whether this mesh contains triangle primitives.
-        bool hasTriangles() const {
-            return indices[PI_TRIANGLES].getSize()>0;
-        }
-
-        /// Returns whether this mesh contains quadrilateral primitives.
-        bool hasQuads() const {
-            return indices[PI_QUADS].getSize()>0;
-        }
-
-        /// Returns whether this mesh contains polygon primitives.
-        bool hasPolygons() const {
-            return polygons.getSize()>0;
-        }
-
-        AABB box; ///< The axis-aligned bounding box.
-
-        /// Names for the primitives stored in the indices table.
-        enum PrimitiveIndices {
-            PI_POINTS    ///< The first array of indices describes points.
-        ,   PI_LINES     ///< The second array of indices describes lines.
-        ,   PI_TRIANGLES ///< The third array of indices describes triangles.
-        ,   PI_QUADS     ///< The third array of indices describes quadrilaterals.
-        ,   PI_COUNT     ///< Special entry to name the number of enum entries.
-        };
-
-        static GLenum const GL_PRIM_TYPE[PI_COUNT]; ///< The primitive types as stored in the indices table.
-
-        IndexTable indices;  ///< Table of vertex indices describing primitives.
-        IndexTable polygons; ///< Table of vertex indices describing polygons.
-
-#ifdef GALE_USE_VBO
-        wrapgl::ArrayBufferObject vbo_vertnorm; ///< Vertices and normals on the GPU.
-        wrapgl::IndexBufferObject vbo_indices;  ///< Primitive and polygon indices on the GPU.
-
-        wrapgl::VertexArrayObject vao; ///< Bindable state vector for the render arrays.
-#else
-        VectorArray normals; ///< Array of vertex normals.
-#endif
-
-      protected:
-
-        Mesh const* m_mesh;   ///< Reference to the mesh to render.
     };
 
     /// Creates a mesh with \a num_vertices uninitialized vertices.

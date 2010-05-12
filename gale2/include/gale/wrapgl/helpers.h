@@ -92,9 +92,9 @@ class Logo
     math::HMat4f m_modelview; ///< The camera's modelview matrix.
     Camera m_camera;          ///< The logo's camera.
 
-    GLuint m_list_range;              ///< Start number of the range of display list IDs.
-    model::Mesh* m_cube;              ///< The mesh for rendering the cubes.
-    model::Mesh::Preparer m_preparer; ///< Preparer for the cube mesh.
+    GLuint m_list_range;      ///< Start number of the range of display list IDs.
+    model::Mesh* m_cube;      ///< The cube mesh data.
+    PreparedMesh m_cube_prep; ///< The cube mesh prepared for rendering.
 };
 
 } // namespace wrapgl

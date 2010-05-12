@@ -31,9 +31,8 @@
  * A 3D graphics API abstraction for rendering geometry
  */
 
-#include "../model/mesh.h"
-
 #include "camera.h"
+#include "preparedmesh.h"
 
 namespace gale {
 
@@ -45,8 +44,8 @@ namespace wrapgl {
  */
 struct Renderer
 {
-    /// Renders the given \a mesh.
-    static void draw(model::Mesh::Preparer const& geom);
+    /// Renders the given prepared mesh \a prep.
+    static void draw(PreparedMesh const& prep);
 
     /// Renders the given axis-aligned bounding \a box.
     static void draw(model::AABB const& box);

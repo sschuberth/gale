@@ -176,7 +176,7 @@ class TestWindow:public DefaultWindow
   private:
 
     Mesh* m_cube;
-    Mesh::Preparer m_cube_prep;
+    PreparedMesh m_cube_prep;
 
     // Use a member function pointer to easily switch between the interpolation methods.
     Quatf::Interpolator m_interpolator;

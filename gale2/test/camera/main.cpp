@@ -115,8 +115,8 @@ class TestWindow:public DefaultWindow
     Mesh* m_mesh;
     Mesh* m_mesh_normals;
 
-    Mesh::Preparer m_mesh_prep;
-    Mesh::Preparer m_normals_prep;
+    PreparedMesh m_mesh_prep;
+    PreparedMesh m_normals_prep;
 };
 
 // Enable memory leak detection, see:

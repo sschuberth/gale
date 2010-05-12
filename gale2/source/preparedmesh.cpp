@@ -23,22 +23,23 @@
  *
  */
 
-#include "gale/model/mesh.h"
+#include "gale/wrapgl/preparedmesh.h"
 
 using namespace gale::math;
+using namespace gale::model;
 
 namespace gale {
 
-namespace model {
+namespace wrapgl {
 
-GLenum const Mesh::Preparer::GL_PRIM_TYPE[PI_COUNT]={
+GLenum const PreparedMesh::GL_PRIM_TYPE[PI_COUNT]={
     GL_POINTS
 ,   GL_LINES
 ,   GL_TRIANGLES
 ,   GL_QUADS
 };
 
-void Mesh::Preparer::compile(Mesh const* const mesh)
+void PreparedMesh::compile(Mesh const* const mesh)
 {
     m_mesh=mesh;
     if (!m_mesh) {
@@ -49,20 +50,20 @@ void Mesh::Preparer::compile(Mesh const* const mesh)
     indices.clear();
     polygons.clear();
 
-    size_t size=m_mesh->vertices.getSize()*sizeof(VectorArray::Type);
+    size_t size=m_mesh->vertices.getSize()*sizeof(Mesh::VectorArray::Type);
 
 #ifdef GALE_USE_VBO
     // Allocate uninitialized GPU memory for the vertices and normals.
     vbo_vertnorm.setData(size*2,NULL);
 
     // Copy the vertices to the GPU.
-    VectorArray::Type* arrays_ptr=reinterpret_cast<VectorArray::Type*>(vbo_vertnorm.map(GL_READ_WRITE_ARB));
+    Mesh::VectorArray::Type* arrays_ptr=reinterpret_cast<Mesh::VectorArray::Type*>(vbo_vertnorm.map(GL_READ_WRITE_ARB));
     memcpy(arrays_ptr,m_mesh->vertices.data(),size);
 
     arrays_ptr+=m_mesh->vertices.getSize();
 #else
     normals.setSize(m_mesh->vertices.getSize());
-    VectorArray::Type* arrays_ptr=normals;
+    Mesh::VectorArray::Type* arrays_ptr=normals;
 #endif
 
     // Initialize the memory for the normals to 0.
@@ -76,10 +77,10 @@ void Mesh::Preparer::compile(Mesh const* const mesh)
     box.min=box.max=m_mesh->vertices[0];
 
     indices.setSize(G_ARRAY_LENGTH(GL_PRIM_TYPE));
-    IndexArray polygon;
+    Mesh::IndexArray polygon;
 
     for (int vi=0;vi<m_mesh->vertices.getSize();++vi) {
-        IndexArray const& vn=m_mesh->neighbors[vi];
+        Mesh::IndexArray const& vn=m_mesh->neighbors[vi];
         Vec3f const& v=m_mesh->vertices[vi];
 
         // Update the bounding box extents.
@@ -204,18 +205,18 @@ void Mesh::Preparer::compile(Mesh const* const mesh)
     for (int i=0;i<polygons.getSize();++i) {
         size+=polygons[i].getSize();
     }
-    vbo_indices.setData(size*sizeof(IndexArray::Type),NULL);
+    vbo_indices.setData(size*sizeof(Mesh::IndexArray::Type),NULL);
 
     // Copy the indices to the GPU.
-    IndexArray::Type* indices_ptr=reinterpret_cast<IndexArray::Type*>(vbo_indices.map(GL_WRITE_ONLY_ARB));
+    Mesh::IndexArray::Type* indices_ptr=reinterpret_cast<Mesh::IndexArray::Type*>(vbo_indices.map(GL_WRITE_ONLY_ARB));
 
     for (int i=0;i<G_ARRAY_LENGTH(GL_PRIM_TYPE);++i) {
-        memcpy(indices_ptr,indices[i].data(),indices[i].getSize()*sizeof(IndexArray::Type));
+        memcpy(indices_ptr,indices[i].data(),indices[i].getSize()*sizeof(Mesh::IndexArray::Type));
         indices_ptr+=indices[i].getSize();
     }
 
     for (int i=0;i<polygons.getSize();++i) {
-        memcpy(indices_ptr,polygons[i].data(),polygons[i].getSize()*sizeof(IndexArray::Type));
+        memcpy(indices_ptr,polygons[i].data(),polygons[i].getSize()*sizeof(Mesh::IndexArray::Type));
         indices_ptr+=polygons[i].getSize();
     }
 
@@ -226,6 +227,6 @@ void Mesh::Preparer::compile(Mesh const* const mesh)
 #endif
 }
 
-} // namespace model
+} // namespace wrapgl
 
 } // namespace gale

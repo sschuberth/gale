@@ -372,10 +372,10 @@ class TestWindow:public DefaultWindow
         }
 
         Mesh* mesh;
-        Mesh::Preparer mesh_prep;
+        PreparedMesh mesh_prep;
 
         Mesh* normals;
-        Mesh::Preparer normals_prep;
+        PreparedMesh normals_prep;
     };
 
     // Array of base meshes, subdivision modes, and subdivision steps.

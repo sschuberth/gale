@@ -169,7 +169,7 @@ Logo::Logo(double const fov,float const distance)
     G_ASSERT_OPENGL
 
     // Prepare the mesh.
-    m_preparer.compile(m_cube);
+    m_cube_prep.compile(m_cube);
 }
 
 void Logo::draw(Corner corner)
@@ -214,13 +214,13 @@ void Logo::draw(Corner corner)
     G_ASSERT_OPENGL
 
     glTranslatef(1,0,0);
-    Renderer::draw(m_preparer);
+    Renderer::draw(m_cube_prep);
 
     glTranslatef(-1,1,0);
-    Renderer::draw(m_preparer);
+    Renderer::draw(m_cube_prep);
 
     glTranslatef(0,-1,1);
-    Renderer::draw(m_preparer);
+    Renderer::draw(m_cube_prep);
 
     // Reset the transformation.
     glTranslatef(0,0,-1);

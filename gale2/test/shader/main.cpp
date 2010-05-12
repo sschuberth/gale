@@ -168,7 +168,7 @@ class TestWindow:public DefaultWindow
   private:
 
     Mesh* m_mesh;
-    Mesh::Preparer m_mesh_prep;
+    PreparedMesh m_mesh_prep;
 
     ShaderObject m_vert_shader,m_frag_shader;
     ProgramObject m_program;
