@@ -54,11 +54,11 @@ class DynamicArray
     typedef T Type;
 
     /**
-     * \name Constructors and destructors
+     * \name Constructors and destructor
      */
     //@{
 
-    /// Creates an empty array without any memory allocated.
+    /// Creates a dynamic array, optionally of the given \a size and \a capacity.
     DynamicArray(int const size=0,int const capacity=0)
     :   m_data(NULL)
     ,   m_size(0)
@@ -68,7 +68,7 @@ class DynamicArray
         setSize(size);
     }
 
-    /// Creates a copy of the given dynamic array.
+    /// Creates a deep copy of the given dynamic array.
     DynamicArray(DynamicArray const& other)
     :   m_data(NULL)
     ,   m_size(0)
@@ -135,13 +135,15 @@ class DynamicArray
      */
     //@{
 
-    /// Assigns an \a other dynamic array to this dynamic array.
+    /// Deeply copies the \a other dynamic array to this dynamic array.
     DynamicArray& operator=(DynamicArray const& other) {
         setSize(other.m_size);
 
         // The assignment operator is called when copying to an already existing
         // object, so we just assign all array members for their part.
         for (int i=0;i<m_size;++i) {
+            // NOTE: It is T's assignment operator's job to make sure this
+            // causes no memory leaks.
             m_data[i]=other.m_data[i];
         }
 
@@ -303,6 +305,15 @@ class DynamicArray
         return position;
     }
 
+    /// Assumes the array to be sorted and inserts \a item accordingly. If
+    /// \a forced, duplicate entries are be allowed.
+    void insertSorted(T const& item,bool const forced=false) {
+        int index;
+        if (!findSorted(item,index) || forced) {
+            insert(item,index);
+        }
+    }
+
     /// Removes \a count items starting at \a begin from the array. If \a begin
     /// is negative, item are removed from the end of the array. If \a count is
     /// -1, all remaining items starting at \a begin are removed.
@@ -359,24 +370,8 @@ class DynamicArray
         return -1;
     }
 
-    //@}
-
-    /**
-     * \name Sorted array methods
-     */
-    //@{
-
-    /// Inserts an \a item into a sorted array. If \a forced, the item will also
-    /// be inserted if it already exists, resulting in multiple occurrences.
-    void insertSorted(T const& item,bool const forced=false) {
-        int index;
-        if (!findSorted(item,index) || forced) {
-            insert(item,index);
-        }
-    }
-
-    /// Returns whether the \a item could be found in a sorted array, and at
-    /// which \a index. If the \a item was not found, \a index contains the
+    /// Assumes the array to be sorted and returns whether \a item could be
+    /// found and at which \a index. If it was not found, \a index contains the
     /// position where it was expected to be found.
     bool findSorted(T const& item,int& index) const {
         if (m_size<1) {
