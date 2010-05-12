@@ -40,7 +40,7 @@ namespace gale {
 
 namespace wrapgl {
 
-/*
+/**
  * A class to prepare a mesh for optimal rendering on the GPU.
  */
 class PreparedMesh
@@ -65,6 +65,7 @@ class PreparedMesh
 #ifdef GALE_USE_VBO
         return reinterpret_cast<model::Mesh::VectorArray::Type*>(vbo_vertnorm.map(access)+vbo_vertnorm.getSize()/2);
 #else
+        G_UNREF_PARAM(access)
         return normals;
 #endif
     }
