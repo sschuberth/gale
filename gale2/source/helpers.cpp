@@ -230,7 +230,7 @@ void Logo::draw(Corner corner)
     G_ASSERT_OPENGL
 }
 
-Logo::~Logo ()
+Logo::~Logo()
 {
     glDeleteLists(m_list_range,LIST_COUNT);
     G_ASSERT_OPENGL

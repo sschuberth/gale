@@ -174,7 +174,7 @@ class PreparedMesh
     model::Mesh::IndexTable polygons; ///< Table of vertex indices describing polygons.
 
 #ifdef GALE_USE_VBO
-    IndexBufferObject vbo_indices;  ///< Primitive and polygon indices on the GPU.
+    IndexBufferObject vbo_indices; ///< Primitive and polygon indices on the GPU.
 
     VertexArrayObject vao; ///< Bindable state vector for the render arrays.
 #endif
