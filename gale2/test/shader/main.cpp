@@ -100,7 +100,7 @@ class TestWindow:public DefaultWindow
 
         // Create a cube mesh and prepare it for rendering.
         m_mesh=Mesh::Factory::TorusKnot(2.5f,0.2f,500,20,3,7);
-        m_mesh_prep.compile(m_mesh);
+        m_mesh_prep.compile(*m_mesh);
 
         GLchar log[4096];
 

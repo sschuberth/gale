@@ -40,12 +40,12 @@ class TestWindow:public DefaultWindow
 
         // Create an object to view at.
         m_mesh=Mesh::Factory::Dodecahedron();
-        m_mesh_prep.compile(m_mesh);
+        m_mesh_prep.compile(*m_mesh);
 
         m_mesh_normals=Mesh::Factory::Normals(m_mesh->vertices->getSize(),m_mesh->vertices->data(),m_mesh_prep.lockNormals(),0.2f);
         m_mesh_prep.unlockNormals();
 
-        m_normals_prep.compile(m_mesh_normals);
+        m_normals_prep.compile(*m_mesh_normals);
 
         // Set some OpenGL states.
         glEnable(GL_CULL_FACE);

@@ -367,12 +367,12 @@ class TestWindow:public DefaultWindow
 
         void init(Mesh* m,float s=0.2f) {
             mesh=m;
-            mesh_prep.compile(m);
+            mesh_prep.compile(*m);
 
             normals=Mesh::Factory::Normals(mesh->vertices->getSize(),mesh->vertices->data(),mesh_prep.lockNormals(),s);
             mesh_prep.unlockNormals();
 
-            normals_prep.compile(normals);
+            normals_prep.compile(*normals);
         }
 
         Mesh* mesh;

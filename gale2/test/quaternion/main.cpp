@@ -30,7 +30,7 @@ class TestWindow:public DefaultWindow
 
         // Create a cube mesh and prepare it for rendering.
         m_cube=Mesh::Factory::Hexahedron();
-        m_cube_prep.compile(m_cube);
+        m_cube_prep.compile(*m_cube);
 
         // Use spherical-linear interpolation by default.
         m_interpolator=&slerp;

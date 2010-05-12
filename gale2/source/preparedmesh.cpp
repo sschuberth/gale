@@ -39,49 +39,47 @@ GLenum const PreparedMesh::GL_PRIM_TYPE[PI_COUNT]={
 ,   GL_QUADS
 };
 
-void PreparedMesh::compile(Mesh const* const mesh)
+void PreparedMesh::compile(Mesh const& mesh)
 {
-    m_mesh=mesh;
-    if (!m_mesh) {
-        return;
-    }
-
     // Clear all indices as they will be rebuilt now.
     indices.clear();
     polygons.clear();
 
-    size_t size=m_mesh->vertices->getSize()*sizeof(Mesh::VectorArray::Type);
+    size_t size=mesh.vertices->getSize()*sizeof(Mesh::VectorArray::Type);
 
 #ifdef GALE_USE_VBO
     // Allocate uninitialized GPU memory for the vertices and normals.
     vbo_vertnorm.setData(size*2,NULL);
 
     // Copy the vertices to the GPU.
-    Mesh::VectorArray::Type* arrays_ptr=reinterpret_cast<Mesh::VectorArray::Type*>(vbo_vertnorm.map(GL_READ_WRITE_ARB));
-    memcpy(arrays_ptr,m_mesh->vertices->data(),size);
-
-    arrays_ptr+=m_mesh->vertices->getSize();
+    memcpy(lockVertices(GL_READ_WRITE_ARB),mesh.vertices->data(),size);
+    unlockVertices();
 #else
-    normals.setSize(m_mesh->vertices->getSize());
-    Mesh::VectorArray::Type* arrays_ptr=normals;
+    // Allocate memory for as many normals as there are vertices.
+    normals.setSize(mesh.vertices->getSize());
+
+    // Shallow-copy the vertices.
+    vertices=mesh.vertices;
 #endif
 
-    // Initialize the memory for the normals to 0.
-    memset(arrays_ptr,0,size);
+    Mesh::VectorArray::Type* normals_ptr=lockNormals(GL_READ_WRITE_ARB);
 
-    if (m_mesh->vertices->getSize()<=0) {
+    // Initialize the memory for the normals to 0.
+    memset(normals_ptr,0,size);
+
+    if (mesh.vertices->getSize()<=0) {
         box.min=box.max=Vec3f::ZERO();
         return;
     }
 
-    Mesh::VectorArray const& mv=(*m_mesh->vertices);
+    Mesh::VectorArray const& mv=(*mesh.vertices);
     box.min=box.max=mv[0];
 
     indices.setSize(G_ARRAY_LENGTH(GL_PRIM_TYPE));
     Mesh::IndexArray polygon;
 
-    for (int vi=0;vi<m_mesh->vertices->getSize();++vi) {
-        Mesh::IndexArray const& vn=m_mesh->neighbors[vi];
+    for (int vi=0;vi<mesh.vertices->getSize();++vi) {
+        Mesh::IndexArray const& vn=mesh.neighbors[vi];
         Vec3f const& v=mv[vi];
 
         // Update the bounding box extents.
@@ -123,7 +121,7 @@ void PreparedMesh::compile(Mesh const* const mesh)
         for (int n=0;n<vn.getSize();++n) {
             // Get the orbit vertices starting with the edge from vi to its
             // currently selected neighbor.
-            int o=m_mesh->orbit(vi,vn[n],polygon);
+            int o=mesh.orbit(vi,vn[n],polygon);
             if (o<3 || o>5) {
                 // Only triangular to pentagonal faces are supported right now.
                 continue;
@@ -149,9 +147,9 @@ void PreparedMesh::compile(Mesh const* const mesh)
                 indices[PI_TRIANGLES].insert(polygon);
 
                 // Accumulate the "normal" for all face vertices.
-                arrays_ptr[polygon[0]]+=normal;
-                arrays_ptr[polygon[1]]+=normal;
-                arrays_ptr[polygon[2]]+=normal;
+                normals_ptr[polygon[0]]+=normal;
+                normals_ptr[polygon[1]]+=normal;
+                normals_ptr[polygon[2]]+=normal;
             }
             else {
                 // More than 3 vertices require another check.
@@ -164,10 +162,10 @@ void PreparedMesh::compile(Mesh const* const mesh)
                     indices[PI_QUADS].insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    arrays_ptr[polygon[0]]+=normal;
-                    arrays_ptr[polygon[1]]+=normal;
-                    arrays_ptr[polygon[2]]+=normal;
-                    arrays_ptr[polygon[3]]+=normal;
+                    normals_ptr[polygon[0]]+=normal;
+                    normals_ptr[polygon[1]]+=normal;
+                    normals_ptr[polygon[2]]+=normal;
+                    normals_ptr[polygon[3]]+=normal;
                 }
                 else {
                     // More than 4 vertices require another check.
@@ -180,24 +178,24 @@ void PreparedMesh::compile(Mesh const* const mesh)
                     polygons.insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    arrays_ptr[polygon[0]]+=normal;
-                    arrays_ptr[polygon[1]]+=normal;
-                    arrays_ptr[polygon[2]]+=normal;
-                    arrays_ptr[polygon[3]]+=normal;
-                    arrays_ptr[polygon[4]]+=normal;
+                    normals_ptr[polygon[0]]+=normal;
+                    normals_ptr[polygon[1]]+=normal;
+                    normals_ptr[polygon[2]]+=normal;
+                    normals_ptr[polygon[3]]+=normal;
+                    normals_ptr[polygon[4]]+=normal;
                 }
             }
         }
     }
 
     // Normalize the accumulated face "normals" (there are as many normals as vertices).
-    for (int i=0;i<m_mesh->vertices->getSize();++i) {
-        arrays_ptr[i].normalize();
+    for (int i=0;i<mesh.vertices->getSize();++i) {
+        normals_ptr[i].normalize();
     }
 
-#ifdef GALE_USE_VBO
-    vbo_vertnorm.unmap();
+    unlockNormals();
 
+#ifdef GALE_USE_VBO
     // Allocate uninitialized GPU memory for the indices.
     size=0;
     for (int i=0;i<G_ARRAY_LENGTH(GL_PRIM_TYPE);++i) {

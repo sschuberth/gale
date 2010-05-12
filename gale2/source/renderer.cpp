@@ -36,7 +36,7 @@ namespace wrapgl {
 
 void Renderer::draw(PreparedMesh const& prep)
 {
-    if (!prep.getMesh()) {
+    if (!prep.hasData()) {
         return;
     }
 
@@ -51,14 +51,8 @@ void Renderer::draw(PreparedMesh const& prep)
         glEnableClientState(GL_NORMAL_ARRAY);
         G_ASSERT_OPENGL
 
-        prep.vbo_vertnorm.makeCurrent();
-
-        Mesh::VectorArray::Type const* arrays_ptr=NULL;
-        glVertexPointer(3,GL_FLOAT,0,arrays_ptr);
-        G_ASSERT_OPENGL
-
-        arrays_ptr+=prep.getMesh()->vertices->getSize();
-        glNormalPointer(GL_FLOAT,0,arrays_ptr);
+        glVertexPointer(3,GL_FLOAT,0,prep.vertexPointer());
+        glNormalPointer(GL_FLOAT,0,prep.normalPointer());
         G_ASSERT_OPENGL
 
         prep.vbo_indices.makeCurrent();
@@ -74,8 +68,8 @@ void Renderer::draw(PreparedMesh const& prep)
     glEnableClientState(GL_NORMAL_ARRAY);
     G_ASSERT_OPENGL
 
-    glVertexPointer(3,GL_FLOAT,0,prep.getMesh()->vertices->data());
-    glNormalPointer(GL_FLOAT,0,prep.normals);
+    glVertexPointer(3,GL_FLOAT,0,prep.vertexPointer());
+    glNormalPointer(GL_FLOAT,0,prep.normalPointer());
     G_ASSERT_OPENGL
 #endif
 

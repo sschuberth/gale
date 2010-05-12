@@ -47,18 +47,34 @@ class PreparedMesh
 {
   public:
 
-    /// Constructor that simply initializes the mesh to render to NULL.
-    PreparedMesh()
-    :   m_mesh(NULL)
-    {}
-
     /// Generates the primitive index arrays from the mesh data structure
     /// and calculates vertex normals from averaged face normals.
-    void compile(model::Mesh const* const mesh);
+    void compile(model::Mesh const& mesh);
 
-    /// Returns a pointer to the last compiled mesh.
-    model::Mesh const* getMesh() const {
-        return m_mesh;
+    /// Returns whether the mesh contains vertex data.
+    bool hasData() const {
+#ifdef GALE_USE_VBO
+        return vbo_vertnorm.getSize()>0;
+#else
+        return vertices->getSize()>0;
+#endif
+    }
+
+    /// Locks the vertices for direct access and returns a pointer to them.
+    model::Mesh::VectorArray::Type* lockVertices(GLenum access=GL_READ_ONLY_ARB) {
+#ifdef GALE_USE_VBO
+        return reinterpret_cast<model::Mesh::VectorArray::Type*>(vbo_vertnorm.map(access));
+#else
+        G_UNREF_PARAM(access)
+        return vertices->data();
+#endif
+    }
+
+    /// Unlocks the vertices, disabling direct access to them.
+    void unlockVertices() const {
+#ifdef GALE_USE_VBO
+        vbo_vertnorm.unmap();
+#endif
     }
 
     /// Locks the normals for direct access and returns a pointer to them.
@@ -75,6 +91,26 @@ class PreparedMesh
     void unlockNormals() const {
 #ifdef GALE_USE_VBO
         vbo_vertnorm.unmap();
+#endif
+    }
+
+    /// Returns a pointer to the vertices as suitable for glVertexPointer().
+    model::Mesh::VectorArray::Type const* vertexPointer() const {
+#ifdef GALE_USE_VBO
+        vbo_vertnorm.makeCurrent();
+        return reinterpret_cast<model::Mesh::VectorArray::Type const*>(0);
+#else
+        return vertices->data();
+#endif
+    }
+
+    /// Returns a pointer to the normals as suitable for glNormalPointer().
+    model::Mesh::VectorArray::Type const* normalPointer() const {
+#ifdef GALE_USE_VBO
+        vbo_vertnorm.makeCurrent();
+        return reinterpret_cast<model::Mesh::VectorArray::Type const*>(vbo_vertnorm.getSize()/2);
+#else
+        return normals;
 #endif
     }
 
@@ -120,17 +156,19 @@ class PreparedMesh
     model::Mesh::IndexTable polygons; ///< Table of vertex indices describing polygons.
 
 #ifdef GALE_USE_VBO
-    wrapgl::ArrayBufferObject vbo_vertnorm; ///< Vertices and normals on the GPU.
-    wrapgl::IndexBufferObject vbo_indices;  ///< Primitive and polygon indices on the GPU.
+    IndexBufferObject vbo_indices;  ///< Primitive and polygon indices on the GPU.
 
-    wrapgl::VertexArrayObject vao; ///< Bindable state vector for the render arrays.
-#else
-    model::Mesh::VectorArray normals; ///< Array of vertex normals.
+    VertexArrayObject vao; ///< Bindable state vector for the render arrays.
 #endif
 
-  protected:
+  private:
 
-    model::Mesh const* m_mesh;   ///< Reference to the mesh to render.
+#ifdef GALE_USE_VBO
+    ArrayBufferObject vbo_vertnorm; ///< Vertices and normals on the GPU.
+#else
+    model::Mesh::VectorArrayPtr vertices; ///< Shared array of vertex positions.
+    model::Mesh::VectorArray normals;     ///< Array of vertex normals.
+#endif
 };
 
 } // namespace wrapgl

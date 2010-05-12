@@ -169,7 +169,7 @@ Logo::Logo(double const fov,float const distance)
     G_ASSERT_OPENGL
 
     // Prepare the mesh.
-    m_cube_prep.compile(m_cube);
+    m_cube_prep.compile(*m_cube);
 }
 
 void Logo::draw(Corner corner)
