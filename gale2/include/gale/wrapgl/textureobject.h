@@ -123,7 +123,7 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
 
     //@}
 
-  protected:
+  private:
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {

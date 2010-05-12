@@ -211,7 +211,7 @@ struct Mesh
 
         //@}
 
-      protected:
+      private:
 
         /// Makes all vertices in the given \a mesh neighbors that have the
         /// specified \a distance, up to the specified vertex \a valence.
@@ -288,7 +288,7 @@ struct Mesh
 
         //@}
 
-      protected:
+      private:
 
         /// Adds the missing neighbors of newly inserted vertices after a
         /// subdivision step. Starting from vertex index \a x0i, neighbors

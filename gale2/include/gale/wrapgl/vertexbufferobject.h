@@ -141,7 +141,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     //@}
 
-  protected:
+  private:
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {

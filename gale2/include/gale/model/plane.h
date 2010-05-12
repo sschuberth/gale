@@ -163,7 +163,7 @@ class Plane
 
     //@}
 
-  protected:
+  private:
 
     math::Vec3d m_normal; ///< The plane's normal vector (A, B, C in the formula).
     double m_distance;    ///< Negative distance to the origin (D in the formula).

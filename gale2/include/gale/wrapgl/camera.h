@@ -396,7 +396,7 @@ class Camera
 
     //@}
 
-  protected:
+  private:
 
     static Camera* s_current;       ///< Common pointer to the current camera.
 

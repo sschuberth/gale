@@ -190,7 +190,7 @@ class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
         return value;
     }
 
-  protected:
+  private:
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
