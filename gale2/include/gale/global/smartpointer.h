@@ -80,7 +80,7 @@ class SharedPtr
         return *m_object;
     }
 
-    /// Returns the underlying pointer, allows member access.
+    /// Returns the underlying pointer, allowing member access.
     T* operator->() const {
         return m_object;
     }
