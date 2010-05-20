@@ -60,7 +60,7 @@ class PreparedMesh
 #endif
     }
 
-    // Returns the number of vertices in the mesh.
+    /// Returns the number of vertices in the mesh.
     int numVertices() const {
 #ifdef GALE_USE_VBO
         return vbo_vertnorm.getSize()/2;
@@ -69,7 +69,7 @@ class PreparedMesh
 #endif
     }
 
-    // Returns the number of normals in the mesh.
+    /// Returns the number of normals in the mesh.
     int numNormals() const {
 #ifdef GALE_USE_VBO
         return vbo_vertnorm.getSize()/2;
@@ -184,7 +184,7 @@ class PreparedMesh
 #ifdef GALE_USE_VBO
     ArrayBufferObject vbo_vertnorm; ///< Vertices and normals on the GPU.
 #else
-    model::Mesh::VectorArrayPtr vertices; ///< Shared array of vertex positions.
+    model::Mesh::VectorArrayPtr vertices; ///< Shareable array of vertex positions.
     model::Mesh::VectorArray normals;     ///< Array of vertex normals.
 #endif
 };
