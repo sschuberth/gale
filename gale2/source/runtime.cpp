@@ -128,7 +128,7 @@ void* __cdecl memcpy(void* dest,void const* src,size_t count)
     char* d=(char*)dest;
     char const* s=(char const*)src;
 
-    for (size_t i=0;i<count;++i) {
+    while (count--) {
         *d++=*s++;
     }
 
@@ -158,7 +158,7 @@ void* __cdecl memset(void* dest,int c,size_t count)
 {
     char* d=(char*)dest;
 
-    for (size_t i=0;i<count;++i) {
+    while (count--) {
         *d++=(char)c;
     }
 
