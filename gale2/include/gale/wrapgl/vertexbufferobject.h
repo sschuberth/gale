@@ -75,8 +75,8 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     }
 
     /// Initializes or sets the buffer's storage to the \a size number of bytes
-    /// pointed to by \a data. Optionally defines a usage pattern for the data.
-    void setData(GLsizeiptrARB const size,GLvoid const* const data,GLenum const usage=GL_STATIC_DRAW_ARB) const {
+    /// pointed to by \a data for the intended \a usage.
+    void setData(GLenum const usage,GLsizeiptrARB const size,GLvoid const* const data) const {
         makeCurrent();
         glBufferDataARB(T,size,data,usage);
         G_ASSERT_OPENGL
@@ -84,7 +84,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Modifies the buffer's storage to the \a size number of bytes pointed to
     /// by \a data, optionally starting at the given \a offset.
-    void setData(GLsizeiptrARB const size,GLvoid const* const data,GLintptrARB const offset) const {
+    void setData(GLsizeiptrARB const size,GLvoid const* const data,GLintptrARB const offset=0) const {
         makeCurrent();
         glBufferSubDataARB(T,offset,size,data);
         G_ASSERT_OPENGL
@@ -112,8 +112,8 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     }
 
     /// Maps the buffer's storage to client memory for direct access using the
-    /// optionally specified \a access type, and returns the pointer.
-    GLchar* map(GLenum const access=GL_WRITE_ONLY_ARB) const {
+    /// specified \a access type, and returns the pointer.
+    GLchar* map(GLenum const access) const {
         makeCurrent();
         GLvoid* data=glMapBufferARB(T,access);
         G_ASSERT_OPENGL
