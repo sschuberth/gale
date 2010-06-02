@@ -180,6 +180,11 @@ void Logo::draw(Corner corner)
 
     GLint size=math::min(viewport[2],viewport[3])/6;
 
+    // Do not draw anything if the viewport has not yet been initialized.
+    if (size<=0) {
+        return;
+    }
+
     // Adjust the camera's screen space origin.
     GLint x=viewport[0],y=viewport[1];
 
