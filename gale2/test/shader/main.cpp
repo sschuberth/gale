@@ -2,6 +2,13 @@
 #include <gale/wrapgl/renderer.h>
 #include <gale/wrapgl/shaderobject.h>
 
+// Enable memory leak detection, see:
+// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
+#if !defined NDEBUG && !defined GALE_TINY_CODE
+    #define _CRTDBG_MAP_ALLOC
+    #include <crtdbg.h>
+#endif
+
 #ifndef GALE_TINY_CODE
     #include <stdio.h>
 #else
@@ -169,13 +176,6 @@ class TestWindow:public DefaultWindow
     ShaderObject m_vert_shader,m_frag_shader;
     ProgramObject m_program;
 };
-
-// Enable memory leak detection, see:
-// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
-#if !defined NDEBUG && !defined GALE_TINY_CODE
-    #define _CRTDBG_MAP_ALLOC
-    #include <crtdbg.h>
-#endif
 
 int __cdecl main()
 {

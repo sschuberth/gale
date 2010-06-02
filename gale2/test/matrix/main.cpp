@@ -1,6 +1,13 @@
 #include <gale/math/random.h>
 #include <gale/math/hmatrix4.h>
 
+// Enable memory leak detection, see:
+// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
+#if !defined NDEBUG && !defined GALE_TINY_CODE
+    #define _CRTDBG_MAP_ALLOC
+    #include <crtdbg.h>
+#endif
+
 #ifndef GALE_TINY_CODE
     #include <iostream>
 #endif
@@ -84,6 +91,10 @@ int __cdecl main()
 
     C=A*B;
     assert(C==Mat4f::IDENTITY());
+
+#if !defined NDEBUG && !defined GALE_TINY_CODE
+    _CrtDumpMemoryLeaks();
+#endif
 
     return 0;
 }

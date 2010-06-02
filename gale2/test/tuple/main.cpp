@@ -5,6 +5,13 @@
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
 
+// Enable memory leak detection, see:
+// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
+#if !defined NDEBUG && !defined GALE_TINY_CODE
+    #define _CRTDBG_MAP_ALLOC
+    #include <crtdbg.h>
+#endif
+
 using namespace gale::math;
 using namespace gale::system;
 
@@ -54,6 +61,10 @@ int __cdecl main()
     test_color();
 
     puts("*** done ***");
+
+#if !defined NDEBUG && !defined GALE_TINY_CODE
+    _CrtDumpMemoryLeaks();
+#endif
 
     return 0;
 }
