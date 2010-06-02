@@ -239,8 +239,8 @@ class DynamicArray
     }
 
     /// Inserts an \a item at the given \a position into the array. If \a position
-    /// is -1, the item gets appended at the end of the array. Returns the first
-    /// index of the newly added item.
+    /// is -1, the item gets appended at the end of the array. Returns the index
+    /// of the newly added item.
     int insert(T const& item,int position=-1) {
         if (position<0 || position>m_size) {
             position=m_size;
@@ -306,12 +306,14 @@ class DynamicArray
     }
 
     /// Assumes the array to be sorted and inserts \a item accordingly. If
-    /// \a forced, duplicate entries are be allowed.
-    void insertSorted(T const& item,bool const forced=false) {
+    /// \a forced, duplicate entries are be allowed. Returns the index of the
+    /// newly added item.
+    int insertSorted(T const& item,bool const forced=false) {
         int index;
         if (!findSorted(item,index) || forced) {
             insert(item,index);
         }
+        return index;
     }
 
     /// Removes \a count items starting at \a begin from the array. If \a begin
@@ -374,19 +376,41 @@ class DynamicArray
     /// found and at which \a index. If it was not found, \a index contains the
     /// position where it was expected to be found.
     bool findSorted(T const& item,int& index) const {
+        index=-1;
+
+        // Return with an invalid index if the array is empty.
         if (m_size<1) {
             return false;
         }
 
         int first=0,last=m_size-1;
 
-        while (last-first>1) {
+        // Use nested intervals to find the item.
+        while (first<last) {
             index=(first+last)/2;
 
             if (item>m_data[index]) {
+                // Avoid an endless loop due to integer rounding.
+                if (first==index) {
+                    index=last;
+
+                    // Check whether a non-existent item needs to be appended to
+                    // the array.
+                    if (item>m_data[index]) {
+                        ++index;
+                        return false;
+                    }
+
+                    return m_data[index]==item;
+                }
                 first=index;
             }
             else if (item<m_data[index]) {
+                // Avoid an endless loop due to integer rounding.
+                if (last==index) {
+                    index=first;
+                    return m_data[index]==item;
+                }
                 last=index;
             }
             else {
@@ -394,17 +418,7 @@ class DynamicArray
             }
         }
 
-        if (item<=m_data[first]) {
-            index=first;
-        }
-        else if (item<=m_data[last]) {
-            index=last;
-        }
-        else {
-            index=-1;
-        }
-
-        return index>0 && item==m_data[index];
+        return false;
     }
 
     //@}
