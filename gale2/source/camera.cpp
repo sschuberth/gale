@@ -46,7 +46,8 @@ void Camera::makeCurrent(bool const force)
             // If the desired screen space is smaller than the dimensions, we need
             // to enable scissoring to avoid glClear() to affect the whole surface.
             if (m_screen.x>0 || (m_screen.x<=0 && m_screen.width<d.width-m_screen.x)
-             || m_screen.y>0 || (m_screen.y<=0 && m_screen.height<d.height-m_screen.y)) {
+             || m_screen.y>0 || (m_screen.y<=0 && m_screen.height<d.height-m_screen.y))
+            {
                 glScissor(m_screen.x,m_screen.y,m_screen.width,m_screen.height);
                 G_ASSERT_OPENGL
 
