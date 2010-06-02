@@ -41,11 +41,17 @@ void Renderer::draw(PreparedMesh const& prep)
     }
 
 #ifdef GALE_USE_VBO
-    if (prep.vao.isValidHandle()) {
-        prep.vao.makeCurrent();
+    if (prep.m_vao.isValidHandle()) {
+        prep.m_vao.makeCurrent();
     }
 
-    if (!prep.vao.isDirtyState() || !prep.vao.isValidHandle()) {
+    // If Vertex Array Objects are not supported or it is outdated, set the
+    // render array states and bind the buffer objects.
+    if (!prep.m_vao.isValidHandle() || prep.m_vao.isDirtyState()) {
+        // Bind the buffer object for the vertices and normals.
+        prep.m_vbo_vertnorm.makeCurrent();
+#endif
+
         // Set-up the arrays to be indexed.
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_NORMAL_ARRAY);
@@ -55,55 +61,44 @@ void Renderer::draw(PreparedMesh const& prep)
         glNormalPointer(GL_FLOAT,0,prep.normalPointer());
         G_ASSERT_OPENGL
 
-        prep.vbo_indices.makeCurrent();
+#ifdef GALE_USE_VBO
+        // Bind the buffer object for the primitive and polygon indices.
+        prep.m_vbo_primpoly.makeCurrent();
 
         // Mark the Vertex Array Object as consistent.
-        prep.vao.setDirtyState(true);
+        prep.m_vao.setDirtyState(false);
     }
 
     Mesh::IndexArray::Type const* indices_ptr=NULL;
-#else
-    // Set-up the arrays to be indexed.
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    G_ASSERT_OPENGL
-
-    glVertexPointer(3,GL_FLOAT,0,prep.vertexPointer());
-    glNormalPointer(GL_FLOAT,0,prep.normalPointer());
-    G_ASSERT_OPENGL
 #endif
 
     // Render the different indexed primitives, if any.
-    for (int i=0;i<G_ARRAY_LENGTH(PreparedMesh::GL_PRIM_TYPE);++i) {
-        if (prep.indices[i].getSize()>0) {
+    for (int i=0;i<PreparedMesh::PI_COUNT;++i) {
 #ifdef GALE_USE_VBO
-            glDrawElements(PreparedMesh::GL_PRIM_TYPE[i],prep.indices[i].getSize(),GL_UNSIGNED_INT,indices_ptr);
-            indices_ptr+=prep.indices[i].getSize();
+        glDrawElements(PreparedMesh::GL_PRIM_TYPE[i],prep.m_primitives[i].getSize(),GL_UNSIGNED_INT,indices_ptr);
+        indices_ptr+=prep.m_primitives[i].getSize();
 #else
-            glDrawElements(PreparedMesh::GL_PRIM_TYPE[i],prep.indices[i].getSize(),GL_UNSIGNED_INT,prep.indices[i]);
+        glDrawElements(PreparedMesh::GL_PRIM_TYPE[i],prep.m_primitives[i].getSize(),GL_UNSIGNED_INT,prep.m_primitives[i]);
 #endif
-            G_ASSERT_OPENGL
-        }
+        G_ASSERT_OPENGL
     }
 
     // As polygons do not have a fixed number of vertices, each one has its own
     // index array instead of a single array for all the primitive's vertices.
-    for (int i=0;i<prep.polygons.getSize();++i) {
-        if (prep.polygons[i].getSize()>0) {
+    for (int i=0;i<prep.m_polygons.getSize();++i) {
 #ifdef GALE_USE_VBO
-            glDrawElements(GL_POLYGON,prep.polygons[i].getSize(),GL_UNSIGNED_INT,indices_ptr);
-            indices_ptr+=prep.polygons[i].getSize();
+        glDrawElements(GL_POLYGON,prep.m_polygons[i].getSize(),GL_UNSIGNED_INT,indices_ptr);
+        indices_ptr+=prep.m_polygons[i].getSize();
 #else
-            glDrawElements(GL_POLYGON,prep.polygons[i].getSize(),GL_UNSIGNED_INT,prep.polygons[i]);
+        glDrawElements(GL_POLYGON,prep.m_polygons[i].getSize(),GL_UNSIGNED_INT,prep.m_polygons[i]);
 #endif
-            G_ASSERT_OPENGL
-        }
+        G_ASSERT_OPENGL
     }
 
 #ifdef GALE_USE_VBO
-    if (prep.vao.isValidHandle()) {
+    if (prep.m_vao.isValidHandle()) {
         // Make sure no other changes accidently modify the state vector.
-        prep.vao.setCurrent(0);
+        prep.m_vao.setCurrent(0);
     }
 #endif
 }

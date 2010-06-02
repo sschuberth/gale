@@ -237,7 +237,7 @@ class TestWindow:public DefaultWindow
             {
                 // Check if the base mesh only consists of supported primitives.
                 MeshCache const& mc=(*m_meshes)[m_base][0][0];
-                if (mc.mesh_prep.hasPoints() || mc.mesh_prep.hasLines() || mc.mesh_prep.hasQuads() || mc.mesh_prep.hasPolygons()) {
+                if (mc.mesh_prep.pointCount() || mc.mesh_prep.lineCount() || mc.mesh_prep.quadCount() || mc.mesh_prep.polygonCount()) {
                     printf("ERROR: ");
                     printf(BASE_NAMES[m_base]);
                     printf(" mesh cannot be subdivided using ");
@@ -255,7 +255,7 @@ class TestWindow:public DefaultWindow
 
                 // Check if the base mesh only consists of supported primitives.
                 MeshCache const& mc=(*m_meshes)[m_base][0][0];
-                if (mc.mesh_prep.hasPoints() || mc.mesh_prep.hasLines() || mc.mesh_prep.hasTriangles() || mc.mesh_prep.hasPolygons()) {
+                if (mc.mesh_prep.pointCount() || mc.mesh_prep.lineCount() || mc.mesh_prep.triangleCount() || mc.mesh_prep.polygonCount()) {
                     printf("ERROR: ");
                     printf(BASE_NAMES[m_base]);
                     printf(" mesh cannot be subdivided using ");
@@ -369,10 +369,7 @@ class TestWindow:public DefaultWindow
             mesh=m;
             mesh_prep.compile(*m);
 
-            normals=Mesh::Factory::Normals(mesh_prep.numVertices(),mesh_prep.lockVertices(),mesh_prep.lockNormals(),s);
-            mesh_prep.unlockNormals();
-            mesh_prep.unlockVertices();
-
+            normals=Mesh::Factory::Normals(mesh_prep.numVertices(),mesh_prep.vertexAccess(),mesh_prep.normalAccess(),s);
             normals_prep.compile(*normals);
         }
 

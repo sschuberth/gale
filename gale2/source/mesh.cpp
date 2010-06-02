@@ -103,7 +103,7 @@ int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
 int Mesh::insert(int const ai,int const bi,Vec3f const& x)
 {
     // Add a new vertex at index xi.
-    int xi=vertices->insert(x);
+    int xi=vertices.insert(x);
 
     unsigned int const xn[]={ai,bi};
     neighbors.insert(xn);
@@ -148,7 +148,7 @@ void Mesh::erase(int const xi,int const vi)
 }
 
 int Mesh::check() const {
-    for (int vi=0;vi<vertices->getSize();++vi) {
+    for (int vi=0;vi<vertices.getSize();++vi) {
         IndexArray const& vn=neighbors[vi];
         for (int ni=0;ni<vn.getSize();++ni) {
             // Search for duplicates in the neighbor list.

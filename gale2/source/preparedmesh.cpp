@@ -41,46 +41,36 @@ GLenum const PreparedMesh::GL_PRIM_TYPE[PI_COUNT]={
 
 void PreparedMesh::compile(Mesh const& mesh)
 {
+    // Get an own copy of the vertices.
+    m_vertices=mesh.vertices;
+
+    // Set the number of normals to the number of vertices; even point and line
+    // vertices will have normals that equal the vertices' directions.
+    m_normals.setSize(m_vertices.getSize());
+
+    // Initialize the normals to 0 so they can be accumulated.
+    size_t size=m_vertices.getSize()*sizeof(Mesh::VectorArray::Type);
+    memset(m_normals,0,size);
+
     // Clear all indices as they will be rebuilt now.
-    indices.clear();
-    polygons.clear();
+    m_primitives.clear();
+    m_polygons.clear();
 
-    size_t size=mesh.vertices->getSize()*sizeof(Mesh::VectorArray::Type);
+    // Make room for an index array for each primitive type.
+    m_primitives.setSize(PI_COUNT);
+    Mesh::IndexArray polygon;
 
-#ifdef GALE_USE_VBO
-    // Allocate uninitialized GPU memory for the vertices and normals.
-    vbo_vertnorm.setData(size*2,NULL);
-
-    // Copy the vertices to the GPU.
-    memcpy(lockVertices(GL_READ_WRITE_ARB),mesh.vertices->data(),size);
-    unlockVertices();
-#else
-    // Allocate memory for as many normals as there are vertices.
-    normals.setSize(mesh.vertices->getSize());
-
-    // Shallow-copy the vertices.
-    vertices=mesh.vertices;
-#endif
-
-    Mesh::VectorArray::Type* normals_ptr=lockNormals(GL_READ_WRITE_ARB);
-
-    // Initialize the memory for the normals to 0.
-    memset(normals_ptr,0,size);
-
-    if (mesh.vertices->getSize()<=0) {
+    // If there are no vertices, empty the bounding box and return immediately.
+    if (m_vertices.getSize()<=0) {
         box.min=box.max=Vec3f::ZERO();
         return;
     }
 
-    Mesh::VectorArray const& mv=(*mesh.vertices);
-    box.min=box.max=mv[0];
+    box.min=box.max=m_vertices[0];
 
-    indices.setSize(G_ARRAY_LENGTH(GL_PRIM_TYPE));
-    Mesh::IndexArray polygon;
-
-    for (int vi=0;vi<mesh.vertices->getSize();++vi) {
+    for (int vi=0;vi<m_vertices.getSize();++vi) {
         Mesh::IndexArray const& vn=mesh.neighbors[vi];
-        Vec3f const& v=mv[vi];
+        Vec3f const& v=m_vertices[vi];
 
         // Update the bounding box extents.
         if (v.getX()<box.min.getX()) {
@@ -107,14 +97,20 @@ void PreparedMesh::compile(Mesh const& mesh)
         // Check for non-face primitives.
         if (vn.getSize()==0) {
             // This is just a point with an empty neighborhood.
-            indices[PI_POINTS].insert(vi);
+            m_primitives[PI_POINTS].insert(vi);
+            m_normals[vi]=v;
+
             continue;
         }
 
         if (vn.getSize()==1) {
             // This is just a line with a single neighbor.
-            indices[PI_LINES].insert(vi);
-            indices[PI_LINES].insert(vn[0]);
+            m_primitives[PI_LINES].insert(vi);
+            m_normals[vi]=v;
+
+            m_primitives[PI_LINES].insert(vn[0]);
+            m_normals[vn[0]]=m_vertices[vn[0]];
+
             continue;
         }
 
@@ -130,8 +126,8 @@ void PreparedMesh::compile(Mesh const& mesh)
             // Make sure to walk each face only once, i.e. rule out permutations
             // of face indices. Use the address in memory to define a relation
             // on the universe of vertices.
-            Vec3f const& a=mv[polygon[1]];
-            Vec3f const& b=mv[polygon[2]];
+            Vec3f const& a=m_vertices[polygon[1]];
+            Vec3f const& b=m_vertices[polygon[2]];
             if (&v<&a || &v<&b) {
                 continue;
             }
@@ -144,85 +140,96 @@ void PreparedMesh::compile(Mesh const& mesh)
             Vec3f normal=(a-v)^(b-v);
 
             if (o==3) {
-                indices[PI_TRIANGLES].insert(polygon);
+                m_primitives[PI_TRIANGLES].insert(polygon);
 
                 // Accumulate the "normal" for all face vertices.
-                normals_ptr[polygon[0]]+=normal;
-                normals_ptr[polygon[1]]+=normal;
-                normals_ptr[polygon[2]]+=normal;
+                m_normals[polygon[0]]+=normal;
+                m_normals[polygon[1]]+=normal;
+                m_normals[polygon[2]]+=normal;
             }
             else {
                 // More than 3 vertices require another check.
-                Vec3f const& c=mv[polygon[3]];
+                Vec3f const& c=m_vertices[polygon[3]];
                 if (&v<&c) {
                     continue;
                 }
 
                 if (o==4) {
-                    indices[PI_QUADS].insert(polygon);
+                    m_primitives[PI_QUADS].insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    normals_ptr[polygon[0]]+=normal;
-                    normals_ptr[polygon[1]]+=normal;
-                    normals_ptr[polygon[2]]+=normal;
-                    normals_ptr[polygon[3]]+=normal;
+                    m_normals[polygon[0]]+=normal;
+                    m_normals[polygon[1]]+=normal;
+                    m_normals[polygon[2]]+=normal;
+                    m_normals[polygon[3]]+=normal;
                 }
                 else {
                     // More than 4 vertices require another check.
-                    Vec3f const& d=mv[polygon[4]];
+                    Vec3f const& d=m_vertices[polygon[4]];
                     if (&v<&d) {
                         continue;
                     }
 
                     // NOTE: For more than 5 vertices more checks are needed.
-                    polygons.insert(polygon);
+                    m_polygons.insert(polygon);
 
                     // Accumulate the "normal" for all face vertices.
-                    normals_ptr[polygon[0]]+=normal;
-                    normals_ptr[polygon[1]]+=normal;
-                    normals_ptr[polygon[2]]+=normal;
-                    normals_ptr[polygon[3]]+=normal;
-                    normals_ptr[polygon[4]]+=normal;
+                    m_normals[polygon[0]]+=normal;
+                    m_normals[polygon[1]]+=normal;
+                    m_normals[polygon[2]]+=normal;
+                    m_normals[polygon[3]]+=normal;
+                    m_normals[polygon[4]]+=normal;
                 }
             }
         }
     }
 
-    // Normalize the accumulated face "normals" (there are as many normals as vertices).
-    for (int i=0;i<mesh.vertices->getSize();++i) {
-        normals_ptr[i].normalize();
+    // Normalize the accumulated "normals" (there are as many normals as vertices).
+    for (int i=0;i<m_vertices.getSize();++i) {
+        m_normals[i].normalize();
     }
-
-    unlockNormals();
 
 #ifdef GALE_USE_VBO
-    // Allocate uninitialized GPU memory for the indices.
+    // Allocate buffer object for the vertices and normals.
+    m_vbo_vertnorm.setData(GL_STATIC_DRAW_ARB,size*2,NULL);
+
+    // Copy the vertices and normals to the buffer object.
+    m_vbo_vertnorm.setData(size,m_vertices);
+    m_vbo_vertnorm.setData(size,m_normals,size);
+
+    // Accumulate the sizes of all primitive and polygon index arrays.
     size=0;
-    for (int i=0;i<G_ARRAY_LENGTH(GL_PRIM_TYPE);++i) {
-        size+=indices[i].getSize();
-    }
-    for (int i=0;i<polygons.getSize();++i) {
-        size+=polygons[i].getSize();
-    }
-    vbo_indices.setData(size*sizeof(Mesh::IndexArray::Type),NULL);
 
-    // Copy the indices to the GPU.
-    Mesh::IndexArray::Type* indices_ptr=reinterpret_cast<Mesh::IndexArray::Type*>(vbo_indices.map(GL_WRITE_ONLY_ARB));
-
-    for (int i=0;i<G_ARRAY_LENGTH(GL_PRIM_TYPE);++i) {
-        memcpy(indices_ptr,indices[i].data(),indices[i].getSize()*sizeof(Mesh::IndexArray::Type));
-        indices_ptr+=indices[i].getSize();
+    for (int i=0;i<m_primitives.getSize();++i) {
+        size+=m_primitives[i].getSize();
     }
 
-    for (int i=0;i<polygons.getSize();++i) {
-        memcpy(indices_ptr,polygons[i].data(),polygons[i].getSize()*sizeof(Mesh::IndexArray::Type));
-        indices_ptr+=polygons[i].getSize();
+    for (int i=0;i<m_polygons.getSize();++i) {
+        size+=m_polygons[i].getSize();
     }
 
-    vbo_indices.unmap();
+    size*=sizeof(Mesh::IndexArray::Type);
+
+    // Allocate buffer object for the primitive and polygon indices.
+    m_vbo_primpoly.setData(GL_STATIC_DRAW_ARB,size,NULL);
+
+    // Copy the primitive and polygon indices to the buffer object.
+    GLintptrARB offset=0;
+
+    for (int i=0;i<m_primitives.getSize();++i) {
+        size=m_primitives[i].getSize()*sizeof(Mesh::IndexArray::Type);
+        m_vbo_primpoly.setData(size,m_primitives[i],offset);
+        offset+=size;
+    }
+
+    for (int i=0;i<m_polygons.getSize();++i) {
+        size=m_polygons[i].getSize()*sizeof(Mesh::IndexArray::Type);
+        m_vbo_primpoly.setData(size,m_polygons[i],offset);
+        offset+=size;
+    }
 
     // Mark the Vertex Array Object as inconsistent.
-    vao.setDirtyState(false);
+    m_vao.setDirtyState(true);
 #endif
 }
 

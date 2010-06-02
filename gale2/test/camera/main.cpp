@@ -43,12 +43,9 @@ class TestWindow:public DefaultWindow
         m_mesh_prep.compile(*mesh);
         delete mesh;
 
-        mesh=Mesh::Factory::Normals(m_mesh_prep.numVertices(),m_mesh_prep.lockVertices(),m_mesh_prep.lockNormals(),0.2f);
+        mesh=Mesh::Factory::Normals(m_mesh_prep.numVertices(),m_mesh_prep.vertexAccess(),m_mesh_prep.normalAccess(),0.2f);
         m_normals_prep.compile(*mesh);
         delete mesh;
-
-        m_mesh_prep.unlockNormals();
-        m_mesh_prep.unlockVertices();
 
         // Set some OpenGL states.
         glEnable(GL_CULL_FACE);
