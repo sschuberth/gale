@@ -156,29 +156,6 @@ class Camera
         setModelview(math::HMat4f::IDENTITY());
     }
 
-    /// Initializes a perspective camera with a screen space as given by
-    /// \a screen_x, \a screen_y, \a screen_width and \a screen_height. The
-    /// camera's vertical field of view can be specified by \a fov. It's
-    /// orientation and position is given by \a modelview or, if not given, set
-    /// to identity, so the camera looks down the negative z-axis.
-    Camera(GLint screen_x,GLint screen_y,GLsizei screen_width,GLsizei screen_height,double const fov=math::Constd::PI()*0.25,math::HMat4f const* modelview=NULL)
-    :   m_surface(NULL)
-    ,   m_frustum(*this)
-    ,   m_screen_changed(true)
-    ,   m_fov(fov)
-    ,   m_clip_near(0.001)
-    ,   m_clip_far(1000.0)
-    {
-        m_screen.x=screen_x;
-        m_screen.y=screen_y;
-        m_screen.width=screen_width;
-        m_screen.height=screen_height;
-
-        // Set a perspective camera with no transformation by default.
-        setProjection(math::Mat4d::Factory::PerspectiveProjection(m_screen.width,m_screen.height,m_fov,m_clip_near,m_clip_far));
-        setModelview(modelview?*modelview:math::HMat4f::IDENTITY());
-    }
-
     /// Returns a reference to the camera's view frustum.
     Frustum& frustum() {
         return m_frustum;
