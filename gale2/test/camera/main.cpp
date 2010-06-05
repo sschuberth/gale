@@ -83,6 +83,8 @@ class TestWindow:public DefaultWindow
             m_view_xyz[i]->setScreenSpaceDimensions(w[i],h[i]);
             m_view_xyz[i]->setProjection(Mat4d::Factory::PerspectiveProjection(w[i],h[i]));
         }
+
+        repaint();
     }
 
     void onRender() {
