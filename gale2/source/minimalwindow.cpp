@@ -39,6 +39,12 @@ MinimalWindow::MinimalWindow(LPCTSTR title,int width,int height,global::Attribut
 ,   m_close_requested(false)
 ,   m_timeout(0)
 {
+    // Manually post a WM_SIZE message as the one sent by SetWindowPos()
+    // below does not reach the derived window's onResize() method because
+    // virtual functions are not yet virtual during a classes' construction, see
+    // <http://www.artima.com/cppsource/nevercall.html>.
+    PostMessage(windowHandle(),WM_SIZE,SIZE_RESTORED,MAKELPARAM(width,height));
+
     SetWindowText(windowHandle(),title);
 
     // Calculate the window size from the desired client area size.
@@ -95,17 +101,6 @@ void MinimalWindow::processEvents()
 LRESULT MinimalWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM const lParam)
 {
     switch (uMsg) {
-        case WM_SHOWWINDOW: {
-            // Because we set our window procedure after creating the window, we
-            // miss the initial WM_CREATE and WM_SIZE messages. This means
-            // onResize() is initially not called, and the OpenGL viewport's
-            // dimensions are set to 0, 0 because that are the width and height
-            // of the render surface's dummy window. So we simply trigger a
-            // resize event when the window is shown.
-            onResize(dimensions().width,dimensions().height);
-            break;
-        }
-
         // This is sent to a window after its size has changed.
         case WM_SIZE: {
             onResize(LOWORD(lParam),HIWORD(lParam));

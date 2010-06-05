@@ -88,8 +88,11 @@ class MinimalWindow:public RenderSurface
 
     /// Event handler that gets called after a window has changed its size.
     virtual void onResize(int width,int height) {
-        G_UNREF_PARAM(width)
-        G_UNREF_PARAM(height)
+        // When a GL context is first attached to a window, the viewport width and
+        // height are set to the dimensions of that window, which is 0, 0 for the
+        // render surface's dummy window, so we need to adjust the viewport.
+        glViewport(0,0,width,height);
+        repaint();
     }
 
     /// Event handler that gets called when a window portion should be painted.
