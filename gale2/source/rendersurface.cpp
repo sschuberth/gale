@@ -151,7 +151,10 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
 
 bool RenderSurface::createDeviceContext(int pixel_format)
 {
-    // Create a default window and get its device context.
+    // Create a dummy window using a predefined system class to spare the code
+    // to create an own class. This has the disadvantage that a custom window
+    // procedure can only be set after creation, and thus it will never receive
+    // a WM_CREATE or initial WM_SIZE message.
     m_window=CreateWindow(
         "static"      // lpClassName ("edit" would be shorter, but has the wrong cursor)
     ,   NULL          // lpWindowName
