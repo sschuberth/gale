@@ -12,7 +12,9 @@ class DemoWindow:public MinimalWindow
     }
 
     void onPaint() {
-        glRects(-1,-1,1,1);
+        // See <http://sizecoding.blogspot.com/2008/02/chocolux-1k-intro.html>.
+        int t=static_cast<int>(GetTickCount());
+        glRecti(-t,-t,t,t);
     }
 };
 
