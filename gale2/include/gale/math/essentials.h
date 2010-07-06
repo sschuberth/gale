@@ -435,13 +435,6 @@ G_INLINE int roundToEven(float const f)
     return i;
 }
 
-#else // G_ARCH_X86_64
-
-G_INLINE int roundToEven(float const f)
-{
-    return static_cast<int>(f+0.5f);
-}
-
 #endif // G_ARCH_X86_64
 
 /// Rounds the 64-bit floating point value \a d to the nearest integer (to the
@@ -488,13 +481,6 @@ G_INLINE long long roundToEven(double const d)
         fistp i
     }
     return i;
-}
-
-#else // G_ARCH_X86_64
-
-G_INLINE long long roundToEven(double const d)
-{
-    return static_cast<long long>(d+0.5);
 }
 
 #endif // G_ARCH_X86_64
