@@ -70,7 +70,7 @@ struct Mesh
 
             /// Returns an array of vectors as calculated by the Superformula,
             /// see <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape/>.
-            static void Supershape(VectorArray& shape,int const segs,float const m,float const n1,float const n2,float const n3,float const a=1.0,float const b=1.0);
+            static void Supershape(VectorArray& shape,int const segs,float const m,float const n1,float const n2,float const n3,float const a=1.0f,float const b=1.0f);
         };
 
         /**
