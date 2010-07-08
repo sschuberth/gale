@@ -373,13 +373,8 @@ inline T max(T const a,T const b,T const c,T const d)
 template<typename T>
 inline T sgn(T const x)
 {
-    if (x<0) {
-        return -1;
-    }
-    else if (x>0) {
-        return 1;
-    }
-    return 0;
+    // See <http://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign>.
+    return static_cast<T>(x>0)-static_cast<T>(x<0);
 }
 
 //@}
