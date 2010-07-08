@@ -19,76 +19,10 @@ using namespace gale::math;
 using namespace gale::model;
 using namespace gale::wrapgl;
 
-// http://prideout.net/blog/?p=22
-static char const* s_vert_shader_source=
-    "uniform vec3 DiffuseMaterial;\n"
-    "\n"
-    "varying vec3 EyespaceNormal;\n"
-    "varying vec3 Diffuse;\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "    EyespaceNormal = gl_NormalMatrix * gl_Normal;\n"
-    "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
-    "    Diffuse = DiffuseMaterial;\n"
-    "}\n"
-;
-
-// http://prideout.net/blog/?p=22
-static char const* s_frag_shader_source=
-    "varying vec3 EyespaceNormal;\n"
-    "varying vec3 Diffuse;\n"
-    "\n"
-    "uniform vec3 LightPosition;\n"
-    "uniform vec3 AmbientMaterial;\n"
-    "uniform vec3 SpecularMaterial;\n"
-    "uniform float Shininess;\n"
-    "\n"
-    "float stepmix(float edge0, float edge1, float E, float x)\n"
-    "{\n"
-    "    float T = clamp(0.5 * (x - edge0) / E, 0.0, 1.0);\n"
-    "    return mix(edge0, edge1, T);\n"
-    "}\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "    vec3 N = normalize(EyespaceNormal);\n"
-    "    vec3 L = normalize(LightPosition);\n"
-    "    vec3 Eye = vec3(0, 0, 1);\n"
-    "    vec3 H = normalize(L + Eye);\n"
-    "    \n"
-    "    float df = max(0.0, dot(N, L));\n"
-    "    float sf = max(0.0, dot(N, H));\n"
-    "    sf = pow(sf, Shininess);\n"
-    "\n"
-    "    const float A = 0.1;\n"
-    "    const float B = 0.3;\n"
-    "    const float C = 0.6;\n"
-    "    const float D = 1.0;\n"
-    "    float E = fwidth(df);\n"
-    "\n"
-    "    if      (df > A - E && df < A + E) df = stepmix(A, B, E, df);\n"
-    "    else if (df > B - E && df < B + E) df = stepmix(B, C, E, df);\n"
-    "    else if (df > C - E && df < C + E) df = stepmix(C, D, E, df);\n"
-    "    else if (df < A) df = 0.0;\n"
-    "    else if (df < B) df = B;\n"
-    "    else if (df < C) df = C;\n"
-    "    else df = D;\n"
-    "\n"
-    "    E = fwidth(sf);\n"
-    "    if (sf > 0.5 - E && sf < 0.5 + E)\n"
-    "    {\n"
-    "        sf = clamp(0.5 * (sf - 0.5 + E) / E, 0.0, 1.0);\n"
-    "    }\n"
-    "    else\n"
-    "    {\n"
-    "        sf = step(0.5, sf);\n"
-    "    }\n"
-    "\n"
-    "    vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;\n"
-    "    gl_FragColor = vec4(color, 1.0);\n"
-    "}\n"
-;
+#include "aa_cel_vert.inl"
+#undef SHADER_CODE_H_
+#include "aa_cel_frag.inl"
+#undef SHADER_CODE_H_
 
 class TestWindow:public DefaultWindow
 {
@@ -112,13 +46,13 @@ class TestWindow:public DefaultWindow
 
         GLchar log[4096];
 
-        m_vert_shader.setSource(&s_vert_shader_source);
+        m_vert_shader.setSource(&shader_aa_cel_vert);
         if (!m_vert_shader.compile() || m_vert_shader.getParameter(GL_INFO_LOG_LENGTH)>0) {
             m_vert_shader.getLog(log,sizeof(log));
             puts(log);
         }
 
-        m_frag_shader.setSource(&s_frag_shader_source);
+        m_frag_shader.setSource(&shader_aa_cel_frag);
         if (!m_frag_shader.compile() || m_frag_shader.getParameter(GL_INFO_LOG_LENGTH)>0) {
             m_frag_shader.getLog(log,sizeof(log));
             puts(log);

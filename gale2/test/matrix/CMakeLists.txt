@@ -10,6 +10,16 @@ project(${name})
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
 file(GLOB_RECURSE sources "*.h" "*.cpp" "../../res/threekings.rc")
 
+# Append any shader files to the list of source code files.
+file(GLOB_RECURSE shaders "*.glsl")
+list(APPEND sources ${shaders})
+
+# Add custom build step to convert shader files to header files.
+foreach(shader ${shaders})
+    get_filename_component(basename ${shader} NAME_WE)
+    add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/${basename}.inl" COMMAND ../../../res/glsl_minifier.exe -o "${CMAKE_CURRENT_SOURCE_DIR}/${basename}.inl" --preserve-externals ${shader} MAIN_DEPENDENCY ${shader})
+endforeach()
+
 # Do not create the default "Source Files" group.
 source_group("" FILES ${sources})
 
