@@ -227,7 +227,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the Cartesian length of this vector.
     double length() const {
-        return ::sqrt(static_cast<double>(length2()));
+        return sqrt(static_cast<double>(length2()));
     }
 
     /// Normalizes this vector so its length equals 1 (if it is not very small).
@@ -237,7 +237,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         double l=length2();
 
         if (!meta::OpCmpEqual::evaluate(l,1.0) && l>t) {
-            l=::sqrt(l);
+            l=sqrt(l);
             (*this)/=T(l);
         }
 
@@ -273,7 +273,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the smallest angle between this vector and vector \a v in radians.
     double angle(Vector const& v) const {
-        return ::acos(static_cast<double>(angleCosine(v)));
+        return acos(static_cast<double>(angleCosine(v)));
     }
 
     /// Returns the oriented angle between this vector and vector \a v in radians.
@@ -295,7 +295,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
         }
 
         // Calculate the unoriented angle between the two angle vectors.
-        double a=::acos(static_cast<double>(tn%vn));
+        double a=acos(static_cast<double>(tn%vn));
 
         if (d<0) {
             // If d is negative, r projects onto the negative direction of n,

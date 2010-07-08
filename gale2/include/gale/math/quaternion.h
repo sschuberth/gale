@@ -309,7 +309,7 @@ class Quaternion
 
     /// Returns the Cartesian length of this quaternion.
     double length() const {
-        return ::sqrt(static_cast<double>(length2()));
+        return sqrt(static_cast<double>(length2()));
     }
 
     /// Normalizes this quaternion so its length equals 1 (if it is not very
@@ -318,7 +318,7 @@ class Quaternion
         double l=length2();
 
         if (!meta::OpCmpEqual::evaluate(l,1.0) && l>Numerics<T>::ZERO_TOLERANCE()*Numerics<T>::ZERO_TOLERANCE()) {
-            l=::sqrt(l);
+            l=sqrt(l);
             (*this)/=T(l);
         }
 
@@ -346,7 +346,7 @@ class Quaternion
     /// Returns the angle between this quaternion and quaternion \a v, which do
     /// not need to be normalized, in radians.
     double angle(Quaternion const& q) const {
-        return ::acos(static_cast<double>(angleCosine(q)));
+        return acos(static_cast<double>(angleCosine(q)));
     }
 
     //@}
@@ -411,23 +411,23 @@ class Quaternion
         }
 
         // Calculate the angle between q and r.
-        double angle=::acos(cosine);
+        double angle=acos(cosine);
 
         // Calculate the angle between q and the interpolated result.
         double theta=angle*s;
 
         return (
-            q * T(::sin(angle-theta))
-          + r * T(::sin(      theta))
-        )/T(::sin(angle));
+            q * T(sin(angle-theta))
+          + r * T(sin(      theta))
+        )/T(sin(angle));
     }
 
     /// Calculates the complex exponential of a quaternion \a q.
     friend Quaternion exp(Quaternion const& q) {
         double l=q.imag.length();
         if (l>Numerics<T>::ZERO_TOLERANCE()) {
-            double s=::sin(l);
-            return Quaternion(T(::cos(l)),q.imag*T(s/l));
+            double s=sin(l);
+            return Quaternion(T(cos(l)),q.imag*T(s/l));
         }
         return Quaternion(1,Vec::ZERO());
     }
@@ -435,8 +435,8 @@ class Quaternion
     /// Calculates the complex logarithm of a quaternion \a q.
     friend Quaternion log(Quaternion const& q) {
         if (abs(q.real)<1) {
-            double half=::acos(q.real);
-            double s=::sin(half);
+            double half=acos(q.real);
+            double s=sin(half);
             if (abs(s)>Numerics<T>::ZERO_TOLERANCE()) {
                 return Quaternion(0,q.imag*T(half/s));
             }
@@ -473,8 +473,8 @@ class Quaternion
     /// normalized rotation \a axis vector and rotation \a angle in radians.
     void setAxisAngle(Vec const& axis,double const angle) {
         double half=0.5*angle;
-        real=T(::cos(half));
-        imag=T(::sin(half))*axis;
+        real=T(cos(half));
+        imag=T(sin(half))*axis;
     }
 
     /// Returns a rotation \a axis vector and rotation \a angle in radians that
@@ -484,8 +484,8 @@ class Quaternion
         T dot=imag.length2();
 
         if (dot>Numerics<T>::ZERO_TOLERANCE()) {
-            angle=::acos(real)*2.0;
-            axis=imag/T(::sqrt(static_cast<double>(dot)));
+            angle=acos(real)*2.0;
+            axis=imag/T(sqrt(static_cast<double>(dot)));
         }
         else {
             angle=0;
@@ -499,7 +499,7 @@ class Quaternion
         T trace=m(0,0)+m(1,1)+m(2,2);
 
         if (trace>0) {
-            T r=::sqrt(trace+1);
+            T r=sqrt(trace+1);
             T s=T(0.5)/r;
 
             real    = T(0.5)*r;
@@ -520,7 +520,7 @@ class Quaternion
             unsigned int j=(i+1)%3;
             unsigned int k=(j+1)%3;
 
-            T r=::sqrt(m(i,i)-m(j,j)-m(k,k)+1);
+            T r=sqrt(m(i,i)-m(j,j)-m(k,k)+1);
             T s=T(0.5)/r;
 
             real    = (m(k,j)-m(j,k))*s;

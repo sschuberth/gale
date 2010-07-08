@@ -41,7 +41,7 @@ void Mesh::Factory::Shape::Ellipse(VectorArray& shape,int const segs,float const
         // of accumulating the delta angles.
         float theta=i*delta;
 
-        shape[i]=Vec3f(::cos(theta)*w,::sin(theta)*h,0);
+        shape[i]=Vec3f(cos(theta)*w,sin(theta)*h,0);
     }
 }
 
@@ -58,7 +58,7 @@ void Mesh::Factory::Shape::Supershape(VectorArray& shape,int const segs,float co
         float theta=i*delta;
 
         float r=f(theta);
-        shape[i]=Vec3f(::cos(theta)*r,::sin(theta)*r,0);
+        shape[i]=Vec3f(cos(theta)*r,sin(theta)*r,0);
     }
 }
 
@@ -81,7 +81,7 @@ Mesh* Mesh::Factory::Tetrahedron()
     Mesh* m=new Mesh(vertices);
 
     // Make all vertices neighbors whose distance matches the required edge length.
-    static float const e=::sqrt(8*a*a);
+    static float const e=sqrt(8*a*a);
     populateNeighborhood(m,e,3);
 
     return m;
@@ -91,7 +91,7 @@ Mesh* Mesh::Factory::Octahedron()
 {
     // http://mathworld.wolfram.com/Octahedron.html
     static float const a=0.5f;
-    static float const b=1.0f/(2.0f*::sqrt(2.0f));
+    static float const b=1.0f/(2.0f*sqrt(2.0f));
 
     static Vec3f const vertices[]={
         // Top and bottom vertices.
@@ -109,7 +109,7 @@ Mesh* Mesh::Factory::Octahedron()
     Mesh* m=new Mesh(vertices);
 
     // Make all vertices neighbors whose distance matches the required edge length.
-    static float const e=::sqrt(a*a+2*b*b);
+    static float const e=sqrt(a*a+2*b*b);
     populateNeighborhood(m,e,4);
 
     return m;
@@ -171,7 +171,7 @@ Mesh* Mesh::Factory::Icosahedron()
     Mesh* m=new Mesh(vertices);
 
     // Make all vertices neighbors whose distance matches the required edge length.
-    static float const e=::sqrt(2*(a*a-a*b+b*b));
+    static float const e=sqrt(2*(a*a-a*b+b*b));
     populateNeighborhood(m,e,5);
 
     return m;
@@ -258,13 +258,13 @@ Mesh* Mesh::Factory::TorusKnot(float const rk,float const rt,int const sp,int co
 
         // Calculate the cylindrical coordinates.
         float theta=angle*q;
-        float r=rk+w*::cos(theta);
-        float z=h*::sin(theta);
+        float r=rk+w*cos(theta);
+        float z=h*sin(theta);
 
         // Convert to cartesian coordinates.
         float phi=angle*p;
-        float x=r*::cos(phi);
-        float y=r*::sin(phi);
+        float x=r*cos(phi);
+        float y=r*sin(phi);
 
         path[i]=Vec3f(x,y,z);
     }
@@ -304,15 +304,15 @@ Mesh* Mesh::Factory::Apple(int const s_sections,int const t_sections)
             float const& u=w.getX();
             float const& v=w.getY();
 
-            float const cv=::cos(v);
-            float const sv=::sin(v);
+            float const cv=cos(v);
+            float const sv=sin(v);
 
             float const f=(4.0f+3.8f*cv);
 
             return Vec3f(
-                ::cos(u)*f
-            ,   ::sin(u)*f
-            ,   (cv+sv-1.0f)*(1.0f+sv)*::log(1.0f-Constf::PI()*v/10.0f)+7.5f*sv
+                cos(u)*f
+            ,   sin(u)*f
+            ,   (cv+sv-1.0f)*(1.0f+sv)*log(1.0f-Constf::PI()*v/10.0f)+7.5f*sv
             );
         }
     };
@@ -341,11 +341,11 @@ Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const
             float const top=t/(2*Constf::PI());
             float const at=a*(1-top);
 
-            float const cnt=::cos(n*t);
-            float const snt=::sin(n*t);
+            float const cnt=cos(n*t);
+            float const snt=sin(n*t);
 
-            float const cs=::cos(s);
-            float const ss=::sin(s);
+            float const cs=cos(s);
+            float const ss=sin(s);
 
             return Vec3f(
                 at*cnt*(1+ss)+c*cnt
@@ -384,8 +384,8 @@ struct ProductFormula:public FormulaR2R3
     /// encoded as the first and second components of \a v.
     Vec3f operator()(Vec2f const& v) const {
         float r1t=r1(v.getX()),r2p=r2(v.getY());
-        float ct=::cos(v.getX()),cp=::cos(v.getY());
-        float st=::sin(v.getX()),sp=::sin(v.getY());
+        float ct=cos(v.getX()),cp=cos(v.getY());
+        float st=sin(v.getX()),sp=sin(v.getY());
         float r2pcp=r2p*cp;
 
         float x=r1t*ct * fm(r2pcp) + fa(r2pcp*ct);

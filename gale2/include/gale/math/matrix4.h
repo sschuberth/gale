@@ -113,7 +113,7 @@ class Matrix4
         )
         {
             // For details, see the gluPerspective() documentation in the OpenGL SDK.
-            double f=1.0/::tan(fov*0.5);
+            double f=1.0/tan(fov*0.5);
             double a=static_cast<double>(view_width)/view_height;
 
             double s=clip_near+clip_far;

@@ -70,7 +70,7 @@ class HMatrix4
         /// Creates a rotation matrix about the x-axis for the given \a angle in
         /// radians.
         static HMatrix4 RotationX(double const angle) {
-            double s=::sin(angle),c=::cos(angle);
+            double s=sin(angle),c=cos(angle);
 
             return HMatrix4(
                 Vec::X()
@@ -83,7 +83,7 @@ class HMatrix4
         /// Creates a rotation matrix about the y-axis for the given \a angle in
         /// radians.
         static HMatrix4 RotationY(double const angle) {
-            double s=::sin(angle),c=::cos(angle);
+            double s=sin(angle),c=cos(angle);
 
             return HMatrix4(
                 Vec(T( c), 0, T(-s))
@@ -96,7 +96,7 @@ class HMatrix4
         /// Creates a rotation matrix about the z-axis for the given \a angle in
         /// radians.
         static HMatrix4 RotationZ(double const angle) {
-            double s=::sin(angle),c=::cos(angle);
+            double s=sin(angle),c=cos(angle);
 
             return HMatrix4(
                 Vec(T( c), T( s), 0)
@@ -109,7 +109,7 @@ class HMatrix4
         /// Creates a rotation matrix about the given normalized \a axis for the
         /// given \a angle in radians.
         static HMatrix4 Rotation(Vec const& axis,double const angle) {
-            double s=::sin(angle),c=1-::cos(angle);
+            double s=sin(angle),c=1-cos(angle);
             double xs=s*axis.getX(),ys=s*axis.getY(),zs=s*axis.getZ();
             double xc=c*axis.getX(),yc=c*axis.getY(),zc=c*axis.getZ();
 

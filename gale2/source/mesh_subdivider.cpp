@@ -138,7 +138,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
 
             // Calculate variables for moving the existing vertices.
             int valence=vn.getSize();
-            double weight=::pow(0.375 + 0.25*::cos(2.0*Constd::PI()/valence),2.0) + 0.375;
+            double weight=pow(0.375 + 0.25*cos(2.0*Constd::PI()/valence),2.0) + 0.375;
 
             Vec3f q=Vec3f::ZERO();
 
@@ -193,7 +193,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 
             // Calculate variables for moving the existing vertices.
             int valence=vn.getSize();
-            float weight=(4.0f - 2.0f*::cos(2.0f*Constf::PI()/valence)) / 9.0f;
+            float weight=(4.0f - 2.0f*cos(2.0f*Constf::PI()/valence)) / 9.0f;
 
             if (move) {
                 // Move the existing vertices.
@@ -408,7 +408,7 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
                     int i=0;
                     while (++i<o) {
                         Vec3f const& a=ov[polygon[i]];
-                        t+=a*((3.0f + 2.0f*::cos(2.0f*Constf::PI()*static_cast<float>(i)/o))/(4.0f*o));
+                        t+=a*((3.0f + 2.0f*cos(2.0f*Constf::PI()*static_cast<float>(i)/o))/(4.0f*o));
                     }
                 }
 

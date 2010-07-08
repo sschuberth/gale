@@ -146,7 +146,7 @@ void Renderer::draw(AABB const& box)
 
 void Renderer::draw(Camera const& camera)
 {
-    double t=::tan(camera.getFOV()/2);
+    double t=tan(camera.getFOV()/2);
 
     // Get the modelview transformation and aspect ratio.
     HMat4f const& m=camera.getModelview();
