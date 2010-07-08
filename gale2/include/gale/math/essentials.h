@@ -297,10 +297,10 @@ inline T clampSafe(T const x,T const a,T const b)
 template<typename T>
 inline T wrap(T x,T const range)
 {
-    if (x<0) {
+    while (x<0) {
         x+=range;
     }
-    else if (x>=range) {
+    while (x>=range) {
         x-=range;
     }
     return x;
@@ -310,12 +310,16 @@ inline T wrap(T x,T const range)
 template<typename T>
 inline T wrap(T x,T const a,T const b)
 {
-    T const range=b-a+1;
-    while (x<a) {
-        x+=range;
-    }
-    while (x>b) {
-        x-=range;
+    while (true) {
+        if (x<a) {
+            x=b-(a-x);
+        }
+        else if (x>b) {
+            x=a+(x-b);
+        }
+        else {
+            break;
+        }
     }
     return x;
 }
