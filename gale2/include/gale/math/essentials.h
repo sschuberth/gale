@@ -327,27 +327,6 @@ inline T wrapSafe(T x,T const a,T const b)
     return (a<=b)?wrap(x,a,b):wrap(x,b,a);
 }
 
-/// Returns the maximum value among \a a and \a b.
-template<typename T>
-inline T max(T const a,T const b)
-{
-    return a>b?a:b;
-}
-
-/// Returns the maximum value among \a a, \a b and \a c.
-template<typename T>
-inline T max(T const a,T const b,T const c)
-{
-    return max(max(a,b),c);
-}
-
-/// Returns the maximum value among \a a, \a b, \a c and \a d.
-template<typename T>
-inline T max(T const a,T const b,T const c,T const d)
-{
-    return max(max(a,b,c),d);
-}
-
 /// Returns the minimum value among \a a and \a b.
 template<typename T>
 inline T min(T const a,T const b)
@@ -367,6 +346,27 @@ template<typename T>
 inline T min(T const a,T const b,T const c,T const d)
 {
     return min(min(a,b,c),d);
+}
+
+/// Returns the maximum value among \a a and \a b.
+template<typename T>
+inline T max(T const a,T const b)
+{
+    return a>b?a:b;
+}
+
+/// Returns the maximum value among \a a, \a b and \a c.
+template<typename T>
+inline T max(T const a,T const b,T const c)
+{
+    return max(max(a,b),c);
+}
+
+/// Returns the maximum value among \a a, \a b, \a c and \a d.
+template<typename T>
+inline T max(T const a,T const b,T const c,T const d)
+{
+    return max(max(a,b,c),d);
 }
 
 /// Returns the sign of \a x, or 0 if \a x is 0.
