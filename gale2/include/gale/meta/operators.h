@@ -94,7 +94,7 @@ struct OpArithDiv
     /// Divides \a a by \a b.
     template<typename T>
     static G_INLINE void evaluate(T& a,T const& b) {
-        G_ASSERT(math::abs(b)>math::Numerics<T>::ZERO_TOLERANCE())
+        G_ASSERT(abs(b)>math::Numerics<T>::ZERO_TOLERANCE())
         a/=b;
     }
 };
@@ -105,7 +105,7 @@ struct OpArithReci
     /// Calculates the reciprocal of \a b and stores the result into \a a.
     template<typename T>
     static G_INLINE void evaluate(T& a,T const& b) {
-        G_ASSERT(math::abs(b)>math::Numerics<T>::ZERO_TOLERANCE())
+        G_ASSERT(abs(b)>math::Numerics<T>::ZERO_TOLERANCE())
         a=1/b;
     }
 };
@@ -163,7 +163,7 @@ struct OpCmpEqual
     )
     {
         // Note that the tolerance may be 0 for integral types!
-        return math::abs(b-a)<=tolerance;
+        return abs(b-a)<=tolerance;
     }
 };
 
@@ -180,7 +180,7 @@ struct OpCmpEqualRel
       T const& tol_rel=math::Numerics<T>::ZERO_TOLERANCE())
     {
         // Note that the tolerance may be 0 for integral types!
-        return math::abs(b-a)<=math::max(tol_abs,tol_rel*math::max(math::abs(a),math::abs(b)));
+        return abs(b-a)<=math::max(tol_abs,tol_rel*math::max(abs(a),abs(b)));
     }
 };
 

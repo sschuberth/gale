@@ -222,14 +222,14 @@ void test_tuple()
         Tuple<3,float> tmp2=-t3f_a;
 
         float tmp_min=tmp2.absMinElement();
-        assert(tmp_min<=fabs(tmp2[0]));
-        assert(tmp_min<=fabs(tmp2[1]));
-        assert(tmp_min<=fabs(tmp2[2]));
+        assert(tmp_min<=abs(tmp2[0]));
+        assert(tmp_min<=abs(tmp2[1]));
+        assert(tmp_min<=abs(tmp2[2]));
 
         float tmp_max=tmp2.absMaxElement();
-        assert(tmp_max>=fabs(tmp2[0]));
-        assert(tmp_max>=fabs(tmp2[1]));
-        assert(tmp_max>=fabs(tmp2[2]));
+        assert(tmp_max>=abs(tmp2[0]));
+        assert(tmp_max>=abs(tmp2[1]));
+        assert(tmp_max>=abs(tmp2[2]));
     }
 
     puts("Check element-wise minimum determination ...");

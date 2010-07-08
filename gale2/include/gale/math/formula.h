@@ -105,9 +105,9 @@ struct SuperFormula:public Formula
     /// Evaluator for the formula.
     float operator()(float const x) const {
         float ta=::cos(m*x/4.0f)/a;
-        ta=::pow(::abs(ta),n2);
+        ta=::pow(abs(ta),n2);
         float tb=::sin(m*x/4.0f)/b;
-        tb=::pow(::abs(tb),n3);
+        tb=::pow(abs(tb),n3);
         return ::pow(ta+tb,-1.0f/n1);
     }
 

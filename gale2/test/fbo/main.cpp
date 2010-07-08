@@ -141,7 +141,7 @@ class TestWindow:public DefaultWindow
         static float const cath_min=::sin(45*Constf::DEG_TO_RAD());
 
         // Current opposite cathetus length.
-        float angle=::fmod(::abs(m_angle),90)+45;
+        float angle=::fmod(abs(m_angle),90)+45;
         float cath=::sin(angle*Constf::DEG_TO_RAD());
 
         float factor=cath_min/cath;

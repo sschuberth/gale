@@ -41,6 +41,31 @@
 #include <float.h>
 #include <limits.h>
 
+/**
+ * \name Overloaded functions to calculate the absolute value
+ */
+//@{
+
+/// Dummy for meta-templates as used by e.g. the Color class.
+inline unsigned int abs(unsigned int const x)
+{
+    return x;
+}
+
+/// Dummy for meta-templates as used by e.g. the Color class.
+inline unsigned short abs(unsigned short const x)
+{
+    return x;
+}
+
+/// Dummy for meta-templates as used by e.g. the Color class.
+inline unsigned char abs(unsigned char const x)
+{
+    return x;
+}
+
+//@}
+
 namespace gale {
 
 namespace math {
@@ -200,79 +225,6 @@ struct Numerics<unsigned char>
     static unsigned char ZERO_TOLERANCE()  { return 0;            }
 };
 /// \endcond
-
-/**
- * \name Overloaded functions to calculate the absolute value
- */
-//@{
-
-/// This is needed as a dummy for template methods.
-inline unsigned int abs(unsigned int const x)
-{
-    return x;
-}
-
-/// This is needed as a dummy for template methods.
-inline unsigned long abs(unsigned long const x)
-{
-    return x;
-}
-
-/// This is needed as a dummy for template methods.
-inline unsigned long long abs(unsigned long long const x)
-{
-    return x;
-}
-
-/// Calls the appropriate run-time function.
-inline int abs(int const x)
-{
-    return ::abs(x);
-}
-
-/// Calls the appropriate run-time function.
-inline long abs(long const x)
-{
-    return ::labs(x);
-}
-
-/// Calls the appropriate run-time function.
-inline long long abs(long long const x)
-{
-#ifdef G_COMP_GNUC
-
-    return ::llabs(x);
-
-#elif defined(G_COMP_MSVC)
-
-    return ::_abs64(x);
-
-#else // G_COMP_GNUC
-
-    return ::abs(x);
-
-#endif // G_COMP_GNUC
-}
-
-/// Calls the appropriate run-time function.
-inline float abs(float const x)
-{
-    return ::fabsf(x);
-}
-
-/// Calls the appropriate run-time function.
-inline double abs(double const x)
-{
-    return ::fabs(x);
-}
-
-/// Calls the appropriate run-time function.
-inline long double abs(long double const x)
-{
-    return ::fabsl(x);
-}
-
-//@}
 
 /**
  * \name Extremes determination related functions
