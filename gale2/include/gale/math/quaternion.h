@@ -444,7 +444,7 @@ class Quaternion
         return Quaternion(0,Vec::ZERO());
     }
 
-    /// Performs a cubic Bzier interpolation between the quaternions \a q and
+    /// Performs a cubic Bezier interpolation between the quaternions \a q and
     /// \a r based on a scalar \a s within the quadrilateral defined
     /// together with the "tangent" quaternions \a a and \a b (the curve touches
     /// the midpoint of the "line" from \a a to \a b when \a s = 0.5).
