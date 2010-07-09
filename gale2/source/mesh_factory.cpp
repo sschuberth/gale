@@ -459,7 +459,13 @@ Mesh* Mesh::Factory::Extruder(VectorArray const& path,VectorArray const& contour
 
         // Calculate the Frenet frame in p.
         Vec3f tangent=~(*b-*a);
-        Vec3f binormal=~(tangent^(*a+*b));
+        Vec3f binormal=*a+*b;
+        if (binormal.isCollinear(tangent)) {
+            binormal=Vec3f::X();
+        }
+        else {
+            binormal=~(tangent^binormal);
+        }
         Vec3f normal=binormal^tangent;
 
         HMat4f frenet(binormal,normal,tangent,*p++);
