@@ -68,6 +68,10 @@ struct Mesh
             /// height \a h, divided into \a segs segments.
             static void Ellipse(VectorArray& shape,int const segs,float const w,float const h);
 
+            /// Returns an array of vectors on a heart shape as published at
+            /// <http://iquilezles.org/blog/?p=1181>.
+            static void Heart(VectorArray& shape,int const segs);
+
             /// Returns an array of vectors as calculated by the Superformula,
             /// see <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape/>.
             static void Supershape(VectorArray& shape,int const segs,float const m,float const n1,float const n2,float const n3,float const a=1.0f,float const b=1.0f);

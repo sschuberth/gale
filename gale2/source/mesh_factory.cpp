@@ -45,6 +45,26 @@ void Mesh::Factory::Shape::Ellipse(VectorArray& shape,int const segs,float const
     }
 }
 
+void Mesh::Factory::Shape::Heart(VectorArray& shape,int const segs)
+{
+    shape.setSize(segs);
+
+    float delta=2*Constf::PI()/segs;
+    for (int i=0;i<segs;++i) {
+        // Because of precision issues, multiply here in each iteration instead
+        // of accumulating the delta angles.
+        float omega=-Constf::PI()+i*delta;
+
+        float lambda=abs(omega)/Constf::PI();
+        float lambda2=lambda*lambda,lambda3=lambda2*lambda;
+
+        float r=(13*lambda-22*lambda2+10*lambda3)/(6-5*lambda);
+
+        // Rotated by 90° CCW from the original formula.
+        shape[i]=Vec3f(sin(omega)*r,-cos(omega)*r,0);
+    }
+}
+
 void Mesh::Factory::Shape::Supershape(VectorArray& shape,int const segs,float const m,float const n1,float const n2,float const n3,float const a,float const b)
 {
     math::SuperFormula f(m,n1,n2,n3,a,b);
