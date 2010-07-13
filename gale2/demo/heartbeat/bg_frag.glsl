@@ -1,4 +1,4 @@
-uniform vec2 viewport;
+uniform ivec2 viewport;
 uniform int sections;
 uniform vec4 color0;
 uniform vec4 color1;

@@ -162,7 +162,7 @@ class DemoWindow:public DefaultWindow
         m_bg_prog.bind();
 
         GLint l=glGetUniformLocation(m_bg_prog.handle(),"viewport");
-        glUniform2f(l,m_camera.getScreenSpace().width,m_camera.getScreenSpace().height);
+        glUniform2i(l,m_camera.getScreenSpace().width,m_camera.getScreenSpace().height);
         G_ASSERT_OPENGL
 
         glDepthMask(GL_FALSE);
