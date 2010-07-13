@@ -5,7 +5,7 @@
  * This file is part of |_____| the Graphics Abstraction Layer & Engine,
  * see the project page at <http://developer.berlios.de/projects/gale/>.
  *
- * Copyright (C) 2005-2009  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
+ * Copyright (C) 2005-2010  Sebastian Schuberth <sschuberth_AT_gmail_DOT_com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
