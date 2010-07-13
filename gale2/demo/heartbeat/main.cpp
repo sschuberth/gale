@@ -18,14 +18,14 @@ using namespace gale::wrapgl;
 #include "fake_sss_frag.inl"
 #undef SHADER_CODE_H_
 
-class TestWindow:public DefaultWindow
+class DemoWindow:public DefaultWindow
 {
   public:
 
-    TestWindow()
+    DemoWindow()
     :   DefaultWindow(_T("demo_heartbeat"),800,600)
-    ,   m_vert_shader(GL_VERTEX_SHADER)
-    ,   m_frag_shader(GL_FRAGMENT_SHADER)
+    ,   m_heart_vert(GL_VERTEX_SHADER)
+    ,   m_heart_frag(GL_FRAGMENT_SHADER)
     {
         m_camera.approach(-5);
 
@@ -57,61 +57,61 @@ class TestWindow:public DefaultWindow
         // Compile and link the shaders.
         GLchar log[4096];
 
-        m_vert_shader.setSource(&shader_fake_sss_vert);
-        if (!m_vert_shader.compile() || m_vert_shader.getParameter(GL_INFO_LOG_LENGTH)>0) {
-            m_vert_shader.getLog(log,sizeof(log));
+        m_heart_vert.setSource(&shader_fake_sss_vert);
+        if (!m_heart_vert.compile() || m_heart_vert.getParameter(GL_INFO_LOG_LENGTH)>0) {
+            m_heart_vert.getLog(log,sizeof(log));
             puts(log);
         }
 
-        m_frag_shader.setSource(&shader_fake_sss_frag);
-        if (!m_frag_shader.compile() || m_frag_shader.getParameter(GL_INFO_LOG_LENGTH)>0) {
-            m_frag_shader.getLog(log,sizeof(log));
+        m_heart_frag.setSource(&shader_fake_sss_frag);
+        if (!m_heart_frag.compile() || m_heart_frag.getParameter(GL_INFO_LOG_LENGTH)>0) {
+            m_heart_frag.getLog(log,sizeof(log));
             puts(log);
         }
 
-        m_program.attach(m_vert_shader);
-        m_program.attach(m_frag_shader);
-        if (!m_program.link() || m_program.getParameter(GL_INFO_LOG_LENGTH)>0) {
-            m_program.getLog(log,sizeof(log));
+        m_heart_prog.attach(m_heart_vert);
+        m_heart_prog.attach(m_heart_frag);
+        if (!m_heart_prog.link() || m_heart_prog.getParameter(GL_INFO_LOG_LENGTH)>0) {
+            m_heart_prog.getLog(log,sizeof(log));
             puts(log);
         }
 
         // We need to use the program before we can set its uniforms.
-        m_program.makeCurrent();
+        m_heart_prog.makeCurrent();
 
         GLint l;
 
         // Vertex shader uniforms.
-        l=glGetUniformLocation(m_program.handle(),"LightPosition");
+        l=glGetUniformLocation(m_heart_prog.handle(),"LightPosition");
         glUniform3f(l,0.25f,0.25f,0.5f);
         G_ASSERT_OPENGL
 
         // Fragment shader uniforms.
-        l=glGetUniformLocation(m_program.handle(),"MaterialThickness");
+        l=glGetUniformLocation(m_heart_prog.handle(),"MaterialThickness");
         glUniform1f(l,0.6f);
         G_ASSERT_OPENGL
 
-        l=glGetUniformLocation(m_program.handle(),"ExtinctionCoefficient");
+        l=glGetUniformLocation(m_heart_prog.handle(),"ExtinctionCoefficient");
         glUniform3f(l,0.8f,0.12f,0.2f);
         G_ASSERT_OPENGL
 
-        l=glGetUniformLocation(m_program.handle(),"LightColor");
+        l=glGetUniformLocation(m_heart_prog.handle(),"LightColor");
         glUniform4f(l,1.0f,1.0f,1.0f,1.0f);
         G_ASSERT_OPENGL
 
-        l=glGetUniformLocation(m_program.handle(),"BaseColor");
+        l=glGetUniformLocation(m_heart_prog.handle(),"BaseColor");
         glUniform4f(l,0.82f,0.76f,0.8f,1.0f);
         G_ASSERT_OPENGL
 
-        l=glGetUniformLocation(m_program.handle(),"SpecColor");
+        l=glGetUniformLocation(m_heart_prog.handle(),"SpecColor");
         glUniform4f(l,0.9f,0.9f,1.0f,1.0f);
         G_ASSERT_OPENGL
 
-        l=glGetUniformLocation(m_program.handle(),"SpecPower");
+        l=glGetUniformLocation(m_heart_prog.handle(),"SpecPower");
         glUniform1f(l,1.0f);
         G_ASSERT_OPENGL
 
-        l=glGetUniformLocation(m_program.handle(),"RimScalar");
+        l=glGetUniformLocation(m_heart_prog.handle(),"RimScalar");
         glUniform1f(l,1.0f);
         G_ASSERT_OPENGL
 
@@ -125,24 +125,25 @@ class TestWindow:public DefaultWindow
 
         m_camera.makeCurrent();
 
-        m_program.makeCurrent();
+        // Draw the heart.
+        m_heart_prog.makeCurrent();
         Renderer::draw(m_heart_prep);
-        m_program.setCurrent(0);
+        m_heart_prog.setCurrent(0);
     }
 
   private:
 
     PreparedMesh m_heart_prep;
 
-    ShaderObject m_vert_shader,m_frag_shader;
-    ProgramObject m_program;
+    ShaderObject m_heart_vert,m_heart_frag;
+    ProgramObject m_heart_prog;
 };
 
 int __cdecl main()
 {
     // Make sure the window is destroyed before dumping memory leaks.
     {
-        TestWindow window;
+        DemoWindow window;
 
         ShowWindow(window.windowHandle(),SW_SHOW);
         window.processEvents();
