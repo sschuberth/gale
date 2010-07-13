@@ -18,6 +18,9 @@ using namespace gale::wrapgl;
 #include "fake_sss_frag.inl"
 #undef SHADER_CODE_H_
 
+#include "bg_frag.inl"
+#undef SHADER_CODE_H_
+
 class DemoWindow:public DefaultWindow
 {
   public:
@@ -26,6 +29,7 @@ class DemoWindow:public DefaultWindow
     :   DefaultWindow(_T("demo_heartbeat"),800,600)
     ,   m_heart_vert(GL_VERTEX_SHADER)
     ,   m_heart_frag(GL_FRAGMENT_SHADER)
+    ,   m_bg_frag(GL_FRAGMENT_SHADER)
     {
         m_camera.approach(-5);
 
@@ -76,10 +80,22 @@ class DemoWindow:public DefaultWindow
             puts(log);
         }
 
-        // We need to use the program before we can set its uniforms.
-        m_heart_prog.makeCurrent();
+        m_bg_frag.setSource(&shader_bg_frag);
+        if (!m_bg_frag.compile() || m_bg_frag.getParameter(GL_INFO_LOG_LENGTH)>0) {
+            m_bg_frag.getLog(log,sizeof(log));
+            puts(log);
+        }
 
+        m_bg_prog.attach(m_bg_frag);
+        if (!m_bg_prog.link() || m_bg_prog.getParameter(GL_INFO_LOG_LENGTH)>0) {
+            m_bg_prog.getLog(log,sizeof(log));
+            puts(log);
+        }
+
+        // We need to bind the program before we can set its uniforms.
         GLint l;
+
+        m_heart_prog.makeCurrent();
 
         // Vertex shader uniforms.
         l=glGetUniformLocation(m_heart_prog.handle(),"LightPosition");
@@ -115,6 +131,21 @@ class DemoWindow:public DefaultWindow
         glUniform1f(l,1.0f);
         G_ASSERT_OPENGL
 
+        m_bg_prog.makeCurrent();
+
+        // Fragment shader uniforms.
+        l=glGetUniformLocation(m_bg_prog.handle(),"sections");
+        glUniform1i(l,50);
+        G_ASSERT_OPENGL
+
+        l=glGetUniformLocation(m_bg_prog.handle(),"color0");
+        glUniform4f(l,0.88f,0.88f,0.88f,1.0f);
+        G_ASSERT_OPENGL
+
+        l=glGetUniformLocation(m_bg_prog.handle(),"color1");
+        glUniform4f(l,0.9f,0.9f,0.9f,1.0f);
+        G_ASSERT_OPENGL
+
         // Set some OpenGL states.
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
@@ -124,6 +155,21 @@ class DemoWindow:public DefaultWindow
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
         m_camera.makeCurrent();
+
+        // Draw a background.
+        Helper::pushOrtho2D();
+
+        m_bg_prog.makeCurrent();
+
+        GLint l=glGetUniformLocation(m_bg_prog.handle(),"viewport");
+        glUniform2f(l,m_camera.getScreenSpace().width,m_camera.getScreenSpace().height);
+        G_ASSERT_OPENGL
+
+        glDepthMask(GL_FALSE);
+        glRecti(0,0,m_camera.getScreenSpace().width,m_camera.getScreenSpace().height);
+        glDepthMask(GL_TRUE);
+
+        Helper::popOrtho2D();
 
         // Draw the heart.
         m_heart_prog.makeCurrent();
@@ -137,6 +183,9 @@ class DemoWindow:public DefaultWindow
 
     ShaderObject m_heart_vert,m_heart_frag;
     ProgramObject m_heart_prog;
+
+    ShaderObject m_bg_frag;
+    ProgramObject m_bg_prog;
 };
 
 int __cdecl main()
