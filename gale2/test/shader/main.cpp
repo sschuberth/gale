@@ -66,7 +66,7 @@ class TestWindow:public DefaultWindow
         }
 
         // We need to use the program before we can set its uniforms.
-        m_program.makeCurrent();
+        m_program.bind();
 
         GLint l;
 
@@ -96,11 +96,11 @@ class TestWindow:public DefaultWindow
     void onRender() {
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-        m_camera.makeCurrent();
+        m_camera.apply();
 
-        m_program.makeCurrent();
+        m_program.bind();
         Renderer::draw(m_mesh_prep);
-        m_program.setCurrent(0);
+        m_program.release();
     }
 
   private:

@@ -117,12 +117,6 @@ class Camera
         return s_current;
     }
 
-    /// Makes \a camera the current one. This is merely a convenience method to
-    /// equalize APIs among classes.
-    static void setCurrent(Camera& camera) {
-        camera.makeCurrent();
-    }
-
     /// Initializes a perspective camera with a screen space that matches the
     /// dimensions of the given \a surface or, if not given, the current viewport.
     /// The camera's vertical field of view and clipping plane distances can be
@@ -161,10 +155,14 @@ class Camera
         return m_frustum;
     }
 
-    /// Makes the camera the current one by applying all its settings to the
-    /// current render context. If \a force is \c true, the camera settings are
-    /// also applied if they did not change.
-    void makeCurrent(bool const force=false);
+    /// Returns whether this the current (i.e. last applied) camera.
+    bool isCurrent() const {
+        return getCurrent()==this;
+    }
+
+    /// Applies all camera settings to the current render context. If \a force
+    /// is \c true, the camera settings are also applied if they did not change.
+    void apply(bool const force=false);
 
     /**
      * \name Screen space related methods

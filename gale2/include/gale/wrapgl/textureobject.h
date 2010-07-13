@@ -69,35 +69,35 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
     /// memory location pointed to by \a data. Optionally selects a specific
     /// mipmap \a level.
     void getData(GLvoid* data,GLenum const data_format,GLenum const data_type,GLint const level=0) {
-        makeCurrent();
+        bind();
         glGetTexImage(T,level,data_format,data_type,data);
         G_ASSERT_OPENGL
     }
 
     /// Returns the floating-point parameter specified by \a name into \a values.
     void getParameter(GLenum const name,GLfloat* values) const {
-        makeCurrent();
+        bind();
         glGetTexParameterfv(T,name,values);
         G_ASSERT_OPENGL
     }
 
     /// Sets the floating-point parameter specified by \a name to \a values.
     void setParameter(GLenum const name,GLfloat const* values) const {
-        makeCurrent();
+        bind();
         glTexParameterfv(T,name,values);
         G_ASSERT_OPENGL
     }
 
     /// Returns the integer parameter specified by \a name into \a values.
     void getParameter(GLenum const name,GLint* values) const {
-        makeCurrent();
+        bind();
         glGetTexParameteriv(T,name,values);
         G_ASSERT_OPENGL
     }
 
     /// Sets the integer parameter specified by \a name to \a values.
     void setParameter(GLenum const name,GLint const* values) const {
-        makeCurrent();
+        bind();
         glTexParameteriv(T,name,values);
         G_ASSERT_OPENGL
     }
@@ -111,7 +111,7 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
 
     /// Sets the priority requesting to make the texture resident.
     void setPriority(GLclampf const priority) const {
-        makeCurrent();
+        bind();
         glPrioritizeTextures(1,&m_handle,priority);
         G_ASSERT_OPENGL
     }
@@ -174,7 +174,7 @@ class Texture1D:public TextureObject<GL_TEXTURE_1D,GL_TEXTURE_BINDING_1D>,public
     /// in OpenGL. Optionally, \a mipmap \a level and a \a border may be
     /// specified.
     void setData(GLsizei const width,GLvoid const* data,GLenum const data_format,GLenum const data_type,GLint const format,GLint const level=0,bool const border=false) const {
-        makeCurrent();
+        bind();
         glTexImage1D(TARGET,level,format,width,border,data_format,data_type,data);
         G_ASSERT_OPENGL
     }
@@ -198,7 +198,7 @@ class Texture2D:public TextureObject<GL_TEXTURE_2D,GL_TEXTURE_BINDING_2D>,public
     /// given \a format in OpenGL. Optionally, \a mipmap \a level and a
     /// \a border may be specified.
     void setData(GLsizei const width,GLsizei const height,GLvoid const* data,GLenum const data_format,GLenum const data_type,GLint const format,GLint const level=0,bool const border=false) const {
-        makeCurrent();
+        bind();
         glTexImage2D(TARGET,level,format,width,height,border,data_format,data_type,data);
         G_ASSERT_OPENGL
     }
@@ -222,7 +222,7 @@ class Texture3D:public TextureObject<GL_TEXTURE_3D_EXT,GL_TEXTURE_BINDING_3D_EXT
     /// as the given \a format in OpenGL. Optionally, \a mipmap \a level and a
     /// \a border may be specified.
     void setData(GLsizei const width,GLsizei const height,GLsizei const depth,GLvoid const* data,GLenum const data_format,GLenum const data_type,GLint const format,GLint const level=0,bool const border=false) const {
-        makeCurrent();
+        bind();
         glTexImage3DEXT(TARGET,level,format,width,height,depth,border,data_format,data_type,data);
         G_ASSERT_OPENGL
     }

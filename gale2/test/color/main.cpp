@@ -64,7 +64,7 @@ class TestWindow:public DefaultWindow
         if (m_mode<2) {
             m_camera.setScreenSpaceOrigin(0,0);
             m_camera.setScreenSpaceDimensions(dims.width,dims.height);
-            m_camera.makeCurrent();
+            m_camera.apply();
             glClear(GL_COLOR_BUFFER_BIT);
 
             Col3ub color;
@@ -95,7 +95,7 @@ class TestWindow:public DefaultWindow
         else {
             m_camera.setScreenSpaceOrigin(dims.width/4,dims.height/4);
             m_camera.setScreenSpaceDimensions(dims.width/2,dims.height/2);
-            m_camera.makeCurrent();
+            m_camera.apply();
             glClear(GL_COLOR_BUFFER_BIT);
 
             glEnable(GL_BLEND);

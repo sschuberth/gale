@@ -119,7 +119,7 @@ class TestWindow:public DefaultWindow
             glDisable(GL_CULL_FACE);
         }
 
-        m_camera.makeCurrent();
+        m_camera.apply();
         glLightfv(GL_LIGHT0,GL_POSITION,m_camera.getPosition());
 
         if (m_camera.frustum().contains(mc.mesh_prep.box) || !m_culling) {

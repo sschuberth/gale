@@ -73,7 +73,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
     /// and \a format, optionally with multi-sampling using the specified number
     /// of \a samples enabled.
     void setStorage(GLsizei const width,GLsizei const height,GLenum const format,GLsizei const samples=0) const {
-        makeCurrent();
+        bind();
 
         if (glRenderbufferStorageMultisample) {
             glRenderbufferStorageMultisample(GL_RENDERBUFFER,samples,format,width,height);
@@ -181,7 +181,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
 
     /// Returns the buffer parameter specified by \a name.
     GLint getParameter(GLenum const name) const {
-        makeCurrent();
+        bind();
         GLint value;
         glGetRenderbufferParameteriv(GL_RENDERBUFFER,name,&value);
         G_ASSERT_OPENGL
@@ -219,7 +219,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
 
     /// Binds the framebuffer object to the OpenGL state as the currently set
     /// target, making it the current read and / or draw buffer.
-    void makeCurrent() const {
+    void bind() const {
         setCurrent(m_handle,m_target);
     }
 
@@ -244,7 +244,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
 
     /// Returns the buffer parameter specified by \a name.
     GLint getParameter(GLenum const attachment,GLenum const name) const {
-        makeCurrent();
+        bind();
         GLint value;
         glGetFramebufferAttachmentParameteriv(m_target,attachment,name,&value);
         G_ASSERT_OPENGL
@@ -253,7 +253,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
 
     /// Returns the status of the framebuffer to ensure its completeness.
     GLenum check() const {
-        makeCurrent();
+        bind();
         GLenum status=glCheckFramebufferStatus(m_target);
         G_ASSERT_OPENGL
         return status;
@@ -262,7 +262,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
     /// Attaches the given \a level of the specified 1D \a texture to the
     /// framebuffer image identified by \a attachment.
     void attach(GLenum const attachment,Texture1D const& texture,GLint const level=0) const {
-        makeCurrent();
+        bind();
         glFramebufferTexture1D(m_target,attachment,texture.target(),texture.handle(),level);
         G_ASSERT_OPENGL
     }
@@ -270,7 +270,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
     /// Attaches the given \a level of the specified 2D \a texture to the
     /// framebuffer image identified by \a attachment.
     void attach(GLenum const attachment,Texture2D const& texture,GLint const level=0) const {
-        makeCurrent();
+        bind();
         glFramebufferTexture2D(m_target,attachment,texture.target(),texture.handle(),level);
         G_ASSERT_OPENGL
     }
@@ -278,7 +278,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
     /// Attaches the given \a level and \a layer of the specified 3D \a texture
     /// to the framebuffer image identified by \a attachment.
     void attach(GLenum const attachment,Texture3D const& texture,GLint const level=0,GLint const layer=0) const {
-        makeCurrent();
+        bind();
         glFramebufferTexture3D(m_target,attachment,texture.target(),texture.handle(),level,layer);
         G_ASSERT_OPENGL
     }
@@ -292,7 +292,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
 
     /// Detaches the framebuffer image identified by \a attachment.
     void detach(GLenum const attachment) const {
-        makeCurrent();
+        bind();
 
         // For detaching, we do not need to know which texture type or buffer
         // was attached.

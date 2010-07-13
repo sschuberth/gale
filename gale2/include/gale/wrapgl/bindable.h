@@ -56,6 +56,11 @@ class Bindable
         return static_cast<GLuint>(param);
     }
 
+    /// Releases this object type from the OpenGL state, restoring the default.
+    static void release() {
+        I::setCurrent(0);
+    }
+
     /// Creates a new (initially unbound) OpenGL object.
     Bindable()
     :   m_dirty_state(false)
@@ -80,7 +85,7 @@ class Bindable
     }
 
     /// Binds this object to the OpenGL state, making it the current one.
-    void makeCurrent() const {
+    void bind() const {
         I::setCurrent(m_handle);
     }
 

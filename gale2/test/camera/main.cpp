@@ -96,7 +96,7 @@ class TestWindow:public DefaultWindow
 
         glClearColor(0,0,0,0);
         for (int i=0;i<4;++i) {
-            m_view_xyz[i]->makeCurrent();
+            m_view_xyz[i]->apply();
             glClear(GL_COLOR_BUFFER_BIT);
 
             glEnable(GL_LIGHTING);

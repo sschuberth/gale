@@ -115,10 +115,10 @@ class TestWindow:public DefaultWindow
     bool onIdle() {
         // As FBO do not have their own rendering context as PBuffers do, we can
         // apply the camera settings before binding the FBO.
-        m_fbo_camera.makeCurrent();
+        m_fbo_camera.apply();
 
 #ifdef SWITCH_DRAW_BUFFER
-        m_frame_buffer.makeCurrent();
+        m_frame_buffer.bind();
         glDrawBuffer(GL_COLOR_ATTACHMENT0+m_ping_pong);
         G_ASSERT_OPENGL
 #else
@@ -153,7 +153,7 @@ class TestWindow:public DefaultWindow
         glScalef(factor,factor,1.0f);
         glTranslatef(-0.5,-0.5,0);
 
-        m_pattern_texture.makeCurrent();
+        m_pattern_texture.bind();
         glRectf(0,0,1,1);
 
         glPopMatrix();
@@ -173,7 +173,7 @@ class TestWindow:public DefaultWindow
         glScalef(factor,factor,1.0f);
         glTranslatef(-0.5,-0.5,0);
 
-        m_read_texture->makeCurrent();
+        m_read_texture->bind();
         glRectf(0,0,1,1);
 
         glPopMatrix();
@@ -201,10 +201,10 @@ class TestWindow:public DefaultWindow
     void onRender() {
         // Render a screen-space aligned quad to the window's viewport with the
         // current draw texture applied.
-        m_win_camera.makeCurrent();
+        m_win_camera.apply();
 
-        FrameBufferObject::setCurrent(0);
-        m_draw_texture->makeCurrent();
+        m_frame_buffer.release();
+        m_draw_texture->bind();
 
         glRectf(0,0,1,1);
     }

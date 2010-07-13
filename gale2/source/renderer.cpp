@@ -42,14 +42,14 @@ void Renderer::draw(PreparedMesh const& prep)
 
 #ifdef GALE_USE_VBO
     if (prep.m_vao.isValidHandle()) {
-        prep.m_vao.makeCurrent();
+        prep.m_vao.bind();
     }
 
     // If Vertex Array Objects are not supported or it is outdated, set the
     // render array states and bind the buffer objects.
     if (!prep.m_vao.isValidHandle() || prep.m_vao.isDirtyState()) {
         // Bind the buffer object for the vertices and normals.
-        prep.m_vbo_vertnorm.makeCurrent();
+        prep.m_vbo_vertnorm.bind();
 #endif
 
         // Set-up the arrays to be indexed.
@@ -63,7 +63,7 @@ void Renderer::draw(PreparedMesh const& prep)
 
 #ifdef GALE_USE_VBO
         // Bind the buffer object for the primitive and polygon indices.
-        prep.m_vbo_primpoly.makeCurrent();
+        prep.m_vbo_primpoly.bind();
 
         // Mark the Vertex Array Object as consistent.
         prep.m_vao.setDirtyState(false);
@@ -98,7 +98,7 @@ void Renderer::draw(PreparedMesh const& prep)
 #ifdef GALE_USE_VBO
     if (prep.m_vao.isValidHandle()) {
         // Make sure no other changes accidently modify the state vector.
-        prep.m_vao.setCurrent(0);
+        prep.m_vao.release();
     }
 #endif
 }

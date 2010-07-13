@@ -95,7 +95,7 @@ class DemoWindow:public DefaultWindow
         // We need to bind the program before we can set its uniforms.
         GLint l;
 
-        m_heart_prog.makeCurrent();
+        m_heart_prog.bind();
 
         // Vertex shader uniforms.
         l=glGetUniformLocation(m_heart_prog.handle(),"LightPosition");
@@ -131,7 +131,7 @@ class DemoWindow:public DefaultWindow
         glUniform1f(l,1.0f);
         G_ASSERT_OPENGL
 
-        m_bg_prog.makeCurrent();
+        m_bg_prog.bind();
 
         // Fragment shader uniforms.
         l=glGetUniformLocation(m_bg_prog.handle(),"sections");
@@ -154,12 +154,12 @@ class DemoWindow:public DefaultWindow
     void onRender() {
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-        m_camera.makeCurrent();
+        m_camera.apply();
 
         // Draw a background.
         Helper::pushOrtho2D();
 
-        m_bg_prog.makeCurrent();
+        m_bg_prog.bind();
 
         GLint l=glGetUniformLocation(m_bg_prog.handle(),"viewport");
         glUniform2f(l,m_camera.getScreenSpace().width,m_camera.getScreenSpace().height);
@@ -172,9 +172,9 @@ class DemoWindow:public DefaultWindow
         Helper::popOrtho2D();
 
         // Draw the heart.
-        m_heart_prog.makeCurrent();
+        m_heart_prog.bind();
         Renderer::draw(m_heart_prep);
-        m_heart_prog.setCurrent(0);
+        m_heart_prog.release();
     }
 
   private:

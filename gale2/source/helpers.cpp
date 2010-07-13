@@ -210,7 +210,7 @@ void Logo::draw(Corner corner)
         );
     }
 
-    m_camera.makeCurrent();
+    m_camera.apply();
 
     // Render the logo.
     glCallList(m_list_range+LIST_PROLOGUE);

@@ -69,7 +69,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     /// Copies the \a size number of bytes, optionally starting at \a offset,
     /// from the buffer's contents to \a data.
     void getData(GLsizeiptrARB const size,GLvoid* const data,GLintptrARB const offset=0) const {
-        makeCurrent();
+        bind();
         glGetBufferSubDataARB(T,offset,size,data);
         G_ASSERT_OPENGL
     }
@@ -77,7 +77,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     /// Initializes or sets the buffer's storage to the \a size number of bytes
     /// pointed to by \a data for the intended \a usage.
     void setData(GLenum const usage,GLsizeiptrARB const size,GLvoid const* const data) const {
-        makeCurrent();
+        bind();
         glBufferDataARB(T,size,data,usage);
         G_ASSERT_OPENGL
     }
@@ -85,7 +85,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     /// Modifies the buffer's storage to the \a size number of bytes pointed to
     /// by \a data, optionally starting at the given \a offset.
     void setData(GLsizeiptrARB const size,GLvoid const* const data,GLintptrARB const offset=0) const {
-        makeCurrent();
+        bind();
         glBufferSubDataARB(T,offset,size,data);
         G_ASSERT_OPENGL
     }
@@ -114,7 +114,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     /// Maps the buffer's storage to client memory for direct access using the
     /// specified \a access type, and returns the pointer.
     GLchar* map(GLenum const access) const {
-        makeCurrent();
+        bind();
         GLvoid* data=glMapBufferARB(T,access);
         G_ASSERT_OPENGL
         return static_cast<GLchar*>(data);
@@ -123,7 +123,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     /// Unmaps the buffer's storage from client memory, returns \c true on
     /// success, \c false otherwise.
     bool unmap() const {
-        makeCurrent();
+        bind();
         GLboolean result=glUnmapBufferARB(T);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
@@ -132,7 +132,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     /// If the buffer's storage is currently mapped to client memory, returns
     /// the pointer to it, or \c NULL otherwise.
     GLchar* getBufferPointer() const {
-        makeCurrent();
+        bind();
         GLvoid* data;
         glGetBufferPointervARB(T,GL_BUFFER_MAP_POINTER_ARB,&data);
         G_ASSERT_OPENGL
@@ -172,7 +172,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Returns the buffer parameter specified by \a name.
     GLint getParameter(GLenum const name) const {
-        makeCurrent();
+        bind();
         GLint value;
         glGetBufferParameterivARB(T,name,&value);
         G_ASSERT_OPENGL

@@ -60,7 +60,7 @@ class TestWindow:public DefaultWindow
     void onRender() {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        m_camera.makeCurrent();
+        m_camera.apply();
 
         // http://mathworld.wolfram.com/Hexahedron.html
         static float const a=0.5f;
@@ -83,7 +83,7 @@ class TestWindow:public DefaultWindow
         glTexCoord2f(0.5f,0.5f);
 
         // X+
-        m_textures[4].makeCurrent();
+        m_textures[4].bind();
         glBegin(GL_QUADS);
             glNormal3fv(Vec3f::X());
             glVertex3fv(v[0]);
@@ -93,7 +93,7 @@ class TestWindow:public DefaultWindow
         glEnd();
 
         // X-
-        m_textures[5].makeCurrent();
+        m_textures[5].bind();
         glBegin(GL_QUADS);
             glNormal3fv(-Vec3f::X());
             glVertex3fv(v[1]);
@@ -103,7 +103,7 @@ class TestWindow:public DefaultWindow
         glEnd();
 
         // Y+
-        m_textures[2].makeCurrent();
+        m_textures[2].bind();
         glBegin(GL_QUADS);
             glNormal3fv(Vec3f::Y());
             glVertex3fv(v[0]);
@@ -113,7 +113,7 @@ class TestWindow:public DefaultWindow
         glEnd();
 
         // Y-
-        m_textures[3].makeCurrent();
+        m_textures[3].bind();
         glBegin(GL_QUADS);
             glNormal3fv(-Vec3f::Y());
             glVertex3fv(v[2]);
@@ -123,7 +123,7 @@ class TestWindow:public DefaultWindow
         glEnd();
 
         // Z+
-        m_textures[0].makeCurrent();
+        m_textures[0].bind();
         glBegin(GL_QUADS);
             glNormal3fv(Vec3f::Z());
             glVertex3fv(v[0]);
@@ -133,7 +133,7 @@ class TestWindow:public DefaultWindow
         glEnd();
 
         // Z-
-        m_textures[1].makeCurrent();
+        m_textures[1].bind();
         glBegin(GL_QUADS);
             glNormal3fv(-Vec3f::Z());
             glVertex3fv(v[4]);
