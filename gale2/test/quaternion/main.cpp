@@ -83,7 +83,7 @@ class TestWindow:public DefaultWindow
 
         static float const RADIUS=sqrtf(2*CATHETUS*CATHETUS);
 
-        double angle=2.0*M_PI*t/4.0+M_PI/4.0;
+        double angle=2.0*Constd::PI()*t/4.0+Constd::PI()/4.0;
         float x=static_cast<float>(cos(angle)*RADIUS);
         float y=static_cast<float>(sin(angle)*RADIUS);
         m_p=Vec3f(x,y,0);
