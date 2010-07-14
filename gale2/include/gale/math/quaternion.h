@@ -67,7 +67,7 @@ class Quaternion
     typedef HMatrix4<T> HMat;
 
     /// Function pointer definition for interpolating quaternions.
-    typedef Quaternion (*Interpolator)(Quaternion const&,Quaternion const&,double);
+    typedef Quaternion (*Interpolator)(Quaternion const&,Quaternion const&,float const);
 
     /**
      * \name Predefined constants
@@ -389,9 +389,9 @@ class Quaternion
     /// - the rotation does \b not have constant speed,
     /// - the interpolation is torque-minimal.
     /// For performance reasons, \a s is not clamped to [0,1].
-    friend Quaternion nlerp(Quaternion const& q,Quaternion const& r,double const s) {
+    friend Quaternion nlerp(Quaternion const& q,Quaternion const& r,float const s) {
         return ~Quaternion(
-            T(q.real+s*(r.real-q.real))
+            q.real+s*(r.real-q.real)
         ,   lerp(q.imag,r.imag,s)
         );
     }
@@ -402,7 +402,7 @@ class Quaternion
     /// - the rotation has constant speed (tangential acceleration is zero),
     /// - the interpolation is torque-minimal.
     /// For performance reasons, \a s is not clamped to [0,1].
-    friend Quaternion slerp(Quaternion const& q,Quaternion const& r,double const s) {
+    friend Quaternion slerp(Quaternion const& q,Quaternion const& r,float const s) {
         T cosine=q.angleCosine(r);
 
         if (meta::OpCmpEqual::evaluate(cosine,T(1))) {
@@ -411,15 +411,15 @@ class Quaternion
         }
 
         // Calculate the angle between q and r.
-        double angle=acos(cosine);
+        T angle=acos(cosine);
 
         // Calculate the angle between q and the interpolated result.
-        double theta=angle*s;
+        T theta=angle*s;
 
         return (
-            q * T(sin(angle-theta))
-          + r * T(sin(      theta))
-        )/T(sin(angle));
+            q * sin(angle-theta)
+          + r * sin(      theta)
+        )/sin(angle);
     }
 
     /// Calculates the complex exponential of a quaternion \a q.
@@ -435,10 +435,10 @@ class Quaternion
     /// Calculates the complex logarithm of a quaternion \a q.
     friend Quaternion log(Quaternion const& q) {
         if (abs(q.real)<1) {
-            double half=acos(q.real);
-            double s=sin(half);
+            T half=acos(q.real);
+            T s=sin(half);
             if (abs(s)>Numerics<T>::ZERO_TOLERANCE()) {
-                return Quaternion(0,q.imag*T(half/s));
+                return Quaternion(0,q.imag*half/s);
             }
         }
         return Quaternion(0,Vec::ZERO());
@@ -453,7 +453,7 @@ class Quaternion
     friend Quaternion squad(
         Quaternion const& q
     ,   Quaternion const& r
-    ,   double const s
+    ,   float const s
     ,   Quaternion const& a
     ,   Quaternion const& b
     ,   Interpolator const interpolator=Quaternion::slerp

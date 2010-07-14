@@ -250,7 +250,7 @@ void test_tuple()
 
     puts("Check linear interpolation ...");
     {
-        double const s=0.63;
+        float const s=0.63f;
         Tuple<4,double> tmp=lerp(t4d_a,t4d_b,s);
         assert(OpCmpEqual::evaluate(tmp[0],t4d_a[0]+(t4d_b[0]-t4d_a[0])*s));
         assert(OpCmpEqual::evaluate(tmp[1],t4d_a[1]+(t4d_b[1]-t4d_a[1])*s));

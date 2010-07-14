@@ -73,11 +73,12 @@ class TestWindow:public DefaultWindow
         static double t=0.0;
         int i=static_cast<int>(roundToZero(t));
 
+        float s=static_cast<float>(t-i);
         if (m_cubic) {
-            m_k=squad(m_kf[i],m_kf[(i+1)&3],t-i,m_kt[i],m_kt[(i+1)&3],m_interpolator);
+            m_k=squad(m_kf[i],m_kf[(i+1)&3],s,m_kt[i],m_kt[(i+1)&3],m_interpolator);
         }
         else {
-            m_k=(*m_interpolator)(m_kf[i],m_kf[(i+1)&3],t-i);
+            m_k=(*m_interpolator)(m_kf[i],m_kf[(i+1)&3],s);
         }
 
         static float const RADIUS=sqrtf(2*CATHETUS*CATHETUS);

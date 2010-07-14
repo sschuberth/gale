@@ -138,7 +138,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
 
             // Calculate variables for moving the existing vertices.
             int valence=vn.getSize();
-            double weight=pow(0.375 + 0.25*cos(2.0*Constd::PI()/valence),2.0) + 0.375;
+            float weight=pow(0.375f + 0.25f*cos(2.0f*Constf::PI()/valence),2.0f) + 0.375f;
 
             Vec3f q=Vec3f::ZERO();
 
