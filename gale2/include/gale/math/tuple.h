@@ -359,7 +359,7 @@ class TupleBase
 
     /// Linearly interpolates between the tuples \a t and \a u based on a scalar
     /// \a s. For performance reasons, \a s is not clamped to [0,1].
-    friend C lerp(C const& t,C const& u,double const s) {
+    friend C lerp(C const& t,C const& u,float const s) {
         C tmp;
         meta::LoopFwd<N,meta::OpCalcLerp>
             ::iterate(tmp.data(),t.data(),u.data(),s);
