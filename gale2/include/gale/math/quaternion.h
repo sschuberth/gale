@@ -317,7 +317,7 @@ class Quaternion
     double normalize() {
         double l=length2();
 
-        if (!meta::OpCmpEqual::evaluate(l,1.0) && l>Numerics<T>::ZERO_TOLERANCE()*Numerics<T>::ZERO_TOLERANCE()) {
+        if (l>Numerics<T>::ZERO_TOLERANCE()*Numerics<T>::ZERO_TOLERANCE()) {
             l=sqrt(l);
             (*this)/=T(l);
         }
