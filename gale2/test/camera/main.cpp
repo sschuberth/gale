@@ -38,10 +38,10 @@ class TestWindow:public DefaultWindow
         // modelview matrix to transform it in the world coordinate system.
         HMat4f m;
 
-        m=HMat4f::Factory::Rotation(Vec3f::X(),-90*Constd::DEG_TO_RAD())*m_view_xyz[1]->getModelview();
+        m=HMat4f::Factory::Rotation(Vec3f::X(),-90*Constf::DEG_TO_RAD())*m_view_xyz[1]->getModelview();
         m_view_xyz[1]->setModelview(m);
 
-        m=HMat4f::Factory::Rotation(Vec3f::Y(),+90*Constd::DEG_TO_RAD())*m_view_xyz[3]->getModelview();
+        m=HMat4f::Factory::Rotation(Vec3f::Y(),+90*Constf::DEG_TO_RAD())*m_view_xyz[3]->getModelview();
         m_view_xyz[3]->setModelview(m);
 
         // Create an object to view at.

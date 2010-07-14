@@ -309,7 +309,7 @@ Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2
 
     MatrixArray rotation(r1_segs);
     for (int i=0;i<r1_segs;++i) {
-        rotation[i]=HMat4f::Factory::RotationZ(Constd::PI()/r1_segs*i);
+        rotation[i]=HMat4f::Factory::RotationZ(Constf::PI()/r1_segs*i);
     }
 
     // Extrude the contour along the path.

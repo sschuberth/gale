@@ -70,7 +70,7 @@ int __cdecl main()
     assert(projection*Vec3f(1,1,1)==Vec3f(0,1,1));
 
     Vec3f axis=r.randomVec3();
-    double angle=r.random0ExclN(Constf::PI()*2);
+    float angle=r.random0ExclN(Constf::PI()*2);
     Vec3f v=r.randomVec3();
 
     m=HMat4f::Factory::Rotation(axis,angle);
