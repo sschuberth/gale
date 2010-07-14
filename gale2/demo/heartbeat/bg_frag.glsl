@@ -8,7 +8,7 @@ void main()
     // Calculate the adjacent and opposite cathetus lengths.
     vec2 cath=vec2(gl_FragCoord.x,gl_FragCoord.y)-viewport*0.5;
 
-    // Calculate the angle in range [0..360[.
+    // Calculate the angle in range [0,360[.
     float angle=degrees(atan(cath.y,cath.x))+180.0;
 
     // Calculate the section we are in.
