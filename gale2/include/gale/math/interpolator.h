@@ -119,9 +119,9 @@ class Interpolator
 
   private:
 
-    /// Helper for all cubic interpolation methods. Interpolates between the
-    /// values in \a v for position \a s in range [0,1], applying the weights in
-    /// \a w and the factor \a f.
+    /// Cubic interpolation helper method with periodic boundary conditions.
+    /// Interpolates between the values in \a v for position \a s in range [0,1],
+    /// applying the weights in \a w and the factor \a f.
     template<class T>
     static T Cubic(global::DynamicArray<T> const& v,float const s,signed char const (&w)[16],float f) {
         G_ASSERT(v.getSize()>0)
