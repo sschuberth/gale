@@ -48,7 +48,7 @@ static T lerp(T const& a,T const& b,float const s) {
 }
 
 /**
- * A collection of static interpolation methods for different data types.
+ * A collection of interpolation (and approximation) methods.
  */
 class Interpolator
 {
@@ -89,7 +89,7 @@ class Interpolator
         return lerp(v[i1],v[i2],t);
     }
 
-    /// B-Spline interpolation between \a v for position \a s in range [0,1], see
+    /// B-Spline approximation between \a v for position \a s in range [0,1], see
     /// <http://blackpawn.com/texts/splines/>.
     template<class T>
     static T BSpline(global::DynamicArray<T> const& v,float const s) {
