@@ -383,6 +383,11 @@ class Quaternion
      */
     //@{
 
+    /// This is an alias for nlerp().
+    friend Quaternion lerp(Quaternion const& q,Quaternion const& r,float const s) {
+        return nlerp(q,r,s);
+    }
+
     /// Performs a normalized linear interpolation between the quaternions \a q
     /// and \a r based on a scalar \a s with the following properties:
     /// - The operation is commutative,
@@ -391,7 +396,7 @@ class Quaternion
     /// For performance reasons, \a s is not clamped to [0,1].
     friend Quaternion nlerp(Quaternion const& q,Quaternion const& r,float const s) {
         return ~Quaternion(
-            q.real+s*(r.real-q.real)
+            q.real+(r.real-q.real)*s
         ,   lerp(q.imag,r.imag,s)
         );
     }
