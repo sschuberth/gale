@@ -60,29 +60,31 @@ class TestWindow:public DefaultWindow
         }
         glEnd();
 
+        static int const SAMPLES=500;
+
         // Linear interpolation.
         glColor3ubv(Col3ub::WHITE());
         glBegin(GL_LINE_STRIP);
-        for (int i=0;i<=dimensions().width;i+=10) {
-            Vec2f p=Interpolator::Linear(m_points,static_cast<float>(i)/dimensions().width);
+        for (int i=0;i<=SAMPLES;++i) {
+            Vec2f p=Interpolator::Linear(m_points,static_cast<float>(i)/SAMPLES);
             glVertex2fv(p);
         }
         glEnd();
 
-        // BSpline interpolation.
-        glColor3ubv(Col3ub::GREEN());
-        glBegin(GL_LINE_STRIP);
-        for (int i=0;i<=dimensions().width;i+=10) {
-            Vec2f p=Interpolator::BSpline(m_points,static_cast<float>(i)/dimensions().width);
-            glVertex2fv(p);
-        }
-        glEnd();
-
-        // CatmullRom interpolation.
+        // B-Spline interpolation.
         glColor3ubv(Col3ub::YELLOW());
         glBegin(GL_LINE_STRIP);
-        for (int i=0;i<=dimensions().width;i+=10) {
-            Vec2f p=Interpolator::CatmullRom(m_points,static_cast<float>(i)/dimensions().width);
+        for (int i=0;i<=SAMPLES;++i) {
+            Vec2f p=Interpolator::BSpline(m_points,static_cast<float>(i)/SAMPLES);
+            glVertex2fv(p);
+        }
+        glEnd();
+
+        // Catmull-Rom interpolation.
+        glColor3ubv(Col3ub::GREEN());
+        glBegin(GL_LINE_STRIP);
+        for (int i=0;i<=SAMPLES;++i) {
+            Vec2f p=Interpolator::CatmullRom(m_points,static_cast<float>(i)/SAMPLES);
             glVertex2fv(p);
         }
         glEnd();
