@@ -70,7 +70,7 @@ class Interpolator
         int i2=(i1==n)?(periodic?0:n):i1+1;
 
         // Interpolate with a new "s" which is scaled to the interval.
-        return lerp(v[i1],v[i2],s*n-i1);
+        return lerp(v[i1],v[i2],i-i1);
     }
 
     /// Cosine interpolation of the values in \a v at position \a s. The
@@ -89,7 +89,7 @@ class Interpolator
         int i2=(i1==n)?(periodic?0:n):i1+1;
 
         // Interpolate with a new "s" which is scaled to the interval.
-        float t=(1.0f-cos((s*n-i1)*Constf::PI()))*0.5f;
+        float t=(1.0f-cos((i-i1)*Constf::PI()))*0.5f;
         return lerp(v[i1],v[i2],t);
     }
 
@@ -151,7 +151,7 @@ class Interpolator
         T d=f*(v[i0]*w[12] + v[i1]*w[13] + v[i2]*w[14] + v[i3]*w[15]);
 
         // Interpolate with a new "s" which is scaled to the interval.
-        float t=(s*n-i1);
+        float t=i-i1;
         return ((a*t + b)*t + c)*t + d;
     }
 };
