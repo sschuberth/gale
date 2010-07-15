@@ -71,7 +71,7 @@ class TestWindow:public DefaultWindow
         }
         glEnd();
 
-        // B-Spline interpolation.
+        // B-Spline approximation.
         glColor3ubv(Col3ub::YELLOW());
         glBegin(GL_LINE_STRIP);
         for (int i=0;i<=SAMPLES;++i) {
