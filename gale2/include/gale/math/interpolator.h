@@ -126,7 +126,7 @@ class Interpolator
         return ((a*sr + b)*sr + c)*sr + d;
     }
 
-    /// Piecewise cubic B-Spline interpolation of the values in \a v at
+    /// Piecewise cubic B-Spline approximation of the values in \a v at
     /// position \a s. The position in range [0,1] is mapped to the array size.
     /// If \a closed is \c true, the values are treated as being periodic,
     /// resulting in a closed curve. Also see <http://blackpawn.com/texts/splines/>.
