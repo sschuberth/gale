@@ -54,51 +54,56 @@ class Interpolator
 {
   public:
 
-    /// Linear interpolation of the values in \a v at position \a s. The
-    /// position in range [0,1] is mapped to the array size. \a periodic toggles
-    /// between natural and periodic boundary conditions. Also see
-    /// <http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/>.
+    /// Piecewise linear interpolation of the values in \a v at position \a s.
+    /// The position in range [0,1] is mapped to the array size. If \a closed is
+    /// \c true, the values are treated as being periodic, resulting in a closed
+    /// curve. Also see <http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/>.
     template<class T>
-    static T Linear(global::DynamicArray<T> const& v,float const s,bool periodic=false) {
+    static T Linear(global::DynamicArray<T> const& v,float const s,bool const closed=false) {
         G_ASSERT(v.getSize()>0)
 
         int n=v.getSize()-1;
 
-        // Calculate the interval borders from the pseudo index.
-        float i=n*s;
-        int i1=roundToZero(i);
-        int i2=(i1==n)?(periodic?0:n):i1+1;
+        // Calculate the array index from the position.
+        float i=(n+static_cast<int>(closed))*s;
+        int it=roundToZero(i);
 
-        // Interpolate with a new "s" which is scaled to the interval.
-        return lerp(v[i1],v[i2],i-i1);
+        int i1=(it>n)?0:it;
+        int i2=(i1==n)?(closed?0:n):i1+1;
+
+        // Interpolate with a new "s" which is scaled relative to the interval.
+        float sr=i-it;
+        return lerp(v[i1],v[i2],sr);
     }
 
-    /// Cosine interpolation of the values in \a v at position \a s. The
-    /// position in range [0,1] is mapped to the array size. \a periodic toggles
-    /// between natural and periodic boundary conditions. Also see
-    /// <http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/>.
+    /// Piecewise cosine interpolation of the values in \a v at position \a s.
+    /// The position in range [0,1] is mapped to the array size. If \a closed is
+    /// \c true, the values are treated as being periodic, resulting in a closed
+    /// curve. Also see <http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/>.
     template<class T>
-    static T Cosine(global::DynamicArray<T> const& v,float const s,bool periodic=false) {
+    static T Cosine(global::DynamicArray<T> const& v,float const s,bool const closed=false) {
         G_ASSERT(v.getSize()>0)
 
         int n=v.getSize()-1;
 
-        // Calculate the interval borders from the pseudo index.
-        float i=n*s;
-        int i1=roundToZero(i);
-        int i2=(i1==n)?(periodic?0:n):i1+1;
+        // Calculate the array index from the position.
+        float i=(n+static_cast<int>(closed))*s;
+        int it=roundToZero(i);
 
-        // Interpolate with a new "s" which is scaled to the interval.
-        float t=(1.0f-cos((i-i1)*Constf::PI()))*0.5f;
-        return lerp(v[i1],v[i2],t);
+        int i1=(it>n)?0:it;
+        int i2=(i1==n)?(closed?0:n):i1+1;
+
+        // Interpolate with a new "s" which is scaled relative to the interval.
+        float sr=i-it;
+        return lerp(v[i1],v[i2],(1.0f-cos(sr*Constf::PI()))*0.5f);
     }
 
-    /// B-Spline approximation of the values in \a v at position \a s. The
-    /// position in range [0,1] is mapped to the array size. \a periodic toggles
-    /// between natural and periodic boundary conditions. Also see
-    /// <http://blackpawn.com/texts/splines/>.
+    /// Piecewise cubic B-Spline interpolation of the values in \a v at
+    /// position \a s. The position in range [0,1] is mapped to the array size.
+    /// If \a closed is \c true, the values are treated as being periodic,
+    /// resulting in a closed curve. Also see <http://blackpawn.com/texts/splines/>.
     template<class T>
-    static T BSpline(global::DynamicArray<T> const& v,float const s,bool periodic=false) {
+    static T BSpline(global::DynamicArray<T> const& v,float const s,bool const closed=false) {
         static signed char const w[]={
             -1, 3,-3, 1
         ,    3,-6, 3, 0
@@ -106,15 +111,15 @@ class Interpolator
         ,    1, 4, 1, 0
         };
 
-        return Cubic(v,s,periodic,w,1.0f/6.0f);
+        return Cubic(v,s,closed,w,1.0f/6.0f);
     }
 
-    /// Catmull-Rom interpolation of the values in \a v at position \a s. The
-    /// position in range [0,1] is mapped to the array size. \a periodic toggles
-    /// between natural and periodic boundary conditions. Also see
-    /// <http://blackpawn.com/texts/splines/>.
+    /// Piecewise cubic Catmull-Rom interpolation of the values in \a v at
+    /// position \a s. The position in range [0,1] is mapped to the array size.
+    /// If \a closed is \c true, the values are treated as being periodic,
+    /// resulting in a closed curve. Also see <http://blackpawn.com/texts/splines/>.
     template<class T>
-    static T CatmullRom(global::DynamicArray<T> const& v,float const s,bool periodic=false) {
+    static T CatmullRom(global::DynamicArray<T> const& v,float const s,bool const closed=false) {
         static signed char const w[]={
             -1, 3,-3, 1
         ,    2,-5, 4,-1
@@ -122,37 +127,40 @@ class Interpolator
         ,    0, 2, 0, 0
         };
 
-        return Cubic(v,s,periodic,w,0.5f);
+        return Cubic(v,s,closed,w,0.5f);
     }
 
   private:
 
-    /// Cubic interpolation of the values in \a v at position \a s. The position
-    /// in range [0,1] is mapped to the array size. \a periodic toggles between
-    /// natural and periodic boundary conditions. The coefficients are calculated
-    /// using the weights in \a w and the factor \a f.
+    /// Piecewise cubic interpolation of the values in \a v at position \a s.
+    /// The position in range [0,1] is mapped to the array size. If \a closed is
+    /// \c true, the values are treated as being periodic, resulting in a closed
+    /// curve. The polynomial coefficients are calculated using the weights in
+    /// \a w and the factor \a f.
     template<class T>
-    static T Cubic(global::DynamicArray<T> const& v,float const s,bool periodic,signed char const (&w)[16],float f) {
+    static T Cubic(global::DynamicArray<T> const& v,float const s,bool const closed,signed char const (&w)[16],float const f) {
         G_ASSERT(v.getSize()>0)
 
         int n=v.getSize()-1;
 
-        // Calculate the interval borders from the pseudo index.
-        float i=n*s;
-        int i1=roundToZero(i);
-        int i2=(i1==n)?(periodic?0:n):i1+1;
+        // Calculate the array index from the position.
+        float i=(n+static_cast<int>(closed))*s;
+        int it=roundToZero(i);
 
-        int i0=(i1==0)?(periodic?n:0):i1-1;
-        int i3=(i2==n)?(periodic?0:n):i2+1;
+        int i1=(it>n)?0:it;
+        int i2=(i1==n)?(closed?0:n):i1+1;
+
+        int i0=(i1==0)?(closed?n:0):i1-1;
+        int i3=(i2==n)?(closed?0:n):i2+1;
 
         T a=f*(v[i0]*w[ 0] + v[i1]*w[ 1] + v[i2]*w[ 2] + v[i3]*w[ 3]);
         T b=f*(v[i0]*w[ 4] + v[i1]*w[ 5] + v[i2]*w[ 6] + v[i3]*w[ 7]);
         T c=f*(v[i0]*w[ 8] + v[i1]*w[ 9] + v[i2]*w[10] + v[i3]*w[11]);
         T d=f*(v[i0]*w[12] + v[i1]*w[13] + v[i2]*w[14] + v[i3]*w[15]);
 
-        // Interpolate with a new "s" which is scaled to the interval.
-        float t=i-i1;
-        return ((a*t + b)*t + c)*t + d;
+        // Interpolate with a new "s" which is scaled relative to the interval.
+        float sr=i-it;
+        return ((a*sr + b)*sr + c)*sr + d;
     }
 };
 
