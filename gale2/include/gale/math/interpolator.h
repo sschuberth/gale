@@ -98,6 +98,34 @@ class Interpolator
         return lerp(v[i1],v[i2],(1.0f-cos(sr*Constf::PI()))*0.5f);
     }
 
+    /// Piecewise cubic Bezier interpolation of the values in \a v and their
+    /// corresponding tangents in \a t at position \a s. The position in range
+    /// [0,1] is mapped to the array size. If \a closed is \c true, the values
+    /// are treated as being periodic, resulting in a closed curve. Also see
+    /// <http://local.wasp.uwa.edu.au/~pbourke/geometry/bezier/cubicbezier.html>.
+    template<class T>
+    static T Bezier(global::DynamicArray<T> const& v,global::DynamicArray<T> const& t,float const s,bool const closed=false) {
+        G_ASSERT(v.getSize()>0)
+
+        int n=v.getSize()-1;
+
+        // Calculate the array index from the position.
+        float i=(n+static_cast<int>(closed))*s;
+        int it=roundToZero(i);
+
+        int i0=(it>n)?0:it;
+        int i1=(i0==n)?(closed?0:n):i0+1;
+
+        T a=-v[i0]   + (v[i0]+t[i0])*3 - (v[i1]-t[i1])*3 + v[i1];
+        T b= v[i0]*3 - (v[i0]+t[i0])*6 + (v[i1]-t[i1])*3;
+        T c=-v[i0]*3 + (v[i0]+t[i0])*3;
+        T d= v[i0];
+
+        // Interpolate with a new "s" which is scaled relative to the interval.
+        float sr=i-it;
+        return ((a*sr + b)*sr + c)*sr + d;
+    }
+
     /// Piecewise cubic B-Spline interpolation of the values in \a v at
     /// position \a s. The position in range [0,1] is mapped to the array size.
     /// If \a closed is \c true, the values are treated as being periodic,

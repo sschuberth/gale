@@ -40,6 +40,32 @@ class TestWindow:public DefaultWindow
 
             m_points.insert(Vec2f(x,y));
         }
+
+        static int const N=m_points.getSize()-1;
+
+        // Calculate the tangents as described at the bottom (method 3) at
+        // <http://local.wasp.uwa.edu.au/~pbourke/geometry/bezier/cubicbezier.html>.
+        m_tangents.setSize(m_points.getSize());
+        for (int i=0;i<m_tangents.getSize();++i) {
+            int ip=(i==0)?0:i-1;
+            int is=(i==N)?N:i+1;
+
+            // Use the vector from the predecessor to the successor as the tangent.
+            Vec2f t=m_points[is]-m_points[ip];
+
+            // Get the adjacent vectors along the points.
+            Vec2f p0=m_points[i]-m_points[ip];
+            Vec2f p1=m_points[is]-m_points[i];
+
+            // Limit the tangent length to half the minimum length of the
+            // adjacent vectors.
+            float minlen=min(p0.length2(),p1.length2())/(2*2);
+            if (t.length2()>minlen) {
+                t=~t*sqrt(minlen);
+            }
+
+            m_tangents[i]=t;
+        }
     }
 
     void onResize(int width,int height) {
@@ -71,6 +97,24 @@ class TestWindow:public DefaultWindow
         }
         glEnd();
 
+        // Bezier interpolation.
+        glColor3ubv(Col3ub::CYAN());
+        glBegin(GL_LINE_STRIP);
+        for (int i=0;i<=SAMPLES;++i) {
+            Vec2f p=Interpolator::Bezier(m_points,m_tangents,static_cast<float>(i)/SAMPLES);
+            glVertex2fv(p);
+        }
+        glEnd();
+
+        // Render the tangents.
+        glColor3ubv(Col3ub::BLUE());
+        glBegin(GL_LINES);
+        for (int i=0;i<m_points.getSize();++i) {
+            glVertex2fv(m_points[i]+m_tangents[i]*0.5f);
+            glVertex2fv(m_points[i]-m_tangents[i]*0.5f);
+        }
+        glEnd();
+
         // B-Spline approximation.
         glColor3ubv(Col3ub::YELLOW());
         glBegin(GL_LINE_STRIP);
@@ -92,7 +136,7 @@ class TestWindow:public DefaultWindow
 
   private:
 
-    DynamicArray<Vec2f> m_points;
+    DynamicArray<Vec2f> m_points,m_tangents;
 };
 
 int __cdecl main()
