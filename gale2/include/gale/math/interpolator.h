@@ -59,21 +59,11 @@ class Interpolator
     /// \c true, the values are treated as being periodic, resulting in a closed
     /// curve. Also see <http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/>.
     template<class T>
-    static T Linear(global::DynamicArray<T> const& v,float const s,bool const closed=false) {
-        G_ASSERT(v.getSize()>0)
+    static T Linear(global::DynamicArray<T> const& v,float s,bool const closed=false) {
+        int i0,i1;
+        s=getInterval(v.getSize()-1,s,closed,i0,i1);
 
-        int n=v.getSize()-1;
-
-        // Calculate the array index from the position.
-        float i=(n+static_cast<int>(closed))*s;
-        int it=roundToZero(i);
-
-        int i1=(it>n)?0:it;
-        int i2=(i1==n)?(closed?0:n):i1+1;
-
-        // Interpolate with a new "s" which is scaled relative to the interval.
-        float sr=i-it;
-        return lerp(v[i1],v[i2],sr);
+        return lerp(v[i0],v[i1],s);
     }
 
     /// Piecewise cosine interpolation of the values in \a v at position \a s.
@@ -81,21 +71,11 @@ class Interpolator
     /// \c true, the values are treated as being periodic, resulting in a closed
     /// curve. Also see <http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/>.
     template<class T>
-    static T Cosine(global::DynamicArray<T> const& v,float const s,bool const closed=false) {
-        G_ASSERT(v.getSize()>0)
+    static T Cosine(global::DynamicArray<T> const& v,float s,bool const closed=false) {
+        int i0,i1;
+        s=getInterval(v.getSize()-1,s,closed,i0,i1);
 
-        int n=v.getSize()-1;
-
-        // Calculate the array index from the position.
-        float i=(n+static_cast<int>(closed))*s;
-        int it=roundToZero(i);
-
-        int i1=(it>n)?0:it;
-        int i2=(i1==n)?(closed?0:n):i1+1;
-
-        // Interpolate with a new "s" which is scaled relative to the interval.
-        float sr=i-it;
-        return lerp(v[i1],v[i2],(1.0f-cos(sr*Constf::PI()))*0.5f);
+        return lerp(v[i0],v[i1],(1.0f-cos(Constf::PI()*s))*0.5f);
     }
 
     /// Piecewise cubic Bezier interpolation of the values in \a v and their
@@ -104,26 +84,18 @@ class Interpolator
     /// are treated as being periodic, resulting in a closed curve. Also see
     /// <http://local.wasp.uwa.edu.au/~pbourke/geometry/bezier/cubicbezier.html>.
     template<class T>
-    static T Bezier(global::DynamicArray<T> const& v,global::DynamicArray<T> const& t,float const s,bool const closed=false) {
-        G_ASSERT(v.getSize()>0)
+    static T Bezier(global::DynamicArray<T> const& v,global::DynamicArray<T> const& t,float s,bool const closed=false) {
+        static signed char const w[]={
+            -1, 3,-3, 1
+        ,    3,-6, 3, 0
+        ,   -3, 3, 0, 0
+        ,    1, 0, 0, 0
+        };
 
-        int n=v.getSize()-1;
+        int i0,i1;
+        s=getInterval(v.getSize()-1,s,closed,i0,i1);
 
-        // Calculate the array index from the position.
-        float i=(n+static_cast<int>(closed))*s;
-        int it=roundToZero(i);
-
-        int i0=(it>n)?0:it;
-        int i1=(i0==n)?(closed?0:n):i0+1;
-
-        T a=-v[i0]   + (v[i0]+t[i0])*3 - (v[i1]-t[i1])*3 + v[i1];
-        T b= v[i0]*3 - (v[i0]+t[i0])*6 + (v[i1]-t[i1])*3;
-        T c=-v[i0]*3 + (v[i0]+t[i0])*3;
-        T d= v[i0];
-
-        // Interpolate with a new "s" which is scaled relative to the interval.
-        float sr=i-it;
-        return ((a*sr + b)*sr + c)*sr + d;
+        return evalPolynomial(v[i0],v[i0]+t[i0],v[i1]-t[i1],v[i1],w,1.0f,s);
     }
 
     /// Piecewise cubic B-Spline approximation of the values in \a v at
@@ -131,7 +103,7 @@ class Interpolator
     /// If \a closed is \c true, the values are treated as being periodic,
     /// resulting in a closed curve. Also see <http://blackpawn.com/texts/splines/>.
     template<class T>
-    static T BSpline(global::DynamicArray<T> const& v,float const s,bool const closed=false) {
+    static T BSpline(global::DynamicArray<T> const& v,float s,bool const closed=false) {
         static signed char const w[]={
             -1, 3,-3, 1
         ,    3,-6, 3, 0
@@ -139,7 +111,15 @@ class Interpolator
         ,    1, 4, 1, 0
         };
 
-        return Cubic(v,s,closed,w,1.0f/6.0f);
+        int n=v.getSize()-1;
+
+        int i1,i2;
+        s=getInterval(n,s,closed,i1,i2);
+
+        int i0=(i1==0)?(closed?n:0):i1-1;
+        int i3=(i2==n)?(closed?0:n):i2+1;
+
+        return evalPolynomial(v[i0],v[i1],v[i2],v[i3],w,1.0f/6.0f,s);
     }
 
     /// Piecewise cubic Catmull-Rom interpolation of the values in \a v at
@@ -147,7 +127,7 @@ class Interpolator
     /// If \a closed is \c true, the values are treated as being periodic,
     /// resulting in a closed curve. Also see <http://blackpawn.com/texts/splines/>.
     template<class T>
-    static T CatmullRom(global::DynamicArray<T> const& v,float const s,bool const closed=false) {
+    static T CatmullRom(global::DynamicArray<T> const& v,float s,bool const closed=false) {
         static signed char const w[]={
             -1, 3,-3, 1
         ,    2,-5, 4,-1
@@ -155,40 +135,47 @@ class Interpolator
         ,    0, 2, 0, 0
         };
 
-        return Cubic(v,s,closed,w,0.5f);
-    }
-
-  private:
-
-    /// Piecewise cubic interpolation of the values in \a v at position \a s.
-    /// The position in range [0,1] is mapped to the array size. If \a closed is
-    /// \c true, the values are treated as being periodic, resulting in a closed
-    /// curve. The polynomial coefficients are calculated using the weights in
-    /// \a w and the factor \a f.
-    template<class T>
-    static T Cubic(global::DynamicArray<T> const& v,float const s,bool const closed,signed char const (&w)[16],float const f) {
-        G_ASSERT(v.getSize()>0)
-
         int n=v.getSize()-1;
 
-        // Calculate the array index from the position.
-        float i=(n+static_cast<int>(closed))*s;
-        int it=roundToZero(i);
-
-        int i1=(it>n)?0:it;
-        int i2=(i1==n)?(closed?0:n):i1+1;
+        int i1,i2;
+        s=getInterval(n,s,closed,i1,i2);
 
         int i0=(i1==0)?(closed?n:0):i1-1;
         int i3=(i2==n)?(closed?0:n):i2+1;
 
-        T a=f*(v[i0]*w[ 0] + v[i1]*w[ 1] + v[i2]*w[ 2] + v[i3]*w[ 3]);
-        T b=f*(v[i0]*w[ 4] + v[i1]*w[ 5] + v[i2]*w[ 6] + v[i3]*w[ 7]);
-        T c=f*(v[i0]*w[ 8] + v[i1]*w[ 9] + v[i2]*w[10] + v[i3]*w[11]);
-        T d=f*(v[i0]*w[12] + v[i1]*w[13] + v[i2]*w[14] + v[i3]*w[15]);
+        return evalPolynomial(v[i0],v[i1],v[i2],v[i3],w,0.5f,s);
+    }
 
-        // Interpolate with a new "s" which is scaled relative to the interval.
-        float sr=i-it;
-        return ((a*sr + b)*sr + c)*sr + d;
+  private:
+
+    /// Returns the indices \a i0 and \a i1 for position \a s into an array with
+    /// maximum index \a n (the position in range [0,1] is mapped to the array
+    /// size). If \a closed is \c true, the array is treated as being periodic,
+    /// resulting in the indices to wrap. The return value equals the position
+    /// scaled to range [0,1] relative to the interval.
+    static float getInterval(int const n,float const s,bool const closed,int& i0,int& i1) {
+        G_ASSERT(n>=0)
+
+        // Calculate the array indices from the position.
+        float i=(n+static_cast<int>(closed))*s;
+        int it=roundToZero(i);
+
+        i0=(it>n)?0:it;
+        i1=(i0==n)?(closed?0:n):i0+1;
+
+        return i-it;
+    }
+
+    /// Evaluates the cubic polynomial constructed from the values \a v0, \a v1
+    /// \a v2, \a v3, the weights in \a w and the factor \a f, at position \a s.
+    template<class T>
+    static T evalPolynomial(T const& v0,T const& v1,T const& v2,T const& v3,signed char const (&w)[16],float const f,float const s) {
+        T a=f*(v0*w[ 0] + v1*w[ 1] + v2*w[ 2] + v3*w[ 3]);
+        T b=f*(v0*w[ 4] + v1*w[ 5] + v2*w[ 6] + v3*w[ 7]);
+        T c=f*(v0*w[ 8] + v1*w[ 9] + v2*w[10] + v3*w[11]);
+        T d=f*(v0*w[12] + v1*w[13] + v2*w[14] + v3*w[15]);
+
+        return ((a*s + b)*s + c)*s + d;
     }
 };
 
