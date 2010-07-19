@@ -117,6 +117,10 @@ Logo::Logo(double const fov,float const distance)
     glDisable(GL_TEXTURE_2D);
     G_ASSERT_OPENGL
 
+    glPushAttrib(GL_LINE_BIT);
+    glLineWidth(1.0f);
+    G_ASSERT_OPENGL
+
     glColor3fv(Col3f::WHITE());
     G_ASSERT_OPENGL
 
@@ -127,6 +131,7 @@ Logo::Logo(double const fov,float const distance)
     glNewList(m_list_range+LIST_EPILOGUE,GL_COMPILE);
     G_ASSERT_OPENGL
 
+    glPopAttrib();
     glPopAttrib();
     glPopAttrib();
     glPopAttrib();
