@@ -27,6 +27,8 @@
 
 #include "gale/math/color.h"
 
+using namespace gale::math;
+
 namespace gale {
 
 namespace wrapgl {
@@ -86,10 +88,10 @@ void Helper::popOrtho2D()
 Logo::Logo(double const fov,float const distance)
 :   m_camera(NULL,fov)
 {
-    math::Vec3f const pos(distance,distance,distance);
+    Vec3f const pos(distance,distance,distance);
 
-    m_modelview=math::HMat4f::Factory::LookAt(math::Vec3f::ZERO(),pos,math::Vec3f::Y());
-    m_camera.setModelview(m_modelview);
+    HMat4f modelview=HMat4f::Factory::LookAt(Vec3f::ZERO(),pos,Vec3f::Y());
+    m_camera.setModelview(modelview);
 
     m_list_range=glGenLists(LIST_COUNT);
     G_ASSERT_OPENGL
@@ -115,7 +117,7 @@ Logo::Logo(double const fov,float const distance)
     glDisable(GL_TEXTURE_2D);
     G_ASSERT_OPENGL
 
-    glColor3fv(math::Col3f::WHITE());
+    glColor3fv(Col3f::WHITE());
     G_ASSERT_OPENGL
 
     glEndList();
@@ -138,8 +140,8 @@ Logo::Logo(double const fov,float const distance)
     G_ASSERT_OPENGL
 
     float const scale_corner=1.8f,scale_length=1.5f;
-    math::Vec3f const r(scale_corner,0,0),t(0,scale_corner,0),l(0,0,scale_corner);
-    math::Vec3f n;
+    Vec3f const r(scale_corner,0,0),t(0,scale_corner,0),l(0,0,scale_corner);
+    Vec3f n;
 
     glBegin(GL_LINE_LOOP);
 
@@ -173,12 +175,18 @@ Logo::Logo(double const fov,float const distance)
     delete cube;
 }
 
+Logo::~Logo()
+{
+    glDeleteLists(m_list_range,LIST_COUNT);
+    G_ASSERT_OPENGL
+}
+
 void Logo::draw(Corner corner)
 {
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT,viewport);
 
-    GLint size=math::min(viewport[2],viewport[3])/6;
+    GLint size=min(viewport[2],viewport[3])/6;
 
     // Do not draw anything if the viewport has not yet been initialized.
     if (size<=0) {
@@ -204,7 +212,7 @@ void Logo::draw(Corner corner)
     if (m_camera.getScreenSpace().width!=size || m_camera.getScreenSpace().height!=size) {
         m_camera.setScreenSpaceDimensions(size,size);
         m_camera.setProjection(
-            math::Mat4d::Factory::PerspectiveProjection(
+            Mat4d::Factory::PerspectiveProjection(
                 size,size,m_camera.getFOV(),m_camera.getNearClipping(),m_camera.getFarClipping()
             )
         );
@@ -232,12 +240,6 @@ void Logo::draw(Corner corner)
     glTranslatef(0,0,-1);
 
     glCallList(m_list_range+LIST_EPILOGUE);
-    G_ASSERT_OPENGL
-}
-
-Logo::~Logo()
-{
-    glDeleteLists(m_list_range,LIST_COUNT);
     G_ASSERT_OPENGL
 }
 

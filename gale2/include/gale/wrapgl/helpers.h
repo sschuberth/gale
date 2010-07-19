@@ -89,7 +89,6 @@ class Logo
     ,   LIST_COUNT    ///< Special entry to name the number of enum entries.
     };
 
-    math::HMat4f m_modelview; ///< The camera's modelview matrix.
     Camera m_camera;          ///< The logo's camera.
 
     GLuint m_list_range;      ///< Start number of the range of display list IDs.
