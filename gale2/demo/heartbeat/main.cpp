@@ -23,6 +23,9 @@ using namespace gale::wrapgl;
 #include "bg_frag.inl"
 #undef SHADER_CODE_H_
 
+static int const TOTAL_SAMPLES=600;
+static int const TAIL_SAMPLES=50;
+
 // Modeled using <http://threekings.tk/mirror/Spline/MainForm.html>.
 static Vec2f const ECG[]={
     Vec2f( -195,    0)
@@ -60,6 +63,7 @@ class DemoWindow:public DefaultWindow
     ,   m_heart_vert(GL_VERTEX_SHADER)
     ,   m_heart_frag(GL_FRAGMENT_SHADER)
     ,   m_bg_frag(GL_FRAGMENT_SHADER)
+    ,   m_sample(0)
     ,   m_points(ECG)
     {
         m_camera.rotate(Vec3f::Y(),-10*Constf::DEG_TO_RAD());
@@ -182,6 +186,20 @@ class DemoWindow:public DefaultWindow
         // Set some OpenGL states.
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(5.0f);
+
+        // Set the ECG animation timeout.
+        setTimeout(0.002);
+    }
+
+    void onTimeout() {
+        m_sample=wrap(++m_sample,TOTAL_SAMPLES);
+        repaint();
     }
 
     void onRender() {
@@ -211,24 +229,70 @@ class DemoWindow:public DefaultWindow
 
         Helper::pushOrtho2D();
 
-        static int const SAMPLES=500;
+        glBegin(GL_LINE_STRIP);
 
         float px=m_camera.getScreenSpace().width/2;
         float py=m_camera.getScreenSpace().height/4;
 
-        glBegin(GL_LINE_STRIP);
-            glVertex2f(0,py);
+        Vec2f p0,p1,p;
 
-        for (int i=0;i<=SAMPLES;++i) {
-            Vec2f p=Interpolator::CatmullRom(m_points,static_cast<float>(i)/SAMPLES);
+        // Draw the first straight line segment.
+        p0=Vec2f(0,py);
+        p1=m_points.first()+Vec2f(px,py);
+        for (int i=0;i<=TOTAL_SAMPLES/4;++i) {
+            // Determine the color.
+            int t=m_sample-i;
+            float alpha=static_cast<float>(TAIL_SAMPLES-t)/TAIL_SAMPLES;
+            if (alpha<0 || alpha>1) {
+                alpha=0;
+            }
+            glColor4f(1.0f,1.0f,1.0f,alpha);
+
+            // Calculate the position.
+            p=lerp(p0,p1,static_cast<float>(i)/(TOTAL_SAMPLES*0.25f));
+            glVertex2fv(p);
+        }
+
+        // Draw the ECG curve.
+        for (int i=0;i<=TOTAL_SAMPLES/2;++i) {
+            // Determine the color.
+            int t=m_sample-i-TOTAL_SAMPLES/4;
+            float alpha=static_cast<float>(TAIL_SAMPLES-t)/TAIL_SAMPLES;
+            if (alpha<0 || alpha>1) {
+                alpha=0;
+            }
+            glColor4f(1.0f,1.0f,1.0f,alpha);
+
+            // Calculate the position.
+            p=Interpolator::CatmullRom(m_points,static_cast<float>(i)/(TOTAL_SAMPLES*0.5f));
             p+=Vec2f(px,py);
             glVertex2fv(p);
         }
 
-            glVertex2f(m_camera.getScreenSpace().width,py);
+        // Draw the last straight line segment.
+        p0=m_points.last()+Vec2f(px,py);
+        p1=Vec2f(m_camera.getScreenSpace().width,py);
+        for (int i=0;i<=TOTAL_SAMPLES/4;++i) {
+            // Determine the color.
+            int t=m_sample-i-TOTAL_SAMPLES/4-TOTAL_SAMPLES/2;
+            float alpha=static_cast<float>(TAIL_SAMPLES-t)/TAIL_SAMPLES;
+            if (alpha<0 || alpha>1) {
+                alpha=0;
+            }
+            glColor4f(1.0f,1.0f,1.0f,alpha);
+
+            // Calculate the position.
+            p=lerp(p0,p1,static_cast<float>(i)/(TOTAL_SAMPLES*0.25f));
+            glVertex2fv(p);
+        }
+
         glEnd();
 
         Helper::popOrtho2D();
+    }
+
+    void onMouseEvent(int x,int y,int wheel,int event) {
+        // Prevent mouse events.
     }
 
   private:
@@ -241,6 +305,7 @@ class DemoWindow:public DefaultWindow
     ShaderObject m_bg_frag;
     ProgramObject m_bg_prog;
 
+    int m_sample;
     DynamicArray<Vec2f> m_points;
 };
 
