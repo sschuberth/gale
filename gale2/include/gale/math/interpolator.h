@@ -95,6 +95,7 @@ class Interpolator
         int i0,i1;
         s=getInterval(v.getSize()-1,s,closed,i0,i1);
 
+        // Calculate the inner control points from the outer ones and their tangents.
         return evalPolynomial(v[i0],v[i0]+t[i0],v[i1]-t[i1],v[i1],w,1.0f,s);
     }
 
