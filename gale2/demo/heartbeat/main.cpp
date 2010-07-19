@@ -23,8 +23,8 @@ using namespace gale::wrapgl;
 #include "bg_frag.inl"
 #undef SHADER_CODE_H_
 
-static int const TOTAL_SAMPLES=600;
-static int const TAIL_SAMPLES=50;
+static int const TOTAL_SAMPLES=800;
+static int const TAIL_SAMPLES=60;
 
 // Modeled using <http://threekings.tk/mirror/Spline/MainForm.html>.
 static Vec2f const ECG[]={
@@ -60,6 +60,7 @@ class DemoWindow:public DefaultWindow
 
     DemoWindow()
     :   DefaultWindow(_T("demo_heartbeat"),800,600)
+    ,   m_scale(1.0f)
     ,   m_heart_vert(GL_VERTEX_SHADER)
     ,   m_heart_frag(GL_FRAGMENT_SHADER)
     ,   m_bg_frag(GL_FRAGMENT_SHADER)
@@ -207,7 +208,7 @@ class DemoWindow:public DefaultWindow
 
         m_camera.apply();
 
-        // Draw a background.
+        // Draw the background.
         Helper::pushOrtho2D();
 
         m_bg_prog.bind();
@@ -223,10 +224,16 @@ class DemoWindow:public DefaultWindow
         Helper::popOrtho2D();
 
         // Draw the heart.
+        glPushMatrix();
+        glScalef(m_scale,m_scale,1.0f);
+
         m_heart_prog.bind();
         Renderer::draw(m_heart_prep);
         m_heart_prog.release();
 
+        glPopMatrix();
+
+        // Draw the ECG curve.
         Helper::pushOrtho2D();
 
         glBegin(GL_LINE_STRIP);
@@ -235,6 +242,9 @@ class DemoWindow:public DefaultWindow
         float py=m_camera.getScreenSpace().height/4;
 
         Vec2f p0,p1,p;
+
+        float alpha_max=0;
+        Vec2f head;
 
         // Draw the first straight line segment.
         p0=Vec2f(0,py);
@@ -251,6 +261,12 @@ class DemoWindow:public DefaultWindow
             // Calculate the position.
             p=lerp(p0,p1,static_cast<float>(i)/(TOTAL_SAMPLES*0.25f));
             glVertex2fv(p);
+
+            // Determine the head position.
+            if (alpha>alpha_max) {
+                alpha_max=alpha;
+                head=p;
+            }
         }
 
         // Draw the ECG curve.
@@ -267,6 +283,12 @@ class DemoWindow:public DefaultWindow
             p=Interpolator::CatmullRom(m_points,static_cast<float>(i)/(TOTAL_SAMPLES*0.5f));
             p+=Vec2f(px,py);
             glVertex2fv(p);
+
+            // Determine the head position.
+            if (alpha>alpha_max) {
+                alpha_max=alpha;
+                head=p;
+            }
         }
 
         // Draw the last straight line segment.
@@ -284,11 +306,20 @@ class DemoWindow:public DefaultWindow
             // Calculate the position.
             p=lerp(p0,p1,static_cast<float>(i)/(TOTAL_SAMPLES*0.25f));
             glVertex2fv(p);
+
+            // Determine the head position.
+            if (alpha>alpha_max) {
+                alpha_max=alpha;
+                head=p;
+            }
         }
 
         glEnd();
 
         Helper::popOrtho2D();
+
+        // Scale the heart according to the ECG value.
+        m_scale=1.0f+static_cast<float>(head.getY()-py)/250.0f;
     }
 
     void onMouseEvent(int x,int y,int wheel,int event) {
@@ -298,6 +329,7 @@ class DemoWindow:public DefaultWindow
   private:
 
     PreparedMesh m_heart_prep;
+    float m_scale;
 
     ShaderObject m_heart_vert,m_heart_frag;
     ProgramObject m_heart_prog;
