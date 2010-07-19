@@ -128,6 +128,26 @@ class DynamicArray
         return data();
     }
 
+    /// Returns a reference to the first element in the array.
+    T& first() {
+        return m_data[0];
+    }
+
+    /// Returns a reference to the last element in the array.
+    T& last() {
+        return m_data[m_size-1];
+    }
+
+    /// Returns a constant reference to the first element in the array.
+    T const& first() const {
+        return m_data[0];
+    }
+
+    /// Returns a constant reference to the last element in the array.
+    T const& last() const {
+        return m_data[m_size-1];
+    }
+
     //@}
 
     /**
