@@ -1,3 +1,4 @@
+#include <gale/math/interpolator.h>
 #include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/renderer.h>
 #include <gale/wrapgl/shaderobject.h>
@@ -9,6 +10,7 @@
     #include <crtdbg.h>
 #endif
 
+using namespace gale::global;
 using namespace gale::math;
 using namespace gale::model;
 using namespace gale::wrapgl;
@@ -21,6 +23,34 @@ using namespace gale::wrapgl;
 #include "bg_frag.inl"
 #undef SHADER_CODE_H_
 
+// Modeled using <http://threekings.tk/mirror/Spline/MainForm.html>.
+static Vec2f const ECG[]={
+    Vec2f( -195,    0)
+,   Vec2f( -179,    0)
+,   Vec2f( -155,    1)
+,   Vec2f( -133,    2)
+,   Vec2f(  -95,  -10)
+,   Vec2f(  -63,   28)
+,   Vec2f(  -43,    0)
+,   Vec2f(  -30,    6)
+,   Vec2f(  -23,  -18)
+,   Vec2f(   -1,  142)
+,   Vec2f(    9,  -29)
+,   Vec2f(   17,   -1)
+,   Vec2f(   25,    0)
+,   Vec2f(   35,    0)
+,   Vec2f(   47,    0)
+,   Vec2f(   60,    0)
+,   Vec2f(   76,    3)
+,   Vec2f(   91,   18)
+,   Vec2f(  109,   31)
+,   Vec2f(  133,   35)
+,   Vec2f(  153,   31)
+,   Vec2f(  177,   18)
+,   Vec2f(  195,    2)
+,   Vec2f(  204,    0)
+};
+
 class DemoWindow:public DefaultWindow
 {
   public:
@@ -30,8 +60,11 @@ class DemoWindow:public DefaultWindow
     ,   m_heart_vert(GL_VERTEX_SHADER)
     ,   m_heart_frag(GL_FRAGMENT_SHADER)
     ,   m_bg_frag(GL_FRAGMENT_SHADER)
+    ,   m_points(ECG)
     {
-        m_camera.approach(-5);
+        m_camera.rotate(Vec3f::Y(),-10*Constf::DEG_TO_RAD());
+        m_camera.approach(-4.0f);
+        m_camera.elevate(-0.3f);
 
         // Create a heart-shaped contour.
         Mesh::VectorArray heart_shape;
@@ -175,6 +208,27 @@ class DemoWindow:public DefaultWindow
         m_heart_prog.bind();
         Renderer::draw(m_heart_prep);
         m_heart_prog.release();
+
+        Helper::pushOrtho2D();
+
+        static int const SAMPLES=500;
+
+        float px=m_camera.getScreenSpace().width/2;
+        float py=m_camera.getScreenSpace().height/4;
+
+        glBegin(GL_LINE_STRIP);
+            glVertex2f(0,py);
+
+        for (int i=0;i<=SAMPLES;++i) {
+            Vec2f p=Interpolator::CatmullRom(m_points,static_cast<float>(i)/SAMPLES);
+            p+=Vec2f(px,py);
+            glVertex2fv(p);
+        }
+
+            glVertex2f(m_camera.getScreenSpace().width,py);
+        glEnd();
+
+        Helper::popOrtho2D();
     }
 
   private:
@@ -186,6 +240,8 @@ class DemoWindow:public DefaultWindow
 
     ShaderObject m_bg_frag;
     ProgramObject m_bg_prog;
+
+    DynamicArray<Vec2f> m_points;
 };
 
 int __cdecl main()
