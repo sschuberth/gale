@@ -132,6 +132,15 @@ class TestWindow:public DefaultWindow
             glVertex2fv(p);
         }
         glEnd();
+
+        // Hermite interpolation.
+        glColor3ubv(Col3ub::MAGENTA());
+        glBegin(GL_LINE_STRIP);
+        for (int i=0;i<=SAMPLES;++i) {
+            Vec2f p=Interpolator::Hermite(m_points,m_tangents,static_cast<float>(i)/SAMPLES);
+            glVertex2fv(p);
+        }
+        glEnd();
     }
 
   private:

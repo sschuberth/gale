@@ -146,6 +146,26 @@ class Interpolator
         return evalPolynomial(v[i0],v[i1],v[i2],v[i3],w,0.5f,s);
     }
 
+    /// Piecewise cubic Hermite interpolation of the values in \a v and their
+    /// corresponding tangents in \a t at position \a s. The position in range
+    /// [0,1] is mapped to the array size. If \a closed is \c true, the values
+    /// are treated as being periodic, resulting in a closed curve. Also see
+    /// <http://www.cubic.org/docs/hermite.htm>.
+    template<class T>
+    static T Hermite(global::DynamicArray<T> const& v,global::DynamicArray<T> const& t,float s,bool const closed=false) {
+        static signed char const w[]={
+             2,-2, 1, 1
+        ,   -3, 3,-2,-1
+        ,    0, 0, 1, 0
+        ,    1, 0, 0, 0
+        };
+
+        int i0,i1;
+        s=getInterval(v.getSize()-1,s,closed,i0,i1);
+
+        return evalPolynomial(v[i0],v[i1],t[i0],t[i1],w,1.0f,s);
+    }
+
   private:
 
     /// Returns the indices \a i0 and \a i1 for position \a s into an array with
