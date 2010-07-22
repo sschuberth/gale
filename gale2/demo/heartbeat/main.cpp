@@ -100,32 +100,32 @@ class DemoWindow:public DefaultWindow
         GLchar log[4096];
 
         m_heart_vert.setSource(&shader_fake_sss_vert);
-        if (!m_heart_vert.compile() || m_heart_vert.getParameter(GL_INFO_LOG_LENGTH)>0) {
+        if (!m_heart_vert.compile() || m_heart_vert.getParameter(GL_INFO_LOG_LENGTH)>1) {
             m_heart_vert.getLog(log,sizeof(log));
             puts(log);
         }
 
         m_heart_frag.setSource(&shader_fake_sss_frag);
-        if (!m_heart_frag.compile() || m_heart_frag.getParameter(GL_INFO_LOG_LENGTH)>0) {
+        if (!m_heart_frag.compile() || m_heart_frag.getParameter(GL_INFO_LOG_LENGTH)>1) {
             m_heart_frag.getLog(log,sizeof(log));
             puts(log);
         }
 
         m_heart_prog.attach(m_heart_vert);
         m_heart_prog.attach(m_heart_frag);
-        if (!m_heart_prog.link() || m_heart_prog.getParameter(GL_INFO_LOG_LENGTH)>0) {
+        if (!m_heart_prog.link() || m_heart_prog.getParameter(GL_INFO_LOG_LENGTH)>1) {
             m_heart_prog.getLog(log,sizeof(log));
             puts(log);
         }
 
         m_bg_frag.setSource(&shader_bg_frag);
-        if (!m_bg_frag.compile() || m_bg_frag.getParameter(GL_INFO_LOG_LENGTH)>0) {
+        if (!m_bg_frag.compile() || m_bg_frag.getParameter(GL_INFO_LOG_LENGTH)>1) {
             m_bg_frag.getLog(log,sizeof(log));
             puts(log);
         }
 
         m_bg_prog.attach(m_bg_frag);
-        if (!m_bg_prog.link() || m_bg_prog.getParameter(GL_INFO_LOG_LENGTH)>0) {
+        if (!m_bg_prog.link() || m_bg_prog.getParameter(GL_INFO_LOG_LENGTH)>1) {
             m_bg_prog.getLog(log,sizeof(log));
             puts(log);
         }
