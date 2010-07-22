@@ -36,8 +36,7 @@ namespace wrapgl {
 void Helper::pushOrtho2D()
 {
     // Save the current matrix mode.
-    GLint matrix_mode;
-    glGetIntegerv(GL_MATRIX_MODE,&matrix_mode);
+    glPushAttrib(GL_TRANSFORM_BIT);
     G_ASSERT_OPENGL
 
     // Save the original modelview matrix, then set the current one to identity.
@@ -59,15 +58,14 @@ void Helper::pushOrtho2D()
     G_ASSERT_OPENGL
 
     // Restore the original matrix mode.
-    glMatrixMode(matrix_mode);
+    glPopAttrib();
     G_ASSERT_OPENGL
 }
 
 void Helper::popOrtho2D()
 {
     // Save the current matrix mode.
-    GLint matrix_mode;
-    glGetIntegerv(GL_MATRIX_MODE,&matrix_mode);
+    glPushAttrib(GL_TRANSFORM_BIT);
     G_ASSERT_OPENGL
 
     // Restore the original projection matrix.
@@ -81,7 +79,7 @@ void Helper::popOrtho2D()
     G_ASSERT_OPENGL
 
     // Restore the original matrix mode.
-    glMatrixMode(matrix_mode);
+    glPopAttrib();
     G_ASSERT_OPENGL
 }
 
