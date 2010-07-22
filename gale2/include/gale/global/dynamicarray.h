@@ -84,7 +84,7 @@ class DynamicArray
     }
 
     /// Creates a dynamic array from the given static array.
-    template<size_t size>
+    template<int size>
     DynamicArray(T const (&array)[size])
     :   m_data(NULL)
     ,   m_size(0)
@@ -269,7 +269,7 @@ class DynamicArray
         // Adjust the size for a new object.
         setSize(m_size+1);
 
-        size_t offset=m_size-position-1;
+        int offset=m_size-position-1;
         if (offset>0) {
             // Move insetted items to create a gap.
             memmove(&m_data[position+1],&m_data[position],offset*sizeof(T));
@@ -292,7 +292,7 @@ class DynamicArray
         setSize(m_size+array.m_size);
 
         // Move insetted items to create a gap.
-        size_t offset=m_size-position-array.m_size;
+        int offset=m_size-position-array.m_size;
         if (offset>0) {
             memmove(&m_data[position+array.m_size],&m_data[position],offset*sizeof(T));
         }
@@ -305,7 +305,7 @@ class DynamicArray
     /// Inserts a static \a array at the given \a position into the dynamic array.
     /// If \a position is -1, the item gets appended at the end of the array.
     /// Returns the first index of the newly added array.
-    template<size_t size>
+    template<int size>
     int insert(T const (&array)[size],int position=-1) {
         if (position<0 || position>m_size) {
             position=m_size;
@@ -315,7 +315,7 @@ class DynamicArray
         setSize(m_size+size);
 
         // Move insetted items to create a gap.
-        size_t offset=m_size-position-size;
+        int offset=m_size-position-size;
         if (offset>0) {
             memmove(&m_data[position+size],&m_data[position],offset*sizeof(T));
         }
@@ -355,7 +355,7 @@ class DynamicArray
         }
 
         // Move abundant items to close the gap.
-        size_t offset=m_size-end;
+        int offset=m_size-end;
         if (offset>0) {
             memmove(&m_data[begin],&m_data[end],offset*sizeof(T));
         }
