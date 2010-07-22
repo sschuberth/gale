@@ -103,7 +103,7 @@ LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
         // TranslateMessage function. The WM_CHAR message contains the
         // character code of the key that was pressed.
         case WM_CHAR: {
-            onKeyEvent(LOBYTE(wParam));
+            onKeyEvent(static_cast<char>(wParam));
             break;
         }
 
@@ -137,7 +137,7 @@ LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
                 }
             }
 
-            short x=LOWORD(lParam),y=HIWORD(lParam);
+            WORD x=LOWORD(lParam),y=HIWORD(lParam);
             onMouseEvent(x,y,0,event);
             break;
         }
