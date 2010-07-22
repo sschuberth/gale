@@ -75,9 +75,9 @@ CPUInfo::CPUInfo()
 #ifdef G_COMP_MSVC
 
         __cpuid(info,0x00000001);
-        m_00000001_ebx=info[1];
-        m_00000001_edx=info[3];
-        m_00000001_ecx=info[2];
+        m_00000001_ebx=static_cast<unsigned int>(info[1]);
+        m_00000001_edx=static_cast<unsigned int>(info[3]);
+        m_00000001_ecx=static_cast<unsigned int>(info[2]);
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
@@ -108,7 +108,7 @@ CPUInfo::CPUInfo()
         __stosd(reinterpret_cast<DWORD*>(&info[0]),0,0);
 
         __cpuid(info,0x00000004);
-        m_00000004_eax=info[0];
+        m_00000004_eax=static_cast<unsigned int>(info[0]);
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
@@ -137,8 +137,8 @@ CPUInfo::CPUInfo()
 #ifdef G_COMP_MSVC
 
         __cpuid(info,0x80000001);
-        m_80000001_edx=info[3];
-        m_80000001_ecx=info[2];
+        m_80000001_edx=static_cast<unsigned int>(info[3]);
+        m_80000001_ecx=static_cast<unsigned int>(info[2]);
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
@@ -162,7 +162,7 @@ CPUInfo::CPUInfo()
 #ifdef G_COMP_MSVC
 
         __cpuid(info,0x80000008);
-        m_80000008_ecx=info[2];
+        m_80000008_ecx=static_cast<unsigned int>(info[2]);
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 

@@ -188,7 +188,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
         // Get the number of "online" processors. This counts processor cores,
         // but not logical processors.
-        count=sysconf(_SC_NPROCESSORS_ONLN);
+        count=static_cast<unsigned int>(sysconf(_SC_NPROCESSORS_ONLN));
 
 #elif defined G_OS_WINDOWS
 
@@ -251,7 +251,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
                 // at the thread level.
                 int info[4];
                 __cpuid(info,0x0000000b);
-                count=info[1]&0x0000ffff;
+                count=static_cast<unsigned int>(info[1])&0x0000ffff;
 
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
