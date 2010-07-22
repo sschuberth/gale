@@ -47,10 +47,10 @@ namespace model {
  */
 struct Mesh
 {
-    /// Array of vectors as usable by OpenGL to specify vertices.
+    /// Array of vectors as usable e.g. by glVertexPointer().
     typedef global::DynamicArray<math::Vec3f> VectorArray;
 
-    /// Array of vertex indices as usable by OpenGL.
+    /// Array of indices as usable e.g. by glDrawElements().
     typedef global::DynamicArray<unsigned int> IndexArray;
 
     /// Array of arrays to store vertex neighbors or polygon indices.
