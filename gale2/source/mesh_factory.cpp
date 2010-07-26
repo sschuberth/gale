@@ -785,7 +785,7 @@ void Mesh::Factory::populateNeighborhood(Mesh* const mesh,float distance,int con
         int n=0; // The current neighbor index.
         Vec3f u; // Copy of the first neighbor vertex.
 
-        for (int k=0;k<mesh->vertices.getSize(),c<valence;++k) {
+        for (int k=0;k<mesh->vertices.getSize() && c<valence;++k) {
             // Get the vector from the reference to the (possible) neighbor.
             Vec3f v=mesh->vertices[k]-r;
 
