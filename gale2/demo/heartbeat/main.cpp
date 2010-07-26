@@ -26,6 +26,8 @@ using namespace gale::wrapgl;
 static int const TOTAL_SAMPLES=800;
 static int const TAIL_SAMPLES=60;
 
+static float const LINE_WIDTH=3.0f;
+
 // Modeled using <http://threekings.tk/mirror/Spline/MainForm.html>.
 static Vec2f const ECG[]={
     Vec2f( -195,    0)
@@ -192,7 +194,7 @@ class DemoWindow:public DefaultWindow
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_LINE_SMOOTH);
-        glLineWidth(5.0f);
+        glLineWidth(LINE_WIDTH);
 
         // Set the ECG animation timeout.
         setTimeout(0.002);
@@ -236,10 +238,26 @@ class DemoWindow:public DefaultWindow
         // Draw the ECG curve.
         Helper::pushOrtho2D();
 
-        glBegin(GL_LINE_STRIP);
+        float px=m_camera.getScreenSpace().width/2.0f;
+        float py=m_camera.getScreenSpace().height/4.0f;
 
-        float px=m_camera.getScreenSpace().width/2;
-        float py=m_camera.getScreenSpace().height/4;
+        Vec2f head=drawECGCurve(px,py);
+        drawECGCurve(px,py-LINE_WIDTH);
+
+        Helper::popOrtho2D();
+
+        // Scale the heart according to the ECG value.
+        m_scale=1.0f+static_cast<float>(head.getY()-py)/250.0f;
+    }
+
+    void onMouseEvent(int x,int y,int wheel,int event) {
+        // Prevent mouse events.
+    }
+
+  private:
+
+    Vec2f drawECGCurve(float px,float py) {
+        glBegin(GL_LINE_STRIP);
 
         Vec2f p0,p1,p;
 
@@ -293,7 +311,7 @@ class DemoWindow:public DefaultWindow
 
         // Draw the last straight line segment.
         p0=m_points.last()+Vec2f(px,py);
-        p1=Vec2f(m_camera.getScreenSpace().width,py);
+        p1=Vec2f(static_cast<float>(m_camera.getScreenSpace().width),py);
         for (int i=0;i<=TOTAL_SAMPLES/4;++i) {
             // Determine the color.
             int t=m_sample-i-TOTAL_SAMPLES/4-TOTAL_SAMPLES/2;
@@ -316,17 +334,8 @@ class DemoWindow:public DefaultWindow
 
         glEnd();
 
-        Helper::popOrtho2D();
-
-        // Scale the heart according to the ECG value.
-        m_scale=1.0f+static_cast<float>(head.getY()-py)/250.0f;
+        return head;
     }
-
-    void onMouseEvent(int x,int y,int wheel,int event) {
-        // Prevent mouse events.
-    }
-
-  private:
 
     PreparedMesh m_heart_prep;
     float m_scale;
