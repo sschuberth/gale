@@ -80,7 +80,7 @@ class DemoWindow:public DefaultWindow
         // Create a straight line path.
         Mesh::VectorArray line_path(5);
         for (int i=0;i<line_path.getSize();++i) {
-            line_path[i]=Vec3f(0.0f,0.0f,i*0.1f);
+            line_path[i]=Vec3f(0.0f,0.0f,-0.2f+i*0.1f);
         }
 
         // Create scaling matrices for the heart shapes.
@@ -228,6 +228,16 @@ class DemoWindow:public DefaultWindow
         // Draw the heart.
         glPushMatrix();
         glScalef(m_scale,m_scale,1.0f);
+
+        int rotation_sample=0;
+        if (m_sample>TOTAL_SAMPLES/4*3) {
+            rotation_sample=m_sample-TOTAL_SAMPLES/4*3;
+        }
+        if (m_sample<TOTAL_SAMPLES/4) {
+            rotation_sample=m_sample+TOTAL_SAMPLES/4;
+        }
+        float s=static_cast<float>(rotation_sample)/(TOTAL_SAMPLES/2);
+        glRotatef((1.0f-cos(Constf::PI()*s))*90.0f,0,1,0);
 
         m_heart_prog.bind();
         Renderer::draw(m_heart_prep);
