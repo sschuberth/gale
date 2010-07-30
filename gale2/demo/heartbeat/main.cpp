@@ -1,4 +1,6 @@
+#include <gale/math/color.h>
 #include <gale/math/interpolator.h>
+#include <gale/math/random.h>
 #include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/renderer.h>
 #include <gale/wrapgl/shaderobject.h>
@@ -11,6 +13,7 @@
 #endif
 
 #define DRAW_BACKGROUND
+#define DRAW_SMALL_HEARTS
 #define DRAW_BIG_HEART
 #define DRAW_ECG_CURVE
 
@@ -31,6 +34,8 @@ static int const TOTAL_SAMPLES=800;
 static int const TAIL_SAMPLES=60;
 
 static float const LINE_WIDTH=3.0f;
+
+static int const NUM_SMALL_HEARTS=50;
 
 // Modeled using <http://threekings.tk/mirror/Spline/MainForm.html>.
 static Vec2f const ECG[]={
@@ -72,6 +77,7 @@ class DemoWindow:public DefaultWindow
     ,   m_bg_frag(GL_FRAGMENT_SHADER)
     ,   m_sample(0)
     ,   m_points(ECG)
+    ,   m_hearts(NUM_SMALL_HEARTS)
     {
         m_camera.rotate(Vec3f::Y(),-10*Constf::DEG_TO_RAD());
         m_camera.approach(-4.0f);
@@ -101,6 +107,19 @@ class DemoWindow:public DefaultWindow
 
         m_heart_prep.compile(*heart);
         delete heart;
+
+        // Initialize the flying hearts.
+        for (int i=0;i<m_hearts.getSize();++i) {
+            m_hearts[i].position=Vec2f::ZERO();
+
+            float speed=0.5f+m_rand.random0N(0.5f);
+            m_hearts[i].velocity=m_rand.randomVec2()*speed;
+
+            float vr=10.0f;
+            float vs=m_rand.random0N(2*vr)-vr;
+            m_hearts[i].color=Col4f(0.82f,0.76f,0.8f,1.0f);
+            m_hearts[i].color.setS(m_hearts[i].color.getS()+vs);
+        }
 
         // Compile and link the shaders.
         GLchar log[4096];
@@ -215,6 +234,7 @@ class DemoWindow:public DefaultWindow
         m_camera.apply();
 
         Helper::pushOrtho2D();
+        glDepthMask(GL_FALSE);
 
 #ifdef DRAW_BACKGROUND
         // Draw the background.
@@ -224,13 +244,46 @@ class DemoWindow:public DefaultWindow
         glUniform2i(l,m_camera.getScreenSpace().width,m_camera.getScreenSpace().height);
         G_ASSERT_OPENGL
 
-        glDepthMask(GL_FALSE);
         glRecti(0,0,m_camera.getScreenSpace().width,m_camera.getScreenSpace().height);
-        glDepthMask(GL_TRUE);
 
         m_bg_prog.release();
 #endif
 
+#ifdef DRAW_SMALL_HEARTS
+        // Draw the flying hearts.
+        glPushMatrix();
+
+        float cx=m_camera.getScreenSpace().width*0.5f;
+        float cy=m_camera.getScreenSpace().height*0.5f;
+        glTranslatef(cx,cy,0);
+
+        for (int i=0;i<m_hearts.getSize();++i) {
+            glPushMatrix();
+
+            glTranslatef(m_hearts[i].position.getX(),m_hearts[i].position.getY(),0);
+            float scale=20.0f*m_scale;
+            glScalef(scale,scale,1.0f);
+
+            glColor4fv(m_hearts[i].color);
+            Renderer::draw(m_heart_prep);
+
+            glPopMatrix();
+
+            m_hearts[i].position+=m_hearts[i].velocity*m_scale*m_scale;
+            if (m_hearts[i].position.getX()<-cx || m_hearts[i].position.getX()>cx
+             || m_hearts[i].position.getY()<-cy || m_hearts[i].position.getY()>cy)
+            {
+                m_hearts[i].position=Vec2f::ZERO();
+
+                float speed=0.5f+m_rand.random0N(0.5f);
+                m_hearts[i].velocity=m_rand.randomVec2()*speed;
+            }
+        }
+
+        glPopMatrix();
+#endif
+
+        glDepthMask(GL_TRUE);
         Helper::popOrtho2D();
 
 #ifdef DRAW_BIG_HEART
@@ -370,6 +423,16 @@ class DemoWindow:public DefaultWindow
 
     int m_sample;
     DynamicArray<Vec2f> m_points;
+
+    RandomEcuyerf m_rand;
+
+    struct FlyingHeart {
+        Vec2f position;
+        Vec2f velocity;
+        Col4f color;
+    };
+
+    DynamicArray<FlyingHeart> m_hearts;
 };
 
 int __cdecl main()
