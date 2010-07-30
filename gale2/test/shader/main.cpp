@@ -47,20 +47,20 @@ class TestWindow:public DefaultWindow
         GLchar log[4096];
 
         m_vert_shader.setSource(&shader_aa_cel_vert);
-        if (!m_vert_shader.compile() || m_vert_shader.getParameter(GL_INFO_LOG_LENGTH)>1) {
+        if (!m_vert_shader.compile() || m_vert_shader.hasLog()) {
             m_vert_shader.getLog(log,sizeof(log));
             puts(log);
         }
 
         m_frag_shader.setSource(&shader_aa_cel_frag);
-        if (!m_frag_shader.compile() || m_frag_shader.getParameter(GL_INFO_LOG_LENGTH)>1) {
+        if (!m_frag_shader.compile() || m_frag_shader.hasLog()) {
             m_frag_shader.getLog(log,sizeof(log));
             puts(log);
         }
 
         m_program.attach(m_vert_shader);
         m_program.attach(m_frag_shader);
-        if (!m_program.link() || m_program.getParameter(GL_INFO_LOG_LENGTH)>1) {
+        if (!m_program.link() || m_program.hasLog()) {
             m_program.getLog(log,sizeof(log));
             puts(log);
         }

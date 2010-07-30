@@ -117,6 +117,12 @@ class ShaderObject
         G_ASSERT_OPENGL
     }
 
+    /// Convenience method to check for any log entries.
+    bool hasLog() const {
+        // Some GLSL implementations return a single \0 for an empty log.
+        return getParameter(GL_INFO_LOG_LENGTH)>1;
+    }
+
   protected:
 
     GLuint m_handle; ///< The handle identifying the object.
@@ -188,6 +194,12 @@ class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
         glGetProgramiv(m_handle,name,&value);
         G_ASSERT_OPENGL
         return value;
+    }
+
+    /// Convenience method to check for any log entries.
+    bool hasLog() const {
+        // Some GLSL implementations return a single \0 for an empty log.
+        return getParameter(GL_INFO_LOG_LENGTH)>1;
     }
 
   private:
