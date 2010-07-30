@@ -49,6 +49,12 @@ class Helper
     /// projection that maps each raster position exactly to a viewport pixel.
     static void pushOrtho2D();
 
+    /// Saves the current modelview / projection matrices and sets an orthogonal
+    /// projection that maps the lower left viewport pixel to the coordinate
+    /// \a ll_x / \a ll_y, and the upper right viewport pixel to the coordinate
+    /// \a ur_x / \a ur_y.
+    static void pushOrtho2D(GLdouble ll_x,GLdouble ll_y,GLdouble ur_x,GLdouble ur_y);
+
     /// Restores the projection / modelview matrices which were previously saved
     /// by pushOrtho2D().
     static void popOrtho2D();

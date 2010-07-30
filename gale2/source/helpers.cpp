@@ -35,6 +35,16 @@ namespace wrapgl {
 
 void Helper::pushOrtho2D()
 {
+    // Set the projection matrix to map each raster position to a viewport pixel.
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT,viewport);
+    G_ASSERT_OPENGL
+
+    pushOrtho2D(viewport[0],viewport[1],viewport[2]-1,viewport[3]-1);
+}
+
+void Helper::pushOrtho2D(GLdouble ll_x,GLdouble ll_y,GLdouble ur_x,GLdouble ur_y)
+{
     // Save the current matrix mode.
     glPushAttrib(GL_TRANSFORM_BIT);
     G_ASSERT_OPENGL
@@ -51,10 +61,7 @@ void Helper::pushOrtho2D()
     glLoadIdentity();
     G_ASSERT_OPENGL
 
-    // Set the projection matrix to map each raster position to a screen pixel.
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT,viewport);
-    glOrtho(viewport[0],viewport[2],viewport[1],viewport[3],-1,1);
+    glOrtho(ll_x,ur_x+1,ll_y,ur_y+1,-1,1);
     G_ASSERT_OPENGL
 
     // Restore the original matrix mode.
