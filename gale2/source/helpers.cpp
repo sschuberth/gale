@@ -86,11 +86,18 @@ void Helper::popOrtho2D()
 Logo::Logo(double const fov,float const distance)
 :   m_camera(NULL,fov)
 {
+    // Prepare the camera for rendering the cubes.
     Vec3f const pos(distance,distance,distance);
 
     HMat4f modelview=HMat4f::Factory::LookAt(Vec3f::ZERO(),pos,Vec3f::Y());
     m_camera.setModelview(modelview);
 
+    // Prepare the mesh for rendering the cubes.
+    model::Mesh* cube=model::Mesh::Factory::Hexahedron();
+    m_cube_prep.compile(*cube);
+    delete cube;
+
+    // Generate display lists to render various parts of the logo.
     m_list_range=glGenLists(LIST_COUNT);
     G_ASSERT_OPENGL
 
@@ -98,28 +105,30 @@ Logo::Logo(double const fov,float const distance)
     glNewList(m_list_range+LIST_PROLOGUE,GL_COMPILE);
     G_ASSERT_OPENGL
 
+    // Save states that need to be changed for rendering the logo.
     glPushAttrib(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     G_ASSERT_OPENGL
 
-    glPushAttrib(GL_POLYGON_BIT);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    glPushAttrib(GL_CURRENT_BIT);
+    glColor3fv(Col3f::WHITE());
     G_ASSERT_OPENGL
 
     glPushAttrib(GL_ENABLE_BIT);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_1D);
     glDisable(GL_TEXTURE_2D);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_LINE_SMOOTH);
     G_ASSERT_OPENGL
 
     glPushAttrib(GL_LINE_BIT);
     glLineWidth(1.0f);
     G_ASSERT_OPENGL
 
-    glColor3fv(Col3f::WHITE());
+    glPushAttrib(GL_POLYGON_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     G_ASSERT_OPENGL
 
     glEndList();
@@ -133,12 +142,13 @@ Logo::Logo(double const fov,float const distance)
     glPopAttrib();
     glPopAttrib();
     glPopAttrib();
+    glPopAttrib();
     G_ASSERT_OPENGL
 
     glEndList();
     G_ASSERT_OPENGL
 
-    // Compile the frame display list.
+    // Compile the display list for rendering the frame.
     glNewList(m_list_range+LIST_FRAME,GL_COMPILE);
     G_ASSERT_OPENGL
 
@@ -147,35 +157,28 @@ Logo::Logo(double const fov,float const distance)
     Vec3f n;
 
     glBegin(GL_LINE_LOOP);
+        glVertex3fv(r);
 
-    glVertex3fv(r);
+        n=(~((t-r)^pos))*scale_length;
+        glVertex3fv(n+r);
+        glVertex3fv(n+t);
 
-    n=(~((t-r)^pos))*scale_length;
-    glVertex3fv(n+r);
-    glVertex3fv(n+t);
+        glVertex3fv(t);
 
-    glVertex3fv(t);
+        n=(~((l-t)^pos))*scale_length;
+        glVertex3fv(n+t);
+        glVertex3fv(n+l);
 
-    n=(~((l-t)^pos))*scale_length;
-    glVertex3fv(n+t);
-    glVertex3fv(n+l);
+        glVertex3fv(l);
 
-    glVertex3fv(l);
-
-    n=(~((r-l)^pos))*scale_length;
-    glVertex3fv(n+l);
-    glVertex3fv(n+r);
-
+        n=(~((r-l)^pos))*scale_length;
+        glVertex3fv(n+l);
+        glVertex3fv(n+r);
     glEnd();
     G_ASSERT_OPENGL
 
     glEndList();
     G_ASSERT_OPENGL
-
-    // Prepare the mesh.
-    model::Mesh* cube=model::Mesh::Factory::Hexahedron();
-    m_cube_prep.compile(*cube);
-    delete cube;
 }
 
 Logo::~Logo()
@@ -191,7 +194,7 @@ void Logo::draw(Corner corner)
 
     GLint size=min(viewport[2],viewport[3])/6;
 
-    // Do not draw anything if the viewport has not yet been initialized.
+    // Do not render anything if the viewport has not yet been initialized.
     if (size<=0) {
         return;
     }
@@ -207,19 +210,15 @@ void Logo::draw(Corner corner)
         y+=viewport[3]-size;
     }
 
-    if (m_camera.getScreenSpace().x!=x || m_camera.getScreenSpace().y!=y) {
-        m_camera.setScreenSpaceOrigin(x,y);
-    }
+    // Adjust the camera's screen space (always set it to force applying it).
+    m_camera.setScreenSpaceOrigin(x,y);
+    m_camera.setScreenSpaceDimensions(size,size);
 
-    // Adjust the camera's screen space dimensions.
-    if (m_camera.getScreenSpace().width!=size || m_camera.getScreenSpace().height!=size) {
-        m_camera.setScreenSpaceDimensions(size,size);
-        m_camera.setProjection(
-            Mat4d::Factory::PerspectiveProjection(
-                size,size,m_camera.getFOV(),m_camera.getNearClipping(),m_camera.getFarClipping()
-            )
-        );
-    }
+    m_camera.setProjection(
+        Mat4d::Factory::PerspectiveProjection(
+            size,size,m_camera.getFOV(),m_camera.getNearClipping(),m_camera.getFarClipping()
+        )
+    );
 
     m_camera.apply();
 
@@ -244,6 +243,9 @@ void Logo::draw(Corner corner)
 
     glCallList(m_list_range+LIST_EPILOGUE);
     G_ASSERT_OPENGL
+
+    // Restore the original viewport.
+    glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
 }
 
 } // namespace wrapgl
