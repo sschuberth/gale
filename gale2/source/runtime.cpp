@@ -37,9 +37,16 @@ int _fltused=0x9875;
 // Forward declaration to the usual main() entry point.
 int __cdecl main();
 
-// This is the real entry point as used by the C runtime; just call the usual
-// main() entry point and exit with its return value.
+// This is the real entry point as used by the linker for /SUBSYSTEM:CONSOLE
+// applications; just call main() here and exit with its return value.
 int mainCRTStartup()
+{
+    ExitProcess(main());
+}
+
+// This is the real entry point as used by the linker for /SUBSYSTEM:WINDOWS
+// applications; just call main() here and exit with its return value.
+int WinMainCRTStartup()
 {
     ExitProcess(main());
 }
