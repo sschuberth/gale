@@ -10,6 +10,10 @@
     #include <crtdbg.h>
 #endif
 
+#define DRAW_BACKGROUND
+#define DRAW_BIG_HEART
+#define DRAW_ECG_CURVE
+
 using namespace gale::global;
 using namespace gale::math;
 using namespace gale::model;
@@ -210,9 +214,10 @@ class DemoWindow:public DefaultWindow
 
         m_camera.apply();
 
-        // Draw the background.
         Helper::pushOrtho2D();
 
+#ifdef DRAW_BACKGROUND
+        // Draw the background.
         m_bg_prog.bind();
 
         GLint l=glGetUniformLocation(m_bg_prog.handle(),"viewport");
@@ -223,8 +228,12 @@ class DemoWindow:public DefaultWindow
         glRecti(0,0,m_camera.getScreenSpace().width,m_camera.getScreenSpace().height);
         glDepthMask(GL_TRUE);
 
+        m_bg_prog.release();
+#endif
+
         Helper::popOrtho2D();
 
+#ifdef DRAW_BIG_HEART
         // Draw the heart.
         glPushMatrix();
         glScalef(m_scale,m_scale,1.0f);
@@ -244,7 +253,9 @@ class DemoWindow:public DefaultWindow
         m_heart_prog.release();
 
         glPopMatrix();
+#endif
 
+#ifdef DRAW_ECG_CURVE
         // Draw the ECG curve.
         Helper::pushOrtho2D();
 
@@ -258,6 +269,7 @@ class DemoWindow:public DefaultWindow
 
         // Scale the heart according to the ECG value.
         m_scale=1.0f+static_cast<float>(head.getY()-py)/250.0f;
+#endif
     }
 
     void onMouseEvent(int x,int y,int wheel,int event) {
