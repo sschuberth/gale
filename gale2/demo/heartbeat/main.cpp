@@ -71,6 +71,7 @@ class DemoWindow:public DefaultWindow
 
     DemoWindow()
     :   DefaultWindow(_T("demo_heartbeat"),800,600)
+    ,   m_base_color(0.82f,0.76f,0.8f,1.0f)
     ,   m_scale(1.0f)
     ,   m_heart_vert(GL_VERTEX_SHADER)
     ,   m_heart_frag(GL_FRAGMENT_SHADER)
@@ -117,7 +118,7 @@ class DemoWindow:public DefaultWindow
 
             float vr=10.0f;
             float vs=m_rand.random0N(2*vr)-vr;
-            m_hearts[i].color=Col4f(0.82f,0.76f,0.8f,1.0f);
+            m_hearts[i].color=m_base_color;
             m_hearts[i].color.setS(m_hearts[i].color.getS()+vs);
         }
 
@@ -179,7 +180,7 @@ class DemoWindow:public DefaultWindow
         G_ASSERT_OPENGL
 
         l=glGetUniformLocation(m_heart_prog.handle(),"BaseColor");
-        glUniform4f(l,0.82f,0.76f,0.8f,1.0f);
+        glUniform4fv(l,1,m_base_color);
         G_ASSERT_OPENGL
 
         l=glGetUniformLocation(m_heart_prog.handle(),"SpecColor");
@@ -315,8 +316,8 @@ class DemoWindow:public DefaultWindow
         float px=m_camera.getScreenSpace().width/2.0f;
         float py=m_camera.getScreenSpace().height/4.0f;
 
-        Vec2f head=drawECGCurve(px,py,0.0f,1.0f,1.0f);
-        drawECGCurve(px,py-LINE_WIDTH,0.0f,0.8f,0.8f);
+        Vec2f head=drawECGCurve(px,py,1.0f,1.0f,1.0f);
+        drawECGCurve(px,py-LINE_WIDTH,m_base_color.getR(),m_base_color.getG(),m_base_color.getB());
 
         Helper::popOrtho2D();
 
@@ -412,8 +413,10 @@ class DemoWindow:public DefaultWindow
         return head;
     }
 
-    PreparedMesh m_heart_prep;
+    Col4f m_base_color;
     float m_scale;
+
+    PreparedMesh m_heart_prep;
 
     ShaderObject m_heart_vert,m_heart_frag;
     ProgramObject m_heart_prog;
