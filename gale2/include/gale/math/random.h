@@ -160,6 +160,19 @@ class RandomBase
      */
     //@{
 
+    /// Returns a normalized random 2-component vector.
+    Vector<2,T> randomVec2() {
+        Vector<2,T> v;
+
+        do {
+            v.setX(random0N(2)-1);
+            v.setY(random0N(2)-1);
+        } while (v.length2()>1);
+
+        v.normalize();
+        return v;
+    }
+
     /// Returns a normalized random 3-component vector.
     Vector<3,T> randomVec3() {
         Vector<3,T> v;
