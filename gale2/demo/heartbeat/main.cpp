@@ -262,8 +262,8 @@ class DemoWindow:public DefaultWindow
         float px=m_camera.getScreenSpace().width/2.0f;
         float py=m_camera.getScreenSpace().height/4.0f;
 
-        Vec2f head=drawECGCurve(px,py,1.0f,1.0f,1.0f);
-        drawECGCurve(px,py-LINE_WIDTH,0.8f,0.8f,0.8f);
+        Vec2f head=drawECGCurve(px,py,0.0f,1.0f,1.0f);
+        drawECGCurve(px,py-LINE_WIDTH,0.0f,0.8f,0.8f);
 
         Helper::popOrtho2D();
 
