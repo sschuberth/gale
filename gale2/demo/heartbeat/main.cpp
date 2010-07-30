@@ -251,8 +251,8 @@ class DemoWindow:public DefaultWindow
         float px=m_camera.getScreenSpace().width/2.0f;
         float py=m_camera.getScreenSpace().height/4.0f;
 
-        Vec2f head=drawECGCurve(px,py);
-        drawECGCurve(px,py-LINE_WIDTH);
+        Vec2f head=drawECGCurve(px,py,1.0f,1.0f,1.0f);
+        drawECGCurve(px,py-LINE_WIDTH,0.8f,0.8f,0.8f);
 
         Helper::popOrtho2D();
 
@@ -266,7 +266,7 @@ class DemoWindow:public DefaultWindow
 
   private:
 
-    Vec2f drawECGCurve(float px,float py) {
+    Vec2f drawECGCurve(float px,float py,float r,float g,float b) {
         glBegin(GL_LINE_STRIP);
 
         Vec2f p0,p1,p;
@@ -284,7 +284,7 @@ class DemoWindow:public DefaultWindow
             if (alpha<0 || alpha>1) {
                 alpha=0;
             }
-            glColor4f(1.0f,1.0f,1.0f,alpha);
+            glColor4f(r,g,b,alpha);
 
             // Calculate the position.
             p=lerp(p0,p1,static_cast<float>(i)/(TOTAL_SAMPLES*0.25f));
@@ -305,7 +305,7 @@ class DemoWindow:public DefaultWindow
             if (alpha<0 || alpha>1) {
                 alpha=0;
             }
-            glColor4f(1.0f,1.0f,1.0f,alpha);
+            glColor4f(r,g,b,alpha);
 
             // Calculate the position.
             p=Interpolator::CatmullRom(m_points,static_cast<float>(i)/(TOTAL_SAMPLES*0.5f));
@@ -329,7 +329,7 @@ class DemoWindow:public DefaultWindow
             if (alpha<0 || alpha>1) {
                 alpha=0;
             }
-            glColor4f(1.0f,1.0f,1.0f,alpha);
+            glColor4f(r,g,b,alpha);
 
             // Calculate the position.
             p=lerp(p0,p1,static_cast<float>(i)/(TOTAL_SAMPLES*0.25f));
