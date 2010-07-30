@@ -45,12 +45,12 @@ class Helper
 {
   public:
 
-    /// Saves the current modelview and projection matrices and sets an orthogonal
-    /// projection that maps each raster position exactly to a screen space pixel.
+    /// Saves the current modelview / projection matrices and sets an orthogonal
+    /// projection that maps each raster position exactly to a viewport pixel.
     static void pushOrtho2D();
 
-    /// Restores the projection and modelview matrices, which were e.g. previously
-    /// saved by pushOrtho2D(), from the matrix stack.
+    /// Restores the projection / modelview matrices which were previously saved
+    /// by pushOrtho2D().
     static void popOrtho2D();
 };
 
