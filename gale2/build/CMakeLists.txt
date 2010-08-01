@@ -109,6 +109,7 @@ if(MSVC)
         /DYNAMICBASE:NO
         /FIXED
         /MERGE:.rdata=.text
+        /SUBSYSTEM:WINDOWS
     ")
 endif()
 
