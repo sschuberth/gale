@@ -1,3 +1,3 @@
 #!/bin/sh
 
-php -f `dirname $0`/glex.php $*
+php -f $(dirname $0)/glex.php $*

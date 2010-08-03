@@ -1,6 +1,6 @@
 #!/bin/sh
 
-pushd `dirname $0`/../glex > /dev/null
+pushd $(dirname $0)/../glex > /dev/null
 
 # Download and parse the OpenGL extension registry if needed.
 if [ ! -e "../../glex/registry/OpenGL.org/ARB/color_buffer_float.txt" ]; then
@@ -17,7 +17,7 @@ done < ../build/opengl-extensions.txt
 
 popd > /dev/null
 
-pushd `dirname $0` > /dev/null
+pushd $(dirname $0) > /dev/null
 
 buildname=GCC
 
