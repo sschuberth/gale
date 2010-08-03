@@ -57,10 +57,10 @@ struct ColorModel
         return Numerics<T>::MAX();
     }
 
-    /// Converts a color representation from the RGB to the HSV model. The RGB
-    /// input channel values have to be in the range from MIN_INTENSITY() to
-    /// MAX_INTENSITY(). The HSV output channel values will be in range
-    /// [0,360[ for hue, and in range [0,100] for saturation and value.
+    /// Converts a color representation from the RGB (red, green, blue) to the
+    /// HSV (hue, saturation, value) model. \a r, \a g and \a b have to be
+    /// ranging from MIN_INTENSITY() to MAX_INTENSITY(). \a h will be in range
+    /// [0,360[, \a s and \a v will be in range [0,100].
     static void RGB2HSV(T const r,T const g,T const b,float& h,float& s,float& v) {
         // Convert RGB values to range [0,1].
         T const range=MAX_INTENSITY()-MIN_INTENSITY();
@@ -109,10 +109,10 @@ struct ColorModel
         v=V*100;
     }
 
-    /// Converts a color representation from the HSV to the RGB model. The HSV
-    /// input channel values have to be in range [0,360[ for hue, and in range
-    /// [0,100] for saturation and value. The RGB output channel values will be
-    /// in the range from MIN_INTENSITY() to MAX_INTENSITY().
+    /// Converts a color representation from the HSV (hue, saturation, value) to
+    /// the RGB (red, green, blue) model. \a h has to be in range [0,360[, both
+    /// \a s and \a v have to be in range [0,100]. \a r, \a g and \a b will be
+    /// ranging from MIN_INTENSITY() to MAX_INTENSITY().
     static void HSV2RGB(float const h,float const s,float const v,T& r,T& g,T& b) {
         // Convert H value to range [0,6[ and SV values to range [0,1].
         float H=wrap(h/60,0.0f,6.0f);
