@@ -122,7 +122,7 @@ struct ColorModel
         float R,G,B;
 
         if (S>0) {
-            long long i=roundToZero(H);
+            int i=roundToZero(H);
             float f=H-i;
 
             float p=V*(1-S);

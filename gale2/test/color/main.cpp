@@ -115,7 +115,7 @@ class TestWindow:public DefaultWindow
                     color.setH(static_cast<float>(i)/QUADS_X*360);
                     x1=((i+1)*step_x)>>16;
 
-                    long long alpha=roundToEven(m_value*2.55f*m_rand.random01());
+                    int alpha=roundToEven(m_value*2.55f*m_rand.random01());
                     color.setA(static_cast<Col4ub::Type>(alpha));
                     glColor4ubv(color);
                     glVertex2i(x0,y0);
