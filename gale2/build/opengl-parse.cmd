@@ -29,4 +29,6 @@ bash -c "export PATH=/bin && ../../glex2/glex.sh es=../../glex2/spec/enumext.spe
 bash -c "export PATH=/bin && ../../glex2/glex.sh es=../../glex2/spec/wglenumext.spec fs=../../glex2/spec/wglext.spec tm=../../glex2/spec/wgl.tm api=@`cygpath '%~dp0opengl-apis.txt'`"
 echo *** Done
 
+if exist *.stackdump pause
+
 popd
