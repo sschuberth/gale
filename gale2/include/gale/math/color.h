@@ -594,7 +594,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// Returns the complementary color of this color.
     Color complement() {
         Color c(*this);
-        c.setH(wrap(getH()+180,T(0),T(360)));
+        c.setH(getH()+180);
         return c;
     }
 
