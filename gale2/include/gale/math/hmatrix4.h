@@ -157,11 +157,11 @@ class HMatrix4
             );
         }
 
-        /// Creates a matrix that makes a camera look at \a point from
+        /// Creates a matrix that makes a camera look at \a target from
         /// \a position, with \a up facing upwards (if it is collinear to the
         /// view direction, another arbitrary vector is used).
-        static HMatrix4 LookAt(Vec const& point,Vec const& position,Vec up) {
-            Vec backward=~(position-point),right;
+        static HMatrix4 LookAt(Vec const& target,Vec const& position,Vec up) {
+            Vec backward=~(position-target),right;
 
             if (backward.isCollinear(up)) {
                 up=backward.orthoVector();
