@@ -203,8 +203,7 @@ inline double ColorModel<double>::MAX_INTENSITY()
  *
  * OpenGL example usage:
  * \code
- * Col4ub colors[8];
- * glColorPointer(4,GL_UNSIGNED_BYTE,0,colors);
+ * glColor4ubv(Col4ub::RED());
  * \endcode
  */
 template<unsigned int N,typename T>
