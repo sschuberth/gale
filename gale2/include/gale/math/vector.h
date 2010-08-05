@@ -365,13 +365,9 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
     /// Returns the cross product between vectors \a v and \a w.
     friend Vector operator^(Vector const& v,Vector const& w) {
-        // 6 scalar muls/divs, 3 scalar adds/subs.
-        G_ASSERT(N==3)
-        return Vector(
-            v.getY()*w.getZ() - v.getZ()*w.getY()
-        ,   v.getZ()*w.getX() - v.getX()*w.getZ()
-        ,   v.getX()*w.getY() - v.getY()*w.getX()
-        );
+        Vector tmp=v;
+        tmp.crossWith(w);
+        return tmp;
     }
 
     //@}
