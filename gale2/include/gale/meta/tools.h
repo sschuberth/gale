@@ -42,6 +42,9 @@ namespace meta {
 template<typename T>
 struct ArrayInitializer
 {
+    /// Definition for external access to the data type.
+    typedef T Type;
+
     /// Constructor to initialize the iterator.
     ArrayInitializer(T* iterator)
     :   iterator(iterator)
