@@ -60,6 +60,9 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
   public:
 
+    /// Definition for external access to the data type.
+    typedef T Type;
+
     /**
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",

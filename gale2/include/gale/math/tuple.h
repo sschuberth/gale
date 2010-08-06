@@ -54,9 +54,6 @@ class TupleBase
 {
   public:
 
-    /// Definition for external access to the data type.
-    typedef T Type;
-
     /**
      * \name Constructors
      */
@@ -418,6 +415,9 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> >
     typedef TupleBase<N,T,Tuple<N,T> > Base;
 
   public:
+
+    /// Definition for external access to the data type.
+    typedef T Type;
 
     /**
      * \name Constructors
