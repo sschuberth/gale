@@ -160,6 +160,29 @@ class RandomBase
      */
     //@{
 
+    /// Returns a random RGB color.
+    Color<3,T> randomCol3() {
+        Color<3,T> c;
+
+        c.setR(c.MIN_VALUE()+random0N(c.RANGE()));
+        c.setG(c.MIN_VALUE()+random0N(c.RANGE()));
+        c.setB(c.MIN_VALUE()+random0N(c.RANGE()));
+
+        return c;
+    }
+
+    /// Returns a random RGBA color.
+    Color<4,T> randomCol4() {
+        Color<4,T> c;
+
+        c.setR(c.MIN_VALUE()+random0N(c.RANGE()));
+        c.setG(c.MIN_VALUE()+random0N(c.RANGE()));
+        c.setB(c.MIN_VALUE()+random0N(c.RANGE()));
+        c.setA(c.MIN_VALUE()+random0N(c.RANGE()));
+
+        return c;
+    }
+
     /// Returns a normalized random 2-component vector.
     Vector<2,T> randomVec2() {
         Vector<2,T> v;

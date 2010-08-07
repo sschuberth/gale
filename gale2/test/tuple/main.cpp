@@ -474,6 +474,16 @@ void test_color()
     black4.setA(0.5);
     assert(!white4==black4);
 
+    Col3b srgb;
+    for (int i=0;i<1000;++i) {
+        srgb=re.randomCol3();
+        Col3b neutral=srgb.mixAdd(srgb.complement());
+
+        assert(OpCmpEqual::evaluate(neutral.getR(),Col3b::WHITE().getR(),Col3b::Type(1)));
+        assert(OpCmpEqual::evaluate(neutral.getG(),Col3b::WHITE().getG(),Col3b::Type(1)));
+        assert(OpCmpEqual::evaluate(neutral.getB(),Col3b::WHITE().getB(),Col3b::Type(1)));
+    }
+
     puts("Check color conversion ...");
 
     Col3ub::Type r,g,b;
@@ -490,11 +500,5 @@ void test_color()
         assert(OpCmpEqual::evaluate(r,rgb.getR(),Col3ub::Type(1)));
         assert(OpCmpEqual::evaluate(g,rgb.getG(),Col3ub::Type(1)));
         assert(OpCmpEqual::evaluate(b,rgb.getB(),Col3ub::Type(1)));
-
-        Col3ub neutral=rgb.mixAdd(rgb.complement());
-
-        assert(OpCmpEqual::evaluate(neutral.getR(),Col3ub::WHITE().getR(),Col3ub::Type(1)));
-        assert(OpCmpEqual::evaluate(neutral.getG(),Col3ub::WHITE().getG(),Col3ub::Type(1)));
-        assert(OpCmpEqual::evaluate(neutral.getB(),Col3ub::WHITE().getB(),Col3ub::Type(1)));
     }
 }
