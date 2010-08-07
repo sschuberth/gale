@@ -28,7 +28,7 @@
 
 /**
  * \file
- * An implementation to represent colors
+ * Color representations
  */
 
 #include "tuple.h"
@@ -38,160 +38,48 @@ namespace gale {
 namespace math {
 
 /**
- * Color helper class with only a single template parameter. This is needed
- * because partial specialization of member functions of template classes with
- * multiple template parameters is not supported by C++. Using this class we can
- * fully specialize only those class template member functions that should not
- * be implicitly obtained from the base template.
+ * Helper class with only a single template parameter. This is needed because
+ * partial specialization of class templates by only specifying the differing
+ * member functions (not the whole class) is not supported by C++ for multiple
+ * template arguments. Using this class we can specialize only those class
+ * template member functions that should not be implicitly obtained from the
+ * base template.
  */
 template<typename T>
-struct ColorModel
+struct ChannelRange
 {
-    /// Returns the minimum intensity value allowed for a color channel.
-    static T MIN_INTENSITY() {
+    /// Returns the minimum value allowed for a color channel.
+    static T MIN_VALUE() {
         return Numerics<T>::MIN();
     }
 
-    /// Returns the maximum intensity value allowed for a color channel.
-    static T MAX_INTENSITY() {
+    /// Returns the maximum value allowed for a color channel.
+    static T MAX_VALUE() {
         return Numerics<T>::MAX();
-    }
-
-    /// Converts a color representation from the RGB (red, green, blue) to the
-    /// HSV (hue, saturation, value) model. \a r, \a g and \a b have to be
-    /// ranging from MIN_INTENSITY() to MAX_INTENSITY(). \a h will be in range
-    /// [0,360[, \a s and \a v will be in range [0,100].
-    static void RGB2HSV(T const r,T const g,T const b,float& h,float& s,float& v) {
-        // Convert RGB values to range [0,1].
-        T const range=MAX_INTENSITY()-MIN_INTENSITY();
-
-        float R=clamp(float(r-MIN_INTENSITY())/range,0.0f,1.0f);
-        float G=clamp(float(g-MIN_INTENSITY())/range,0.0f,1.0f);
-        float B=clamp(float(b-MIN_INTENSITY())/range,0.0f,1.0f);
-
-        float m=min(R,G,B);
-        float V=max(R,G,B);
-
-        float delta=V-m;
-        float S=(V>0)?(delta/V):0;
-
-        float H;
-
-        if (S>0) {
-            float rd=(V-R)/delta;
-            float gd=(V-G)/delta;
-            float bd=(V-B)/delta;
-
-            if (R==V) {
-                // Red channel is the maximum, determine the minimum.
-                H=(G==m)?(5+bd):(1-gd);
-            }
-            else if (G==V) {
-                // Green channel is the maximum, determine the minimum.
-                H=(B==m)?(1+rd):(3-bd);
-            }
-            else {
-                // Blue channel is the maximum, determine the minimum.
-                H=(R==m)?(3+gd):(5-rd);
-            }
-
-            H=wrap(H,0.0f,6.0f);
-        }
-        else {
-            // Achromatic case, actually hue is undefined!
-            H=0;
-        }
-
-        // At this point hue is in range [0,6[, saturation and value in range
-        // [0,1]. Convert the first to degrees and the latter two to percent.
-        h=H*60;
-        s=S*100;
-        v=V*100;
-    }
-
-    /// Converts a color representation from the HSV (hue, saturation, value) to
-    /// the RGB (red, green, blue) model. \a h has to be in range [0,360[, both
-    /// \a s and \a v have to be in range [0,100]. \a r, \a g and \a b will be
-    /// ranging from MIN_INTENSITY() to MAX_INTENSITY().
-    static void HSV2RGB(float const h,float const s,float const v,T& r,T& g,T& b) {
-        // Convert H value to range [0,6[ and SV values to range [0,1].
-        float H=wrap(h/60,0.0f,6.0f);
-        float S=clamp(s/100,0.0f,1.0f);
-        float V=clamp(v/100,0.0f,1.0f);
-
-        float R,G,B;
-
-        if (S>0) {
-            int i=roundToZero(H);
-            float f=H-i;
-
-            float p=V*(1-S);
-            float q=V*(1-S*f);
-            float t=V*(1-S*(1-f));
-
-            switch (i) {
-                default: {
-                    R=V; G=t; B=p;
-                    break;
-                }
-                case 1: {
-                    R=q; G=V; B=p;
-                    break;
-                }
-                case 2: {
-                    R=p; G=V; B=t;
-                    break;
-                }
-                case 3: {
-                    R=p; G=q; B=V;
-                    break;
-                }
-                case 4: {
-                    R=t; G=p; B=V;
-                    break;
-                }
-                case 5: {
-                    R=V; G=p; B=q;
-                    break;
-                }
-            }
-        }
-        else {
-            // Achromatic case, actually hue is undefined!
-            R=G=B=V;
-        }
-
-        // At this point red, green and blue are in range [0,1]. Convert them
-        // to the intensity range.
-        T const range=MAX_INTENSITY()-MIN_INTENSITY();
-
-        r=T(R*range+MIN_INTENSITY());
-        g=T(G*range+MIN_INTENSITY());
-        b=T(B*range+MIN_INTENSITY());
     }
 };
 
 /// \cond DOXYGEN_IGNORE
 template<>
-inline float ColorModel<float>::MIN_INTENSITY()
+inline float ChannelRange<float>::MIN_VALUE()
 {
     return 0;
 }
 
 template<>
-inline float ColorModel<float>::MAX_INTENSITY()
+inline float ChannelRange<float>::MAX_VALUE()
 {
     return 1;
 }
 
 template<>
-inline double ColorModel<double>::MIN_INTENSITY()
+inline double ChannelRange<double>::MIN_VALUE()
 {
     return 0;
 }
 
 template<>
-inline double ColorModel<double>::MAX_INTENSITY()
+inline double ChannelRange<double>::MAX_VALUE()
 {
     return 1;
 }
@@ -199,7 +87,7 @@ inline double ColorModel<double>::MAX_INTENSITY()
 
 /**
  * Color representation based on an RGB(A)-tuple. It features predefined
- * constants for commonly used colors, HSV conversion and useful operators.
+ * constants for commonly used colors and useful operators.
  *
  * OpenGL example usage:
  * \code
@@ -207,19 +95,17 @@ inline double ColorModel<double>::MAX_INTENSITY()
  * \endcode
  */
 template<unsigned int N,typename T>
-class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
+class Color:public TupleBase<N,T,Color<N,T> >,public ChannelRange<T>
 {
-    //@{
-
-    /// These type definitions simplify base class access to identifiers that
+    /// This type definition simplifies base class access to identifiers that
     /// are not visible until instantiation time because they do not dependent
     /// on template arguments.
     typedef TupleBase<N,T,Color<N,T> > Base;
-    typedef ColorModel<T> Model;
-
-    //@}
 
   public:
+
+    /// Definition for external access to the data type.
+    typedef T Type;
 
     /**
      * \name Predefined constants
@@ -286,18 +172,17 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
   protected:
 
-    /// Sets each color channel to either the maximum or minimum intensity
+    /// Sets each color channel to either the maximum or minimum value
     /// depending on the bits set in \a mask. Bit 0 maps to the first channel,
     /// bit 1 to second one and so on. This constructor is required to
     /// initialize the static class constants.
     explicit Color(unsigned int const mask)
-    :   m_hsv_outdated(true)
     {
         // Do not allow colors with less than 3 elements.
         G_ASSERT(N>=3)
 
         meta::LoopFwd<N,meta::OpAssign>
-            ::iterateIndexMask(Base::data(),mask,Model::MAX_INTENSITY(),Model::MIN_INTENSITY());
+            ::iterateIndexMask(Base::data(),mask,MAX_VALUE(),MIN_VALUE());
     }
 
   public:
@@ -310,20 +195,17 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// Allows to initialize 3-channel colors directly.
     Color(T const r,T const g,T const b)
     :   Base(r,g,b)
-    ,   m_hsv_outdated(true)
     {}
 
     /// Allows to initialize 4-channel colors directly.
     Color(T const r,T const g,T const b,T const a)
     :   Base(r,g,b,a)
-    ,   m_hsv_outdated(true)
     {}
 
     /// Converts a color of different type but with the same amount of channels
     /// to this type.
     template<typename U>
     Color(Color<N,U> const& v)
-    :   m_hsv_outdated(true)
     {
         // Do not allow colors with less than 3 elements.
         G_ASSERT(N>=3)
@@ -338,18 +220,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
      */
     //@{
 
-    /// Assigns new values to the red, green and blue channels.
-    void setRGB(T const r,T const g,T const b) {
-        set(r,g,b);
-        m_hsv_outdated=true;
-    }
-
-    /// Assigns new values to the red, green, blue and alpha channels.
-    void setRGBA(T const r,T const g,T const b,T const a) {
-        set(r,g,b,a);
-        m_hsv_outdated=true;
-    }
-
     /// Returns the red channel.
     T getR() {
         return Base::data()[0];
@@ -363,7 +233,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// Assigns a new value to the red channel.
     void setR(T const r) {
         Base::data()[0]=r;
-        m_hsv_outdated=true;
     }
 
     /// Returns the green channel.
@@ -379,7 +248,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// Assigns a new value to the green channel.
     void setG(T const g) {
         Base::data()[1]=g;
-        m_hsv_outdated=true;
     }
 
     /// Returns the blue channel.
@@ -395,7 +263,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     /// Assigns a new value to the blue channel.
     void setB(T const b) {
         Base::data()[2]=b;
-        m_hsv_outdated=true;
     }
 
     /// Returns the alpha channel.
@@ -414,63 +281,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     void setA(T const a) {
         G_ASSERT(N>=4)
         Base::data()[3]=a;
-    }
-
-    //@}
-
-    /**
-     * \name HSV color model channel access methods
-     */
-    //@{
-
-    /// Assigns new values to the hue, saturation and value channels.
-    void setHSV(float const h,float const s,float const v) {
-        HSV2RGB(m_h=h,m_s=s,m_v=v,Base::data()[0],Base::data()[1],Base::data()[2]);
-        m_hsv_outdated=false;
-    }
-
-    /// Assigns new values to the hue, saturation, value and alpha channels.
-    void setHSVA(float const h,float const s,float const v,T const a) {
-        G_ASSERT(N>=4)
-        HSV2RGB(m_h=h,m_s=s,m_v=v,Base::data()[0],Base::data()[1],Base::data()[2]);
-        Base::data()[3]=a;
-        m_hsv_outdated=false;
-    }
-
-    /// Returns the hue channel.
-    float getH() {
-        updateHSV();
-        return m_h;
-    }
-
-    /// Assigns a new value to the hue channel.
-    void setH(float const h) {
-        updateHSV();
-        HSV2RGB(m_h=h,m_s,m_v,Base::data()[0],Base::data()[1],Base::data()[2]);
-    }
-
-    /// Returns the saturation channel.
-    float getS() {
-        updateHSV();
-        return m_s;
-    }
-
-    /// Assigns a new value to the saturation channel.
-    void setS(float const s) {
-        updateHSV();
-        HSV2RGB(m_h,m_s=s,m_v,Base::data()[0],Base::data()[1],Base::data()[2]);
-    }
-
-    /// Returns the value channel.
-    float getV() {
-        updateHSV();
-        return m_v;
-    }
-
-    /// Assigns a new value to the value channel.
-    void setV(float const v) {
-        updateHSV();
-        HSV2RGB(m_h,m_s,m_v=v,Base::data()[0],Base::data()[1],Base::data()[2]);
     }
 
     //@}
@@ -502,100 +312,8 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
      */
     //@{
 
-    /// Returns a blend of 5 colors that match this color to form a \a palette.
-    void blend(Color (&palette)[5]) {
-        updateHSV();
-
-        float h,s,v;
-
-        if (m_v>70) {
-            v=m_v-30;
-        }
-        else {
-            v=m_v+30;
-        }
-
-        palette[0].setH(m_h);
-        palette[0].setS(m_s);
-        palette[0].setV(v);
-
-        palette[2].setV(v);
-
-        if (m_h>=0 && m_h<30) {
-            palette[1].setH(m_h+30);
-            palette[1].setS(m_s);
-            palette[1].setV(m_v);
-
-            palette[2].setH(m_h+30);
-            palette[2].setS(m_s);
-        }
-        else if (m_h>=30 && m_h<60) {
-            palette[1].setH(m_h+150);
-            palette[1].setS(clamp(m_s-30,0.0f,100.0f));
-            palette[1].setV(clamp(m_v-20,0.0f,100.0f));
-
-            palette[2].setH(m_h+150);
-            palette[2].setS(clamp(m_s-50,0.0f,100.0f));
-
-            // Overwrite the previously set value.
-            palette[2].setV(clamp(m_v+20,0.0f,100.0f));
-        }
-        else if (m_h>=60 && m_h<180) {
-            h=m_h-40;
-
-            palette[1].setH(h);
-            palette[1].setS(m_s);
-            palette[1].setV(m_v);
-
-            palette[2].setH(h);
-            palette[2].setS(m_s);
-        }
-        else if (m_h>=180 && m_h<220) {
-            palette[1].setH(m_h-160);
-            palette[1].setS(m_s);
-            palette[1].setV(m_v);
-
-            palette[2].setH(m_h-170);
-            palette[2].setS(m_s);
-        }
-        else if (m_h>=220 && m_h<300) {
-            s=clamp(m_s-40,0.0f,100.0f);
-
-            palette[1].setH(m_h);
-            palette[1].setS(s);
-            palette[1].setV(m_v);
-
-            palette[2].setH(m_h);
-            palette[2].setS(s);
-        }
-        else {
-            h=wrap(m_h+20,0.0f,360.0f);
-
-            if (m_s>50) {
-                s=m_s-40;
-            }
-            else {
-                s=m_s+40;
-            }
-
-            palette[1].setH(h);
-            palette[1].setS(s);
-            palette[1].setV(m_v);
-
-            palette[2].setH(h);
-            palette[2].setS(s);
-        }
-
-        palette[3].setHSV(0,0,100-m_v);
-        palette[4].setHSV(0,0,m_v);
-    }
-
     /// Returns the complementary color of this color.
-    Color complement() {
-        Color c(*this);
-        c.setH(getH()+180);
-        return c;
-    }
+    Color complement();
 
     /// Returns the color's inverse (the alpha channel is omitted, if present).
     Color inverse() const {
@@ -603,7 +321,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         Color<N,double> tD(*this);
         tD-=BLACK();
 
-        T const range=MAX_INTENSITY()-MIN_INTENSITY();
+        T const range=MAX_VALUE()-MIN_VALUE();
         tD/=range;
 
         // This can be seen as converting from RGB to CMY, meaning that "iD"
@@ -642,7 +360,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
         Color<N,double> cD(c);
         cD-=BLACK();
 
-        T const range=MAX_INTENSITY()-MIN_INTENSITY();
+        T const range=MAX_VALUE()-MIN_VALUE();
         Color<N,double> mD=(tD+cD)/range;
 
         // Normalize the result to the unit color cube.
@@ -665,26 +383,17 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
     }
 
     //@}
-
-  private:
-
-    /// Updates the HSV channels to match the RGB channels if required.
-    void updateHSV() {
-        if (!m_hsv_outdated) {
-            return;
-        }
-        RGB2HSV(Base::data()[0],Base::data()[1],Base::data()[2],m_h,m_s,m_v);
-        m_hsv_outdated=false;
-    }
-
-    /// Dirty-flag for the HSV channel variables. The RGB channel variables are
-    /// always kept up to date.
-    bool m_hsv_outdated;
-
-    float m_h; ///< Variable for the "hue" channel value.
-    float m_s; ///< Variable for the "saturation" channel value.
-    float m_v; ///< Variable for the "value" channel value.
 };
+
+#include "colormodel.inl"
+
+template<unsigned int N,typename T>
+inline Color<N,T> Color<N,T>::complement()
+{
+    ColorModelHSV c(*this);
+    c.setH(c.getH()+180);
+    return c.rgb<Color<N,T> >();
+}
 
 /**
  * \name Type definitions for use as OpenGL colors
