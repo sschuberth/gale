@@ -109,7 +109,7 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
 
         // Try to get the same format with multi-sampling, see
         // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
-        if (GLEX_ARB_multisample || GLEX_ARB_multisample_init()) {
+        if (samples>0 && (GLEX_ARB_multisample || GLEX_ARB_multisample_init())) {
             attr.insert(WGL_SAMPLE_BUFFERS_ARB,TRUE);
             attr.insert(WGL_SAMPLES_ARB,samples);
 
