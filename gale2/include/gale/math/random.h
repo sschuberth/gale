@@ -161,24 +161,26 @@ class RandomBase
     //@{
 
     /// Returns a random RGB color.
-    Color<3,T> randomCol3() {
-        Color<3,T> c;
+    template<typename C>
+    Color<3,C> randomCol3() {
+        Color<3,C> c;
 
-        c.setR(c.MIN_VALUE()+random0N(c.RANGE()));
-        c.setG(c.MIN_VALUE()+random0N(c.RANGE()));
-        c.setB(c.MIN_VALUE()+random0N(c.RANGE()));
+        c.setR(C(c.MIN_VALUE()+random0N(c.RANGE())));
+        c.setG(C(c.MIN_VALUE()+random0N(c.RANGE())));
+        c.setB(C(c.MIN_VALUE()+random0N(c.RANGE())));
 
         return c;
     }
 
     /// Returns a random RGBA color.
-    Color<4,T> randomCol4() {
-        Color<4,T> c;
+    template<typename C>
+    Color<4,C> randomCol4() {
+        Color<4,C> c;
 
-        c.setR(c.MIN_VALUE()+random0N(c.RANGE()));
-        c.setG(c.MIN_VALUE()+random0N(c.RANGE()));
-        c.setB(c.MIN_VALUE()+random0N(c.RANGE()));
-        c.setA(c.MIN_VALUE()+random0N(c.RANGE()));
+        c.setR(C(c.MIN_VALUE()+random0N(c.RANGE())));
+        c.setG(C(c.MIN_VALUE()+random0N(c.RANGE())));
+        c.setB(C(c.MIN_VALUE()+random0N(c.RANGE())));
+        c.setA(C(c.MIN_VALUE()+random0N(c.RANGE())));
 
         return c;
     }

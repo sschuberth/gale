@@ -476,12 +476,12 @@ void test_color()
 
     Col3b srgb;
     for (int i=0;i<1000;++i) {
-        srgb=re.randomCol3();
+        srgb=re.randomCol3<Col3b::Type>();
         Col3b neutral=srgb.mixAdd(srgb.complement());
 
-        assert(OpCmpEqual::evaluate(neutral.getR(),Col3b::WHITE().getR(),Col3b::Type(1)));
-        assert(OpCmpEqual::evaluate(neutral.getG(),Col3b::WHITE().getG(),Col3b::Type(1)));
-        assert(OpCmpEqual::evaluate(neutral.getB(),Col3b::WHITE().getB(),Col3b::Type(1)));
+        assert(OpCmpEqual::evaluate(neutral.getR(),Col3b::WHITE().getR(),Col3b::Type(2)));
+        assert(OpCmpEqual::evaluate(neutral.getG(),Col3b::WHITE().getG(),Col3b::Type(2)));
+        assert(OpCmpEqual::evaluate(neutral.getB(),Col3b::WHITE().getB(),Col3b::Type(2)));
     }
 
     puts("Check color conversion ...");
