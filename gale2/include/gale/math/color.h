@@ -378,8 +378,8 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 
     /// Returns the subtractive mix between this color and color \a c.
     Color mixSub(Color const& c) const {
-        Color tCMY=inverse(),cCMY=c.inverse();
-        return tCMY.mixAdd(cCMY).inverse();
+        Color tCMY=complement(),cCMY=c.complement();
+        return tCMY.mixAdd(cCMY).complement();
     }
 
     //@}
