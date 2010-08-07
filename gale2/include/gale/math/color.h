@@ -295,9 +295,9 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
      */
     //@{
 
-    /// Returns the inverse of color \a c.
+    /// Returns the complementary color of color \a c.
     friend Color operator!(Color const& c) {
-        return c.inverse();
+        return c.complement();
     }
 
     /// Returns the additive mix between colors \a a and \a b.
@@ -317,11 +317,8 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
      */
     //@{
 
-    /// Returns the complementary color of this color.
-    Color complement();
-
-    /// Returns the color's inverse (the alpha channel is omitted, if present).
-    Color inverse() const {
+    /// Returns the color's complementary color (an alpha channel is ignored).
+    Color complement() const {
         // Normalize the color to range [0,1].
         Color<N,double> tD(*this);
         tD-=BLACK();
@@ -389,14 +386,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 };
 
 #include "colormodel.inl"
-
-template<unsigned int N,typename T>
-inline Color<N,T> Color<N,T>::complement()
-{
-    ColorModelHSV c(*this);
-    c.setH(c.getH()+180);
-    return c.rgb<Color<N,T> >();
-}
 
 /**
  * \name Type definitions for use as OpenGL colors

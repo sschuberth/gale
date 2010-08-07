@@ -464,9 +464,9 @@ void test_color()
     static Col3ub const col3ub(Col3ub::MAX_VALUE(),Col3ub::MAX_VALUE(),Col3ub::MAX_VALUE());
     assert(col3ub==white);
 
-    puts("Check color inversion ...");
+    puts("Check color complement ...");
 
-    assert(white.inverse()==Col3ub::BLACK());
+    assert(white.complement()==Col3ub::BLACK());
 
     Col4f white4=Col4f::WHITE();
     white4.setA(0.5);
@@ -483,10 +483,18 @@ void test_color()
         r=static_cast<Col3ub::Type>(re.random(255));
         g=static_cast<Col3ub::Type>(re.random(255));
         b=static_cast<Col3ub::Type>(re.random(255));
+
         hsv.fromRGB(r/255.0f,g/255.0f,b/255.0f);
         rgb=hsv.rgb<Col3ub>();
+
         assert(OpCmpEqual::evaluate(r,rgb.getR(),Col3ub::Type(1)));
         assert(OpCmpEqual::evaluate(g,rgb.getG(),Col3ub::Type(1)));
         assert(OpCmpEqual::evaluate(b,rgb.getB(),Col3ub::Type(1)));
+
+        Col3ub neutral=rgb.mixAdd(rgb.complement());
+
+        assert(OpCmpEqual::evaluate(neutral.getR(),Col3ub::WHITE().getR(),Col3ub::Type(1)));
+        assert(OpCmpEqual::evaluate(neutral.getG(),Col3ub::WHITE().getG(),Col3ub::Type(1)));
+        assert(OpCmpEqual::evaluate(neutral.getB(),Col3ub::WHITE().getB(),Col3ub::Type(1)));
     }
 }
