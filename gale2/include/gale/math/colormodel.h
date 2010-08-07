@@ -48,9 +48,9 @@ class ColorModel
     template<unsigned int N,typename T>
     void init(Color<N,T> const& color) {
         // Map RGB to range [0,1].
-        float r=clamp(static_cast<float>(color.getR()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
-        float g=clamp(static_cast<float>(color.getG()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
-        float b=clamp(static_cast<float>(color.getB()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
+        float r=clamp((color.getR()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
+        float g=clamp((color.getG()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
+        float b=clamp((color.getB()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
 
         // Convert to the color model.
         fromRGB(r,g,b);
