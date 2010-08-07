@@ -433,35 +433,35 @@ void test_color()
     puts("Check predefined color constants ...");
 
     Col3d black=Col3d::BLACK();
-    static Col3d const col3d(Col3d::MIN_INTENSITY(),Col3d::MIN_INTENSITY(),Col3d::MIN_INTENSITY());
+    static Col3d const col3d(Col3d::MIN_VALUE(),Col3d::MIN_VALUE(),Col3d::MIN_VALUE());
     assert(col3d==black);
 
     Col3f blue=Col3f::BLUE();
-    static Col3f const col3f(Col3f::MIN_INTENSITY(),Col3f::MIN_INTENSITY(),Col3f::MAX_INTENSITY());
+    static Col3f const col3f(Col3f::MIN_VALUE(),Col3f::MIN_VALUE(),Col3f::MAX_VALUE());
     assert(col3f==blue);
 
     Col3i green=Col3i::GREEN();
-    static Col3i const col3i(Col3i::MIN_INTENSITY(),Col3i::MAX_INTENSITY(),Col3i::MIN_INTENSITY());
+    static Col3i const col3i(Col3i::MIN_VALUE(),Col3i::MAX_VALUE(),Col3i::MIN_VALUE());
     assert(col3i==green);
 
     Col3ui cyan=Col3ui::CYAN();
-    static Col3ui const col3ui(Col3ui::MIN_INTENSITY(),Col3ui::MAX_INTENSITY(),Col3ui::MAX_INTENSITY());
+    static Col3ui const col3ui(Col3ui::MIN_VALUE(),Col3ui::MAX_VALUE(),Col3ui::MAX_VALUE());
     assert(col3ui==cyan);
 
     Col3s red=Col3s::RED();
-    static Col3s const col3s(Col3s::MAX_INTENSITY(),Col3s::MIN_INTENSITY(),Col3s::MIN_INTENSITY());
+    static Col3s const col3s(Col3s::MAX_VALUE(),Col3s::MIN_VALUE(),Col3s::MIN_VALUE());
     assert(col3s==red);
 
     Col3us magenta=Col3us::MAGENTA();
-    static Col3us const col3us(Col3us::MAX_INTENSITY(),Col3us::MIN_INTENSITY(),Col3us::MAX_INTENSITY());
+    static Col3us const col3us(Col3us::MAX_VALUE(),Col3us::MIN_VALUE(),Col3us::MAX_VALUE());
     assert(col3us==magenta);
 
     Col3b yellow=Col3b::YELLOW();
-    static Col3b const col3b(Col3b::MAX_INTENSITY(),Col3b::MAX_INTENSITY(),Col3b::MIN_INTENSITY());
+    static Col3b const col3b(Col3b::MAX_VALUE(),Col3b::MAX_VALUE(),Col3b::MIN_VALUE());
     assert(col3b==yellow);
 
     Col3ub white=Col3ub::WHITE();
-    static Col3ub const col3ub(Col3ub::MAX_INTENSITY(),Col3ub::MAX_INTENSITY(),Col3ub::MAX_INTENSITY());
+    static Col3ub const col3ub(Col3ub::MAX_VALUE(),Col3ub::MAX_VALUE(),Col3ub::MAX_VALUE());
     assert(col3ub==white);
 
     puts("Check color inversion ...");
@@ -476,20 +476,17 @@ void test_color()
 
     puts("Check color conversion ...");
 
-    Col3ub conv;
     Col3ub::Type r,g,b;
-    float h,s,v;
+    ColorModelHSV hsv;
+    Col3ub rgb;
     for (int i=0;i<1000;++i) {
         r=static_cast<Col3ub::Type>(re.random(255));
         g=static_cast<Col3ub::Type>(re.random(255));
         b=static_cast<Col3ub::Type>(re.random(255));
-        conv.setRGB(r,g,b);
-        h=conv.getH();
-        s=conv.getS();
-        v=conv.getV();
-        conv.setHSV(h,s,v);
-        assert(OpCmpEqual::evaluate(r,conv.getR(),Col3ub::Type(1)));
-        assert(OpCmpEqual::evaluate(g,conv.getG(),Col3ub::Type(1)));
-        assert(OpCmpEqual::evaluate(b,conv.getB(),Col3ub::Type(1)));
+        hsv.fromRGB(r/255.0f,g/255.0f,b/255.0f);
+        rgb=hsv.rgb<Col3ub>();
+        assert(OpCmpEqual::evaluate(r,rgb.getR(),Col3ub::Type(1)));
+        assert(OpCmpEqual::evaluate(g,rgb.getG(),Col3ub::Type(1)));
+        assert(OpCmpEqual::evaluate(b,rgb.getB(),Col3ub::Type(1)));
     }
 }

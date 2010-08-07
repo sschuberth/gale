@@ -67,20 +67,20 @@ class TestWindow:public DefaultWindow
             m_camera.apply();
             glClear(GL_COLOR_BUFFER_BIT);
 
-            Col3ub color;
-            color.setV(m_value);
+            ColorModelHSV hsv;
+            hsv.setV(m_value);
             glBegin(GL_QUADS);
             unsigned int y0=0,y1;
             for (unsigned int k=0;k<QUADS_Y;++k) {
-                color.setS(static_cast<float>(k)/QUADS_Y*100);
+                hsv.setS(static_cast<float>(k)/QUADS_Y*100);
                 y1=((k+1)*step_y)>>16;
 
                 unsigned int x0=0,x1;
                 for (unsigned int i=0;i<QUADS_X;++i) {
-                    color.setH(static_cast<float>(i)/QUADS_X*360);
+                    hsv.setH(static_cast<float>(i)/QUADS_X*360);
                     x1=((i+1)*step_x)>>16;
 
-                    glColor3ubv(color);
+                    glColor3ubv(hsv.rgb<Col3ub>());
                     glVertex2i(x0,y0);
                     glVertex2i(x1,y0);
                     glVertex2i(x1,y1);
@@ -102,22 +102,23 @@ class TestWindow:public DefaultWindow
 
             m_rand.init(0xdeadbeef);
 
-            Col4ub color;
-            color.setV(100);
+            ColorModelHSV hsv;
+            hsv.setV(100);
             glBegin(GL_QUADS);
             unsigned y0=0,y1;
             for (unsigned k=0;k<QUADS_Y;++k) {
-                color.setS(static_cast<float>(k)/QUADS_Y*100);
+                hsv.setS(static_cast<float>(k)/QUADS_Y*100);
                 y1=((k+1)*step_y)>>16;
 
                 unsigned x0=0,x1;
                 for (unsigned i=0;i<QUADS_X;++i) {
-                    color.setH(static_cast<float>(i)/QUADS_X*360);
+                    hsv.setH(static_cast<float>(i)/QUADS_X*360);
                     x1=((i+1)*step_x)>>16;
 
                     int alpha=roundToEven(m_value*2.55f*m_rand.random01());
-                    color.setA(static_cast<Col4ub::Type>(alpha));
-                    glColor4ubv(color);
+                    Col4ub rgb=hsv.rgb<Col4ub>();
+                    rgb.setA(static_cast<Col4ub::Type>(alpha));
+                    glColor4ubv(rgb);
                     glVertex2i(x0,y0);
                     glVertex2i(x1,y0);
                     glVertex2i(x1,y1);
