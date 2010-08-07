@@ -84,9 +84,17 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
     // Try to initialize an OpenGL extension for more sophisticated selection of a
     // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
     if (GLEX_WGL_ARB_pixel_format || GLEX_WGL_ARB_pixel_format_init()) {
-        // If additional pixel attributes were given, copy them over.
+        // If custom pixel attributes are given, copy them over (attributes
+        // specified later override earlier ones).
         if (pixel_attr) {
             attr=*pixel_attr;
+        }
+        else {
+            // Specify some default pixel format attributes.
+            attr.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
+            attr.insert(WGL_COLOR_BITS_ARB,DEFAULT_COLOR_BITS);
+            attr.insert(WGL_DEPTH_BITS_ARB,DEFAULT_DEPTH_BITS);
+            attr.insert(WGL_STENCIL_BITS_ARB,DEFAULT_STENCIL_BITS);
         }
 
         // Make sure some required attributes are specified.
@@ -94,12 +102,6 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
         attr.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
         attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
         attr.insert(WGL_DOUBLE_BUFFER_ARB,TRUE);
-
-        // Specify some common pixel format attributes.
-        attr.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
-        attr.insert(WGL_COLOR_BITS_ARB,DEFAULT_COLOR_BITS);
-        attr.insert(WGL_DEPTH_BITS_ARB,DEFAULT_DEPTH_BITS);
-        attr.insert(WGL_STENCIL_BITS_ARB,DEFAULT_STENCIL_BITS);
 
         // Try to find a matching (one-based) pixel format.
         UINT count;
