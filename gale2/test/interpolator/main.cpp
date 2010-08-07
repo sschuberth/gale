@@ -18,7 +18,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow(_T("test_interpolator"),800,600)
+    :   DefaultWindow(_T("test_interpolator"),800,600,NULL,0)
     {
         struct S:public Formula
         {
