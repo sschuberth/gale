@@ -29,7 +29,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow(_T("test_shader"))
+    :   DefaultWindow(_T("test_shader"),500,500)
     ,   m_vert_shader(GL_VERTEX_SHADER)
     ,   m_frag_shader(GL_FRAGMENT_SHADER)
     {

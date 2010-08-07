@@ -66,8 +66,8 @@ class DefaultWindow:public MinimalWindow
     };
 
     /// Creates a window with reasonable defaults set.
-    DefaultWindow(LPCTSTR title,int const client_width=500,int const client_height=500)
-    :   MinimalWindow(title,client_width,client_height)
+    DefaultWindow(LPCTSTR title,int const client_width,int const client_height,global::AttributeListi const* const pixel_attr=NULL,int const samples=8)
+    :   MinimalWindow(title,client_width,client_height,pixel_attr,samples)
     ,   m_camera(this)
     ,   m_fullscreen(false)
     {

@@ -47,7 +47,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow(_T("test_mesh"))
+    :   DefaultWindow(_T("test_mesh"),500,500)
     ,   m_base(0)
     ,   m_mode(0)
     ,   m_step(0)
