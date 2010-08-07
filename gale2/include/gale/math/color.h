@@ -46,7 +46,7 @@ namespace math {
  * base template.
  */
 template<typename T>
-struct ChannelRange
+struct ColorChannel
 {
     /// Returns the minimum value allowed for a color channel.
     static T MIN_VALUE() {
@@ -57,29 +57,34 @@ struct ChannelRange
     static T MAX_VALUE() {
         return Numerics<T>::MAX();
     }
+
+    /// Returns the value range allowed for a color channel.
+    static T RANGE() {
+        return MAX_VALUE()-MIN_VALUE();
+    }
 };
 
 /// \cond DOXYGEN_IGNORE
 template<>
-inline float ChannelRange<float>::MIN_VALUE()
+inline float ColorChannel<float>::MIN_VALUE()
 {
     return 0;
 }
 
 template<>
-inline float ChannelRange<float>::MAX_VALUE()
+inline float ColorChannel<float>::MAX_VALUE()
 {
     return 1;
 }
 
 template<>
-inline double ChannelRange<double>::MIN_VALUE()
+inline double ColorChannel<double>::MIN_VALUE()
 {
     return 0;
 }
 
 template<>
-inline double ChannelRange<double>::MAX_VALUE()
+inline double ColorChannel<double>::MAX_VALUE()
 {
     return 1;
 }
@@ -95,7 +100,7 @@ inline double ChannelRange<double>::MAX_VALUE()
  * \endcode
  */
 template<unsigned int N,typename T>
-class Color:public TupleBase<N,T,Color<N,T> >,public ChannelRange<T>
+class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 {
     /// This type definition simplifies base class access to identifiers that
     /// are not visible until instantiation time because they do not dependent
@@ -321,8 +326,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ChannelRange<T>
         Color<N,double> tD(*this);
         tD-=BLACK();
 
-        T const range=MAX_VALUE()-MIN_VALUE();
-        tD/=range;
+        tD/=RANGE();
 
         // This can be seen as converting from RGB to CMY, meaning that "iD"
         // represents the same color in the CMY model as "tD" in the RGB model.
@@ -338,7 +342,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ChannelRange<T>
 #pragma warning(default:4127)
 
         // Map the result back to the original range.
-        iD*=range;
+        iD*=RANGE();
         iD+=BLACK();
 
         return iD;
@@ -360,8 +364,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ChannelRange<T>
         Color<N,double> cD(c);
         cD-=BLACK();
 
-        T const range=MAX_VALUE()-MIN_VALUE();
-        Color<N,double> mD=(tD+cD)/range;
+        Color<N,double> mD=(tD+cD)/RANGE();
 
         // Normalize the result to the unit color cube.
         double me=mD.maxElement();
@@ -370,7 +373,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ChannelRange<T>
         }
 
         // Map the result back to the original range.
-        mD*=range;
+        mD*=RANGE();
         mD+=BLACK();
 
         return mD;

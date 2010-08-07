@@ -34,11 +34,9 @@ class ColorModel
     template<unsigned int N,typename T>
     void init(Color<N,T> const& color) {
         // Map RGB to range [0,1].
-        float const range=static_cast<float>(color.MAX_VALUE()-color.MIN_VALUE());
-
-        float r=clamp((color.getR()-color.MIN_VALUE())/range,0.0f,1.0f);
-        float g=clamp((color.getG()-color.MIN_VALUE())/range,0.0f,1.0f);
-        float b=clamp((color.getB()-color.MIN_VALUE())/range,0.0f,1.0f);
+        float r=clamp(static_cast<float>(color.getR()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
+        float g=clamp(static_cast<float>(color.getG()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
+        float b=clamp(static_cast<float>(color.getB()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
 
         // Convert to the color model.
         fromRGB(r,g,b);
@@ -60,12 +58,10 @@ class ColorModel
         toRGB(r,g,b);
 
         // Map RGB to the color's range.
-        float const range=static_cast<float>(C::MAX_VALUE()-C::MIN_VALUE());
-
         C c;
-        c.setR(static_cast<C::Type>(C::MIN_VALUE()+r*range));
-        c.setG(static_cast<C::Type>(C::MIN_VALUE()+g*range));
-        c.setB(static_cast<C::Type>(C::MIN_VALUE()+b*range));
+        c.setR(static_cast<C::Type>(C::MIN_VALUE()+r*C::RANGE()));
+        c.setG(static_cast<C::Type>(C::MIN_VALUE()+g*C::RANGE()));
+        c.setB(static_cast<C::Type>(C::MIN_VALUE()+b*C::RANGE()));
 
         return c;
     }
