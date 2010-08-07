@@ -57,7 +57,7 @@ class RenderSurface
 {
   public:
 
-    static int const DEFAULT_COLOR_BITS   = 32; ///< The color bits to use if not further specified.
+    static int const DEFAULT_COLOR_BITS   = 24; ///< The color bits to use if not further specified.
     static int const DEFAULT_DEPTH_BITS   = 24; ///< The depth bits to use if not further specified.
     static int const DEFAULT_STENCIL_BITS = 8;  ///< The stencil bits to use if not further specified.
 
