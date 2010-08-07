@@ -231,49 +231,49 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorModel<T>
 
     /// Returns a color which represents black.
     static Color const& BLACK() {
-        static Color const c(0x0);
+        static Color const c(0x0|0x8);
         return c;
     }
 
     /// Returns a color which represents blue.
     static Color const& BLUE() {
-        static Color const c(0x4);
+        static Color const c(0x4|0x8);
         return c;
     }
 
     /// Returns a color which represents green.
     static Color const& GREEN() {
-        static Color const c(0x2);
+        static Color const c(0x2|0x8);
         return c;
     }
 
     /// Returns a color which represents cyan.
     static Color const& CYAN() {
-        static Color const c(0x6);
+        static Color const c(0x6|0x8);
         return c;
     }
 
     /// Returns a color which represents red.
     static Color const& RED() {
-        static Color const c(0x1);
+        static Color const c(0x1|0x8);
         return c;
     }
 
     /// Returns a color which represents magenta.
     static Color const& MAGENTA() {
-        static Color const c(0x5);
+        static Color const c(0x5|0x8);
         return c;
     }
 
     /// Returns a color which represents yellow.
     static Color const& YELLOW() {
-        static Color const c(0x3);
+        static Color const c(0x3|0x8);
         return c;
     }
 
     /// Returns a color which represents white.
     static Color const& WHITE() {
-        static Color const c(0x7);
+        static Color const c(0x7|0x8);
         return c;
     }
 
