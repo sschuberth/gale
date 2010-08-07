@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Color representations
+ * RGB color routines
  */
 
 #include "tuple.h"
@@ -384,8 +384,6 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 
     //@}
 };
-
-#include "colormodel.inl"
 
 /**
  * \name Type definitions for use as OpenGL colors

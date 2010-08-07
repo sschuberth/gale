@@ -23,6 +23,20 @@
  *
  */
 
+#ifndef COLORMODEL_H
+#define COLORMODEL_H
+
+/**
+ * \file
+ * Color model representations
+ */
+
+#include "color.h"
+
+namespace gale {
+
+namespace math {
+
 /**
  * Base class for color model representations different than RGB.
  */
@@ -228,3 +242,9 @@ class ColorModelHSV:public ColorModel
     float m_s; ///< The color's saturation.
     float m_v; ///< The color's value.
 };
+
+} // namespace math
+
+} // namespace gale
+
+#endif // COLORMODEL_H

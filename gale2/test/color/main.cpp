@@ -1,4 +1,4 @@
-#include <gale/math/color.h>
+#include <gale/math/colormodel.h>
 #include <gale/math/random.h>
 #include <gale/wrapgl/defaultwindow.h>
 
