@@ -319,30 +319,18 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 
     /// Returns the color's complementary color (an alpha channel is ignored).
     Color complement() const {
-        // Normalize the color to range [0,1].
-        Color<N,double> tD(*this);
-        tD-=BLACK();
-
-        tD/=RANGE();
-
-        // This can be seen as converting from RGB to CMY, meaning that "iD"
-        // represents the same color in the CMY model as "tD" in the RGB model.
-        Color<N,double> iD=Color<N,double>::WHITE()-tD;
+        Color tmp=WHITE()-*this+BLACK();
 
 // Warning C4127: Conditional expression is constant.
 #pragma warning(disable:4127)
 
         if (N==4) {
-            iD.setA(tD.getA());
+            tmp.setA(getA());
         }
 
 #pragma warning(default:4127)
 
-        // Map the result back to the original range.
-        iD*=RANGE();
-        iD+=BLACK();
-
-        return iD;
+        return tmp;
     }
 
     //@}
