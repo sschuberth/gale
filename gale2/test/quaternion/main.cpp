@@ -1,14 +1,14 @@
-#include <gale/math/random.h>
-#include <gale/system/timer.h>
-#include <gale/wrapgl/defaultwindow.h>
-#include <gale/wrapgl/renderer.h>
-
 // Enable memory leak detection, see:
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
 #if !defined NDEBUG && !defined GALE_TINY_CODE
     #define _CRTDBG_MAP_ALLOC
     #include <crtdbg.h>
 #endif
+
+#include <gale/math/random.h>
+#include <gale/system/timer.h>
+#include <gale/wrapgl/defaultwindow.h>
+#include <gale/wrapgl/renderer.h>
 
 #ifndef GALE_TINY_CODE
     #include <stdio.h>

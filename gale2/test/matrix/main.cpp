@@ -1,13 +1,13 @@
-#include <gale/math/hmatrix4.h>
-#include <gale/math/matrix4.h>
-#include <gale/math/quaternion.h>
-
 // Enable memory leak detection, see:
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
 #if !defined NDEBUG && !defined GALE_TINY_CODE
     #define _CRTDBG_MAP_ALLOC
     #include <crtdbg.h>
 #endif
+
+#include <gale/math/hmatrix4.h>
+#include <gale/math/matrix4.h>
+#include <gale/math/quaternion.h>
 
 #ifndef GALE_TINY_CODE
     #include <iostream>
