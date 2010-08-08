@@ -5,13 +5,6 @@
 #include <gale/wrapgl/renderer.h>
 #include <gale/wrapgl/shaderobject.h>
 
-// Enable memory leak detection, see:
-// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
-#if !defined NDEBUG && !defined GALE_TINY_CODE
-    #define _CRTDBG_MAP_ALLOC
-    #include <crtdbg.h>
-#endif
-
 #define DRAW_BACKGROUND
 #define DRAW_SMALL_HEARTS
 #define DRAW_BIG_HEART
@@ -441,17 +434,10 @@ class DemoWindow:public DefaultWindow
 
 int __cdecl main()
 {
-    // Make sure the window is destroyed before dumping memory leaks.
-    {
-        DemoWindow window;
+    DemoWindow window;
 
-        ShowWindow(window.windowHandle(),SW_SHOW);
-        window.processEvents();
-    }
-
-#if !defined NDEBUG && !defined GALE_TINY_CODE
-    _CrtDumpMemoryLeaks();
-#endif
+    ShowWindow(window.windowHandle(),SW_SHOW);
+    window.processEvents();
 
     return 0;
 }
