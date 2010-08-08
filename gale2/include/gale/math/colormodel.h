@@ -67,7 +67,7 @@ class ColorModel
     C getRGB() const {
         // Convert from the color model.
         Color<C::Channels,double> rgb;
-        toRGB(rgb.m_data[0],rgb.m_data[1],rgb.m_data[2]);
+        toRGB(rgb[0],rgb[1],rgb[2]);
 
         // Map RGB to the color's range.
         return C(rgb);

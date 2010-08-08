@@ -102,8 +102,6 @@ inline double ColorChannel<double>::MAX_VALUE()
 template<unsigned int N,typename T>
 class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 {
-    friend class ColorModel;
-
     /// This type definition simplifies base class access to identifiers that
     /// are not visible until instantiation time because they do not dependent
     /// on template arguments.
