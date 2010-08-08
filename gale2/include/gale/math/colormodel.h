@@ -48,9 +48,9 @@ class ColorModel
     template<unsigned int N,typename T>
     void init(Color<N,T> const& color) {
         // Map RGB to range [0,1].
-        float r=clamp((color.getR()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
-        float g=clamp((color.getG()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
-        float b=clamp((color.getB()-color.MIN_VALUE())/color.RANGE(),0.0f,1.0f);
+        double r=clamp((color.getR()-color.MIN_VALUE())/color.RANGE(),0.0,1.0);
+        double g=clamp((color.getG()-color.MIN_VALUE())/color.RANGE(),0.0,1.0);
+        double b=clamp((color.getB()-color.MIN_VALUE())/color.RANGE(),0.0,1.0);
 
         // Convert to the color model.
         fromRGB(r,g,b);
@@ -58,17 +58,17 @@ class ColorModel
 
     /// Sets the color model to match the given \a r, \a g, \a b values, where
     /// all values need to be in range [0,1].
-    virtual void fromRGB(float const r,float const g,float const b)=0;
+    virtual void fromRGB(double const r,double const g,double const b)=0;
 
     /// Gets the \a r, \a g, \a b values from the color model, where all values
     /// are in range [0,1].
-    virtual void toRGB(float& r,float& g,float& b)=0;
+    virtual void toRGB(double& r,double& g,double& b)=0;
 
     /// Converts the color model to RGB color class \c C with proper range mapping.
     template<class C>
     C rgb() {
         // Convert from the color model.
-        float r,g,b;
+        double r,g,b;
         toRGB(r,g,b);
 
         // Map RGB to the color's range.
@@ -101,13 +101,13 @@ class ColorModelHSV:public ColorModel
 
     /// Sets the color model to match the given \a r, \a g, \a b values, where
     /// all values need to be in range [0,1].
-    void fromRGB(float const r,float const g,float const b) {
-        float m=min(r,g,b);
-        float V=max(r,g,b);
+    void fromRGB(double const r,double const g,double const b) {
+        double m=min(r,g,b);
+        double V=max(r,g,b);
 
-        float delta=V-m;
+        double delta=V-m;
 
-        float H,S;
+        double H,S;
 
         if (delta) {
             // If delta>0, it is V>0, too.
@@ -129,27 +129,27 @@ class ColorModelHSV:public ColorModel
         }
 
         // Map H to range [0,360[ and SV to range [0,100].
-        m_h=wrap(H*60.0f,360.0f);
-        m_s=S*100.0f;
-        m_v=V*100.0f;
+        m_h=wrap(H*60.0,360.0);
+        m_s=S*100.0;
+        m_v=V*100.0;
     }
 
     /// Gets the \a r, \a g, \a b values from the color model, where all values
     /// are in range [0,1].
-    void toRGB(float& r,float& g,float& b) {
+    void toRGB(double& r,double& g,double& b) {
         // Map H to range [0,6[ and SV to range [0,1].
-        float H=wrap(m_h/60.0f,6.0f);
-        float S=clamp(m_s/100.0f,0.0f,1.0f);
-        float V=clamp(m_v/100.0f,0.0f,1.0f);
+        double H=wrap(m_h/60.0,6.0);
+        double S=clamp(m_s/100.0,0.0,1.0);
+        double V=clamp(m_v/100.0,0.0,1.0);
 
         // Convert to RGB.
         if (S) {
-            int i=roundToZero(H);
-            float f=H-i;
+            int i=static_cast<int>(roundToZero(H));
+            double f=H-i;
 
-            float p=V*(1-S);
-            float q=V*(1-S*f);
-            float t=V*(1-S*(1-f));
+            double p=V*(1-S);
+            double q=V*(1-S*f);
+            double t=V*(1-S*(1-f));
 
             switch (i) {
                 default: {
@@ -190,57 +190,57 @@ class ColorModelHSV:public ColorModel
     //@{
 
     /// Returns the hue.
-    float getH() {
+    double getH() {
         return m_h;
     }
 
     /// Returns a constant reference to the hue.
-    float const& getH() const {
+    double const& getH() const {
         return m_h;
     }
 
     /// Assigns a new hue.
-    void setH(float const h) {
-        m_h=wrap(h,360.0f);
+    void setH(double const h) {
+        m_h=wrap(h,360.0);
     }
 
     /// Returns the saturation.
-    float getS() {
+    double getS() {
         return m_s;
     }
 
     /// Returns a constant reference to the saturation.
-    float const& getS() const {
+    double const& getS() const {
         return m_s;
     }
 
     /// Assigns a new saturation.
-    void setS(float const s) {
-        m_s=clamp(s,0.0f,100.0f);
+    void setS(double const s) {
+        m_s=clamp(s,0.0,100.0);
     }
 
     /// Returns the value.
-    float getV() {
+    double getV() {
         return m_v;
     }
 
     /// Returns a constant reference to the value.
-    float const& getV() const {
+    double const& getV() const {
         return m_v;
     }
 
     /// Assigns a new value.
-    void setV(float const v) {
-        m_v=clamp(v,0.0f,100.0f);
+    void setV(double const v) {
+        m_v=clamp(v,0.0,100.0);
     }
 
     //@}
 
   private:
 
-    float m_h; ///< The color's hue.
-    float m_s; ///< The color's saturation.
-    float m_v; ///< The color's value.
+    double m_h; ///< The color's hue.
+    double m_s; ///< The color's saturation.
+    double m_v; ///< The color's value.
 };
 
 } // namespace math

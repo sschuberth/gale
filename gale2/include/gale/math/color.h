@@ -59,8 +59,8 @@ struct ColorChannel
     }
 
     /// Returns the value range allowed for a color channel.
-    static float RANGE() {
-        return static_cast<float>(MAX_VALUE())-MIN_VALUE();
+    static double RANGE() {
+        return static_cast<double>(MAX_VALUE())-MIN_VALUE();
     }
 };
 
