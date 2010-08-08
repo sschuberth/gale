@@ -344,7 +344,8 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
      */
     //@{
 
-    /// Returns the color's complementary color (an alpha channel is ignored).
+    /// Returns the color's complementary color (an alpha channel is ignored),
+    /// see <http://en.wikipedia.org/wiki/Complementary_color>.
     Color complement() const {
         Color tmp=WHITE()-*this+BLACK();
 
