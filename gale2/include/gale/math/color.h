@@ -211,14 +211,28 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
     {}
 
     /// Converts a color of different type but with the same amount of channels
-    /// to this type.
+    /// to this type with correct range mapping applied.
     template<typename U>
     Color(Color<N,U> const& v)
     {
         // Do not allow colors with less than 3 elements.
         G_ASSERT(N>=3)
 
-        meta::LoopFwd<N,meta::OpAssign>::iterate(Base::data(),v.data());
+        // Cast the color to double for high-precision calculations.
+        Color<N,double> tmp;
+        meta::LoopFwd<N,meta::OpAssign>::iterate(tmp.data(),v.data());
+
+        // Map to range [0,1].
+        meta::LoopFwd<N,meta::OpArithSub>::iterate(tmp.data(),static_cast<double>(v.MIN_VALUE()));
+        meta::LoopFwd<N,meta::OpArithDiv>::iterate(tmp.data(),v.RANGE());
+
+        // Map to this color's range.
+        meta::LoopFwd<N,meta::OpArithMul>::iterate(tmp.data(),RANGE());
+        meta::LoopFwd<N,meta::OpArithAdd>::iterate(tmp.data(),static_cast<double>(MIN_VALUE()));
+
+        // Convert to this color's data type (the const-cast is required to call
+        // the correct iterate() method).
+        meta::LoopFwd<N,meta::OpAssign>::iterate(data(),const_cast<double const*>(tmp.data()));
     }
 
     //@}
