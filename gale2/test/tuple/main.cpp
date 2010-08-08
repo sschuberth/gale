@@ -464,6 +464,15 @@ void test_color()
     static Col3ub const col3ub(Col3ub::MAX_VALUE(),Col3ub::MAX_VALUE(),Col3ub::MAX_VALUE());
     assert(col3ub==white);
 
+    puts("Check color mixing ...");
+
+    assert(Col4i::RED().mixAdd(Col4i::GREEN())==Col4i::YELLOW());
+    assert(Col4i::GREEN().mixAdd(Col4i::BLUE())==Col4i::CYAN());
+    assert(Col4i::BLUE().mixAdd(Col4i::RED())==Col4i::MAGENTA());
+
+    assert(Col4i::RED().mixAdd(Col4i::GREEN()).mixAdd(Col4i::BLUE())==Col4i::WHITE());
+    assert(Col4i::CYAN().mixSub(Col4i::MAGENTA()).mixSub(Col4i::YELLOW())==Col4i::BLACK());
+
     puts("Check color complement ...");
 
     assert(white.complement()==Col3ub::BLACK());
@@ -474,11 +483,15 @@ void test_color()
     black4.setA(0.5);
     assert(!white4==black4);
 
-    Col3b srgb;
+    Col3b srgb,neutral;
     for (int i=0;i<1000;++i) {
         srgb=re.randomCol3<Col3b::Type>();
-        Col3b neutral=srgb.mixAdd(srgb.complement());
+
+        neutral=srgb.mixAdd(srgb.complement());
         assert(neutral==Col3b::WHITE());
+
+        neutral=srgb.mixSub(srgb.complement());
+        assert(neutral==Col3b::BLACK());
     }
 
     puts("Check color conversion ...");
