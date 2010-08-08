@@ -471,7 +471,12 @@ void test_color()
     assert(Col4i::BLUE().mixAdd(Col4i::RED())==Col4i::MAGENTA());
 
     assert(Col4i::RED().mixAdd(Col4i::GREEN()).mixAdd(Col4i::BLUE())==Col4i::WHITE());
-    assert(Col4i::CYAN().mixSub(Col4i::MAGENTA()).mixSub(Col4i::YELLOW())==Col4i::BLACK());
+
+    assert(Col3us::CYAN().mixSub(Col3us::MAGENTA())==Col3us::BLUE());
+    assert(Col3us::MAGENTA().mixSub(Col3us::YELLOW())==Col3us::RED());
+    assert(Col3us::YELLOW().mixSub(Col3us::CYAN())==Col3us::GREEN());
+
+    assert(Col3us::CYAN().mixSub(Col3us::MAGENTA()).mixSub(Col3us::YELLOW())==Col3us::BLACK());
 
     puts("Check color complement ...");
 
