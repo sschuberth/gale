@@ -509,7 +509,7 @@ void test_color()
         b=static_cast<Col3ub::Type>(re.random(255));
 
         hsv.fromRGB(r/255.0f,g/255.0f,b/255.0f);
-        rgb=hsv.rgb<Col3ub>();
+        rgb=hsv.getRGB<Col3ub>();
 
         assert(OpCmpEqual::evaluate(r,rgb.getR(),Col3ub::Type(1)));
         assert(OpCmpEqual::evaluate(g,rgb.getG(),Col3ub::Type(1)));

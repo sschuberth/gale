@@ -80,7 +80,7 @@ class TestWindow:public DefaultWindow
                     hsv.setH(static_cast<float>(i)/QUADS_X*360);
                     x1=((i+1)*step_x)>>16;
 
-                    glColor3ubv(hsv.rgb<Col3ub>());
+                    glColor3ubv(hsv.getRGB<Col3ub>());
                     glVertex2i(x0,y0);
                     glVertex2i(x1,y0);
                     glVertex2i(x1,y1);
@@ -116,7 +116,7 @@ class TestWindow:public DefaultWindow
                     x1=((i+1)*step_x)>>16;
 
                     int alpha=roundToEven(m_value*2.55f*m_rand.random01());
-                    Col4ub rgb=hsv.rgb<Col4ub>();
+                    Col4ub rgb=hsv.getRGB<Col4ub>();
                     rgb.setA(static_cast<Col4ub::Type>(alpha));
                     glColor4ubv(rgb);
                     glVertex2i(x0,y0);

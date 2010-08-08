@@ -44,40 +44,33 @@ class ColorModel
 {
   public:
 
-    /// Initializes the color model with an RGB \a color.
-    template<unsigned int N,typename T>
-    void init(Color<N,T> const& color) {
-        // Map RGB to range [0,1].
-        double r=clamp((color.getR()-color.MIN_VALUE())/color.RANGE(),0.0,1.0);
-        double g=clamp((color.getG()-color.MIN_VALUE())/color.RANGE(),0.0,1.0);
-        double b=clamp((color.getB()-color.MIN_VALUE())/color.RANGE(),0.0,1.0);
-
-        // Convert to the color model.
-        fromRGB(r,g,b);
-    }
-
     /// Sets the color model to match the given \a r, \a g, \a b values, where
     /// all values need to be in range [0,1].
     virtual void fromRGB(double const r,double const g,double const b)=0;
 
     /// Gets the \a r, \a g, \a b values from the color model, where all values
     /// are in range [0,1].
-    virtual void toRGB(double& r,double& g,double& b)=0;
+    virtual void toRGB(double& r,double& g,double& b) const=0;
 
-    /// Converts the color model to RGB color class \c C with proper range mapping.
+    /// Sets the color model to the specified RGB \a color.
+    template<unsigned int N,typename T>
+    void setRGB(Color<N,T> const& color) {
+        // Map RGB to range [0,1].
+        Color<N,double> rgb(color);
+
+        // Convert to the color model.
+        fromRGB(rgb.getR(),rgb.getG(),rgb.getB());
+    }
+
+    /// Gets the RGB representation of the color model for color class \c C.
     template<class C>
-    C rgb() {
+    C getRGB() const {
         // Convert from the color model.
-        double r,g,b;
-        toRGB(r,g,b);
+        Color<C::Channels,double> rgb;
+        toRGB(rgb.m_data[0],rgb.m_data[1],rgb.m_data[2]);
 
         // Map RGB to the color's range.
-        C c;
-        c.setR(static_cast<C::Type>(C::MIN_VALUE()+r*C::RANGE()));
-        c.setG(static_cast<C::Type>(C::MIN_VALUE()+g*C::RANGE()));
-        c.setB(static_cast<C::Type>(C::MIN_VALUE()+b*C::RANGE()));
-
-        return c;
+        return C(rgb);
     }
 };
 
@@ -93,10 +86,10 @@ class ColorModelHSV:public ColorModel
     :   m_h(0),m_s(0),m_v(0)
     {}
 
-    /// Initializes the color model with an RGB \a color.
+    /// Initializes the color model to the specified RGB \a color.
     template<unsigned int N,typename T>
     ColorModelHSV(Color<N,T> const& color) {
-        init(color);
+        setRGB(color);
     }
 
     /// Sets the color model to match the given \a r, \a g, \a b values, where
@@ -136,7 +129,7 @@ class ColorModelHSV:public ColorModel
 
     /// Gets the \a r, \a g, \a b values from the color model, where all values
     /// are in range [0,1].
-    void toRGB(double& r,double& g,double& b) {
+    void toRGB(double& r,double& g,double& b) const {
         // Map H to range [0,6[ and SV to range [0,1].
         double H=wrap(m_h/60.0,6.0);
         double S=clamp(m_s/100.0,0.0,1.0);

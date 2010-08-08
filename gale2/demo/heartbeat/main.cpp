@@ -120,7 +120,7 @@ class DemoWindow:public DefaultWindow
             float vs=m_rand.random0N(2*vr)-vr;
             ColorModelHSV hsv(m_base_color);
             hsv.setS(hsv.getS()+vs);
-            m_hearts[i].color=hsv.rgb<Col4f>();
+            m_hearts[i].color=hsv.getRGB<Col4f>();
         }
 
         // Compile and link the shaders.
