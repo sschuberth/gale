@@ -156,13 +156,13 @@ class TupleBase
 
     /// Element-wise increments \c this tuple by tuple \a t.
     C const& operator+=(C const& t) {
-        meta::LoopFwd<N,meta::OpArithInc>::iterate(data(),t.data());
+        meta::LoopFwd<N,meta::OpArithAdd>::iterate(data(),t.data());
         return *static_cast<C*>(this);
     }
 
     /// Element-wise decrements \c this tuple by tuple \a t.
     C const& operator-=(C const& t) {
-        meta::LoopFwd<N,meta::OpArithDec>::iterate(data(),t.data());
+        meta::LoopFwd<N,meta::OpArithSub>::iterate(data(),t.data());
         return *static_cast<C*>(this);
     }
 

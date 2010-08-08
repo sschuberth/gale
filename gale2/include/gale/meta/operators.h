@@ -58,8 +58,8 @@ struct OpAssignNeg
     }
 };
 
-/// Increment operator.
-struct OpArithInc
+/// Addition operator.
+struct OpArithAdd
 {
     /// Adds \a b to \a a.
     template<typename T>
@@ -68,8 +68,8 @@ struct OpArithInc
     }
 };
 
-/// Decrement operator.
-struct OpArithDec
+/// Subtraction operator.
+struct OpArithSub
 {
     /// Subtracts \a b from \a a.
     template<typename T>
