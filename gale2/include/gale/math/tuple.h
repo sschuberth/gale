@@ -416,7 +416,10 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> >
 
   public:
 
-    /// Definition for external access to the data type.
+    /// The number of elements of this template instance.
+    static int const Elements=N;
+
+    /// The data type of this template instance.
     typedef T Type;
 
     /**

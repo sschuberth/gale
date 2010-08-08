@@ -109,7 +109,10 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 
   public:
 
-    /// Definition for external access to the data type.
+    /// The number of channels of this template instance.
+    static int const Channels=N;
+
+    /// The data type of this template instance.
     typedef T Type;
 
     /**

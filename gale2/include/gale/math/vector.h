@@ -60,7 +60,10 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
 
   public:
 
-    /// Definition for external access to the data type.
+    /// The number of components of this template instance.
+    static int const Components=N;
+
+    /// The data type of this template instance.
     typedef T Type;
 
     /**
