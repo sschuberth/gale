@@ -2,6 +2,8 @@
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
 
+#include <iostream>
+
 // Enable memory leak detection, see:
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
 #if !defined NDEBUG && !defined GALE_TINY_CODE

@@ -114,7 +114,7 @@ class DemoWindow:public DefaultWindow
             m_hearts[i].position=Vec2f::ZERO();
 
             float speed=0.5f+m_rand.random0N(0.5f);
-            m_hearts[i].velocity=m_rand.randomVec2()*speed;
+            m_hearts[i].velocity=Vec2f::random(m_rand)*speed;
 
             float vr=10.0f;
             float vs=m_rand.random0N(2*vr)-vr;
@@ -278,7 +278,7 @@ class DemoWindow:public DefaultWindow
                 m_hearts[i].position=Vec2f::ZERO();
 
                 float speed=0.5f+m_rand.random0N(0.5f);
-                m_hearts[i].velocity=m_rand.randomVec2()*speed;
+                m_hearts[i].velocity=Vec2f::random(m_rand)*speed;
             }
         }
 

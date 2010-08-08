@@ -33,8 +33,7 @@
 
 #include "../global/types.h"
 
-#include "matrix4.h"
-#include "quaternion.h"
+#include "essentials.h"
 
 #ifndef GALE_TINY_CODE
     #include <time.h>
@@ -151,107 +150,6 @@ class RandomBase
     /// Returns a floating-point random number in range ]0,range].
     T randomExcl0N(T const range) {
         return randomExcl01()*range;
-    }
-
-    //@}
-
-    /**
-     * \name Utility methods to generate certain data types
-     */
-    //@{
-
-    /// Returns a random RGB color.
-    template<typename C>
-    Color<3,C> randomCol3() {
-        Color<3,C> c;
-
-        c.setR(C(c.MIN_VALUE()+random0N(c.RANGE())));
-        c.setG(C(c.MIN_VALUE()+random0N(c.RANGE())));
-        c.setB(C(c.MIN_VALUE()+random0N(c.RANGE())));
-
-        return c;
-    }
-
-    /// Returns a random RGBA color.
-    template<typename C>
-    Color<4,C> randomCol4() {
-        Color<4,C> c;
-
-        c.setR(C(c.MIN_VALUE()+random0N(c.RANGE())));
-        c.setG(C(c.MIN_VALUE()+random0N(c.RANGE())));
-        c.setB(C(c.MIN_VALUE()+random0N(c.RANGE())));
-        c.setA(C(c.MIN_VALUE()+random0N(c.RANGE())));
-
-        return c;
-    }
-
-    /// Returns a normalized random 2-component vector.
-    Vector<2,T> randomVec2() {
-        Vector<2,T> v;
-
-        do {
-            v.setX(random0N(2)-1);
-            v.setY(random0N(2)-1);
-        } while (v.length2()>1);
-
-        v.normalize();
-        return v;
-    }
-
-    /// Returns a normalized random 3-component vector.
-    Vector<3,T> randomVec3() {
-        Vector<3,T> v;
-
-        do {
-            v.setX(random0N(2)-1);
-            v.setY(random0N(2)-1);
-            v.setZ(random0N(2)-1);
-        } while (v.length2()>1);
-
-        v.normalize();
-        return v;
-    }
-
-    /// Returns a normalized random 4-component vector.
-    Vector<4,T> randomVec4() {
-        Vector<4,T> v;
-
-        do {
-            v.setX(random0N(2)-1);
-            v.setY(random0N(2)-1);
-            v.setZ(random0N(2)-1);
-            v.setW(random0N(2)-1);
-        } while (v.length2()>1);
-
-        v.normalize();
-        return v;
-    }
-
-    /// Returns a random orthonormalized 4x4 homogeneous matrix.
-    HMatrix4<T> randomHMat4() {
-        HMatrix4<T> m(
-            randomVec3()
-        ,   randomVec3()
-        ,   randomVec3()
-        );
-        return m.orthonormalize();
-    }
-
-    /// Returns a random invertible 4x4 matrix.
-    Matrix4<T> randomMat4() {
-        Matrix4<T> m;
-        do {
-            m.c0=randomVec4();
-            m.c1=randomVec4();
-            m.c2=randomVec4();
-            m.c3=randomVec4();
-        } while (abs(m.determinant())<=Numerics<T>::ZERO_TOLERANCE());
-        return m;
-    }
-
-    /// Returns a random quaternion.
-    Quaternion<T> randomQuat() {
-        return Quaternion<T>(randomVec3(),random0ExclN(2*Constants<T>::PI()));
     }
 
     //@}

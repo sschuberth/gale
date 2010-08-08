@@ -485,7 +485,7 @@ void test_color()
 
     Col3b srgb,neutral;
     for (int i=0;i<1000;++i) {
-        srgb=re.randomCol3<Col3b::Type>();
+        srgb=Col3b::random(re);
 
         neutral=srgb.mixAdd(srgb.complement());
         assert(neutral==Col3b::WHITE());

@@ -48,7 +48,7 @@ class TestWindow:public DefaultWindow
         // Get some random orientations.
         RandomEcuyerf rand(0x44766788);
         for (i=0;i<4;++i) {
-            m_kf[i]=~rand.randomQuat();
+            m_kf[i]=Quatf::random(rand);
         }
 
         // Calculate the tangents for the key frame orientations.

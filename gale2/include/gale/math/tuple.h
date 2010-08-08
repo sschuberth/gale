@@ -34,6 +34,8 @@
 #include "../meta/loops.h"
 #include "../meta/operators.h"
 
+#include "random.h"
+
 #ifndef GALE_TINY_CODE
     #include <iostream>
 #endif

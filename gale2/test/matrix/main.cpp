@@ -1,5 +1,6 @@
-#include <gale/math/random.h>
 #include <gale/math/hmatrix4.h>
+#include <gale/math/matrix4.h>
+#include <gale/math/quaternion.h>
 
 // Enable memory leak detection, see:
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vsdebug/html/vxcondetectingisolatingmemoryleaks.asp
@@ -69,9 +70,9 @@ int __cdecl main()
     assert(projection*Vec3f::Z()==Vec3f::Z());
     assert(projection*Vec3f(1,1,1)==Vec3f(0,1,1));
 
-    Vec3f axis=r.randomVec3();
+    Vec3f axis=Vec3f::random(r);
     float angle=r.random0ExclN(Constf::PI()*2);
-    Vec3f v=r.randomVec3();
+    Vec3f v=Vec3f::random(r);
 
     m=HMat4f::Factory::Rotation(axis,angle);
     Vec3f vrm=m*v;
@@ -83,14 +84,14 @@ int __cdecl main()
 
     // Matrix tests.
 
-    Mat4f A=r.randomMat4(),B=A,C;
+    Mat4d A=Mat4d::random(r),B=A,C;
 
     bool result;
     B.invert(&result);
     assert(result);
 
     C=A*B;
-    assert(C==Mat4f::IDENTITY());
+    assert(C==Mat4d::IDENTITY());
 
 #if !defined NDEBUG && !defined GALE_TINY_CODE
     _CrtDumpMemoryLeaks();
