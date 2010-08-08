@@ -359,26 +359,24 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 
     /// Returns the additive mix between this color and color \a c.
     Color mixAdd(Color const& c) const {
-        // Normalize the colors to range [0,1] and mix them.
-        Color<N,double> tD(*this);
-        tD-=BLACK();
+        Color<N,double> mix=Color<N,double>(*this)+Color<N,double>(c);
 
-        Color<N,double> cD(c);
-        cD-=BLACK();
+// Warning C4127: Conditional expression is constant.
+#pragma warning(disable:4127)
 
-        Color<N,double> mD=(tD+cD)/RANGE();
-
-        // Normalize the result to the unit color cube.
-        double me=mD.maxElement();
-        if (me>1.0) {
-            mD/=me;
+        if (N==4) {
+            mix.setA(mix.getA()*0.5);
         }
 
-        // Map the result back to the original range.
-        mD*=RANGE();
-        mD+=BLACK();
+#pragma warning(default:4127)
 
-        return mD;
+        // Normalize the result to the unit color cube.
+        double max=mix.maxElement();
+        if (max>1.0) {
+            mix/=max;
+        }
+
+        return Color(mix);
     }
 
     /// Returns the subtractive mix between this color and color \a c.
