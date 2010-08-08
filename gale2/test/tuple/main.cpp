@@ -496,6 +496,10 @@ void test_color()
 
     puts("Check color conversion ...");
 
+    assert(Col4i::RED()==Col4i(Col4ub::RED()));
+    assert(Col3f::GREEN()==Col3f(Col3b::GREEN()));
+    assert(Col4us::BLUE()==Col4us(Col4d::BLUE()));
+
     Col3ub::Type r,g,b;
     ColorModelHSV hsv;
     Col3ub rgb;
