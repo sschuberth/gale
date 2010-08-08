@@ -353,7 +353,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
     //@}
 
     /**
-     * \name Mixing methods
+     * \name Mixing methods, see <http://en.wikipedia.org/wiki/Color_mixing>.
      */
     //@{
 
@@ -381,6 +381,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 
     /// Returns the subtractive mix between this color and color \a c.
     Color mixSub(Color const& c) const {
+        // Additive primary colors equal subtractive secondary colors and vice versa.
         Color tCMY=complement(),cCMY=c.complement();
         return tCMY.mixAdd(cCMY).complement();
     }
