@@ -253,7 +253,7 @@
 #ifdef G_COMP_GNUC
     #define G_NO_VTABLE
 #elif defined(G_COMP_MSVC)
-    #define G_NO_VTABLE _declspec(novtable)
+    #define G_NO_VTABLE __declspec(novtable)
 #else
     #define G_NO_VTABLE
 #endif
