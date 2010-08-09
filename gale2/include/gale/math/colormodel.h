@@ -40,7 +40,7 @@ namespace math {
 /**
  * Base class for color model representations different than RGB.
  */
-class ColorModel
+class G_NO_VTABLE ColorModel
 {
   public:
 
