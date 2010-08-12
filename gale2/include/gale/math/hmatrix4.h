@@ -543,6 +543,14 @@ class HMatrix4
         c2=c0^c1;
     }
 
+    /// Transposes the rotation part of this matrix.
+    void transpose() {
+        T tmp;
+        tmp=(*this)(1,0); (*this)(1,0)=(*this)(0,1); (*this)(0,1)=tmp;
+        tmp=(*this)(2,0); (*this)(2,0)=(*this)(0,2); (*this)(0,2)=tmp;
+        tmp=(*this)(2,1); (*this)(2,1)=(*this)(1,2); (*this)(1,2)=tmp;
+    }
+
     /// Inverts this matrix. Optionally returns a \a result indicating whether
     /// the matrix is orthonormal and thus the inverse exists.
     void invert(bool* const result=NULL) {
@@ -553,13 +561,16 @@ class HMatrix4
         }
 
         if (valid) {
+            // Invert any scaling.
+            c0/=c0.length2();
+            c1/=c1.length2();
+            c2/=c2.length2();
+
+            // Invert any translation.
             c3=Vec(-c3%c0,-c3%c1,-c3%c2);
 
-            // Transpose the column vectors.
-            T tmp;
-            tmp=(*this)(1,0); (*this)(1,0)=(*this)(0,1); (*this)(0,1)=tmp;
-            tmp=(*this)(2,0); (*this)(2,0)=(*this)(0,2); (*this)(0,2)=tmp;
-            tmp=(*this)(2,1); (*this)(2,1)=(*this)(1,2); (*this)(1,2)=tmp;
+            // Invert any rotation.
+            transpose();
         }
     }
 
