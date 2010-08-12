@@ -47,6 +47,13 @@ static T lerp(T const& a,T const& b,I const& s) {
     return a+(b-a)*s;
 }
 
+/// Cubically interpolates between \a a and \a b based on \a s. For performance
+/// reasons, \a s is not clamped to [0,1].
+template<class T,typename I>
+static T cubic(T const& a,T const& b,I const& s) {
+    return a+(b-a)*(3-2*s)*s*s;
+}
+
 /**
  * A collection of interpolation (and approximation) methods.
  */
