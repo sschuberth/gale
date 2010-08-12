@@ -448,6 +448,31 @@ class Tuple:public TupleBase<N,T,Tuple<N,T> >
     //@}
 };
 
+/**
+ * \name Type definitions for convenience
+ */
+//@{
+
+typedef Tuple<3,double> Tup3d;
+typedef Tuple<3,float> Tup3f;
+typedef Tuple<3,int> Tup3i;
+typedef Tuple<3,unsigned int> Tup3ui;
+typedef Tuple<3,short> Tup3s;
+typedef Tuple<3,unsigned short> Tup3us;
+typedef Tuple<3,signed char> Tup3b;
+typedef Tuple<3,unsigned char> Tup3ub;
+
+typedef Tuple<4,double> Tup4d;
+typedef Tuple<4,float> Tup4f;
+typedef Tuple<4,int> Tup4i;
+typedef Tuple<4,unsigned int> Tup4ui;
+typedef Tuple<4,short> Tup4s;
+typedef Tuple<4,unsigned short> Tup4us;
+typedef Tuple<4,signed char> Tup4b;
+typedef Tuple<4,unsigned char> Tup4ub;
+
+//@}
+
 } // namespace math
 
 } // namespace gale
