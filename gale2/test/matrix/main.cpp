@@ -17,31 +17,29 @@ using namespace gale::math;
 
 int __cdecl main()
 {
-    RandomEcuyerf r;
+    RandomEcuyerd r;
 
     // Homogeneous matrix tests.
 
-    HMat4f m,n;
+    HMat4d m=HMat4d::IDENTITY(),n=HMat4d::IDENTITY();
 
-    m(0,0)=n(0,0)=r.random01();
-    m(1,0)=n(0,1)=r.random01();
-    m(2,0)=n(0,2)=r.random01();
+    Vec3d axis=Vec3d::random(r);
+    double angle=r.random0ExclN(Constd::PI()*2);
 
-    m(0,1)=n(1,0)=r.random01();
-    m(1,1)=n(1,1)=r.random01();
-    m(2,1)=n(1,2)=r.random01();
+    Vec3d dir=Vec3d::random(r);
+    double factor=r.randomExcl0N(10.0);
 
-    m(0,2)=n(2,0)=r.random01();
-    m(1,2)=n(2,1)=r.random01();
-    m(2,2)=n(2,2)=r.random01();
+    double sx=r.randomExcl0N(10.0);
+    double sy=r.randomExcl0N(10.0);
+    double sz=r.randomExcl0N(10.0);
 
-    m(0,3)=n(0,3)=0;
-    m(1,3)=n(1,3)=0;
-    m(2,3)=n(2,3)=0;
+    m*=HMat4d::Factory::Rotation(axis,angle);
+    m*=HMat4d::Factory::Translation(dir,factor);
+    m*=HMat4d::Factory::Scaling(sx,sy,sz);
 
+    n=m;
     n.invert();
-
-    assert(m==n);
+    assert(m*n==HMat4d::IDENTITY());
 
     m(0,3)=r.random01();
     m(1,3)=r.random01();
@@ -50,17 +48,17 @@ int __cdecl main()
     m.orthonormalize();
     n=!m;
 
-    HMat4f a(m.c0,m.c1,m.c2,m.c3);
+    HMat4d a(m.c0,m.c1,m.c2,m.c3);
     m*=n;
 
 #ifndef GALE_TINY_CODE
     std::cout << m << std::endl;
 #endif
 
-    assert(m==HMat4f::IDENTITY());
-    assert(n*HMat4f::IDENTITY()==n);
+    assert(m==HMat4d::IDENTITY());
+    assert(n*HMat4d::IDENTITY()==n);
 
-    HMat4f b=a+a;
+    HMat4d b=a+a;
     assert(a==b/2);
     assert(b-a==a);
 
@@ -70,15 +68,15 @@ int __cdecl main()
     assert(projection*Vec3f::Z()==Vec3f::Z());
     assert(projection*Vec3f(1,1,1)==Vec3f(0,1,1));
 
-    Vec3f axis=Vec3f::random(r);
-    float angle=r.random0ExclN(Constf::PI()*2);
-    Vec3f v=Vec3f::random(r);
+    axis=Vec3d::random(r);
+    angle=r.random0ExclN(Constd::PI()*2);
+    Vec3d v=Vec3d::random(r);
 
-    m=HMat4f::Factory::Rotation(axis,angle);
-    Vec3f vrm=m*v;
+    m=HMat4d::Factory::Rotation(axis,angle);
+    Vec3d vrm=m*v;
 
-    Quatf q(axis,angle);
-    Vec3f vrq=q*v;
+    Quatd q(axis,angle);
+    Vec3d vrq=q*v;
 
     assert(vrm.equals(vrq));
 
