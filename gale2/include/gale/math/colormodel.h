@@ -76,7 +76,7 @@ class G_NO_VTABLE ColorModel
 };
 
 /**
- * An HSV color model representation.
+ * An HSV (also known as HSB) color model representation.
  */
 class ColorModelHSV:public ColorModel
 {
