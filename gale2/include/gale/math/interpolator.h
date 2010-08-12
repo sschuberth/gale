@@ -42,8 +42,8 @@ namespace math {
 
 /// Linearly interpolates between \a a and \a b based on \a s. For performance
 /// reasons, \a s is not clamped to [0,1].
-template<class T>
-static T lerp(T const& a,T const& b,float const s) {
+template<class T,typename I>
+static T lerp(T const& a,T const& b,I const& s) {
     return a+(b-a)*s;
 }
 
