@@ -32,6 +32,7 @@
  */
 
 #include "color.h"
+#include "interpolator.h"
 
 namespace gale {
 
@@ -234,6 +235,171 @@ class ColorModelHSV:public ColorModel
     double m_h; ///< The color's hue.
     double m_s; ///< The color's saturation.
     double m_v; ///< The color's value.
+};
+
+/**
+ * An RYB color model representation, see
+ * <http://threekings.tk/mirror/ryb_TR.pdf>.
+ */
+class ColorModelRYB:public ColorModel
+{
+  public:
+
+    /// Initializes the color model to black.
+    ColorModelRYB()
+    :   m_r(1),m_y(1),m_b(1)
+    {}
+
+    /// Initializes the color model to the specified RGB \a color.
+    template<unsigned int N,typename T>
+    ColorModelRYB(Color<N,T> const& color) {
+        setRGB(color);
+    }
+
+    /// Sets the color model to match the given \a r, \a g, \a b values, where
+    /// all values need to be in range [0,1].
+    void fromRGB(double const r,double const g,double const b) {
+    }
+
+    /// Gets the \a r, \a g, \a b values from the color model, where all values
+    /// are in range [0,1].
+    void toRGB(double& r,double& g,double& b) const {
+        // Pair-wise interpolate RGB corner values along the B-axis of the RYB
+        // interpolation cube.
+        Tup3d b00=cubic(WHITE()  , BLUE()   , m_b);
+        Tup3d b10=cubic(YELLOW() , GREEN()  , m_b);
+        Tup3d b01=cubic(RED()    , PURPLE() , m_b);
+        Tup3d b11=cubic(ORANGE() , BLACK()  , m_b);
+
+        // Pair-wise interpolate RGB edge values along the Y-axis of the RYB
+        // interpolation cube.
+        Tup3d y0=cubic(b00,b10,m_y);
+        Tup3d y1=cubic(b01,b11,m_y);
+
+        // Pair-wise interpolate RGB face values along the R-axis of the RYB
+        // interpolation cube.
+        Tup3d rgb=cubic(y0,y1,m_r);
+
+        r=rgb[0];
+        g=rgb[1];
+        b=rgb[2];
+    }
+
+    /**
+     * \name Color model access methods
+     */
+    //@{
+
+    /// Returns the red percentage.
+    double getR() {
+        return m_r;
+    }
+
+    /// Returns a constant reference to the red percentage.
+    double const& getR() const {
+        return m_r;
+    }
+
+    /// Assigns a new red percentage.
+    void setR(double const r) {
+        m_r=clamp(r,0.0,1.0);
+    }
+
+    /// Returns the yellow percentage.
+    double getY() {
+        return m_y;
+    }
+
+    /// Returns a constant reference to the yellow percentage.
+    double const& getY() const {
+        return m_y;
+    }
+
+    /// Assigns a new yellow percentage.
+    void setY(double const y) {
+        m_y=clamp(y,0.0,1.0);
+    }
+
+    /// Returns the blue percentage.
+    double getB() {
+        return m_b;
+    }
+
+    /// Returns a constant reference to the blue percentage.
+    double const& getB() const {
+        return m_b;
+    }
+
+    /// Assigns a new blue percentage.
+    void setB(double const b) {
+        m_b=clamp(b,0.0,1.0);
+    }
+
+    //@}
+
+  private:
+
+    /// Returns the RGB coordinates for the white corner in the RYB
+    /// interpolation cube.
+    static Tup3d const& WHITE() {
+        static Tup3d t(1.0,1.0,1.0);
+        return t;
+    }
+
+    /// Returns the RGB coordinates for the red corner in the RYB
+    /// interpolation cube.
+    static Tup3d const& RED() {
+        static Tup3d t(1.0,0.0,0.0);
+        return t;
+    }
+
+    /// Returns the RGB coordinates for the yellow corner in the RYB
+    /// interpolation cube.
+    static Tup3d const& YELLOW() {
+        static Tup3d t(1.0,1.0,0.0);
+        return t;
+    }
+
+    /// Returns the RGB coordinates for the blue corner in the RYB
+    /// interpolation cube.
+    static Tup3d const& BLUE() {
+        static Tup3d t(0.163,0.373,0.6);
+        return t;
+    }
+
+    /// Returns the RGB coordinates for the black corner in the RYB
+    /// interpolation cube.
+    static Tup3d const& BLACK() {
+        static Tup3d t(0.2,0.094,0.0);
+        return t;
+    }
+
+    /// Returns the RGB coordinates for the green corner in the RYB
+    /// interpolation cube.
+    static Tup3d const& GREEN() {
+        static Tup3d t(0.0,0.66,0.2);
+        return t;
+    }
+
+    /// Returns the RGB coordinates for the purple corner in the RYB
+    /// interpolation cube.
+    static Tup3d const& PURPLE() {
+        // NOTE: There is a typo in the original paper which erroneously defines
+        // purple as (0.5,0.5,0.0), this has been fixed in the technical report!
+        static Tup3d t(0.5,0.0,0.5);
+        return t;
+    }
+
+    /// Returns the RGB coordinates for the orange corner in the RYB
+    /// interpolation cube.
+    static Tup3d const& ORANGE() {
+        static Tup3d t(1.0,0.5,0.0);
+        return t;
+    }
+
+    double m_r; ///< The color's red percentage.
+    double m_y; ///< The color's yellow percentage.
+    double m_b; ///< The color's blue percentage.
 };
 
 } // namespace math
