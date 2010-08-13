@@ -82,9 +82,10 @@ class ColorModelHSV:public ColorModel
 {
   public:
 
-    /// Initializes the color model to black.
-    ColorModelHSV()
-    :   m_h(0),m_s(0),m_v(0)
+    /// Initializes the color model to the given \a hue, \a saturation and
+    /// \a value, or to black by default.
+    ColorModelHSV(double hue=0,double saturation=0,double value=0)
+    :   m_h(hue),m_s(saturation),m_v(value)
     {}
 
     /// Initializes the color model to the specified RGB \a color.
@@ -193,9 +194,9 @@ class ColorModelHSV:public ColorModel
         return m_h;
     }
 
-    /// Assigns a new hue.
-    void setH(double const h) {
-        m_h=wrap(h,360.0);
+    /// Assigns a new \a hue.
+    void setH(double const hue) {
+        m_h=wrap(hue,360.0);
     }
 
     /// Returns the saturation.
@@ -208,9 +209,9 @@ class ColorModelHSV:public ColorModel
         return m_s;
     }
 
-    /// Assigns a new saturation.
-    void setS(double const s) {
-        m_s=clamp(s,0.0,100.0);
+    /// Assigns a new \a saturation.
+    void setS(double const saturation) {
+        m_s=clamp(saturation,0.0,100.0);
     }
 
     /// Returns the value.
@@ -223,18 +224,18 @@ class ColorModelHSV:public ColorModel
         return m_v;
     }
 
-    /// Assigns a new value.
-    void setV(double const v) {
-        m_v=clamp(v,0.0,100.0);
+    /// Assigns a new \a value.
+    void setV(double const value) {
+        m_v=clamp(value,0.0,100.0);
     }
 
     //@}
 
   private:
 
-    double m_h; ///< The color's hue.
-    double m_s; ///< The color's saturation.
-    double m_v; ///< The color's value.
+    double m_h; ///< The color's hue in range [0,360[.
+    double m_s; ///< The color's saturation in range [0,100].
+    double m_v; ///< The color's value in range [0,100].
 };
 
 /**
@@ -245,9 +246,10 @@ class ColorModelRYB:public ColorModel
 {
   public:
 
-    /// Initializes the color model to black.
-    ColorModelRYB()
-    :   m_r(1),m_y(1),m_b(1)
+    /// Initializes the color model to the given \a red, \a yellow and \a blue
+    /// percentages, or to black by default.
+    ColorModelRYB(double red=1,double yellow=1,double blue=1)
+    :   m_r(red),m_y(yellow),m_b(blue)
     {}
 
     /// Initializes the color model to the specified RGB \a color.
@@ -300,9 +302,9 @@ class ColorModelRYB:public ColorModel
         return m_r;
     }
 
-    /// Assigns a new red percentage.
-    void setR(double const r) {
-        m_r=clamp(r,0.0,1.0);
+    /// Assigns a new \a red percentage.
+    void setR(double const red) {
+        m_r=clamp(red,0.0,1.0);
     }
 
     /// Returns the yellow percentage.
@@ -315,9 +317,9 @@ class ColorModelRYB:public ColorModel
         return m_y;
     }
 
-    /// Assigns a new yellow percentage.
-    void setY(double const y) {
-        m_y=clamp(y,0.0,1.0);
+    /// Assigns a new \a yellow percentage.
+    void setY(double const yellow) {
+        m_y=clamp(yellow,0.0,1.0);
     }
 
     /// Returns the blue percentage.
@@ -330,9 +332,9 @@ class ColorModelRYB:public ColorModel
         return m_b;
     }
 
-    /// Assigns a new blue percentage.
-    void setB(double const b) {
-        m_b=clamp(b,0.0,1.0);
+    /// Assigns a new \a blue percentage.
+    void setB(double const blue) {
+        m_b=clamp(blue,0.0,1.0);
     }
 
     //@}
@@ -397,9 +399,9 @@ class ColorModelRYB:public ColorModel
         return t;
     }
 
-    double m_r; ///< The color's red percentage.
-    double m_y; ///< The color's yellow percentage.
-    double m_b; ///< The color's blue percentage.
+    double m_r; ///< The color's red percentage in range [0,1].
+    double m_y; ///< The color's yellow percentage in range [0,1].
+    double m_b; ///< The color's blue percentage in range [0,1].
 };
 
 } // namespace math
