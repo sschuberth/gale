@@ -184,11 +184,6 @@ class ColorModelHSV:public ColorModel
      */
     //@{
 
-    /// Returns the hue.
-    double getH() {
-        return m_h;
-    }
-
     /// Returns a constant reference to the hue.
     double const& getH() const {
         return m_h;
@@ -199,11 +194,6 @@ class ColorModelHSV:public ColorModel
         m_h=wrap(hue,360.0);
     }
 
-    /// Returns the saturation.
-    double getS() {
-        return m_s;
-    }
-
     /// Returns a constant reference to the saturation.
     double const& getS() const {
         return m_s;
@@ -212,11 +202,6 @@ class ColorModelHSV:public ColorModel
     /// Assigns a new \a saturation.
     void setS(double const saturation) {
         m_s=clamp(saturation,0.0,100.0);
-    }
-
-    /// Returns the value.
-    double getV() {
-        return m_v;
     }
 
     /// Returns a constant reference to the value.
@@ -292,11 +277,6 @@ class ColorModelRYB:public ColorModel
      */
     //@{
 
-    /// Returns the red percentage.
-    double getR() {
-        return m_r;
-    }
-
     /// Returns a constant reference to the red percentage.
     double const& getR() const {
         return m_r;
@@ -307,11 +287,6 @@ class ColorModelRYB:public ColorModel
         m_r=clamp(red,0.0,1.0);
     }
 
-    /// Returns the yellow percentage.
-    double getY() {
-        return m_y;
-    }
-
     /// Returns a constant reference to the yellow percentage.
     double const& getY() const {
         return m_y;
@@ -320,11 +295,6 @@ class ColorModelRYB:public ColorModel
     /// Assigns a new \a yellow percentage.
     void setY(double const yellow) {
         m_y=clamp(yellow,0.0,1.0);
-    }
-
-    /// Returns the blue percentage.
-    double getB() {
-        return m_b;
     }
 
     /// Returns a constant reference to the blue percentage.
