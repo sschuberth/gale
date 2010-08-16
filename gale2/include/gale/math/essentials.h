@@ -159,7 +159,7 @@ struct Numerics<double>
     static double MIN()                    { return DBL_MIN;      }
     static double MAX()                    { return DBL_MAX;      }
     static double EPSILON()                { return DBL_EPSILON;  }
-    static double ZERO_TOLERANCE()         { return 1e-08;        }
+    static double ZERO_TOLERANCE()         { return 1e-8;        }
 };
 
 template<>
@@ -168,7 +168,7 @@ struct Numerics<float>
     static float MIN()                     { return FLT_MIN;      }
     static float MAX()                     { return FLT_MAX;      }
     static float EPSILON()                 { return FLT_EPSILON;  }
-    static float ZERO_TOLERANCE()          { return 1e-06f;       }
+    static float ZERO_TOLERANCE()          { return 1e-6f;       }
 };
 
 template<>
