@@ -9,6 +9,8 @@
 #include <gale/math/random.h>
 #include <gale/wrapgl/defaultwindow.h>
 
+//#define BACKGROUND_RYB
+
 using namespace gale::math;
 using namespace gale::wrapgl;
 
@@ -115,6 +117,12 @@ class TestWindow:public DefaultWindow
                 for (unsigned int i=0;i<QUADS_X;++i) {
                     hsv.setH(static_cast<float>(i)/QUADS_X*360);
                     x1=((i+1)*step_x)>>16;
+
+#ifdef BACKGROUND_RYB
+                    double hue;
+                    ColorModelRYB::RYBHueToRGBHue(hsv.getH(),hue);
+                    hsv.setH(hue);
+#endif
 
                     glColor3ubv(hsv.getRGB<Col3ub>());
                     glVertex2i(x0,y0);
