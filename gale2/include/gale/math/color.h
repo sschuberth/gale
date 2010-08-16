@@ -368,15 +368,15 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
      */
     //@{
 
-    /// Returns the additive mix between this color and color \a c.
-    Color mixAdd(Color const& c) const {
-        Color<N,double> mix=Color<N,double>(*this)+Color<N,double>(c);
+    /// Returns the additive mix between this color and color \a c in ratio \a s.
+    Color mixAdd(Color const& c,double s=0.5) const {
+        Color<N,double> mix=Color<N,double>(*this)*(1-s)+Color<N,double>(c)*s;
 
 // Warning C4127: Conditional expression is constant.
 #pragma warning(disable:4127)
 
         if (N==4) {
-            mix.setA(mix.getA()*0.5);
+            mix.setA(mix.getA()*(1-s)+c.getA()*s);
         }
 
 #pragma warning(default:4127)
@@ -390,12 +390,12 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
         return Color(mix);
     }
 
-    /// Returns the subtractive mix between this color and color \a c.
-    Color mixSub(Color const& c) const {
+    /// Returns the subtractive mix between this color and color \a c in ratio \a s.
+    Color mixSub(Color const& c,double s=0.5) const {
         // The complements of the subtractive primary colors are the additive
         // primary colors and vice versa.
         Color tCMY=complement(),cCMY=c.complement();
-        return tCMY.mixAdd(cCMY).complement();
+        return tCMY.mixAdd(cCMY,s).complement();
     }
 
     //@}
