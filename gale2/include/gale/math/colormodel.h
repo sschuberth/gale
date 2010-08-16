@@ -84,7 +84,7 @@ class ColorModelHSV:public ColorModel
 
     /// Initializes the color model to the given \a hue, \a saturation and
     /// \a value, or to black by default.
-    ColorModelHSV(double hue=0,double saturation=0,double value=0)
+    ColorModelHSV(double const hue=0,double const saturation=0,double const value=0)
     :   m_h(hue),m_s(saturation),m_v(value)
     {}
 
@@ -254,7 +254,7 @@ class ColorModelRYB:public ColorModel
     /// Returns the hue \a h_ryb in the RYB color model for the color given by
     /// the hue \a h_rgb in the RGB color model. Arguments \a a and \a b are
     /// only used internally for the approximation using nested intervals.
-    static void RGBHueToRYBHue(double const h_rgb,double& h_ryb,double a=0,double b=360) {
+    static void RGBHueToRYBHue(double const h_rgb,double& h_ryb,double const a=0,double const b=360) {
         // Guess an RYB hue ...
         h_ryb=(a+b)*0.5;
 
@@ -278,7 +278,7 @@ class ColorModelRYB:public ColorModel
 
     /// Initializes the color model to the given \a red, \a yellow and \a blue
     /// percentages, or to black by default.
-    ColorModelRYB(double red=1,double yellow=1,double blue=1)
+    ColorModelRYB(double const red=1,double const yellow=1,double const blue=1)
     :   m_r(red),m_y(yellow),m_b(blue)
     {}
 
