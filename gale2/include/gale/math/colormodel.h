@@ -231,6 +231,12 @@ class ColorModelRYB:public ColorModel
 {
   public:
 
+    /**
+     * \name Hue conversion methods, see
+     * <http://www.daleroose.com/web_design/color_chart/>.
+     */
+    //@{
+
     /// Returns the hue \a h_rgb in the RGB color model for the color given by
     /// the hue \a h_ryb in the RYB color model.
     static void RYBHueToRGBHue(double const h_ryb,double& h_rgb) {
@@ -275,6 +281,8 @@ class ColorModelRYB:public ColorModel
             RGBHueToRYBHue(h_rgb,h_ryb,a,h_ryb);
         }
     }
+
+    //@}
 
     /// Initializes the color model to the given \a red, \a yellow and \a blue
     /// percentages, or to black by default.
