@@ -21,6 +21,15 @@ class TestWindow:public DefaultWindow
     ,   m_value(100.0f)
     ,   m_mode(0)
     {
+        // Check the RGB / RYB hue conversion.
+        double angle,h_ryb,h_rgb;
+        for (int i=0;i<10000;++i) {
+            angle=m_rand.random0ExclN(360);
+            ColorModelRYB::RYBHueToRGBHue(h_ryb=angle,h_rgb);
+            ColorModelRYB::RGBHueToRYBHue(h_rgb,h_ryb);
+            assert(gale::meta::OpCmpEqual::evaluate(h_ryb,angle,1e-4));
+        }
+
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
         // Set the clear color to blue to see if scissoring works.

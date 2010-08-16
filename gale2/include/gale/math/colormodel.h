@@ -231,6 +231,51 @@ class ColorModelRYB:public ColorModel
 {
   public:
 
+    /// Returns the hue \a h_rgb in the RGB color model for the color given by
+    /// the hue \a h_ryb in the RYB color model.
+    static void RYBHueToRGBHue(double const h_ryb,double& h_rgb) {
+        ColorModelHSV hsv(h_ryb,100,100);
+
+        // Abuse the HSV to RGB conversion: The amount of green for a given hue
+        // in RGB matches the amount of yellow for the same hue in RYB.
+        double r,y,b;
+        hsv.toRGB(r,y,b);
+
+        // Convert RYB to RGB.
+        ColorModelRYB ryb(r,y,b);
+        double g;
+        ryb.toRGB(r,g,b);
+
+        // Get the hue in RGB.
+        hsv.fromRGB(r,g,b);
+        h_rgb=hsv.getH();
+    }
+
+    /// Returns the hue \a h_ryb in the RYB color model for the color given by
+    /// the hue \a h_rgb in the RGB color model. Arguments \a a and \a b are
+    /// only used internally for the approximation using nested intervals.
+    static void RGBHueToRYBHue(double const h_rgb,double& h_ryb,double a=0,double b=360) {
+        // Guess an RYB hue ...
+        h_ryb=(a+b)*0.5;
+
+        // ... and convert it to an RGB hue ...
+        double h_rgb_guessed;
+        RYBHueToRGBHue(h_ryb,h_rgb_guessed);
+
+        // ... to see how closely we match the given RGB hue ...
+        double h_rgb_diff=h_rgb_guessed-h_rgb;
+        if (abs(h_rgb_diff)<=Numd::ZERO_TOLERANCE()) {
+            return;
+        }
+        // ... and adjust our guess accordingly, if required.
+        else if (h_rgb_diff<0) {
+            RGBHueToRYBHue(h_rgb,h_ryb,h_ryb,b);
+        }
+        else {
+            RGBHueToRYBHue(h_rgb,h_ryb,a,h_ryb);
+        }
+    }
+
     /// Initializes the color model to the given \a red, \a yellow and \a blue
     /// percentages, or to black by default.
     ColorModelRYB(double red=1,double yellow=1,double blue=1)
