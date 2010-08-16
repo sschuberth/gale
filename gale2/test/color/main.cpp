@@ -22,28 +22,26 @@ class TestWindow:public DefaultWindow
     ,   m_mode(0)
     {
         // Check the RGB / HSV color conversion.
-        double r,g,b;
+        double r,g,b,s,v;
+        ColorModelHSV hsv;
+        Col3d rgb_hue_only,rgb_with_saturation,rgb;
         for (int i=0;i<10000;++i) {
             r=m_rand.random01();
             g=m_rand.random01();
             b=m_rand.random01();
-
-            ColorModelHSV hsv;
             hsv.fromRGB(r,g,b);
 
             // Converting from HSV to RGB is the same as converting only hue and
             // then mixing in white reverse proportionally to the saturation and
             // mixing in black reverse proportionally to the value.
-            double s=hsv.getS();
-            double v=hsv.getV();
+            s=hsv.getS();
+            v=hsv.getV();
             hsv.setS(100);
             hsv.setV(100);
 
-            Col3d rgb_hue_only;
             hsv.toRGB(rgb_hue_only[0],rgb_hue_only[1],rgb_hue_only[2]);
-
-            Col3d rgb_with_saturation=Col3d::WHITE().mixAdd(rgb_hue_only,s/100.0);
-            Col3d rgb=Col3d::BLACK().mixAdd(rgb_with_saturation,v/100.0);
+            rgb_with_saturation=Col3d::WHITE().mixAdd(rgb_hue_only,s/100.0);
+            rgb=Col3d::BLACK().mixAdd(rgb_with_saturation,v/100.0);
 
             assert(gale::meta::OpCmpEqual::evaluate(r,rgb[0]));
             assert(gale::meta::OpCmpEqual::evaluate(g,rgb[1]));
