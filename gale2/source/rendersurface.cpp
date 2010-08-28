@@ -84,20 +84,20 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
     // Try to initialize an OpenGL extension for more sophisticated selection of a
     // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
     if (GLEX_WGL_ARB_pixel_format || GLEX_WGL_ARB_pixel_format_init()) {
-        // If custom pixel attributes are given, copy them over (attributes
-        // specified later override earlier ones).
         if (pixel_attr) {
+            // Either use any given custom pixel format attributes ...
             attr=*pixel_attr;
         }
         else {
-            // Specify some default pixel format attributes.
+            // ... or specify some default pixel format attributes.
             attr.insert(WGL_PIXEL_TYPE_ARB,WGL_TYPE_RGBA_ARB);
             attr.insert(WGL_COLOR_BITS_ARB,DEFAULT_COLOR_BITS);
             attr.insert(WGL_DEPTH_BITS_ARB,DEFAULT_DEPTH_BITS);
             attr.insert(WGL_STENCIL_BITS_ARB,DEFAULT_STENCIL_BITS);
         }
 
-        // Make sure some required attributes are specified.
+        // Make sure some required attributes are always specified (attributes
+        // specified later override earlier ones).
         attr.insert(WGL_DRAW_TO_WINDOW_ARB,TRUE);
         attr.insert(WGL_SUPPORT_OPENGL_ARB,TRUE);
         attr.insert(WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB);
@@ -107,7 +107,7 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
         UINT count;
         wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count);
 
-        // Try to get the same format with multi-sampling, see
+        // Try to get the same format again with multi-sampling, see
         // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
         if (samples>0 && (GLEX_ARB_multisample || GLEX_ARB_multisample_init())) {
             attr.insert(WGL_SAMPLE_BUFFERS_ARB,TRUE);
