@@ -158,7 +158,7 @@ bool RenderSurface::createDeviceContext(int pixel_format)
     // procedure can only be set after creation, and thus it will never receive
     // a WM_CREATE or initial WM_SIZE message.
     m_window=CreateWindow(
-        "static"      // lpClassName ("edit" would be shorter, but has the wrong cursor)
+        "static"      // lpClassName ("edit" is shorter, but has the wrong mouse cursor)
     ,   NULL          // lpWindowName
     ,   WS_POPUP      // dwStyle
     ,   0             // x
@@ -179,10 +179,9 @@ bool RenderSurface::createDeviceContext(int pixel_format)
 
         m_context.device=GetDC(m_window);
         if (m_context.device) {
-            // If no pixel format was specified, get one.
+            // If no (one-based) pixel format was specified, try to find a
+            // matching one for our default pixel format descriptor.
             if (pixel_format<=0) {
-
-                // Try to find a matching (one-based) pixel format.
                 pixel_format=ChoosePixelFormat(m_context.device,&s_pfd);
             }
 
