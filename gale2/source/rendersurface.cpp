@@ -143,9 +143,9 @@ RenderSurface::RenderSurface(
     }
 
     if (GLEX_WGL_ARB_create_context) {
-        if (pixel_attr) {
+        if (context_attr) {
             // Either use any given custom context attributes ...
-            attr=*pixel_attr;
+            attr=*context_attr;
         }
         else {
             // ... or clear the attributes to get a default context.
