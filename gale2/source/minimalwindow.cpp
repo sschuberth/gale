@@ -34,8 +34,15 @@ namespace wrapgl {
 // TODO: Add Linux implementation.
 #ifdef G_OS_WINDOWS
 
-MinimalWindow::MinimalWindow(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr,int const samples)
-:   RenderSurface(pixel_attr,samples)
+MinimalWindow::MinimalWindow(
+    LPCTSTR title
+,   int width
+,   int height
+,   global::AttributeListi const* const context_attr
+,   global::AttributeListi const* const pixel_attr
+,   int const samples
+)
+:   RenderSurface(context_attr,pixel_attr,samples)
 ,   m_close_requested(false)
 ,   m_timeout(0)
 {

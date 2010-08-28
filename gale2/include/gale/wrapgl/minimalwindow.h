@@ -49,11 +49,19 @@ class MinimalWindow:public RenderSurface
 {
   public:
 
-    /// Creates an OpenGL window with the specified \a title, a client size of
-    /// the given \a width and \a height, and a pixel format that matches
+    /// Creates a window with the specified \a title, a client size of
+    /// the given \a width and \a height, an OpenGL context with the attributes
+    /// in \a context_attr attached to it and a pixel format that matches
     /// \a pixel_attr. The window will be hidden initially, but it will become
     /// the current render context.
-    MinimalWindow(LPCTSTR title,int width,int height,global::AttributeListi const* const pixel_attr=NULL,int const samples=8);
+    MinimalWindow(
+        LPCTSTR title
+    ,   int width
+    ,   int height
+    ,   global::AttributeListi const* const context_attr=NULL
+    ,   global::AttributeListi const* const pixel_attr=NULL
+    ,   int const samples=8
+    );
 
     /// Returns the currently set timeout value in seconds.
     double getTimeout() const {

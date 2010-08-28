@@ -67,7 +67,11 @@ PIXELFORMATDESCRIPTOR const RenderSurface::s_pfd={
 ,   0                        // dwDamageMask
 };
 
-RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int const samples)
+RenderSurface::RenderSurface(
+    global::AttributeListi const* const context_attr
+,   global::AttributeListi const* const pixel_attr
+,   int const samples
+)
 {
     // Create a surface with a default pixel format.
     G_ASSERT_CALL(createDeviceContext())
@@ -78,12 +82,22 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
 
     G_ASSERT_CALL(makeCurrent())
 
+    // Try to initialize an extension for more sophisticated selection of a
+    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
+    GLEX_WGL_ARB_pixel_format_init();
+
+    // Try to initialize an extension to ask for multi-sampled pixel formats, see
+    // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
+    GLEX_ARB_multisample_init();
+
+    // Try to initialize an extension required to create a context of a specific
+    // version, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
+    GLEX_WGL_ARB_create_context_init();
+
     AttributeListi attr;
     GLint format=0;
 
-    // Try to initialize an OpenGL extension for more sophisticated selection of a
-    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
-    if (GLEX_WGL_ARB_pixel_format || GLEX_WGL_ARB_pixel_format_init()) {
+    if (GLEX_WGL_ARB_pixel_format) {
         if (pixel_attr) {
             // Either use any given custom pixel format attributes ...
             attr=*pixel_attr;
@@ -107,9 +121,8 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
         UINT count;
         wglChoosePixelFormatARB(m_context.device,attr,NULL,1,&format,&count);
 
-        // Try to get the same format again with multi-sampling, see
-        // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
-        if (samples>0 && (GLEX_ARB_multisample || GLEX_ARB_multisample_init())) {
+        if (samples>0 && GLEX_ARB_multisample) {
+            // Try to get the same format again with multi-sampling.
             attr.insert(WGL_SAMPLE_BUFFERS_ARB,TRUE);
             attr.insert(WGL_SAMPLES_ARB,samples);
 
@@ -129,18 +142,21 @@ RenderSurface::RenderSurface(global::AttributeListi const* const pixel_attr,int 
         }
     }
 
-    // Try to initialize an extension required to create an OpenGL 3.0 compatible
-    // context, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
-    if (GLEX_WGL_ARB_create_context || GLEX_WGL_ARB_create_context_init()) {
+    if (GLEX_WGL_ARB_create_context) {
+        if (pixel_attr) {
+            // Either use any given custom context attributes ...
+            attr=*pixel_attr;
+        }
+        else {
+            // ... or clear the attributes to get a default context.
+            attr.clear();
+        }
+
         // Destroy the default render context in order to create a more
         // sophisticated one.
         destroyRenderContext();
 
-        // Request an OpenGL 3.0 context.
-        attr.clear();
-        attr.insert(WGL_CONTEXT_MAJOR_VERSION_ARB,3);
-        attr.insert(WGL_CONTEXT_MINOR_VERSION_ARB,0);
-        m_context.render=wglCreateContextAttribsARB(m_context.device,0,attr);
+        m_context.render=wglCreateContextAttribsARB(m_context.device,NULL,attr);
     }
 
     if (!m_context.render) {
