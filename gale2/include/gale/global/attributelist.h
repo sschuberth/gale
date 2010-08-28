@@ -52,6 +52,41 @@ class AttributeList
         clear();
     }
 
+    /// Creates a list with a single type / value pair.
+    AttributeList(T const type,T const value) {
+        clear();
+        insert(type,value);
+    }
+
+    /// Creates a list with two type / value pairs.
+    AttributeList(
+        T const type0
+    ,   T const value0
+    ,   T const type1
+    ,   T const value1
+    )
+    {
+        clear();
+        insert(type0,value0);
+        insert(type1,value1);
+    }
+
+    /// Creates a list with three type / value pairs.
+    AttributeList(
+        T const type0
+    ,   T const value0
+    ,   T const type1
+    ,   T const value1
+    ,   T const type2
+    ,   T const value2
+    )
+    {
+        clear();
+        insert(type0,value0);
+        insert(type1,value1);
+        insert(type2,value2);
+    }
+
     /// Marks the list as empty.
     void clear() {
         m_size=0;
