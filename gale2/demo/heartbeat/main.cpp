@@ -16,12 +16,9 @@ using namespace gale::model;
 using namespace gale::wrapgl;
 
 #include "fake_sss_vert.inl"
-#undef SHADER_CODE_H_
 #include "fake_sss_frag.inl"
-#undef SHADER_CODE_H_
 
 #include "bg_frag.inl"
-#undef SHADER_CODE_H_
 
 static int const TOTAL_SAMPLES=800;
 static int const TAIL_SAMPLES=60;
@@ -119,13 +116,13 @@ class DemoWindow:public DefaultWindow
         // Compile and link the shaders.
         GLchar log[4096];
 
-        m_heart_vert.setSource(&shader_fake_sss_vert);
+        m_heart_vert.setSource(&fake_sss_vert_glsl);
         if (!m_heart_vert.compile() || m_heart_vert.hasLog()) {
             m_heart_vert.getLog(log,sizeof(log));
             puts(log);
         }
 
-        m_heart_frag.setSource(&shader_fake_sss_frag);
+        m_heart_frag.setSource(&fake_sss_frag_glsl);
         if (!m_heart_frag.compile() || m_heart_frag.hasLog()) {
             m_heart_frag.getLog(log,sizeof(log));
             puts(log);
@@ -138,7 +135,7 @@ class DemoWindow:public DefaultWindow
             puts(log);
         }
 
-        m_bg_frag.setSource(&shader_bg_frag);
+        m_bg_frag.setSource(&bg_frag_glsl);
         if (!m_bg_frag.compile() || m_bg_frag.hasLog()) {
             m_bg_frag.getLog(log,sizeof(log));
             puts(log);

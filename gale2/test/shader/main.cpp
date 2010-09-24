@@ -20,9 +20,7 @@ using namespace gale::model;
 using namespace gale::wrapgl;
 
 #include "aa_cel_vert.inl"
-#undef SHADER_CODE_H_
 #include "aa_cel_frag.inl"
-#undef SHADER_CODE_H_
 
 class TestWindow:public DefaultWindow
 {
@@ -46,13 +44,13 @@ class TestWindow:public DefaultWindow
 
         GLchar log[4096];
 
-        m_vert_shader.setSource(&shader_aa_cel_vert);
+        m_vert_shader.setSource(&aa_cel_vert_glsl);
         if (!m_vert_shader.compile() || m_vert_shader.hasLog()) {
             m_vert_shader.getLog(log,sizeof(log));
             puts(log);
         }
 
-        m_frag_shader.setSource(&shader_aa_cel_frag);
+        m_frag_shader.setSource(&aa_cel_frag_glsl);
         if (!m_frag_shader.compile() || m_frag_shader.hasLog()) {
             m_frag_shader.getLog(log,sizeof(log));
             puts(log);
