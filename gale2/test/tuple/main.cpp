@@ -480,6 +480,10 @@ void test_color()
 
     puts("Check color complement ...");
 
+    assert(Col3ub::RED().complement()==Col3ub::CYAN());
+    assert(Col3ub::GREEN().complement()==Col3ub::MAGENTA());
+    assert(Col3ub::BLUE().complement()==Col3ub::YELLOW());
+
     assert(white.complement()==Col3ub::BLACK());
 
     Col4f white4=Col4f::WHITE();

@@ -98,6 +98,10 @@ inline double ColorChannel<double>::MAX_VALUE()
  * \code
  * glColor4ubv(Col4ub::RED());
  * \endcode
+ *
+ * RGB is an additive color model with primary colors red, green and blue,
+ * secondary colors cyan, magenta and yellow, and neutral color white (for fully
+ * saturated colors).
  */
 template<unsigned int N,typename T>
 class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
@@ -370,13 +374,14 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
 
     /// Returns the additive mix between this color and color \a c in ratio \a s.
     Color mixAdd(Color const& c,double s=0.5) const {
-        Color<N,double> mix=Color<N,double>(*this)*(1-s)+Color<N,double>(c)*s;
+        Color<N,double> mix=(Color<N,double>(*this)*(1-s)+Color<N,double>(c)*s)*2;
 
 // Warning C4127: Conditional expression is constant.
 #pragma warning(disable:4127)
 
         if (N==4) {
-            mix.setA(mix.getA()*(1-s)+c.getA()*s);
+            // Undo the multiplication by 2 from above for the alpha channel.
+            mix.setA(mix.getA()*0.5);
         }
 
 #pragma warning(default:4127)
