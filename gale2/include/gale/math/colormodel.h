@@ -31,7 +31,7 @@
  * Color model representations
  */
 
-#include "color.h"
+#include "colorspace.h"
 #include "interpolator.h"
 
 namespace gale {
@@ -76,154 +76,6 @@ class G_NO_VTABLE ColorModel
 };
 
 /**
- * An HSV (also known as HSB) color model representation.
- */
-class ColorModelHSV:public ColorModel
-{
-  public:
-
-    /// Initializes the color model to the given \a hue, \a saturation and
-    /// \a value, or to black by default.
-    ColorModelHSV(double const hue=0,double const saturation=0,double const value=0)
-    :   m_h(hue),m_s(saturation),m_v(value)
-    {}
-
-    /// Initializes the color model to the specified RGB \a color.
-    template<unsigned int N,typename T>
-    ColorModelHSV(Color<N,T> const& color) {
-        setRGB(color);
-    }
-
-    /// Sets the color model to match the given \a r, \a g, \a b values, where
-    /// all values need to be in range [0,1].
-    void fromRGB(double const r,double const g,double const b) {
-        double m=min(r,g,b);
-        double V=max(r,g,b);
-
-        double delta=V-m;
-
-        double H,S;
-
-        if (delta) {
-            // If delta>0, it is V>0, too.
-            S=delta/V;
-
-            if (r==V) {
-                H=(g-b)/delta;
-            }
-            else if (g==V) {
-                H=(b-r)/delta+2;
-            }
-            else {
-                H=(r-g)/delta+4;
-            }
-        }
-        else {
-            // Achromatic case (gray), actually hue is undefined!
-            H=S=0;
-        }
-
-        // Map H to range [0,360[ and SV to range [0,100].
-        m_h=wrap(H*60.0,360.0);
-        m_s=S*100.0;
-        m_v=V*100.0;
-    }
-
-    /// Gets the \a r, \a g, \a b values from the color model, where all values
-    /// are in range [0,1].
-    void toRGB(double& r,double& g,double& b) const {
-        // Map H to range [0,6[ and SV to range [0,1].
-        double H=wrap(m_h/60.0,6.0);
-        double S=clamp(m_s/100.0,0.0,1.0);
-        double V=clamp(m_v/100.0,0.0,1.0);
-
-        // Convert to RGB.
-        if (S) {
-            int i=static_cast<int>(roundToZero(H));
-            double f=H-i;
-
-            double p=V*(1-S);
-            double q=V*(1-S*f);
-            double t=V*(1-S*(1-f));
-
-            switch (i) {
-                default: {
-                    r=V; g=t; b=p;
-                    break;
-                }
-                case 1: {
-                    r=q; g=V; b=p;
-                    break;
-                }
-                case 2: {
-                    r=p; g=V; b=t;
-                    break;
-                }
-                case 3: {
-                    r=p; g=q; b=V;
-                    break;
-                }
-                case 4: {
-                    r=t; g=p; b=V;
-                    break;
-                }
-                case 5: {
-                    r=V; g=p; b=q;
-                    break;
-                }
-            }
-        }
-        else {
-            // Achromatic case (gray), actually hue is undefined!
-            r=g=b=V;
-        }
-    }
-
-    /**
-     * \name Color model access methods
-     */
-    //@{
-
-    /// Returns a constant reference to the hue.
-    double const& getH() const {
-        return m_h;
-    }
-
-    /// Assigns a new \a hue.
-    void setH(double const hue) {
-        m_h=wrap(hue,360.0);
-    }
-
-    /// Returns a constant reference to the saturation.
-    double const& getS() const {
-        return m_s;
-    }
-
-    /// Assigns a new \a saturation.
-    void setS(double const saturation) {
-        m_s=clamp(saturation,0.0,100.0);
-    }
-
-    /// Returns a constant reference to the value.
-    double const& getV() const {
-        return m_v;
-    }
-
-    /// Assigns a new \a value.
-    void setV(double const value) {
-        m_v=clamp(value,0.0,100.0);
-    }
-
-    //@}
-
-  private:
-
-    double m_h; ///< The color's hue in range [0,360[.
-    double m_s; ///< The color's saturation in range [0,100].
-    double m_v; ///< The color's value in range [0,100].
-};
-
-/**
  * An RYB color model representation, see
  * <http://threekings.tk/mirror/ryb_TR.pdf>.
  */
@@ -240,7 +92,7 @@ class ColorModelRYB:public ColorModel
     /// Returns the hue \a h_rgb in the RGB color model for the color given by
     /// the hue \a h_ryb in the RYB color model.
     static void RYBHueToRGBHue(double const h_ryb,double& h_rgb) {
-        ColorModelHSV hsv(h_ryb,100,100);
+        ColorSpaceHSV hsv(h_ryb,100,100);
 
         // Abuse the HSV to RGB conversion: The amount of green for a given hue
         // in RGB matches the amount of yellow for the same hue in RYB.

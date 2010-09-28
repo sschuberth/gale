@@ -5,7 +5,7 @@
     #include <crtdbg.h>
 #endif
 
-#include <gale/math/colormodel.h>
+#include <gale/math/colorspace.h>
 #include <gale/math/random.h>
 #include <gale/math/tuple.h>
 #include <gale/math/vector.h>
@@ -510,7 +510,7 @@ void test_color()
     assert(Col4us::BLUE()==Col4us(Col4d::BLUE()));
 
     Col3ub::Type r,g,b;
-    ColorModelHSV hsv;
+    ColorSpaceHSV hsv;
     Col3ub rgb;
     for (int i=0;i<1000;++i) {
         r=static_cast<Col3ub::Type>(re.random(255));

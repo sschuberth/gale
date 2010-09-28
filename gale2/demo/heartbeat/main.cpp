@@ -1,4 +1,4 @@
-#include <gale/math/colormodel.h>
+#include <gale/math/colorspace.h>
 #include <gale/math/interpolator.h>
 #include <gale/math/random.h>
 #include <gale/wrapgl/defaultwindow.h>
@@ -108,7 +108,7 @@ class DemoWindow:public DefaultWindow
 
             float vr=10.0f;
             float vs=m_rand.random0N(2*vr)-vr;
-            ColorModelHSV hsv(m_base_color);
+            ColorSpaceHSV hsv(m_base_color);
             hsv.setS(hsv.getS()+vs);
             m_hearts[i].color=hsv.getRGB<Col4f>();
         }
