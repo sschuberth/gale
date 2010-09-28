@@ -33,17 +33,18 @@ class TestWindow:public DefaultWindow
             b=m_rand.random01();
             hsv.fromRGB(r,g,b);
 
-            // Converting from HSV to RGB is the same as converting only hue and
-            // then mixing in white reverse proportionally to the saturation and
-            // mixing in black reverse proportionally to the value.
+            // Converting from HSV to RGB color space is the same as converting
+            // only hue to a pure RGB color, and then mixing in white reverse
+            // proportionally to the saturation (producing a tint) and mixing in
+            // black reverse proportionally to the value (producing a shade).
             s=hsv.getS();
             v=hsv.getV();
             hsv.setS(100);
             hsv.setV(100);
 
             hsv.toRGB(rgb_hue_only[0],rgb_hue_only[1],rgb_hue_only[2]);
-            rgb_with_saturation=Col3d::WHITE().mixAdd(rgb_hue_only,s/100.0);
-            rgb=Col3d::BLACK().mixAdd(rgb_with_saturation,v/100.0);
+            rgb_with_saturation=lerp(Col3d::WHITE(),rgb_hue_only,s/100.0);
+            rgb=lerp(Col3d::BLACK(),rgb_with_saturation,v/100.0);
 
             assert(gale::meta::OpCmpEqual::evaluate(r,rgb[0]));
             assert(gale::meta::OpCmpEqual::evaluate(g,rgb[1]));
