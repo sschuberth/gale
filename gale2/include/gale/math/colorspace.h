@@ -28,7 +28,7 @@
 
 /**
  * \file
- * Color space representations
+ * Color space representations, see <http://en.wikipedia.org/wiki/Color_space>.
  */
 
 #include "color.h"
@@ -38,7 +38,7 @@ namespace gale {
 namespace math {
 
 /**
- * Base class for color space representations different than RGB.
+ * Base class for color spaces based on the RGB color model.
  */
 class G_NO_VTABLE ColorSpace
 {
@@ -75,7 +75,8 @@ class G_NO_VTABLE ColorSpace
 };
 
 /**
- * An HSV (also known as HSB) color space representation.
+ * An HSV (also known as HSB) color space representation, see
+ * <http://en.wikipedia.org/wiki/List_of_color_spaces_and_their_uses#HSV>.
  */
 class ColorSpaceHSV:public ColorSpace
 {
