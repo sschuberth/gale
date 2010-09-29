@@ -348,8 +348,11 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
      */
     //@{
 
-    /// Returns the color's complementary color (an alpha channel is ignored),
-    /// see <http://en.wikipedia.org/wiki/Complementary_color>.
+    /// Returns the color's complementary color. As not only hue, but also
+    /// saturation and value are taken into account, different tints or shades
+    /// of the same pure color return different complementary colors. An alpha
+    /// channel is ignored, if present. See
+    /// <http://en.wikipedia.org/wiki/Complementary_color>.
     Color complement() const {
         Color tmp=WHITE()-*this+BLACK();
 
