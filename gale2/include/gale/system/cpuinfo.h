@@ -40,13 +40,13 @@ namespace system {
 
 /**
  * Using the x86 CPUID instruction, this class reports detailed processor
- * capabilities. For details see these (or more recent) links:
+ * capabilities. For details consult these documents:
  *
- * - Intel Processor Identification and the CPUID Instruction
- *   <http://www.intel.com/design/xeon/applnots/241618.htm>
+ * - Intel Processor Identification and the CPUID Instruction, see
+ *   <http://www.intel.com/Assets/PDF/appnote/241618.pdf>.
  *
- * - AMD CPUID Specification
- *   <http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/25481.pdf>
+ * - AMD CPUID Specification, see
+ *   <http://support.amd.com/us/Processor_TechDocs/25481.pdf>.
  */
 class CPUInfo:public global::Singleton<CPUInfo>
 {
