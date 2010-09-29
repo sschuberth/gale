@@ -385,10 +385,10 @@ class TupleBase
     /// Writes tuple values to an output stream.
     friend std::ostream& operator<<(std::ostream& s,C const& t) {
         s << '(';
-        for (int i=0;i<N-1;++i) {
-            s << t[i] << ',';
+        for (int i=0;i<N;++i) {
+            s << (t[i]+0) << ((i<N-1)?',':')');
         }
-        return s << t[N-1] << ')';
+        return s;
     }
 
     //@}
