@@ -48,7 +48,7 @@ namespace wrapgl {
 
 /**
  * This is a bindable OpenGL object implementation for Renderbuffer Objects, see
- * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>
+ * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>.
  */
 class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObject>
 {
@@ -191,7 +191,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
 
 /**
  * This is a bindable OpenGL object implementation for Framebuffer Objects, see
- * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>
+ * <http://www.opengl.org/registry/specs/{ARB,EXT}/framebuffer_object.txt>.
  */
 class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject>
 {
