@@ -8,7 +8,7 @@ project(${name})
 
 # Recursively add the source code files. The specified path is relative to
 # CMAKE_CURRENT_SOURCE_DIR, but the returned paths are absolute.
-file(GLOB_RECURSE sources "*.h" "*.cpp" "../../res/threekings.rc")
+file(GLOB_RECURSE sources "*.h" "*.cpp")
 
 # Append any shader files to the list of source code files.
 file(GLOB_RECURSE shaders "*.glsl")

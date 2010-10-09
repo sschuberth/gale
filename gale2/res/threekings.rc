@@ -1,6 +1,0 @@
-#include <winres.h>
-
-#include "../include/gale/global/resource.h"
-
-LANGUAGE 0, SUBLANG_NEUTRAL
-IDI_MAINICON ICON "threekings.ico"

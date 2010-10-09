@@ -31,7 +31,7 @@
  * Default window and camera navigation implementations
  */
 
-#include "../global/resource.h"
+#include "../global/resources.h"
 
 #include "minimalwindow.h"
 #include "camera.h"
@@ -78,7 +78,7 @@ class DefaultWindow:public MinimalWindow
     ,   m_camera(this)
     ,   m_fullscreen(false)
     {
-        HICON icon=LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_MAINICON));
+        HICON icon=CreateIconFromPointer(threekings_ico);
         SendMessage(windowHandle(),WM_SETICON,ICON_BIG,(LPARAM)icon);
         SendMessage(windowHandle(),WM_SETICON,ICON_SMALL,(LPARAM)icon);
 
