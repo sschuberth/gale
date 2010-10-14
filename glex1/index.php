@@ -154,13 +154,13 @@ else {
             <td style="width: 30%"><hr /></td>
             <td style="text-align: center">
                 <a href="http://validator.w3.org/check?uri=referer">
-                    <img style="display: inline" src="images/w3c-xhtml11.png" alt="Valid XHTML 1.1" />
+                    <img style="display: inline" src="images/valid-xhtml11.png" alt="Valid XHTML 1.1" />
                 </a>
             </td>
             <td style="width: 5%"><hr /></td>
             <td style="text-align: center">
                 <a href="http://jigsaw.w3.org/css-validator/check/referer">
-                    <img style="display: inline" src="images/w3c-css.png" alt="Valid CSS" />
+                    <img style="display: inline" src="images/valid-css.png" alt="Valid CSS" />
                 </a>
             </td>
             <td style="width: 30%"><hr /></td>
