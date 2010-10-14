@@ -151,7 +151,7 @@ else {
         </tr>
         <tr>
             <td><!-- Corner spacer --></td>
-            <td style="width: 35%"><hr /></td>
+            <td style="width: 30%"><hr /></td>
             <td style="text-align: center">
                 <a href="http://validator.w3.org/check?uri=referer">
                     <img style="display: inline" src="images/w3c-xhtml11.png" alt="Valid XHTML 1.1" />
@@ -163,7 +163,7 @@ else {
                     <img style="display: inline" src="images/w3c-css.png" alt="Valid CSS" />
                 </a>
             </td>
-            <td style="width: 35%"><hr /></td>
+            <td style="width: 30%"><hr /></td>
             <td><!-- Corner spacer --></td>
         </tr>
         <tr>
