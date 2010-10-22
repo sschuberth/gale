@@ -20,6 +20,8 @@ elif [ -n "$(curl --version 2> /dev/null)" ]; then
         echo "Updating $i"
         curl --remote-name --remote-time --time-cond $(basename $i) $i
     done
+else
+    echo "Error: Neither Wget nor cURL was found."
 fi
 
 popd > /dev/null
