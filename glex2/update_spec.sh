@@ -17,7 +17,7 @@ elif [ -n "$(curl --version 2> /dev/null)" ]; then
     mkdir spec 2> /dev/null
     cd spec
     for i in $urls; do
-        echo Updating $i
+        echo "Updating $i"
         curl --remote-name --remote-time --time-cond $(basename $i) $i
     done
 fi

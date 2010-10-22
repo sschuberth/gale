@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [[ ($# -ne 1) || (! -d $1) ]]; then
-    echo Usage: $0 \<directory\>
+    echo "Usage: $0 <directory>"
     exit 1
 fi
 
