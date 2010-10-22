@@ -2,7 +2,7 @@
 
 if [ $# -ne 1 -o ! -d $1 ]; then
     echo Usage: $0 \<directory\>
-    exit -1
+    exit 1
 fi
 
 pushd $1 > /dev/null
