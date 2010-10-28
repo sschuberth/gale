@@ -43,7 +43,7 @@ namespace model {
 
 /**
  * A vertex-vertex mesh data structure implementation as described at
- * <http://en.wikipedia.org/wiki/Polygon_mesh#Vertex-Vertex_Meshes>.
+ * <http://en.wikipedia.org/wiki/Polygon_mesh#Vertex-vertex_meshes>.
  */
 struct Mesh
 {
