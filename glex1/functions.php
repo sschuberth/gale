@@ -2,14 +2,6 @@
 
 require_once 'constants.php';
 
-function getFunctionsRevision() {
-    return '$Revision$';
-}
-
-function getFunctionsDate() {
-    return '$Date$';
-}
-
 /*
  * Examples for parsing oddities:
  *

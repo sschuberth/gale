@@ -166,12 +166,6 @@ else {
             <td style="width: 30%"><hr /></td>
             <td><!-- Corner spacer --></td>
         </tr>
-        <tr>
-            <td colspan="7" style="text-align: center; font-size: 8pt">
-                &nbsp;<br />
-                <?= getFunctionsRevision(); ?> &bull; <?= getFunctionsDate(); ?>
-            </td>
-        </tr>
         <?php drawTableBorder('b','white',FALSE,5); ?>
     </table>
 </body>
