@@ -1,0 +1,3 @@
+[submodule "geshi"]
+	path = geshi
+	url = git://repo.or.cz/geshi.git
