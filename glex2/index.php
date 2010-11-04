@@ -212,8 +212,9 @@ else {
         <?php drawTableBorder('t','white',FALSE,5); ?>
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
-                <a href="http://gale.berlios.de/glex2/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a>
-                <br />&nbsp;
+                <a href="http://gale.berlios.de/glex2/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a><br />
+                Source code high-lighting is performed by <a href="http://qbnz.com/highlighter/">GeSHi</a> <?= GESHI_VERSION ?><br />
+                &nbsp;
             </td>
         </tr>
         <tr>
@@ -232,12 +233,6 @@ else {
             </td>
             <td style="width: 30%"><hr /></td>
             <td><!-- Corner spacer --></td>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align: center; font-size: 8pt">
-                &nbsp;<br />
-                Source code high-lighting is performed by <a href="http://qbnz.com/highlighter/">GeSHi</a> <?= GESHI_VERSION ?><br />
-            </td>
         </tr>
         <?php drawTableBorder('b','white',FALSE,5); ?>
     </table>
