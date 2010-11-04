@@ -21,7 +21,7 @@ Tools
   installation instructions in order to make additional packages like PHP
   available in the setup.
 
-  Then install the follwing packages:
+  Then install the following packages:
     * bash
     * coreutils
     * findutils
