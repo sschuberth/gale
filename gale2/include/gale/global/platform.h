@@ -98,7 +98,11 @@
     #include <intrin.h>
 #endif // G_OS_WINDOWS
 
-#include "../system/runtime.h"
+#ifdef GALE_TINY_CODE
+    #include "../system/runtime.h"
+#else
+    #include <new.h>
+#endif
 
 #include <GL/gl.h>
 #include <GL/glu.h>
