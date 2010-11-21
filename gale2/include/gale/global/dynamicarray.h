@@ -396,42 +396,20 @@ class DynamicArray
     /// found and at which \a index. If it was not found, \a index contains the
     /// position where it was expected to be found.
     bool findSorted(T const& item,int& index) const {
-        index=-1;
-
-        // Return with an invalid index if the array is empty.
-        if (m_size<1) {
-            return false;
-        }
+        index=0;
 
         int first=0,last=m_size-1;
 
-        // Use nested intervals to find the item.
-        while (first<last) {
+        // Use binary search to find the item.
+        while (first<=last) {
             index=(first+last)/2;
 
             if (item>m_data[index]) {
-                // Avoid an endless loop due to integer rounding.
-                if (first==index) {
-                    index=last;
-
-                    // Check whether a non-existent item needs to be appended to
-                    // the array.
-                    if (item>m_data[index]) {
-                        ++index;
-                        return false;
-                    }
-
-                    return m_data[index]==item;
-                }
+                ++index;
                 first=index;
             }
             else if (item<m_data[index]) {
-                // Avoid an endless loop due to integer rounding.
-                if (last==index) {
-                    index=first;
-                    return m_data[index]==item;
-                }
-                last=index;
+                last=index-1;
             }
             else {
                 return true;

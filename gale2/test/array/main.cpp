@@ -16,7 +16,7 @@ int __cdecl main()
 
         DynamicArray<int> a;
 
-        assert(!a.findSorted(42,i) && i==-1);
+        assert(!a.findSorted(42,i) && i==0);
 
         a.setSize(5);
         a=1,3,5,7,11;
