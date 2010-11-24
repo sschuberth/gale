@@ -117,7 +117,8 @@ function writeMacroHeader($extension,$procs) {
     if ($debug==2) {
         echo "\n--- BEGIN debug output ---\n";
     }
-    for ($i=0;$i<count($matches_proc);++$i) {
+    $i=0;
+    while ($i<count($matches_proc)) {
         if ($debug==2) {
             for ($k=1;$k<count($matches_proc[$i]);++$k) {
                 echo $matches_proc[$i][$k].'|';
@@ -154,7 +155,10 @@ function writeMacroHeader($extension,$procs) {
         if (!$replaced_type && !$replaced_args) {
             // Note that $i is not an index but a key into the array. This means
             // deleting an entry will not make the following entries "move up".
-            unset($matches_proc[$i]);
+            array_splice($matches_proc,$i,1);
+        }
+        else {
+            ++$i;
         }
     }
     if ($debug==2) {
