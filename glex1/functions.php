@@ -78,30 +78,31 @@ function parseSpecIntoArray($spec,&$struct) {
 }
 
 function writeMacroHeader($extension,$procs) {
+    // Returns TRUE if the resulting string contains at least one data type with a GL prefix.
     function addDataTypePrefix(&$arguments) {
         $patterns=array(
-            "/(^|\W)(boolean)/",
-            "/(^|\W)(byte)/",
-            "/(^|\W)(ubyte)/",
-            "/(^|\W)(char)/",
-            "/(^|\W)(short)/",
-            "/(^|\W)(ushort)/",
-            "/(^|\W)(int)/",
-            "/(^|\W)(uint)/",
-            "/(^|\W)(handle)/",
-            "/(^|\W)(sizei)/",
-            "/(^|\W)(enum)/",
-            "/(^|\W)(bitfield)/",
-            "/(^|\W)(half)/",
-            "/(^|\W)(float)/",
-            "/(^|\W)(clampf)/",
-            "/(^|\W)(double)/",
-            "/(^|\W)(clampd)/",
-            "/(^|\W)(time)/",
-            "/(^|\W)(void)/"
+            "/(^|\W)(GL)?(boolean)/",
+            "/(^|\W)(GL)?(byte)/",
+            "/(^|\W)(GL)?(ubyte)/",
+            "/(^|\W)(GL)?(char)/",
+            "/(^|\W)(GL)?(short)/",
+            "/(^|\W)(GL)?(ushort)/",
+            "/(^|\W)(GL)?(int)/",
+            "/(^|\W)(GL)?(uint)/",
+            "/(^|\W)(GL)?(handle)/",
+            "/(^|\W)(GL)?(sizei)/",
+            "/(^|\W)(GL)?(enum)/",
+            "/(^|\W)(GL)?(bitfield)/",
+            "/(^|\W)(GL)?(half)/",
+            "/(^|\W)(GL)?(float)/",
+            "/(^|\W)(GL)?(clampf)/",
+            "/(^|\W)(GL)?(double)/",
+            "/(^|\W)(GL)?(clampd)/",
+            "/(^|\W)(GL)?(time)/",
+            "/(^|\W)(GL)?(void)/"
         );
-        $result=preg_replace($patterns,"\\1GL\\2",$arguments);
-        if ($result===NULL || $result===$arguments) {
+        $result=preg_replace($patterns,"\\1GL\\3",$arguments);
+        if ($result===NULL) {
             return FALSE;
         }
         $arguments=$result;
