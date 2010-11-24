@@ -36,16 +36,10 @@ if (empty($spec)) {
 parseSpecIntoArray($spec,$struct);
 
 if ($debug==1) {
-    echo "*** debug *** Dumping section headers\n";
-    foreach (array_keys($struct) as $section) {
-        // Dump only the section header.
-        echo $section."\n";
-    }
-}
-else if ($debug==2) {
     // Dump the array containing the file structure if debugging is enabled.
-    echo "*** debug *** Dumping file structure array\n";
+    echo "--- BEGIN debug output ---\n";
     print_r($struct);
+    echo "--- END debug output ---\n";
 }
 
 // Search for the section where new procedures and functions are defined.
@@ -56,19 +50,11 @@ foreach (array_keys($struct) as $section) {
     // "New Procedures, Functions and Structures:"
     if (preg_match('/New\W+Procedures\W+\w*\W*Functions/',$section)>0) {
         $procs=$struct[$section];
-        if ($debug==1) {
-            echo "*** debug *** Dumping procedures and functions section content\n";
-            echo $procs."\n";
-        }
         --$remaining;
     }
 
     if (preg_match('/New\W+Tokens/',$section)>0) {
         $tokens=$struct[$section];
-        if ($debug==1) {
-            echo "*** debug *** Dumping tokens section content\n";
-            echo $tokens."\n";
-        }
         --$remaining;
     }
 
@@ -99,31 +85,31 @@ $extension=GLEX_PREFIX.$struct['Name'];
 $extension=strtok($extension,' ');
 
 if ($cmdline) {
-    echo 'Writing macro header ...';
+    echo 'Writing macro header ... ';
     $p=writeMacroHeader($extension,$procs);
     if (empty($p)) {
-        echo " skipped empty file.\n";
+        echo "skipped empty file.\n";
     }
     else {
-        echo ' saved as "'.$p."\".\n";
+        echo 'saved as "'.$p."\".\n";
     }
 
-    echo 'Writing prototype header ...';
+    echo 'Writing prototype header ... ';
     $h=writePrototypeHeader($extension,$procs,$tokens);
     if (empty($h)) {
-        echo " skipped empty file.\n";
+        echo "skipped empty file.\n";
     }
     else {
-        echo ' saved as "'.$h."\".\n";
+        echo 'saved as "'.$h."\".\n";
     }
 
-    echo 'Writing initialization code ...';
+    echo 'Writing initialization code ... ';
     $c=writeInitializationCode($extension);
     if (empty($c)) {
-        echo " skipped empty file.\n";
+        echo "skipped empty file.\n";
     }
     else {
-        echo ' saved as "'.$c."\".\n";
+        echo 'saved as "'.$c."\".\n";
     }
 
     $g='GLEX_globals.h';

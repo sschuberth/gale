@@ -109,11 +109,22 @@ function writeMacroHeader($extension,$procs) {
     }
 
     global $cmdline;
+    global $debug;
 
     // First, roughly split into the parts outside and inside of the parentheses.
     preg_match_all("/\s*([^\(\)]+)\s*\(([^\(\)]*)\)\s*;?/",$procs,$matches_proc,PREG_SET_ORDER);
 
+    if ($debug==2) {
+        echo "\n--- BEGIN debug output ---\n";
+    }
     for ($i=0;$i<count($matches_proc);++$i) {
+        if ($debug==2) {
+            for ($k=1;$k<count($matches_proc[$i]);++$k) {
+                echo $matches_proc[$i][$k].'|';
+            }
+            echo "\n";
+        }
+
         // Second, separate the return type and procedure name.
         preg_match("/^(.+)(\w+?)$/U",$matches_proc[$i][1],$matches_line);
 
@@ -145,6 +156,9 @@ function writeMacroHeader($extension,$procs) {
             // deleting an entry will not make the following entries "move up".
             unset($matches_proc[$i]);
         }
+    }
+    if ($debug==2) {
+        echo "--- END debug output ---\n";
     }
 
     $type_length_max=0;
@@ -206,10 +220,22 @@ function writeMacroHeader($extension,$procs) {
 
 function writePrototypeHeader($extension,$procs,$tokens) {
     function extractTokensToString($tokens,&$defines) {
+        global $debug;
+
         $name_length_max=0;
         preg_match_all("/(\w+)\s+(0x[0-9a-fA-F]+)/",$tokens,$matches,PREG_SET_ORDER);
 
+        if ($debug==2) {
+            echo "\n--- BEGIN debug output ---\n";
+        }
         for ($i=0;$i<count($matches);++$i) {
+            if ($debug==2) {
+                for ($k=1;$k<count($matches[$i]);++$k) {
+                    echo $matches[$i][$k].'|';
+                }
+                echo "\n";
+            }
+
             $match=&$matches[$i][1];
             if (!preg_match("/^W?GLX?_/",$match)) {
                 $match='GL_'.$match;
@@ -219,6 +245,9 @@ function writePrototypeHeader($extension,$procs,$tokens) {
             if ($name_length>$name_length_max) {
                 $name_length_max=$name_length;
             }
+        }
+        if ($debug==2) {
+            echo "--- END debug output ---\n";
         }
 
         foreach ($matches as $define) {
