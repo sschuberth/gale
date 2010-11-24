@@ -1,10 +1,12 @@
 // http://machinesdontcare.wordpress.com/2008/10/29/subsurface-scatter-shader/
 
+#version 330 compatibility
+
 // Set light-position.
 uniform vec3 LightPosition;
 
-// Varying variables to be sent to Fragment Shader.
-varying vec3 worldNormal, eyeVec, lightVec, vertPos, lightPos;
+// Output variables to the FS.
+out vec3 worldNormal, eyeVec, lightVec, vertPos, lightPos;
 
 void subScatterVS(in vec4 ecVert)
 {
@@ -20,7 +22,7 @@ void main()
 
     vec4 ecPos = gl_ModelViewProjectionMatrix * gl_Vertex;
 
-    // Call function to set varyings for subscatter FS.
+    // Call function to set outputs for subscatter FS.
     subScatterVS(ecPos);
 
     // Transform vertex by modelview and projection matrices.

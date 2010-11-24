@@ -1,3 +1,5 @@
+#version 330 compatibility
+
 uniform ivec2 viewport;
 uniform int segments;
 uniform vec4 color0;

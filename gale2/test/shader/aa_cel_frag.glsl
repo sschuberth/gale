@@ -1,6 +1,9 @@
 // http://prideout.net/blog/?p=22
-varying vec3 EyespaceNormal;
-varying vec3 Diffuse;
+
+#version 330 compatibility
+
+in vec3 EyespaceNormal;
+in vec3 Diffuse;
 
 uniform vec3 LightPosition;
 uniform vec3 AmbientMaterial;

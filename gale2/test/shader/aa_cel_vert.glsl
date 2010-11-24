@@ -1,9 +1,11 @@
 // http://prideout.net/blog/?p=22
 
+#version 330 compatibility
+
 uniform vec3 DiffuseMaterial;
 
-varying vec3 EyespaceNormal;
-varying vec3 Diffuse;
+out vec3 EyespaceNormal;
+out vec3 Diffuse;
 
 void main()
 {

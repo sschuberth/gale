@@ -1,5 +1,7 @@
 // http://machinesdontcare.wordpress.com/2008/10/29/subsurface-scatter-shader/
 
+#version 330 compatibility
+
 // Variables for lighting properties.
 uniform float MaterialThickness;
 uniform vec3 ExtinctionCoefficient;
@@ -9,8 +11,8 @@ uniform vec4 SpecColor;
 uniform float SpecPower;
 uniform float RimScalar;
 
-// Varying variables to be sent to Fragment Shader.
-varying vec3 worldNormal, eyeVec, lightVec, vertPos, lightPos;
+// Input variables from the VS.
+in vec3 worldNormal, eyeVec, lightVec, vertPos, lightPos;
 
 float halfLambert(in vec3 vect1, in vec3 vect2)
 {
