@@ -174,7 +174,7 @@ bool RenderSurface::createDeviceContext(int pixel_format)
     // procedure can only be set after creation, and thus it will never receive
     // a WM_CREATE or initial WM_SIZE message.
     m_window=CreateWindow(
-        "static"      // lpClassName ("edit" is shorter, but has the wrong mouse cursor)
+        "STATIC"      // lpClassName ("EDIT" is shorter, but has the wrong mouse cursor)
     ,   NULL          // lpWindowName
     ,   WS_POPUP      // dwStyle
     ,   0             // x
