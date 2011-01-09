@@ -425,7 +425,7 @@ class HMatrix4
 
     /// Multiplies this matrix from the left to column vector \a v (resulting in
     /// a column vector).
-    Vec multFromLeftTo(Vec const& v) const {
+    Vec mulMatVec(Vec const& v) const {
         // 9 scalar muls/divs, 9 scalar adds/subs (includes translation).
         return Vec(
             c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]
@@ -436,14 +436,14 @@ class HMatrix4
 
     /// Multiplies this matrix from the right to row vector \a v (resulting in a
     /// row vector).
-    Vec multFromRightTo(Vec const& v) const {
+    Vec mulVecMat(Vec const& v) const {
         // 16 scalar muls/divs, 9 scalar adds/subs (includes translation).
-        T v4=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + m_c3w;
-        T s=v4 ? T(1)/v4 : T(1);
+        T w=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + m_c3w;
+        T s=w ? T(1)/w : T(1);
         return Vec(
-            s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2])
-        ,   s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2])
-        ,   s*(v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2])
+            (v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2])*s
+        ,   (v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2])*s
+        ,   (v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2])*s
         );
     }
 
@@ -584,7 +584,7 @@ class HMatrix4
     /// Multiplies matrix \a m from the left to column vector \a v (resulting in
     /// a column vector).
     friend Vec operator*(HMatrix4 const& m,Vec const& v) {
-        return m.multFromLeftTo(v);
+        return m.mulMatVec(v);
     }
 
     /// Returns an orthonormalized copy of matrix \a m.

@@ -297,7 +297,7 @@ class Matrix4
 
     /// Multiplies this matrix from the left to column vector \a v (resulting in
     /// a column vector).
-    Vec multFromLeftTo(Vec const& v) const {
+    Vec mulMatVec(Vec const& v) const {
         // 16 scalar muls/divs, 12 scalar adds/subs.
         return Vec(
             c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0]*v[3]
@@ -309,7 +309,7 @@ class Matrix4
 
     /// Multiplies this matrix from the right to row vector \a v (resulting in a
     /// row vector).
-    Vec multFromRightTo(Vec const& v) const {
+    Vec mulVecMat(Vec const& v) const {
         // 16 scalar muls/divs, 12 scalar adds/subs.
         return Vec(
             v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + v[3]*c0[3]
@@ -321,27 +321,27 @@ class Matrix4
 
     /// Multiplies this matrix from the left to column vector \a v (resulting in
     /// a column vector) using homogeneous coordinates.
-    Vector<3,T> multFromLeftTo(Vector<3,T> const& v) const {
+    Vector<3,T> mulMatVec(Vector<3,T> const& v) const {
         // 16 scalar muls/divs, 12 scalar adds/subs.
-        T v4 = c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3];
-        T  s = v4 ? T(1)/v4 : T(1);
+        T w=c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3];
+        T s=w ? T(1)/w : T(1);
         return Vec(
-            s*(c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0])
-        ,   s*(c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1])
-        ,   s*(c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2])
+            (c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0])*s
+        ,   (c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1])*s
+        ,   (c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2])*s
         );
     }
 
     /// Multiplies this matrix from the right to row vector \a v (resulting in a
     /// row vector) using homogeneous coordinates.
-    Vector<3,T> multFromRightTo(Vector<3,T> const& v) const {
+    Vector<3,T> mulVecMat(Vector<3,T> const& v) const {
         // 16 scalar muls/divs, 12 scalar adds/subs.
-        T v4 = v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + c3[3];
-        T  s = v4 ? T(1)/v4 : T(1);
+        T w=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + c3[3];
+        T s=w ? T(1)/w : T(1);
         return Vec(
-            s*(v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + c0[3])
-        ,   s*(v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + c1[3])
-        ,   s*(v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2] + c2[3])
+            (v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + c0[3])*s
+        ,   (v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + c1[3])*s
+        ,   (v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2] + c2[3])*s
         );
     }
 
@@ -462,13 +462,13 @@ class Matrix4
     /// Multiplies matrix \a m from the left to column vector \a v (resulting in
     /// a column vector).
     friend Vec operator*(Matrix4 const& m,Vec const& v) {
-        return m.multFromLeftTo(v);
+        return m.mulMatVec(v);
     }
 
     /// Multiplies matrix \a m from the left to column vector \a v (resulting in
     /// a column vector) using homogeneous coordinates.
     friend Vector<3,T> operator*(Matrix4 const& m,Vector<3,T> const& v) {
-        return m.multFromLeftTo(v);
+        return m.mulMatVec(v);
     }
 
     /// Returns the inverse of matrix \a m.
