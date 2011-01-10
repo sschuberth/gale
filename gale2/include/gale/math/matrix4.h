@@ -329,7 +329,7 @@ class Matrix4
         // 16 scalar muls/divs, 12 scalar adds/subs.
         T w=c0[3]*v[0] + c1[3]*v[1] + c2[3]*v[2] + c3[3];
         T s=w ? T(1)/w : T(1);
-        return Vec(
+        return Vector<3,T>(
             (c0[0]*v[0] + c1[0]*v[1] + c2[0]*v[2] + c3[0])*s
         ,   (c0[1]*v[0] + c1[1]*v[1] + c2[1]*v[2] + c3[1])*s
         ,   (c0[2]*v[0] + c1[2]*v[1] + c2[2]*v[2] + c3[2])*s
@@ -342,7 +342,7 @@ class Matrix4
         // 16 scalar muls/divs, 12 scalar adds/subs.
         T w=v[0]*c3[0] + v[1]*c3[1] + v[2]*c3[2] + c3[3];
         T s=w ? T(1)/w : T(1);
-        return Vec(
+        return Vector<3,T>(
             (v[0]*c0[0] + v[1]*c0[1] + v[2]*c0[2] + c0[3])*s
         ,   (v[0]*c1[0] + v[1]*c1[1] + v[2]*c1[2] + c1[3])*s
         ,   (v[0]*c2[0] + v[1]*c2[1] + v[2]*c2[2] + c2[3])*s
