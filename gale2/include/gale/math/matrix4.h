@@ -179,6 +179,10 @@ class Matrix4
     Matrix4(Vec const& c0,Vec const& c1,Vec const& c2,Vec const& c3)
     :   c0(c0),c1(c1),c2(c2),c3(c3) {}
 
+    /// Creates a matrix from multiplying column vector \a c with row vector \a r.
+    Matrix4(Vec const& c,Vec const& r)
+    :   c0(c*r[0]),c1(c*r[1]),c2(c*r[2]),c3(c*r[3]) {}
+
     //@}
 
     /**
