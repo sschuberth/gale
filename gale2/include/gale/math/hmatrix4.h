@@ -143,20 +143,6 @@ class HMatrix4
             );
         }
 
-        /// Creates a matrix to project a point in space onto the plane
-        /// specified by its normalized \a normal.
-        static HMatrix4 Projection(Vec const& normal) {
-            T a=normal.getX(),b=normal.getY(),c=normal.getZ();
-            T aa=a*a,bb=b*b,cc=c*c;
-
-            return HMatrix4(
-                Vec(bb+cc,  -a*b,  -a*c)
-            ,   Vec( -b*a, aa+cc,  -b*c)
-            ,   Vec( -c*a,  -c*b, aa+bb)
-            ,   Vec::ZERO()
-            );
-        }
-
         /// Creates a matrix that makes a camera look at \a target from
         /// \a position, with \a up facing upwards (if it is collinear to the
         /// view direction, another arbitrary vector is used).

@@ -62,11 +62,10 @@ int __cdecl main()
     assert(a==b/2);
     assert(b-a==a);
 
-    HMat4f projection=HMat4f::Factory::Projection(Vec3f::X());
-    assert(projection*Vec3f::X()==Vec3f::ZERO());
-    assert(projection*Vec3f::Y()==Vec3f::Y());
-    assert(projection*Vec3f::Z()==Vec3f::Z());
-    assert(projection*Vec3f(1,1,1)==Vec3f(0,1,1));
+    Mat4f projection=Mat4f::Factory::Projection(Vec3f::Y(),Vec3f(-2,2,0));
+    assert(projection*Vec3f(-1,1,0)==Vec3f::ZERO());
+    assert(projection*Vec3f(0,1,0)==Vec3f(2,0,0));
+    assert(projection*Vec3f(-2,1,0)==Vec3f(-2,0,0));
 
     axis=Vec3d::random(r);
     angle=r.random0ExclN(Constd::PI()*2);

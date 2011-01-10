@@ -127,6 +127,19 @@ class Matrix4
             ,   Vec(0.0, 0.0, 2.0*p/d,  0.0)
             );
         }
+
+        /// Creates a generic projection matrix onto the plane given by normal
+        /// \a n as seen from viewpoint \a v. If \a p is true, the projection is
+        /// perspective, else it is orthographic. For details, see
+        /// http://www.cs.iastate.edu/~cs577/handouts/projection.pdf
+        static Matrix4 Projection(Vector<3,T> const& n,Vector<3,T> const& v,bool p=true) {
+            Vec n4(n.getX(),n.getY(),n.getZ(),0);
+            Vec v4(v.getX(),v.getY(),v.getZ(),static_cast<T>(p));
+
+            Matrix4 m(v4,n4);
+
+            return m-n4.dot(v4)*IDENTITY();
+        }
     };
 
     /**
