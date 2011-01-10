@@ -68,10 +68,10 @@ class Matrix4
     /// %Factory methods to easily create commonly used matrices.
     struct Factory
     {
-        /// Creates an orthographic projection matrix with the points in the
-        /// near clipping at \a clip_left, \a clip_bottom and at \a clip_right,
-        /// \a clip_top being mapped to the lower left and upper right window
-        /// corners respectively.
+        /// Creates an orthographic projection matrix. The intersection points
+        /// of \a clip_left / \a clip_bottom and \a clip_right / \a clip_top on
+        /// the near clipping plane are mapped to the lower left and upper right
+        /// viewport corners respectively.
         static Matrix4 OrthographicProjection(
             double const clip_left
         ,   double const clip_right
