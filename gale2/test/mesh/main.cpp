@@ -71,13 +71,13 @@ class TestWindow:public DefaultWindow
 
         (*m_meshes)[5][0][0].init(Mesh::Factory::MoebiusStrip(1.2f,1.0f,0.4f,0.1f,20,10));
 
-        SuperFormula sp_r1(7.0f,0.2f,1.7f,1.7f);
-        SuperFormula sp_r2(7.0f,0.2f,1.7f,1.7f);
-        (*m_meshes)[6][0][0].init(Mesh::Factory::SphericalProduct(sp_r1,60,sp_r2,30));
+        SuperFormula sp_long(7.0f,0.2f,1.7f,1.7f);
+        SuperFormula sp_lat(7.0f,0.2f,1.7f,1.7f);
+        (*m_meshes)[6][0][0].init(Mesh::Factory::SphericalProduct(sp_long,60,sp_lat,30));
 
-        SuperFormula tp_r1(6.0f,-0.68f,22.77f,0.75f,1.99f,0.64f);
-        SuperFormula tp_r2(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
-        (*m_meshes)[7][0][0].init(Mesh::Factory::ToroidalProduct(tp_r1,40,tp_r2,20));
+        SuperFormula tp_long(6.0f,-0.68f,22.77f,0.75f,1.99f,0.64f);
+        SuperFormula tp_lat(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
+        (*m_meshes)[7][0][0].init(Mesh::Factory::ToroidalProduct(tp_long,40,tp_lat,20));
 
         (*m_meshes)[8][0][0].init(Mesh::Factory::Shell(20,80,0.4f,0.2f,2.5f,3));
 

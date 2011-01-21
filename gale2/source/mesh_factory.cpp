@@ -425,26 +425,26 @@ struct ProductFormula:public FormulaR2R3
 
 #pragma warning(default:4512)
 
-Mesh* Mesh::Factory::SphericalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
+Mesh* Mesh::Factory::SphericalProduct(Formula const& long_form,int const long_segs,Formula const& lat_form,int const lat_segs)
 {
     Formula fm;
     ConstantFormula fa(0);
 
-    ProductFormula eval(r1,r2,fm,fa);
+    ProductFormula eval(long_form,lat_form,fm,fa);
 
     // Longitude: -PI <= theta <= PI, Latitude: -PI/2 <= phi <= PI/2.
-    return GridMapper(eval,-Constf::PI(),Constf::PI(),r1_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs,true);
+    return GridMapper(eval,-Constf::PI(),Constf::PI(),long_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,lat_segs,true);
 }
 
-Mesh* Mesh::Factory::ToroidalProduct(Formula const& r1,int const r1_segs,Formula const& r2,int const r2_segs)
+Mesh* Mesh::Factory::ToroidalProduct(Formula const& long_form,int const long_segs,Formula const& lat_form,int const lat_segs)
 {
     ConstantFormula fm(1);
     Formula fa;
 
-    ProductFormula eval(r1,r2,fm,fa);
+    ProductFormula eval(long_form,lat_form,fm,fa);
 
     // Longitude: -PI <= theta <= PI, Latitude: -PI/2 <= phi <= PI/2.
-    return GridMapper(eval,-Constf::PI(),Constf::PI(),r1_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,r2_segs,true);
+    return GridMapper(eval,-Constf::PI(),Constf::PI(),long_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,lat_segs,true);
 }
 
 // Warning C4701: Potentially uninitialized local variable 'mn' used.
