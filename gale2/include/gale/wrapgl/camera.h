@@ -289,6 +289,16 @@ class Camera
      */
     //@{
 
+    /// Transforms the camera so that it looks along the negative z-axis with
+    /// the y-axis facing up and the given bounding box fitting into the frustum.
+    void align(model::AABB const& box) {
+        float cath=math::max(box.getWidth(),box.getHeight())*0.5f;
+        float dist=cath/static_cast<float>(tan(m_fov*0.5))+box.getDepth()*0.5f;
+        math::Vec3f center=box.center();
+        math::HMat4f mat=math::HMat4f::Factory::LookAt(center,center+math::Vec3f(0,0,dist),math::Vec3f::Y());
+        setModelview(mat);
+    }
+
     /// Sets the camera's location to the given \a position.
     math::Vec3f const& getPosition() const {
         return m_modelview.getPositionVector();
