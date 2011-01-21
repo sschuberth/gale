@@ -311,6 +311,13 @@ class TestWindow:public DefaultWindow
                 break;
             }
 
+            case ' ': {
+                 int mode=(m_step==0)?0:m_mode;
+                MeshCache const& mc=(*m_meshes)[m_base][mode][m_step];
+                m_camera.align(mc.mesh_prep.box);
+                break;
+            }
+
             default: {
                 DefaultWindow::onKeyEvent(key);
 
@@ -402,29 +409,30 @@ int __cdecl main()
     puts("Base meshes");
     puts("-----------");
     for (int b=0;b<8;++b) {
-        printf("%d: %s\n",b+1,BASE_NAMES[b]);
+        printf("'%d': %s\n",b+1,BASE_NAMES[b]);
     }
     puts("\n");
     puts("Sub-division modes");
     puts("------------------");
-    puts("p: Polyhedral");
-    puts("b: Butterfly");
-    puts("l: Loop");
-    puts("s: Sqrt3");
-    puts("c: Catmull-Clark");
-    puts("d: Doo-Sabin");
+    puts("'p': Polyhedral");
+    puts("'b': Butterfly");
+    puts("'l': Loop");
+    puts("'s': Sqrt3");
+    puts("'c': Catmull-Clark");
+    puts("'d': Doo-Sabin");
     puts("\n");
     puts("Sub-division steps");
     puts("------------------");
-    puts("+: Increase");
-    puts("-: Decrease");
+    puts("'+': Increase");
+    puts("'-': Decrease");
     puts("\n");
     puts("Display toggles");
     puts("---------------");
-    puts("x: Bounding box");
-    puts("n: Vertex normals");
-    puts("r: Lighting");
-    puts("f: Face / frustum culling");
+    puts("'x': Bounding box");
+    puts("'n': Vertex normals");
+    puts("'r': Lighting");
+    puts("'f': Face / frustum culling");
+    puts("' ': Align camera");
     puts("\n");
 #endif
 
