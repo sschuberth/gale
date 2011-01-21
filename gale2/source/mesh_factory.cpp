@@ -433,7 +433,7 @@ Mesh* Mesh::Factory::SphericalProduct(Formula const& long_form,int const long_se
     ProductFormula eval(long_form,lat_form,fm,fa);
 
     // Longitude: -PI <= theta <= PI, Latitude: -PI/2 <= phi <= PI/2.
-    return GridMapper(eval,-Constf::PI(),Constf::PI(),long_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,lat_segs,true);
+    return GridMapper(eval,-Constf::PI(),Constf::PI(),long_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,lat_segs,false);
 }
 
 Mesh* Mesh::Factory::ToroidalProduct(Formula const& long_form,int const long_segs,Formula const& lat_form,int const lat_segs)
