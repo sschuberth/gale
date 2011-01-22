@@ -403,14 +403,19 @@ struct ProductFormula:public FormulaR2R3
     /// Evaluates the functional product for the given angles theta and phi
     /// encoded as the first and second components of \a v.
     Vec3f operator()(Vec2f const& v) const {
-        float r1t=r1(v.getX()),r2p=r2(v.getY());
-        float ct=cos(v.getX()),cp=cos(v.getY());
-        float st=sin(v.getX()),sp=sin(v.getY());
+        float const& theta=v.getX();
+        float const& phi=v.getY();
+
+        float r1t=r1(theta);
+        float r2p=r2(phi);
+
+        float st=sin(theta),ct=cos(theta);
+        float sp=sin(phi),cp=cos(phi);
+
         float r2pcp=r2p*cp;
 
         float x=r1t*ct * fm(r2pcp) + fa(r2pcp*ct);
         float y=r1t*st * fm(r2pcp) + fa(r2pcp*st);
-
         float z=r2p*sp;
 
         return Vec3f(x,y,z);
