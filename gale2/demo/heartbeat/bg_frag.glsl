@@ -1,5 +1,5 @@
 uniform ivec2 viewport;
-uniform int sections;
+uniform int segments;
 uniform vec4 color0;
 uniform vec4 color1;
 
@@ -11,8 +11,8 @@ void main()
     // Calculate the angle in range [0,360[.
     float angle=degrees(atan(cath.y,cath.x))+180.0;
 
-    // Calculate the section we are in.
-    float section=floor(angle/360.0*float(sections));
+    // Calculate the segment we are in.
+    float segment=floor(angle/360.0*float(segments));
 
-    gl_FragColor=mix(color0,color1,mod(section,2.0));
+    gl_FragColor=mix(color0,color1,mod(segment,2.0));
 }

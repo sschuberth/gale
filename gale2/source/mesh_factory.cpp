@@ -316,15 +316,15 @@ Mesh* Mesh::Factory::MoebiusStrip(float const rrw,float const rrh,float const rt
     return Extruder(path,contour,true,&rotation);
 }
 
-Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const r1,float const r2,float const h,int const n)
+Mesh* Mesh::Factory::Shell(float const rs,float const rt,int const ss,int const st,float const h,int const n)
 {
 // Warning C4512: Assignment operator could not be generated.
 #pragma warning(disable:4512)
 
     struct Formula:public FormulaR2R3
     {
-        Formula(float const r1,float const r2,float const h,int const n)
-        :   a(r1),b(h),c(r2)
+        Formula(float const rt,float const rs,float const h,int const n)
+        :   a(rt),b(h),c(rs)
         ,   n(n)
         {}
 
@@ -354,9 +354,9 @@ Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const
 
 #pragma warning(default:4512)
 
-    Formula f(r1,r2,h,n);
+    Formula f(rt,rs,h,n);
 
-    return GridMapper(f,0,2*Constf::PI(),s_sections,true,0,2*Constf::PI(),t_sections,false);
+    return GridMapper(f,0,2*Constf::PI(),st,true,0,2*Constf::PI(),ss,false);
 }
 
 // Warning C4512: Assignment operator could not be generated.
@@ -635,23 +635,23 @@ Mesh* Mesh::Factory::GridMapper(
     FormulaR2R3 const& eval
 ,   float const s_min
 ,   float const s_max
-,   int const s_sections
+,   int const s_segs
 ,   bool const s_closed
 ,   float const t_min
 ,   float const t_max
-,   int const t_sections
+,   int const t_segs
 ,   bool const t_closed
 )
 {
     // Perform some sanity checks.
-    if (s_sections<3 || t_sections<3) {
+    if (s_segs<3 || t_segs<3) {
         return NULL;
     }
 
     // If the grid is not closed, start and end vertices cannot be shared, and
     // we need one more set of coordinates.
-    int s_coords=s_sections+static_cast<int>(!s_closed);
-    int t_coords=t_sections+static_cast<int>(!t_closed);
+    int s_coords=s_segs+static_cast<int>(!s_closed);
+    int t_coords=t_segs+static_cast<int>(!t_closed);
 
     // Create an empty mesh with the required number of vertices.
     Mesh* m=new Mesh(s_coords*t_coords);
@@ -662,8 +662,8 @@ Mesh* Mesh::Factory::GridMapper(
     // Index of the vertex currently being calculated.
     int vi=0;
 
-    float s_delta=(s_max-s_min)/s_sections;
-    float t_delta=(t_max-t_min)/t_sections;
+    float s_delta=(s_max-s_min)/s_segs;
+    float t_delta=(t_max-t_min)/t_segs;
 
     for (int s=0;s<s_coords;++s) {
         st.setX(s_min+s*s_delta);

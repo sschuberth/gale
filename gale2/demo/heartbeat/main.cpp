@@ -189,7 +189,7 @@ class DemoWindow:public DefaultWindow
         m_bg_prog.bind();
 
         // Fragment shader uniforms.
-        l=glGetUniformLocation(m_bg_prog.handle(),"sections");
+        l=glGetUniformLocation(m_bg_prog.handle(),"segments");
         glUniform1i(l,50);
         G_ASSERT_OPENGL
 

@@ -79,7 +79,7 @@ class TestWindow:public DefaultWindow
         SuperFormula tp_lat(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
         (*m_meshes)[7][0][0].init(Mesh::Factory::ToroidalMapper(tp_long,40,tp_lat,20));
 
-        (*m_meshes)[8][0][0].init(Mesh::Factory::Shell(20,80,0.4f,0.2f,2.5f,3));
+        (*m_meshes)[8][0][0].init(Mesh::Factory::Shell(0.2f,0.4f,80,20,2.5f,3));
 
 #ifndef GALE_TINY_CODE
         for (int b=0;b<8;++b) {
