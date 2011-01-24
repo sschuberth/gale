@@ -811,7 +811,7 @@ void Mesh::Factory::populateNeighborhood(Mesh* const mesh,float distance,int con
 
                 // Get the oriented angle between the neighbors in the plane.
                 double oa=up.orientedAngle(vp,r)*Constd::RAD_TO_DEG();
-                n=roundToEven(oa/(360.0/valence));
+                n=static_cast<int>(roundToEven(oa/(360.0/valence)));
             }
 
             // Store the neighbor's vertex index at the calculated position.
