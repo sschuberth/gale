@@ -255,33 +255,33 @@ Mesh* Mesh::Factory::Sphere(float const r,int const steps)
     return m;
 }
 
-Mesh* Mesh::Factory::Torus(float const r1,float const r2,int const r1_segs,int const r2_segs)
+Mesh* Mesh::Factory::Torus(float const rr,float const rt,int const sr,int const st)
 {
     // Calculate points on the path.
     VectorArray path;
-    Shape::Ellipse(path,r1_segs,r1,r1);
+    Shape::Ellipse(path,sr,rr,rr);
 
     // Calculate points on the contour.
     VectorArray contour;
-    Shape::Ellipse(contour,r2_segs,r2,r2);
+    Shape::Ellipse(contour,st,rt,rt);
 
     // Extrude the contour along the path.
     return Extruder(path,contour);
 }
 
-Mesh* Mesh::Factory::TorusKnot(float const rk,float const rt,int const sp,int const sc,int const p,int const q,float const w,float const h)
+Mesh* Mesh::Factory::TorusKnot(float const rk,float const rt,int const sk,int const st,int const p,int const q,float const w,float const h)
 {
     // Calculate points on the path.
-    VectorArray path(sp);
-    for (int i=0;i<sp;++i) {
-        float angle=2*Constf::PI()/sp*i;
+    VectorArray path(sk);
+    for (int i=0;i<sk;++i) {
+        float angle=2*Constf::PI()/sk*i;
 
         // Calculate the cylindrical coordinates.
         float theta=angle*q;
         float r=rk+w*cos(theta);
         float z=h*sin(theta);
 
-        // Convert to cartesian coordinates.
+        // Convert to Cartesian coordinates.
         float phi=angle*p;
         float x=r*cos(phi);
         float y=r*sin(phi);
@@ -291,25 +291,25 @@ Mesh* Mesh::Factory::TorusKnot(float const rk,float const rt,int const sp,int co
 
     // Calculate points on the contour.
     VectorArray contour;
-    Shape::Ellipse(contour,sc,rt,rt);
+    Shape::Ellipse(contour,st,rt,rt);
 
     // Extrude the contour along the path.
     return Extruder(path,contour);
 }
 
-Mesh* Mesh::Factory::MoebiusStrip(float const r1w,float const r1h,float const r2w,float const r2h,int const r1_segs,int const r2_segs)
+Mesh* Mesh::Factory::MoebiusStrip(float const rrw,float const rrh,float const rtw,float const rth,int const sr,int const st)
 {
     // Calculate points on the path.
     VectorArray path;
-    Shape::Ellipse(path,r1_segs,r1w,r1h);
+    Shape::Ellipse(path,sr,rrw,rrh);
 
     // Calculate points on the contour.
     VectorArray contour;
-    Shape::Ellipse(contour,r2_segs,r2w,r2h);
+    Shape::Ellipse(contour,st,rtw,rth);
 
-    MatrixArray rotation(r1_segs);
-    for (int i=0;i<r1_segs;++i) {
-        rotation[i]=HMat4f::Factory::RotationZ(Constf::PI()/r1_segs*i);
+    MatrixArray rotation(sr);
+    for (int i=0;i<sr;++i) {
+        rotation[i]=HMat4f::Factory::RotationZ(Constf::PI()/sr*i);
     }
 
     // Extrude the contour along the path.
