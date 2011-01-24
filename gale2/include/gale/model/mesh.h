@@ -143,11 +143,6 @@ struct Mesh
          */
         //@{
 
-        /// Generates an apple consisting of \a s_sections pieces of longitude
-        /// and \a t_section pieces of latitude, for details see
-        /// <http://local.wasp.uwa.edu.au/~pbourke/geometry/apple/>.
-        static Mesh* Apple(int const s_sections,int const t_sections);
-
         /// Generates a shell consisting of \a s_sections pieces around the
         /// opening and \a t_section pieces along the side. \a r1 is the radius
         /// of the opening, \a r2 the radius of the inner circle. The height

@@ -316,32 +316,6 @@ Mesh* Mesh::Factory::MoebiusStrip(float const rrw,float const rrh,float const rt
     return Extruder(path,contour,true,&rotation);
 }
 
-Mesh* Mesh::Factory::Apple(int const s_sections,int const t_sections)
-{
-    struct Formula:FormulaR2R3
-    {
-        Vec3f operator()(Vec2f const& w) const {
-            float const& u=w.getX();
-            float const& v=w.getY();
-
-            float const cv=cos(v);
-            float const sv=sin(v);
-
-            float const f=(4.0f+3.8f*cv);
-
-            return Vec3f(
-                cos(u)*f
-            ,   sin(u)*f
-            ,   (cv+sv-1.0f)*(1.0f+sv)*log(1.0f-Constf::PI()*v/10.0f)+7.5f*sv
-            );
-        }
-    };
-
-    Formula f;
-
-    return GridMapper(f,0,2*Constf::PI(),s_sections,true,-Constf::PI(),Constf::PI(),t_sections,true);
-}
-
 Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const r1,float const r2,float const h,int const n)
 {
 // Warning C4512: Assignment operator could not be generated.
