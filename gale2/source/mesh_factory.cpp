@@ -389,7 +389,7 @@ Mesh* Mesh::Factory::Shell(int const s_sections,int const t_sections,float const
 #pragma warning(disable:4512)
 
 /**
- * Helper formula to combine the spherical and toroidal product into a single formula.
+ * Generalized formula for calculating the spherical or toroidal product.
  */
 struct ProductFormula:public FormulaR2R3
 {
@@ -436,8 +436,9 @@ struct ProductFormula:public FormulaR2R3
 
 #pragma warning(default:4512)
 
-Mesh* Mesh::Factory::SphericalProduct(Formula const& long_form,int const long_segs,Formula const& lat_form,int const lat_segs)
+Mesh* Mesh::Factory::SphericalMapper(Formula const& long_form,int const long_segs,Formula const& lat_form,int const lat_segs)
 {
+    // Set up the spherical product formula.
     Formula fm;
     ConstantFormula fa(0);
 
@@ -447,8 +448,9 @@ Mesh* Mesh::Factory::SphericalProduct(Formula const& long_form,int const long_se
     return GridMapper(eval,-Constf::PI(),Constf::PI(),long_segs,true,-Constf::PI()*0.5f,Constf::PI()*0.5f,lat_segs,false);
 }
 
-Mesh* Mesh::Factory::ToroidalProduct(Formula const& long_form,int const long_segs,Formula const& lat_form,int const lat_segs)
+Mesh* Mesh::Factory::ToroidalMapper(Formula const& long_form,int const long_segs,Formula const& lat_form,int const lat_segs)
 {
+    // Set up the toroidal product formula.
     ConstantFormula fm(1);
     Formula fa;
 

@@ -167,12 +167,12 @@ struct Mesh
         /// Generates a mesh's surface by calculating the spherical product of
         /// the formulas \a long_form and \a lat_form, evaluated at \a long_segs
         /// and \a lat_segs samples along the longitude and latitude, respectively.
-        static Mesh* SphericalProduct(math::Formula const& long_form,int const long_segs,math::Formula const& lat_form,int const lat_segs);
+        static Mesh* SphericalMapper(math::Formula const& long_form,int const long_segs,math::Formula const& lat_form,int const lat_segs);
 
         /// Generates a mesh's surface by calculating the toroidal product of
         /// the formulas \a long_form and \a lat_form, evaluated at \a long_segs
         /// and \a lat_segs samples along the longitude and latitude, respectively.
-        static Mesh* ToroidalProduct(math::Formula const& long_form,int const long_segs,math::Formula const& lat_form,int const lat_segs);
+        static Mesh* ToroidalMapper(math::Formula const& long_form,int const long_segs,math::Formula const& lat_form,int const lat_segs);
 
         //@}
 
