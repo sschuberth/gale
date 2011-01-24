@@ -395,9 +395,12 @@ struct ProductFormula:public FormulaR2R3
 {
     /// Initializes with the product formulas \a r1 and \a r2. \a fm and \a fa
     /// define the multiplicative and additive terms for the product calculation.
-    ProductFormula(Formula const& r1,Formula const& r2,Formula const& fm,Formula const& fa)
+    /// The optional factors \a s1 and \a s2 scale r1 and r2 respectively, which
+    /// is useful in toroidal mapping to alter the ring and tube radii.
+    ProductFormula(Formula const& r1,Formula const& r2,Formula const& fm,Formula const& fa,float s1=1.0f,float s2=1.0f)
     :   r1(r1),r2(r2)
     ,   fm(fm),fa(fa)
+    ,   s1(s1),s2(s2)
     {}
 
     /// Evaluates the functional product for the given angles theta and phi
@@ -406,8 +409,8 @@ struct ProductFormula:public FormulaR2R3
         float const& theta=v.getX();
         float const& phi=v.getY();
 
-        float r1t=r1(theta);
-        float r2p=r2(phi);
+        float r1t=r1(theta)*s1;
+        float r2p=r2(phi)*s2;
 
         float st=sin(theta),ct=cos(theta);
         float sp=sin(phi),cp=cos(phi);
@@ -426,6 +429,9 @@ struct ProductFormula:public FormulaR2R3
 
     Formula const& fm; ///< Multiplicative term formula.
     Formula const& fa; ///< Additive term formula.
+
+    float s1; ///< Scale factor for the first product formula.
+    float s2; ///< Scale factor for the second product formula.
 };
 
 #pragma warning(default:4512)
@@ -446,7 +452,7 @@ Mesh* Mesh::Factory::ToroidalProduct(Formula const& long_form,int const long_seg
     ConstantFormula fm(1);
     Formula fa;
 
-    ProductFormula eval(long_form,lat_form,fm,fa);
+    ProductFormula eval(long_form,lat_form,fm,fa,2.0f);
 
     // Longitude: -PI <= theta <= PI, Latitude: -PI <= phi <= PI.
     return GridMapper(eval,-Constf::PI(),Constf::PI(),long_segs,true,-Constf::PI(),Constf::PI(),lat_segs,true);
