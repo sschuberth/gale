@@ -156,6 +156,8 @@ struct Mesh
          * \name Product meshes
          * Methods based on multiplying formulas to yield a 3D composite, see
          * e.g. <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape3d/>.
+         * On Paul Bourke's site, "SuperShape 1" is the longitudinal shape, and
+         * "SuperShape 2" is the latitudinal shape.
          */
         //@{
 
