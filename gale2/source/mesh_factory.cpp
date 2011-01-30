@@ -431,7 +431,7 @@ Mesh* Mesh::Factory::ToroidalMapper(Formula const& long_form,int const long_segs
     ProductFormula eval(long_form,lat_form,fm,fa,2.0f);
 
     // Longitude: -PI <= theta <= PI, Latitude: -PI <= phi <= PI.
-    return GridMapper(eval,-Constf::PI(),Constf::PI(),long_segs,true,-Constf::PI(),Constf::PI(),lat_segs,true);
+    return GridMapper(eval,-Constf::PI(),Constf::PI(),long_segs,true,0,2*Constf::PI(),lat_segs,true);
 }
 
 // Warning C4701: Potentially uninitialized local variable 'mn' used.

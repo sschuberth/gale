@@ -75,9 +75,11 @@ class TestWindow:public DefaultWindow
         SuperFormula sp_lat(7.0f,0.2f,1.7f,1.7f);
         (*m_meshes)[6][0][0].init(Mesh::Factory::SphericalMapper(sp_long,60,sp_lat,30));
 
-        SuperFormula tp_long(6.0f,-0.68f,22.77f,0.75f,1.99f,0.64f);
-        SuperFormula tp_lat(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
-        (*m_meshes)[7][0][0].init(Mesh::Factory::ToroidalMapper(tp_long,40,tp_lat,20));
+        //SuperFormula tp_long(6.0f,-0.68f,22.77f,0.75f,1.99f,0.64f);
+        //SuperFormula tp_lat(3.0f,15.24f,0.35f,49.59f,1.05f,0.28f);
+        SuperFormula tp_long(6.0f,1.0f,1.0f,1.0f);
+        SuperFormula tp_lat(4.0f,1.0f,1.0f,1.0f);
+        (*m_meshes)[7][0][0].init(Mesh::Factory::ToroidalMapper(tp_long,120,tp_lat,60));
 
         (*m_meshes)[8][0][0].init(Mesh::Factory::Shell(0.2f,0.4f,80,20,2.5f,3));
 
