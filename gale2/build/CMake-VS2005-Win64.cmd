@@ -1,6 +1,6 @@
 @echo off
 
-call opengl-parse.cmd %1
+call opengl-parse.cmd
 
 : (Re-)create an empty output directory.
 rmdir /s /q VS2005-Win64 2> nul

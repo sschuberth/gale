@@ -15,19 +15,8 @@ Windows
 Tools
 -----
 
-- Cygwin (http://www.cygwin.com/)
-
-  Please follow the Cygwin Ports (http://sourceware.org/cygwinports/)
-  installation instructions in order to make additional packages like PHP
-  available in the setup.
-
-  Then install the following packages:
-    * bash
-    * coreutils
-    * findutils
-    * php
-    * sed
-    * wget
+- msysGit, that is "Git for Windows" (http://msysgit.googlecode.com/)
+- PHP, needs to be in PATH (http://www.php.net/)
 
 Compiler
 --------
