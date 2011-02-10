@@ -42,7 +42,7 @@ function writeFunctionInlineFile($table,$api) {
         }
     }
     else {
-        writeFuncsForAPI($prefix,$table[$api],$api,$contents);
+        writeFuncsForAPI($prefix,@$table[$api],$api,$contents);
     }
 
     if (!empty($contents)) {
@@ -137,7 +137,7 @@ function writeEnumHeaderFile($table,$api,$hasfuncs) {
         }
     }
     else {
-        writeEnumsForAPI($table[$api],$api,$contents);
+        writeEnumsForAPI(@$table[$api],$api,$contents);
     }
 
     if ($hasfuncs) {

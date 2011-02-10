@@ -96,13 +96,13 @@ function parseEnumSpec($file,&$table) {
         }
 
         // If $value is an extension name, we get its defines, else return.
-        $defines=$table[$value];
+        $defines=@$table[$value];
         if (empty($defines)) {
             return;
         }
 
         // We are done if we find a value.
-        $res_value=$defines[$key];
+        $res_value=@$defines[$key];
         if (!empty($res_value)) {
             $value=$res_value;
             return;
@@ -119,7 +119,7 @@ function parseEnumSpec($file,&$table) {
             $key2=substr($key,0,$pos);
         }
 
-        $res_value=$defines[$key2];
+        $res_value=@$defines[$key2];
         if (!empty($res_value)) {
             $value=$res_value;
             return;
@@ -127,13 +127,13 @@ function parseEnumSpec($file,&$table) {
 
         // In case the extension name is wrong, search the whole table.
         foreach ($table as $defines) {
-            $res_value=$defines[$key];
+            $res_value=@$defines[$key];
             if (is_numeric($res_value)) {
                 $value=$res_value;
                 return;
             }
 
-            $res_value=$defines[$key2];
+            $res_value=@$defines[$key2];
             if (is_numeric($res_value)) {
                 $value=$res_value;
                 return;
@@ -203,7 +203,7 @@ function callbackFuncSpec($first,$line,&$fs_table) {
 
         if (empty($matches[3])) {
             // Try to translate the return type.
-            $token=$tm_table[$matches[2]];
+            $token=@$tm_table[$matches[2]];
             if (empty($token) || $matches[1]!='return') {
                 $token=$matches[2];
             }
@@ -213,7 +213,7 @@ function callbackFuncSpec($first,$line,&$fs_table) {
         }
         else {
             // Try to translate the argument type.
-            $token=$tm_table[$matches[3]];
+            $token=@$tm_table[$matches[3]];
             if (empty($token) || $matches[1]!='param') {
                 $token=$matches[3];
             }
@@ -245,7 +245,7 @@ function parseFuncSpec($file,&$table) {
     // Create the final table using categories as keys and function prototypes
     // as values.
     foreach ($tmp_table as $func => $props) {
-        $params=$props['param'];
+        $params=@$props['param'];
         if (empty($params)) {
             $params='GLvoid';
         }
