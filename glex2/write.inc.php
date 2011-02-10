@@ -102,7 +102,7 @@ function writeEnumHeaderFile($table,$api,$hasfuncs) {
     // Write the inclusion guard header.
     $guard=strtoupper(strtr(basename($file),'.','_'));
 
-    $header.="#ifndef $guard\n";
+    $header="#ifndef $guard\n";
     $header.="#define $guard\n\n";
 
     $ignore=strtoupper($namespace).'_IGNORE';
@@ -159,7 +159,7 @@ function writeEnumHeaderFile($table,$api,$hasfuncs) {
         $contents.="#endif\n\n";
     }
 
-    $footer.="#endif // $ignore\n\n";
+    $footer="#endif // $ignore\n\n";
 
     // Write the inclusion guard footer.
     $footer.="#endif // $guard\n";
@@ -196,7 +196,7 @@ function writeInitializationCodeFile($api) {
         $file=SERVER_TMP_DIRECTORY.$file;
     }
 
-    $contents.="#include \"$namespace.h\"\n\n";
+    $contents="#include \"$namespace.h\"\n\n";
 
     $ignore=strtoupper($namespace).'_IGNORE';
     $contents.="#ifndef $ignore\n\n";
