@@ -103,6 +103,10 @@ struct AABB
     math::Vec3f center() const {
         return (min+max)*0.5f;
     }
+
+    /// Returns the extent of the box.
+    math::Vec3f extent() const {
+        return (max-min)*0.5f;
     }
 
     /// Sets the vertices in \a v to the corner vertices of the box.
