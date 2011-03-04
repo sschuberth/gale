@@ -69,7 +69,7 @@ class Camera
       public:
 
         /// Constructs the frustum planes for the given \a camera.
-        Frustum(Camera const& camera)
+        Frustum(Camera& camera)
         :   m_camera(camera)
         {}
 
@@ -98,7 +98,7 @@ class Camera
         /// Disable assignments (to avoid warnings due to the reference member variable).
         Frustum& operator=(Frustum const&);
 
-        Camera const& m_camera;             ///< Reference to the camera.
+        Camera& m_camera;                   ///< Reference to the camera.
         model::Plane m_frustum[FACE_COUNT]; ///< Array of frustum planes.
     };
 
@@ -401,6 +401,7 @@ class Camera
     bool m_projection_changed;      ///< Dirty flag for projection matrix.
 
     math::HMat4f m_modelview;       ///< Modelview transformation of the camera.
+    math::HMat4f m_modelview_inv;   ///< Inverse modelview transformation of the camera.
     bool m_modelview_changed;       ///< Dirty flag for the modelview transformation.
 };
 

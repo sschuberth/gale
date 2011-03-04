@@ -69,6 +69,10 @@ void Camera::apply(bool const force)
     glPushAttrib(GL_TRANSFORM_BIT);
     G_ASSERT_OPENGL
 
+    if (m_modelview_changed) {
+        m_modelview_inv=!m_modelview;
+    }
+
     if (camera_changed || m_modelview_changed) {
         glMatrixMode(GL_MODELVIEW);
         G_ASSERT_OPENGL
@@ -76,20 +80,22 @@ void Camera::apply(bool const force)
         // As the camera is only an imaginary concept and has no geometry,
         // instead of transforming the camera we need to inversely transform all
         // geometry in the scene.
-        glLoadMatrixf(!m_modelview);
+        glLoadMatrixf(m_modelview_inv);
         G_ASSERT_OPENGL
 
         m_modelview_changed=false;
     }
 
+    if (m_projection_changed) {
+        m_frustum.calculate();
+    }
+
     if (camera_changed || m_projection_changed) {
         glMatrixMode(GL_PROJECTION);
         G_ASSERT_OPENGL
+
         glLoadMatrixd(m_projection);
         G_ASSERT_OPENGL
-
-        // Update the view frustum.
-        m_frustum.calculate();
 
         m_projection_changed=false;
     }

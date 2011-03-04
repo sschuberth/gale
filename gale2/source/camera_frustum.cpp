@@ -34,11 +34,15 @@ namespace wrapgl {
 
 bool Camera::Frustum::contains(Vec3f const& point)
 {
-    Vec3f v=!m_camera.getModelview()*point;
+    if (m_camera.m_modelview_changed) {
+        m_camera.m_modelview_inv=!m_camera.m_modelview;
+    }
+
+    Vec3f v=m_camera.m_modelview_inv*point;
 
     // Recalculate the frustum planes if the camera's projection matrix has
     // changed.
-    if (m_camera.hasProjectionChanged()) {
+    if (m_camera.m_projection_changed) {
         calculate();
     }
 
