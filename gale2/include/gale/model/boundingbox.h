@@ -96,26 +96,25 @@ struct AABB
 
     /// Returns whether the given \a point is contained in the box.
     bool contains(math::Vec3f const& point) const {
-        return min.getX()<=point.getX() && point.getX()<=max.getX()
-            && min.getY()<=point.getY() && point.getY()<=max.getY()
-            && min.getZ()<=point.getZ() && point.getZ()<=max.getZ();
+        return min<=point && point<=max;
     }
 
     /// Returns the center of the box.
     math::Vec3f center() const {
-        return math::Vec3f(min.getX()+max.getX(),min.getY()+max.getY(),min.getZ()+max.getZ())*0.5f;
+        return (min+max)*0.5f;
+    }
     }
 
     /// Sets the vertices in \a v to the corner vertices of the box.
     void vertices(Vertices& v) const {
-        v[0]=math::Vec3f(min.getX(),min.getY(),min.getZ());
+        v[0]=min;
         v[1]=math::Vec3f(min.getX(),min.getY(),max.getZ());
         v[2]=math::Vec3f(min.getX(),max.getY(),min.getZ());
         v[3]=math::Vec3f(min.getX(),max.getY(),max.getZ());
         v[4]=math::Vec3f(max.getX(),min.getY(),min.getZ());
         v[5]=math::Vec3f(max.getX(),min.getY(),max.getZ());
         v[6]=math::Vec3f(max.getX(),max.getY(),min.getZ());
-        v[7]=math::Vec3f(max.getX(),max.getY(),max.getZ());
+        v[7]=max;
     }
 
     math::Vec3f min; ///< Minimum coordinates of the box.
