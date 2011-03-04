@@ -127,7 +127,7 @@ class Plane
 
     /// Sets the plane's \a normal vector.
     void setNormal(math::Vec3d const& normal) {
-        m_normal=~normal;
+        m_normal=normal;
     }
 
     /// Returns the plane's distance to the origin.
