@@ -137,8 +137,7 @@ LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
                 }
             }
 
-            WORD x=LOWORD(lParam),y=HIWORD(lParam);
-            onMouseEvent(x,y,0,event);
+            onMouseEvent(GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam),0,event);
             break;
         }
 
@@ -146,8 +145,9 @@ LRESULT DefaultWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
         // mouse wheel is rotated. The DefWindowProc function propagates the
         // message to the window's parent.
         case WM_MOUSEWHEEL: {
-            short wheel=HIWORD(wParam)*WHEEL_DELTA;
-            onMouseEvent(LOWORD(lParam),HIWORD(lParam),wheel,ME_WHEEL_SCROLL);
+            POINT p={GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam)};
+            ScreenToClient(windowHandle(),&p);
+            onMouseEvent(p.x,p.y,GET_WHEEL_DELTA_WPARAM(wParam)/WHEEL_DELTA,ME_WHEEL_SCROLL);
             break;
         }
 
