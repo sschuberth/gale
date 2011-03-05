@@ -234,13 +234,16 @@ class TestWindow:public DefaultWindow
             }
 
             // Subdivision modes.
-            case 's':
+            case 's': // Sqrt3
                 ++new_mode;
-            case 'l':
+                // No break here!
+            case 'l': // Loop
                 ++new_mode;
-            case 'b':
+                // No break here!
+            case 'b': // Butterfly
                 ++new_mode;
-            case 'p':
+                // No break here!
+            case 'p': // Polyhedral
             {
                 // Check if the base mesh only consists of supported primitives.
                 MeshCache const& mc=(*m_meshes)[m_base][0][0];
@@ -256,7 +259,7 @@ class TestWindow:public DefaultWindow
                 }
                 break;
             }
-            case 'c':
+            case 'c': // CatmullClark
             {
                 new_mode=4;
 
@@ -274,7 +277,7 @@ class TestWindow:public DefaultWindow
                 }
                 break;
             }
-            case 'd':
+            case 'd': // DooSabin
             {
                 new_mode=5;
 
