@@ -312,7 +312,7 @@ class TestWindow:public DefaultWindow
             }
 
             case ' ': {
-                 int mode=(m_step==0)?0:m_mode;
+                int mode=(m_step==0)?0:m_mode;
                 MeshCache const& mc=(*m_meshes)[m_base][mode][m_step];
                 m_camera.align(mc.mesh_prep.box);
                 break;
