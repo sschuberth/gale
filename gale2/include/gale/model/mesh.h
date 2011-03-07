@@ -298,6 +298,91 @@ struct Mesh
         static void assignNeighbors(Mesh const& orig,Mesh& mesh,int const x0i);
     };
 
+    /// A simple class to iterate over the edges in a mesh.
+    class EdgeIterator
+    {
+      public:
+
+        /// Associates the iterator with the given \a mesh and the edge defined
+        /// by vertex index \vi and its neighbor index \a ni.
+        EdgeIterator(Mesh const& mesh,int vi=0,int ni=0)
+        :   m_mesh(mesh)
+        ,   m_num_vertices(mesh.vertices.getSize())
+        ,   m_vi(vi)
+        ,   m_ni(ni)
+        {}
+
+        /// Returns \c true if the two iterators' vertex and neighbor indices
+        /// are equal, \c false otherwise.
+        bool operator==(EdgeIterator const& other) {
+            // For performance reasons, this does not compare the actual mesh.
+            return m_vi==other.m_vi && m_ni==other.m_ni;
+        }
+
+        /// Returns \c true if the two iterators' vertex and neighbor indices
+        /// are not equal, \c false otherwise.
+        bool operator!=(EdgeIterator const& other) {
+            return !(*this==other);
+        }
+
+        /// Moves the iterator forward to the next edge in the mesh.
+        EdgeIterator operator++() {
+            IndexArray const* neighbors=&m_mesh.neighbors[m_vi];
+
+            // The below break criterion defines a (somewhat arbitrary) relation on
+            // the vertex indices to ensure walking each edge only in one direction.
+            do {
+                // Get the next neighbor index.
+                if (++m_ni==neighbors->getSize()) {
+                    m_ni=0;
+
+                    // Get the next vertex index.
+                    if (++m_vi==m_num_vertices) {
+                        break;
+                    }
+
+                    // Refer to the current neighbor indices.
+                    neighbors=&m_mesh.neighbors[m_vi];
+                }
+            } while ((*neighbors)[m_ni]<static_cast<unsigned int>(m_vi));
+
+            return *this;
+        }
+
+        /// Returns the index of the edge's first vertex.
+        int indexA() const {
+            return m_vi;
+        }
+
+        /// Returns the index of the edge's second vertex.
+        int indexB() const {
+            return m_mesh.neighbors[m_vi][m_ni];
+        }
+
+        /// Returns the edge's first vertex.
+        math::Vec3f const& vertexA() const {
+            return m_mesh.vertices[indexA()];
+        }
+
+        /// Returns the edge's second vertex.
+        math::Vec3f const& vertexB() const {
+            return m_mesh.vertices[indexB()];
+        }
+
+      private:
+
+        Mesh const& m_mesh; ///< The mesh being iterated over.
+        int m_num_vertices; ///< Number of vertices in the mesh.
+
+        int m_vi; ///< Index of the first vertex.
+        int m_ni; ///< Index of the first vertex' neighbor.
+    };
+
+    /**
+     * \name Constructors
+     */
+    //@{
+
     /// Creates a mesh with \a num_vertices uninitialized vertices.
     Mesh(int const num_vertices=0)
     :   vertices(num_vertices),neighbors(num_vertices) {}
@@ -314,6 +399,26 @@ struct Mesh
         vertices.insert(vertex_array);
         neighbors.setSize(size);
     }
+
+    //@}
+
+    /**
+     * \name Iterators
+     */
+    //@{
+
+    /// Returns an iterator that marks the begin of the mesh's set of edges.
+    EdgeIterator beginEdges() const {
+        return EdgeIterator(*this);
+    }
+
+    /// Returns an iterator that marks the end of the mesh's set of edges. Note
+    /// that incrementing the end iterator is undefined.
+    EdgeIterator endEdges() const {
+        return EdgeIterator(*this,numEdges()?vertices.getSize():0,0);
+    }
+
+    //@}
 
     /**
      * \name Selection operations
