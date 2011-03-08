@@ -262,7 +262,7 @@ inline T wrap(T x,T const range)
 template<typename T>
 inline T wrap(T x,T const a,T const b)
 {
-    while (true) {
+    for (;;) {
         if (x<a) {
             x=b-(a-x);
         }
