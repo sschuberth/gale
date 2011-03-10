@@ -57,7 +57,7 @@ class PreparedMesh
 
     /// Returns whether the mesh contains something to render.
     bool hasData() const {
-        return pointCount()>0 || lineCount()>0 || triangleCount()>0 || quadCount()>0 || polygonCount()>0;
+        return numPoints()>0 || numLines()>0 || numTriangles()>0 || numQuads()>0 || numPolys()>0;
     }
 
     /// Returns the number of vertices in the mesh.
@@ -99,27 +99,27 @@ class PreparedMesh
     }
 
     /// Returns the number of points in this mesh.
-    int pointCount() const {
+    int numPoints() const {
         return m_primitives[PI_POINTS].getSize();
     }
 
     /// Returns the number of lines in this mesh.
-    int lineCount() const {
+    int numLines() const {
         return m_primitives[PI_LINES].getSize()/2;
     }
 
     /// Returns the number of triangles in this mesh.
-    int triangleCount() const {
+    int numTriangles() const {
         return m_primitives[PI_TRIANGLES].getSize()/3;
     }
 
     /// Returns the number of quadrilaterals in this mesh.
-    int quadCount() const {
+    int numQuads() const {
         return m_primitives[PI_QUADS].getSize()/4;
     }
 
     /// Returns the number of polygons in this mesh.
-    int polygonCount() const {
+    int numPolys() const {
         return m_polygons.getSize();
     }
 

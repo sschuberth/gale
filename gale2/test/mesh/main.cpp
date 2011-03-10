@@ -247,7 +247,7 @@ class TestWindow:public DefaultWindow
             {
                 // Check if the base mesh only consists of supported primitives.
                 MeshCache const& mc=(*m_meshes)[m_base][0][0];
-                if (mc.mesh_prep.pointCount() || mc.mesh_prep.lineCount() || mc.mesh_prep.quadCount() || mc.mesh_prep.polygonCount()) {
+                if (mc.mesh_prep.numPoints() || mc.mesh_prep.numLines() || mc.mesh_prep.numQuads() || mc.mesh_prep.numPolys()) {
                     printf("ERROR  : ");
                     printf(BASE_NAMES[m_base]);
                     printf(" mesh cannot be subdivided using ");
@@ -265,7 +265,7 @@ class TestWindow:public DefaultWindow
 
                 // Check if the base mesh only consists of supported primitives.
                 MeshCache const& mc=(*m_meshes)[m_base][0][0];
-                if (mc.mesh_prep.pointCount() || mc.mesh_prep.lineCount() || mc.mesh_prep.triangleCount() || mc.mesh_prep.polygonCount()) {
+                if (mc.mesh_prep.numPoints() || mc.mesh_prep.numLines() || mc.mesh_prep.numTriangles() || mc.mesh_prep.numPolys()) {
                     printf("ERROR  : ");
                     printf(BASE_NAMES[m_base]);
                     printf(" mesh cannot be subdivided using ");
