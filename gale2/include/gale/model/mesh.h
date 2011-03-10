@@ -353,6 +353,36 @@ struct Mesh
 
     //@}
 
+    /**
+     * \name Topological properties
+     */
+    //@{
+
+    /// Returns the number of vertices in the mesh.
+    int numVertices() const {
+        return vertices.getSize();
+    }
+
+    /// Returns the number of edges in the mesh.
+    int numEdges() const {
+        int e=0;
+
+        for (int i=0;i<neighbors.getSize();++i) {
+            e+=neighbors[i].getSize();
+        }
+
+        return e/2;
+    }
+
+    /// Returns the number of faces in the mesh. As the Euler formula is used,
+    /// the result is only valid for polyhedra that are topologically equivalent
+    /// to a sphere (i.e. that do not contain any holes).
+    int numFaces() const {
+        return numEdges()-numVertices()+2;
+    }
+
+    //@}
+
     /// Performs a simple brute-force check of the neighborhood information.
     /// Returns -1 on success or the vertex index causing the error.
     int check() const;
