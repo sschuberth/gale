@@ -1,5 +1,5 @@
 # See http://www.cmake.org/Wiki/CMake_Useful_Variables for some general help.
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.8.1)
 
 # Set some variables and the project name.
 set(project_name "gale")
