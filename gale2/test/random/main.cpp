@@ -9,7 +9,9 @@
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
 
-#include <iostream>
+#ifndef GALE_TINY_CODE
+    #include <iostream>
+#endif
 
 #define N 2000000
 
