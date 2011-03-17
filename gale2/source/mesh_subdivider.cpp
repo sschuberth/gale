@@ -105,56 +105,67 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
 
 void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
 {
+    InterVertexList vertices;
+    VectorArray positions;
+
+    // Pre-calculate weights for common valences.
+    static float weights[1+6]={0};
+    if (move && !weights[0]) {
+        weights[0]=1;
+        for (int i=1;i<G_ARRAY_LENGTH(weights);++i) {
+            weights[i]=pow(0.375f + 0.25f*cos(2.0f*Constf::PI()/i),2.0f) + 0.375f;
+        }
+    }
+
     while (steps-->0) {
-        Mesh orig=mesh;
-        VectorArray& ov=orig.vertices;
+        vertices.setSize(mesh.numEdges());
+        int i=0;
 
-        // Store the index of the first new vertex.
-        int x0i=ov.getSize();
+        // Generate a list of new edge vertices.
+        Mesh::EdgeIterator edge_current=mesh.beginEdges();
+        Mesh::EdgeIterator edge_end=mesh.endEdges();
+        while (edge_current!=edge_end) {
+            // Get the neighbor vertex indices.
+            InterVertex& s=vertices[i++];
+            s.a=edge_current.indexA();
+            s.b=edge_current.indexB();
 
-        // Loop over all vertices in the base mesh.
-        for (int vi=0;vi<x0i;++vi) {
-            IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=ov[vi];
+            // Calculate the new vertex position.
+            s.v = ( edge_current.vertexA()              + edge_current.vertexB()              ) * 0.375f
+                + ( mesh.vertices[mesh.nextTo(s.a,s.b)] + mesh.vertices[mesh.prevTo(s.a,s.b)] ) * 0.125f;
 
-            // Calculate variables for moving the existing vertices.
-            int valence=vn.getSize();
-            float weight=pow(0.375f + 0.25f*cos(2.0f*Constf::PI()/valence),2.0f) + 0.375f;
+            ++edge_current;
+        }
 
-            Vec3f q=Vec3f::ZERO();
+        if (move) {
+            positions.setSize(mesh.numVertices());
 
-            // Loop over v's neighborhood.
-            for (int n=0;n<vn.getSize();++n) {
-                int ui=vn[n];
-                Vec3f const& u=ov[ui];
+            // Calculate new positions for original vertices.
+            for (i=0;i<mesh.numVertices();++i) {
+                IndexArray const& neighbors=mesh.neighbors[i];
+                int const valence=neighbors.getSize();
 
-                q+=u;
-
-                // Be sure to walk each pair of vertices, i.e. edge, only once.
-                // Use the address in memory to define a relation on the
-                // universe of vertices.
-                if (&u<&v) {
-                    continue;
+                // Average the neighboring vertices.
+                Vec3f q=Vec3f::ZERO();
+                for (int n=0;n<valence;++n) {
+                    q+=mesh.vertices[neighbors[n]];
                 }
-
-                Vec3f x = v*0.375f + u*0.375f
-                        + ov[orig.nextTo(ui,vi)]*0.125f
-                        + ov[orig.prevTo(ui,vi)]*0.125f;
-
-                // Add a new vertex as calculated from its neighbors.
-                mesh.insert(ui,vi,x);
-            }
-
-            if (move) {
                 q/=static_cast<float>(valence);
 
-                // Move the existing vertices.
-                mesh.vertices[vi]=lerp(q,v,weight);
+                // INFO: If higher valences need to be supported, calculate the weight on-the-fly here.
+                G_ASSERT(valence<G_ARRAY_LENGTH(weights))
+
+                positions[i]=lerp(q,mesh.vertices[i],weights[valence]);
+            }
+
+            // Move the original vertices.
+            for (i=0;i<mesh.numVertices();++i) {
+                mesh.vertices[i]=positions[i];
             }
         }
 
-        orig=mesh;
-        assignNeighbors(orig,mesh,x0i);
+        // Insert the new vertices on existing edges and connect them to the mesh.
+        insertAndConnect(mesh,vertices);
     }
 }
 
@@ -464,25 +475,6 @@ void Mesh::Subdivider::insertAndConnect(Mesh& mesh,InterVertexList const& vertic
     }
 
     interconnectEdgeVertices(mesh,orig_vertices);
-}
-
-void Mesh::Subdivider::assignNeighbors(Mesh const& orig,Mesh& mesh,int const x0i)
-{
-    for (int vi=x0i;vi<orig.vertices.getSize();++vi) {
-        IndexArray& vn=mesh.neighbors[vi];
-
-        // Get any neighbor of v, just pick the first one.
-        int ai=vn[0];
-        int bi=orig.nextTo(ai,vi);
-
-        vn.setCapacity(vn.getSize()+4);
-
-        // ai and bi are already neighbors.
-        vn.insert(orig.nextTo(vi,ai),0);
-        vn.insert(orig.prevTo(vi,ai),2);
-        vn.insert(orig.nextTo(vi,bi),3);
-        vn.insert(orig.prevTo(vi,bi));
-    }
 }
 
 } // namespace model
