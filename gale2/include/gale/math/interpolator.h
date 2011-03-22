@@ -55,7 +55,8 @@ static T cubic(T const& a,T const& b,I const& s) {
 }
 
 /**
- * A collection of interpolation (and approximation) methods.
+ * A collection of interpolation (and approximation) methods. For a nice introduction, see
+ * <http://altdevblogaday.org/2011/03/21/moving-beyond-the-linear-bezier/>.
  */
 class Interpolator
 {
@@ -106,7 +107,7 @@ class Interpolator
         return evalPolynomial(v[i0],v[i0]+t[i0],v[i1]-t[i1],v[i1],w,1.0f,s);
     }
 
-    /// Piecewise cubic B-Spline approximation of the values in \a v at
+    /// Uniform cubic B-Spline approximation of the values in \a v ("de Boor" points) at
     /// position \a s. The position in range [0,1] is mapped to the array size.
     /// If \a closed is \c true, the values are treated as being periodic,
     /// resulting in a closed curve. Also see <http://blackpawn.com/texts/splines/>.
@@ -151,6 +152,7 @@ class Interpolator
         int i0=(i1==0)?(closed?n:0):i1-1;
         int i3=(i2==n)?(closed?0:n):i2+1;
 
+        // Catmull-Rom splines are a special case of Cardinal splines with f=0.5.
         return evalPolynomial(v[i0],v[i1],v[i2],v[i3],w,0.5f,s);
     }
 
