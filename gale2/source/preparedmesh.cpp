@@ -58,7 +58,6 @@ void PreparedMesh::compile(Mesh const& mesh)
 
     // Make room for an index array for each primitive type.
     m_primitives.setSize(PI_COUNT);
-    Mesh::IndexArray polygon;
 
     // If there are no vertices, empty the bounding box and return immediately.
     if (m_vertices.getSize()<=0) {
@@ -66,13 +65,12 @@ void PreparedMesh::compile(Mesh const& mesh)
         return;
     }
 
+    // Calculate the axis-aligned bounding box.
     box.min=box.max=m_vertices[0];
 
     for (int vi=0;vi<m_vertices.getSize();++vi) {
-        Mesh::IndexArray const& vn=mesh.neighbors[vi];
         Vec3f const& v=m_vertices[vi];
 
-        // Update the bounding box extents.
         if (v.getX()<box.min.getX()) {
             box.min.setX(v.getX());
         }
@@ -93,95 +91,58 @@ void PreparedMesh::compile(Mesh const& mesh)
         else if (v.getZ()>box.max.getZ()) {
             box.max.setZ(v.getZ());
         }
+    }
 
-        // Check for non-face primitives.
-        if (vn.getSize()==0) {
+    // Enumerate the primitives for rendering.
+    Mesh::PrimitiveIterator prim_current=mesh.beginPrimitives();
+    Mesh::PrimitiveIterator prim_end=mesh.endPrimitives();
+    while (prim_current!=prim_end) {
+        Mesh::IndexArray const& primitive=prim_current.indices();
+        int count=primitive.getSize();
+
+        if (count==1) {
             // This is just a point with an empty neighborhood.
-            m_primitives[PI_POINTS].insert(vi);
-            m_normals[vi]=v;
-
-            continue;
+            int index=primitive[0];
+            m_primitives[PI_POINTS].insert(index);
+            m_normals[index]=mesh.vertices[index];
         }
-
-        if (vn.getSize()==1) {
+        else if (count==2) {
             // This is just a line with a single neighbor.
-            m_primitives[PI_LINES].insert(vi);
-            m_normals[vi]=v;
+            int index=primitive[0];
+            m_primitives[PI_LINES].insert(index);
+            m_normals[index]=mesh.vertices[index];
 
-            m_primitives[PI_LINES].insert(vn[0]);
-            m_normals[vn[0]]=m_vertices[vn[0]];
-
-            continue;
+            index=primitive[1];
+            m_primitives[PI_LINES].insert(index);
+            m_normals[index]=mesh.vertices[index];
         }
-
-        for (int n=0;n<vn.getSize();++n) {
-            // Get the orbit vertices starting with the edge from vi to its
-            // currently selected neighbor.
-            int o=mesh.orbit(vi,vn[n],polygon);
-            if (o<3 || o>5) {
-                // Only triangular to pentagonal faces are supported right now.
-                continue;
+        else {
+            if (count==3) {
+                m_primitives[PI_TRIANGLES].insert(primitive);
+            }
+            else if (count==4) {
+                m_primitives[PI_QUADS].insert(primitive);
+            }
+            else {
+                m_polygons.insert(primitive);
             }
 
-            // Make sure to walk each face only once, i.e. rule out permutations
-            // of face indices. Use the address in memory to define a relation
-            // on the universe of vertices.
-            Vec3f const& a=m_vertices[polygon[1]];
-            Vec3f const& b=m_vertices[polygon[2]];
-            if (&v<&a || &v<&b) {
-                continue;
-            }
-
-            // The "normal's" length equals the spanned parallelogram's area.
+            // The face "normal's" length equals the spanned parallelogram's area.
             // While this method is always correct for triangular faces, for
             // other faces it depends on the order of traversal and which of the
             // face vertices are used for calculation. This is accepted for
             // performance reasons. To fix it, normalize the "normal" here.
+            Vec3f const& v=mesh.vertices[primitive[0]];
+            Vec3f const& a=mesh.vertices[primitive[1]];
+            Vec3f const& b=mesh.vertices[primitive[2]];
             Vec3f normal=(a-v)^(b-v);
 
-            if (o==3) {
-                m_primitives[PI_TRIANGLES].insert(polygon);
-
-                // Accumulate the "normal" for all face vertices.
-                m_normals[polygon[0]]+=normal;
-                m_normals[polygon[1]]+=normal;
-                m_normals[polygon[2]]+=normal;
-            }
-            else {
-                // More than 3 vertices require another check.
-                Vec3f const& c=m_vertices[polygon[3]];
-                if (&v<&c) {
-                    continue;
-                }
-
-                if (o==4) {
-                    m_primitives[PI_QUADS].insert(polygon);
-
-                    // Accumulate the "normal" for all face vertices.
-                    m_normals[polygon[0]]+=normal;
-                    m_normals[polygon[1]]+=normal;
-                    m_normals[polygon[2]]+=normal;
-                    m_normals[polygon[3]]+=normal;
-                }
-                else {
-                    // More than 4 vertices require another check.
-                    Vec3f const& d=m_vertices[polygon[4]];
-                    if (&v<&d) {
-                        continue;
-                    }
-
-                    // NOTE: For more than 5 vertices more checks are needed.
-                    m_polygons.insert(polygon);
-
-                    // Accumulate the "normal" for all face vertices.
-                    m_normals[polygon[0]]+=normal;
-                    m_normals[polygon[1]]+=normal;
-                    m_normals[polygon[2]]+=normal;
-                    m_normals[polygon[3]]+=normal;
-                    m_normals[polygon[4]]+=normal;
-                }
+            for (int i=0;i<count;++i) {
+                m_normals[primitive[i]]+=normal;
             }
         }
+
+        ++prim_current;
     }
 
     // Normalize the accumulated "normals" (there are as many normals as vertices).
