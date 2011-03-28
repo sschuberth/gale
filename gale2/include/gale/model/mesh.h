@@ -395,6 +395,106 @@ struct Mesh
         int m_ni; ///< Index of the first vertex' neighbor.
     };
 
+    /// A simple class to iterate over the primitives in a mesh.
+    class PrimitiveIterator
+    {
+      public:
+
+        /// Associates the iterator with the given \a mesh and the primitive defined
+        /// by the edge from vertex index \vi to its neighbor index \a ni.
+        PrimitiveIterator(Mesh const& mesh,int vi=0,int ni=0)
+            :   m_mesh(mesh)
+            ,   m_num_vertices(mesh.vertices.getSize())
+            ,   m_vi(vi)
+            ,   m_ni(ni)
+        {
+            if (m_vi<m_mesh.vertices.getSize()) {
+                if (m_mesh.neighbors[m_vi].getSize()==0) {
+                    m_primitive.setSize(1);
+                    m_primitive[0]=m_vi;
+                }
+                else {
+                    m_mesh.orbit(m_vi,m_mesh.neighbors[m_vi][m_ni],m_primitive);
+                }
+            }
+        }
+
+        /// Returns \c true if the two iterators' vertex and neighbor indices
+        /// are equal, \c false otherwise.
+        bool operator==(PrimitiveIterator const& other) {
+            // For performance reasons, this does not compare the actual mesh.
+            return m_vi==other.m_vi && m_ni==other.m_ni;
+        }
+
+        /// Returns \c true if the two iterators' vertex and neighbor indices
+        /// are not equal, \c false otherwise.
+        bool operator!=(PrimitiveIterator const& other) {
+            return !(*this==other);
+        }
+
+        /// Moves the iterator forward to the next primitive in the mesh.
+        PrimitiveIterator operator++() {
+            IndexArray const* neighbors=&m_mesh.neighbors[m_vi];
+            bool ordered;
+
+            do {
+                // The below break criterion defines a (somewhat arbitrary) relation on
+                // the vertex indices to ensure walking each edge only in one direction.
+                do {
+                    int num_neighbors=neighbors->getSize();
+
+                    // Handle point primitives.
+                    if (num_neighbors==0) {
+                        m_primitive.setSize(1);
+                        m_primitive[0]=++m_vi;
+                        return *this;
+                    }
+
+                    // Get the next neighbor index.
+                    if (++m_ni==num_neighbors) {
+                        m_ni=0;
+
+                        // Get the next vertex index.
+                        if (++m_vi==m_num_vertices) {
+                            break;
+                        }
+
+                        // Refer to the current neighbor indices.
+                        neighbors=&m_mesh.neighbors[m_vi];
+                    }
+                } while ((*neighbors)[m_ni]<static_cast<unsigned int>(m_vi));
+
+                // Only accept the primitive indices if they are "in order" to avoid index
+                // permutations of the same primitive.
+                ordered=true;
+                int count=m_mesh.orbit(m_vi,(*neighbors)[m_ni],m_primitive);
+                for (int i=2;i<count;++i) {
+                    if (m_primitive[i]<static_cast<unsigned int>(m_vi)) {
+                        ordered=false;
+                        break;
+                    }
+                }
+            } while (!ordered);
+
+            return *this;
+        }
+
+        /// Returns the primitive's vertex indices.
+        IndexArray const& indices() const {
+            return m_primitive;
+        }
+
+      private:
+
+        Mesh const& m_mesh; ///< The mesh being iterated over.
+        int m_num_vertices; ///< Number of vertices in the mesh.
+
+        int m_vi; ///< Index of the first vertex.
+        int m_ni; ///< Index of the first vertex' neighbor.
+
+        IndexArray m_primitive;        ///< The current primitive's indices.
+    };
+
     /**
      * \name Constructors
      */
@@ -433,6 +533,17 @@ struct Mesh
     /// that incrementing the end iterator is undefined.
     EdgeIterator endEdges() const {
         return EdgeIterator(*this,numEdges()?vertices.getSize():0,0);
+    }
+
+    /// Returns an iterator that marks the begin of the mesh's set of primitives.
+    PrimitiveIterator beginPrimitives() const {
+        return PrimitiveIterator(*this);
+    }
+
+    /// Returns an iterator that marks the end of the mesh's set of primitives.
+    /// Note that incrementing the end iterator is undefined.
+    PrimitiveIterator endPrimitives() const {
+        return PrimitiveIterator(*this,vertices.getSize(),0);
     }
 
     //@}
