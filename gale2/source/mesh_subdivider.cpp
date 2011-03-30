@@ -171,88 +171,103 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
 
 void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 {
+    VectorArray positions;
+
+    // Pre-calculate weights for common valences.
+    static float weights[1+6]={0};
+    if (move && !weights[0]) {
+        weights[0]=1;
+        for (int i=1;i<G_ARRAY_LENGTH(weights);++i) {
+            weights[i]=(4.0f - 2.0f*cos(2.0f*Constf::PI()/i)) / 9.0f;
+        }
+    }
+
     while (steps-->0) {
-        Mesh orig=mesh;
-        VectorArray const& ov=orig.vertices;
+        int orig_vertices=mesh.numVertices();
 
-        // Store the index of the first new vertex.
-        int x0i=ov.getSize();
+        // Avoid memory reallocations when adding vertices and their neighbors.
+        int num_faces=mesh.numFaces();
+        mesh.vertices.setCapacity(mesh.vertices.getSize()+num_faces);
+        mesh.neighbors.setCapacity(mesh.neighbors.getSize()+num_faces);
 
-        // Loop over all vertices in the base mesh.
-        for (int vi=0;vi<x0i;++vi) {
-            IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=ov[vi];
+        // Add the new vertices and connect them to the face.
+        Mesh::PrimitiveIterator prim_current=mesh.beginPrimitives();
+        Mesh::PrimitiveIterator prim_end=mesh.endPrimitives();
+        while (prim_current!=prim_end) {
+            int prim_vertices=prim_current.indices().getSize();
 
-            // Calculate variables for moving the existing vertices.
-            int valence=vn.getSize();
-            float weight=(4.0f - 2.0f*cos(2.0f*Constf::PI()/valence)) / 9.0f;
+            if (prim_vertices==3) {
+                // Connect the new vertex to the face.
+                mesh.neighbors.insert(prim_current.indices());
 
-            if (move) {
-                // Move the existing vertices.
-                mesh.vertices[vi]*=1.0f-weight;
+                int vi=mesh.vertices.insert(Vec3f::ZERO());
+                Vec3f& center=mesh.vertices[vi];
+
+                for (int i=0;i<prim_vertices;++i) {
+                    int pi=prim_current.indices()[i];
+                    center+=mesh.vertices[pi];
+                }
+
+                center/=static_cast<float>(prim_vertices);
             }
 
-            // Loop over v's neighborhood.
-            for (int n=0;n<vn.getSize();++n) {
-                int ui=vn[n];
-                Vec3f const& u=ov[ui];
+            ++prim_current;
+        }
 
-                if (move) {
-                    // Move the existing vertices.
-                    mesh.vertices[vi]+=u*(weight/valence);
+        if (move) {
+            positions.setSize(orig_vertices);
+
+            // Calculate new positions for original vertices.
+            for (int i=0;i<orig_vertices;++i) {
+                IndexArray const& neighbors=mesh.neighbors[i];
+                int const valence=neighbors.getSize();
+
+                // INFO: If higher valences need to be supported, calculate the weight on-the-fly here.
+                G_ASSERT(valence<G_ARRAY_LENGTH(weights))
+
+                float weight=weights[valence];
+                positions[i]=mesh.vertices[i]*(1.0f-weight);
+
+                // Take the neighboring vertices into account.
+                for (int n=0;n<valence;++n) {
+                    positions[i]+=mesh.vertices[neighbors[n]]*(weight/valence);
                 }
+            }
 
-                int ti=orig.nextTo(ui,vi);
-                Vec3f const& t=ov[ti];
-
-                // Be sure to walk each pair of vertices, i.e. edge, only once.
-                // Use the address in memory to define a relation on the
-                // universe of vertices.
-                if (&u<&v || &t<&v) {
-                    continue;
-                }
-
-                // Insert a new vertex at the base mesh's face center.
-                Vec3f c=(v+u+t)/3.0f;
-                int ci=mesh.vertices.insert(c);
-
-                // Connect the new vertex to the face vertices.
-                unsigned int cn[]={vi,ui,ti};
-                mesh.neighbors.insert(cn);
-
-                mesh.splice(ci,ui,vi);
-                mesh.splice(ci,ti,ui);
-                mesh.splice(ci,vi,ti);
+            // Move the original vertices.
+            for (int i=0;i<orig_vertices;++i) {
+                mesh.vertices[i]=positions[i];
             }
         }
 
-        // Loop over all vertices in the base mesh.
-        for (int vi=0;vi<x0i;++vi) {
-            IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=ov[vi];
+        // Connect the faces to the new vertices.
+        for (int i=orig_vertices;i<mesh.vertices.getSize();++i) {
+            IndexArray const& n=mesh.neighbors[i];
 
-            // Loop over v's neighborhood.
-            for (int n=0;n<vn.getSize();++n) {
-                int ui=vn[n];
-                Vec3f const& u=ov[ui];
+            mesh.splice(i,n[1],n[0]);
+            mesh.splice(i,n[2],n[1]);
+            mesh.splice(i,n[0],n[2]);
+        }
 
-                // Be sure to walk each pair of vertices, i.e. edge, only once.
-                // Use the address in memory to define a relation on the
-                // universe of vertices.
-                if (&u<&v) {
-                    continue;
-                }
+        // Flip the original edges to connect new vertices from different faces.
+        Mesh::EdgeIterator edge_current=mesh.beginEdges();
+        Mesh::EdgeIterator edge_end=mesh.endEdges();
+        while (edge_current!=edge_end) {
+            int ai=edge_current.indexA();
+            int bi=edge_current.indexB();
 
-                // Flip the base mesh's edges in the subdivided mesh.
-                int ai=mesh.nextTo(ui,vi);
-                int bi=mesh.prevTo(ui,vi);
+            if (ai<orig_vertices && bi<orig_vertices) {
+                int ni=mesh.nextTo(ai,bi);
+                int pi=mesh.prevTo(ai,bi);
 
-                mesh.splice(ai,ui,bi);
-                mesh.splice(bi,vi,ai);
+                mesh.splice(ni,ai,pi);
+                mesh.splice(pi,bi,ni);
 
-                mesh.erase(ui,vi);
-                mesh.erase(vi,ui);
+                mesh.erase(ai,bi);
+                mesh.erase(bi,ai);
             }
+
+            ++edge_current;
         }
     }
 }
