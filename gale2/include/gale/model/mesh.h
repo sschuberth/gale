@@ -280,11 +280,11 @@ struct Mesh
         }
 
         /// Divides the quadrangular faces of a mesh as described by E. Catmull
-        /// and J. Clark in <http://www.idi.ntnu.no/~fredrior/files/Catmull-Clark%201978%20Recursively%20generated%20surfaces.pdf>.
+        /// and J. Clark in <http://www.cs.berkeley.edu/~sequin/CS284/PAPERS/CatmullClark_SDSurf.pdf>.
         static void CatmullClark(Mesh& mesh,int steps=1);
 
         /// Divides the faces of a mesh as described by D. Doo and M. Sabin in
-        /// <http://www.idi.ntnu.no/~fredrior/files/Doo-Sabin%201978%20Recursive%20division.pdf>.
+        /// <http://trac2.assembla.com/DooSabinSurfaces/export/12/trunk/docs/Doo%201978%20Subdivision%20algorithm.pdf>.
         static void DooSabin(Mesh& mesh,int steps=1);
 
         //@}
