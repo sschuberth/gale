@@ -31,121 +31,132 @@ namespace gale {
 
 namespace model {
 
-int Mesh::nextTo(int const xi,int const vi,int const steps) const
+int Mesh::nextTo(int const oi,int const ci,int const distance) const
 {
-    // Search v's neighborhood for x, and return x' successor.
-    IndexArray const& vn=neighbors[vi];
-    int n=vn.find(xi);
+    IndexArray const& cn=neighbors[ci];
+
+    // Search the center vertex' neighborhood for the orbit vertex.
+    int n=cn.find(oi);
 
     if (n>=0) {
-        n+=steps;
-        while (n>=vn.getSize()) {
-            // Wrap in the neighborhood.
-            n-=vn.getSize();
+        // Walk the specified distance along the orbit.
+        n+=distance;
+
+        // Wrap in the neighborhood (do not use modulo for performance).
+        while (n>=cn.getSize()) {
+            n-=cn.getSize();
         }
-        n=vn[n];
+
+        n=cn[n];
     }
 
     return n;
 }
 
-int Mesh::prevTo(int const xi,int const vi,int const steps) const
+int Mesh::prevTo(int const oi,int const ci,int const distance) const
 {
-    // Search v's neighborhood for x, and return x' predecessor.
-    IndexArray const& vn=neighbors[vi];
-    int n=vn.find(xi);
+    IndexArray const& cn=neighbors[ci];
+
+    // Search the center vertex' neighborhood for the orbit vertex.
+    int n=cn.find(oi);
 
     if (n>=0) {
-        n-=steps;
+        // Walk the specified distance along the orbit.
+        n-=distance;
+
+        // Wrap in the neighborhood (do not use modulo for performance).
         while (n<0) {
-            // Wrap in the neighborhood.
-            n+=vn.getSize();
+            n+=cn.getSize();
         }
-        n=vn[n];
+
+        n=cn[n];
     }
 
     return n;
 }
 
-int Mesh::orbit(int ai,int bi,IndexArray& polygon) const
+void Mesh::orbit(int ai,int bi,IndexArray& primitive) const
 {
-    // Optimize for triangle faces.
-    polygon.setSize(3);
+    // Assume a triangle, as this is the most common case.
+    primitive.setSize(3);
 
-    polygon[0]=ai;
-    polygon[1]=bi;
+    // The given edge is already known.
+    primitive[0]=ai;
+    primitive[1]=bi;
 
+    // Return immediately if ai and bi are no neighbors or this is just a line.
     int ci=prevTo(ai,bi);
-    if (ci<0 || static_cast<unsigned int>(ci)==polygon[0]) {
-        polygon.setSize(2);
-        return polygon.getSize();
+    if (ci<0 || ci==ai) {
+        primitive.setSize(2);
+        return;
     }
 
-    polygon[2]=ci;
+    primitive[2]=ci;
 
-    // Add the vertex immediately following ai in the neighborhood of bi until
-    // we return to the starting vertex.
+    // Add the vertex following ai in the neighborhood of bi until we are back
+    // at the first vertex.
     for (;;) {
         ai=bi;
         bi=ci;
 
         ci=prevTo(ai,bi);
-        if (ci<0 || static_cast<unsigned int>(ci)==polygon[0]) {
+        G_ASSERT(ci>=0)
+
+        if (ci==static_cast<int>(primitive[0])) {
             break;
         }
 
-        polygon.insert(ci);
+        primitive.insert(ci);
     }
-
-    return polygon.getSize();
 }
 
-int Mesh::insert(int const ai,int const bi,Vec3f const& x)
+void Mesh::splice(int const xi,int const oi,int const ci,bool const after)
 {
-    // Add a new vertex at index xi.
-    int xi=vertices.insert(x);
+    IndexArray& cn=neighbors[ci];
 
-    unsigned int const xn[]={ai,bi};
-    neighbors.insert(xn);
+    // Search the center vertex' neighborhood for the orbit vertex.
+    int n=cn.find(oi);
+    G_ASSERT(n>=0)
+    cn.insert(xi,n+static_cast<int>(after));
+}
+
+int Mesh::insert(Vec3f const& v,int const ai,int const bi)
+{
+    int vi=vertices.insert(v);
+
+    unsigned int const vn[]={ai,bi};
+    neighbors.insert(vn);
 
     int n;
 
-    // In the neighborhood of ai, replace bi with xi.
+    // In the neighborhood of ai, replace bi with vi.
     IndexArray& an=neighbors[ai];
     n=an.find(bi);
-    if (n>=0) {
-        an[n]=xi;
-    }
+    G_ASSERT(n>=0)
+    an[n]=vi;
 
-    // In the neighborhood of bi, replace ai with xi.
+    // In the neighborhood of bi, replace ai with vi.
     IndexArray& bn=neighbors[bi];
     n=bn.find(ai);
-    if (n>=0) {
-        bn[n]=xi;
-    }
+    G_ASSERT(n>=0)
+    bn[n]=vi;
 
-    return xi;
+    return vi;
 }
 
-void Mesh::splice(int const ai,int const xi,int const vi,bool const after)
+void Mesh::separate(int const ai,int const bi,bool const oneway)
 {
-    // Insert ai after or before xi in vi's neighborhood.
-    IndexArray& vn=neighbors[vi];
-    int n=vn.find(xi);
-    if (n>=0) {
-        vn.insert(ai,n+int(after));
+    IndexArray& an=neighbors[ai];
+    int n=an.find(bi);
+    G_ASSERT(n>=0)
+    an.remove(n);
+
+    if (!oneway) {
+        separate(bi,ai,true);
     }
 }
 
-void Mesh::erase(int const xi,int const vi)
-{
-    // Remove xi from vi's neighborhood.
-    IndexArray& vn=neighbors[vi];
-    int n=vn.find(xi);
-    if (n>=0) {
-        vn.remove(n);
-    }
-}
+#ifndef GALE_TINY_CODE
 
 int Mesh::check() const {
     for (int vi=0;vi<vertices.getSize();++vi) {
@@ -167,6 +178,8 @@ int Mesh::check() const {
 
     return -1;
 }
+
+#endif
 
 } // namespace model
 

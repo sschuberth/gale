@@ -38,7 +38,7 @@ namespace model {
 void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float const scale)
 {
     while (steps-->0) {
-        int orig_vertices=mesh.numVertices();
+        int edge_vertices_start=mesh.numVertices();
 
         // Insert a new vertex on each edge.
         Mesh::EdgeIterator edge_current=mesh.beginEdges();
@@ -47,7 +47,7 @@ void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float const scale)
             int ai=edge_current.indexA();
             int bi=edge_current.indexB();
 
-            if (ai<orig_vertices && bi<orig_vertices) {
+            if (ai<edge_vertices_start && bi<edge_vertices_start) {
                 // Calculate the new vertex position.
                 Vec3f v=edge_current.vertexA()+edge_current.vertexB();
 
@@ -58,22 +58,22 @@ void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float const scale)
                     v=(~v)*scale;
                 }
 
-                mesh.insert(ai,bi,v);
+                mesh.insert(v,ai,bi);
             }
 
             ++edge_current;
         }
 
-        interconnectEdgeVertices(mesh,orig_vertices);
+        interconnectEdgeVertices(mesh,edge_vertices_start);
     }
 }
 
 void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
 {
-    InterVertexList vertices;
+    EdgeVertexList edge_vertices;
 
     while (steps-->0) {
-        vertices.setSize(mesh.numEdges());
+        edge_vertices.setSize(mesh.numEdges());
         int i=0;
 
         // Generate a list of new edge vertices.
@@ -81,7 +81,7 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
         Mesh::EdgeIterator edge_end=mesh.endEdges();
         while (edge_current!=edge_end) {
             // Get the neighbor vertex indices.
-            InterVertex& s=vertices[i++];
+            EdgeVertex& s=edge_vertices[i++];
             s.a=edge_current.indexA();
             s.b=edge_current.indexB();
 
@@ -94,8 +94,7 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
             ++edge_current;
         }
 
-        // Insert the new vertices on existing edges and connect them to the mesh.
-        insertAndConnect(mesh,vertices);
+        spliceEdgeVertices(mesh,edge_vertices);
     }
 }
 
@@ -105,8 +104,8 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
 
 void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
 {
-    InterVertexList vertices;
-    VectorArray positions;
+    EdgeVertexList edge_vertices;
+    VectorArray displacements;
 
     // Pre-calculate weights for common valences.
     static float weights[1+6]={0};
@@ -118,7 +117,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
     }
 
     while (steps-->0) {
-        vertices.setSize(mesh.numEdges());
+        edge_vertices.setSize(mesh.numEdges());
         int i=0;
 
         // Generate a list of new edge vertices.
@@ -126,7 +125,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
         Mesh::EdgeIterator edge_end=mesh.endEdges();
         while (edge_current!=edge_end) {
             // Get the neighbor vertex indices.
-            InterVertex& s=vertices[i++];
+            EdgeVertex& s=edge_vertices[i++];
             s.a=edge_current.indexA();
             s.b=edge_current.indexB();
 
@@ -138,7 +137,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
         }
 
         if (move) {
-            positions.setSize(mesh.numVertices());
+            displacements.setSize(mesh.numVertices());
 
             // Calculate new positions for original vertices.
             for (i=0;i<mesh.numVertices();++i) {
@@ -155,23 +154,22 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
                 // INFO: If higher valences need to be supported, calculate the weight on-the-fly here.
                 G_ASSERT(valence<G_ARRAY_LENGTH(weights))
 
-                positions[i]=lerp(q,mesh.vertices[i],weights[valence]);
+                displacements[i]=lerp(q,mesh.vertices[i],weights[valence]);
             }
 
             // Move the original vertices.
             for (i=0;i<mesh.numVertices();++i) {
-                mesh.vertices[i]=positions[i];
+                mesh.vertices[i]=displacements[i];
             }
         }
 
-        // Insert the new vertices on existing edges and connect them to the mesh.
-        insertAndConnect(mesh,vertices);
+        spliceEdgeVertices(mesh,edge_vertices);
     }
 }
 
 void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 {
-    VectorArray positions;
+    VectorArray displacements;
 
     // Pre-calculate weights for common valences.
     static float weights[1+6]={0};
@@ -183,7 +181,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
     }
 
     while (steps-->0) {
-        int orig_vertices=mesh.numVertices();
+        int face_vertices_start=mesh.numVertices();
 
         // Avoid memory reallocations when adding vertices and their neighbors.
         int num_faces=mesh.numFaces();
@@ -215,10 +213,10 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
         }
 
         if (move) {
-            positions.setSize(orig_vertices);
+            displacements.setSize(face_vertices_start);
 
             // Calculate new positions for original vertices.
-            for (int i=0;i<orig_vertices;++i) {
+            for (int i=0;i<face_vertices_start;++i) {
                 IndexArray const& neighbors=mesh.neighbors[i];
                 int const valence=neighbors.getSize();
 
@@ -226,22 +224,22 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
                 G_ASSERT(valence<G_ARRAY_LENGTH(weights))
 
                 float weight=weights[valence];
-                positions[i]=mesh.vertices[i]*(1.0f-weight);
+                displacements[i]=mesh.vertices[i]*(1.0f-weight);
 
                 // Take the neighboring vertices into account.
                 for (int n=0;n<valence;++n) {
-                    positions[i]+=mesh.vertices[neighbors[n]]*(weight/valence);
+                    displacements[i]+=mesh.vertices[neighbors[n]]*(weight/valence);
                 }
             }
 
             // Move the original vertices.
-            for (int i=0;i<orig_vertices;++i) {
-                mesh.vertices[i]=positions[i];
+            for (int i=0;i<face_vertices_start;++i) {
+                mesh.vertices[i]=displacements[i];
             }
         }
 
         // Connect the faces to the new vertices.
-        for (int i=orig_vertices;i<mesh.vertices.getSize();++i) {
+        for (int i=face_vertices_start;i<mesh.vertices.getSize();++i) {
             IndexArray const& n=mesh.neighbors[i];
 
             mesh.splice(i,n[1],n[0]);
@@ -256,15 +254,14 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
             int ai=edge_current.indexA();
             int bi=edge_current.indexB();
 
-            if (ai<orig_vertices && bi<orig_vertices) {
+            if (ai<face_vertices_start && bi<face_vertices_start) {
                 int ni=mesh.nextTo(ai,bi);
                 int pi=mesh.prevTo(ai,bi);
 
                 mesh.splice(ni,ai,pi);
                 mesh.splice(pi,bi,ni);
 
-                mesh.erase(ai,bi);
-                mesh.erase(bi,ai);
+                mesh.separate(ai,bi);
             }
 
             ++edge_current;
@@ -318,7 +315,7 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
                 Vec3f const& c=ov[orig.nextTo(vi,pi)];
                 Vec3f const& d=ov[orig.prevTo(vi,pi)];
 
-                mesh.insert(vi,pi,(v+p)*0.375f + (a+b+c+d)*0.0625f);
+                mesh.insert((v+p)*0.375f + (a+b+c+d)*0.0625f,vi,pi);
             }
         }
 
@@ -379,7 +376,7 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
 
 void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
 {
-    IndexArray polygon;
+    IndexArray primitive;
 
     while (steps-->0) {
         Mesh orig=mesh;
@@ -398,14 +395,15 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
                 int pi=vn[n];
                 Vec3f const& p=ov[pi];
 
-                int o=orig.orbit(vi,pi,polygon);
+                orig.orbit(vi,pi,primitive);
+                int o=primitive.getSize();
 
                 Vec3f t;
 
                 // The orbit is a quadrilateral.
                 if (o==4) {
-                    Vec3f const& q=ov[polygon[3]];
-                    Vec3f const& r=ov[polygon[2]];
+                    Vec3f const& q=ov[primitive[3]];
+                    Vec3f const& r=ov[primitive[2]];
                     t=v*0.5625f + p*0.1875f + q*0.1875f + r*0.0625f;
                 }
                 // The orbit is an arbitrary polygon.
@@ -414,7 +412,7 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
 
                     int i=0;
                     while (++i<o) {
-                        Vec3f const& a=ov[polygon[i]];
+                        Vec3f const& a=ov[primitive[i]];
                         t+=a*((3.0f + 2.0f*cos(2.0f*Constf::PI()*static_cast<float>(i)/o))/(4.0f*o));
                     }
                 }
@@ -461,35 +459,40 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
  * Helper methods
  */
 
-void Mesh::Subdivider::interconnectEdgeVertices(Mesh& mesh,int orig_vertices)
+void Mesh::Subdivider::interconnectEdgeVertices(Mesh& mesh,int edge_vertices_start)
 {
-    for (int i=orig_vertices;i<mesh.numVertices();++i) {
+    for (int i=edge_vertices_start;i<mesh.numVertices();++i) {
         IndexArray& n=mesh.neighbors[i];
 
-        // The new inserted vertices just have two neighbors as yet.
-        int const& a=n[0];
-        int const& b=n[1];
+        // The edge vertices just have 2 neighbors as yet ...
+        int a=n[0];
+        int b=n[1];
 
-        n.insert(mesh.nextTo(i,a),0);
-        n.insert(mesh.prevTo(i,a),2);
+        /// ... but will get 4 more now.
+        n.setSize(6);
+        n[3]=b;
 
-        n.insert(mesh.nextTo(i,b),3);
-        n.insert(mesh.prevTo(i,b));
+        // Connect to vertices on adjacent edges in the "left" face.
+        n[1]=mesh.prevTo(i,a);
+        n[2]=mesh.nextTo(i,b);
+
+        // Connect to vertices on adjacent edges in the "right" face.
+        n[4]=mesh.prevTo(i,b);
+        n[5]=mesh.nextTo(i,a);
     }
 }
 
-void Mesh::Subdivider::insertAndConnect(Mesh& mesh,InterVertexList const& vertices)
+void Mesh::Subdivider::spliceEdgeVertices(Mesh& mesh,EdgeVertexList const& edge_vertices)
 {
-    // Remember the number of vertices in the original mesh.
-    int orig_vertices=mesh.numVertices();
+    int edge_vertices_start=mesh.numVertices();
 
     // Insert the new edge vertices.
-    for (int i=0;i<vertices.getSize();++i) {
-        InterVertex const& s=vertices[i];
-        mesh.insert(s.a,s.b,s.v);
+    for (int i=0;i<edge_vertices.getSize();++i) {
+        EdgeVertex const& s=edge_vertices[i];
+        mesh.insert(s.v,s.a,s.b);
     }
 
-    interconnectEdgeVertices(mesh,orig_vertices);
+    interconnectEdgeVertices(mesh,edge_vertices_start);
 }
 
 } // namespace model

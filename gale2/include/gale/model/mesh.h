@@ -291,22 +291,22 @@ struct Mesh
 
       private:
 
-        /// Structure for inserting a vertex on an edge.
-        struct InterVertex {
+        /// Structure for inserting a vertex on an existing edge.
+        struct EdgeVertex {
             int a,b;       ///< Indices of the adjacent vertices.
-            math::Vec3f v; ///< Position of the vertex.
+            math::Vec3f v; ///< Position of the edge vertex.
         };
 
-        /// List of vertices to be inserted after a subdivision step.
-        typedef global::DynamicArray<InterVertex> InterVertexList;
+        /// List of edge vertices to be inserted after a subdivision step.
+        typedef global::DynamicArray<EdgeVertex> EdgeVertexList;
 
-        /// Connects edge vertices starting from index \a orig_vertices to each
-        /// other in the specified \a mesh.
-        static void interconnectEdgeVertices(Mesh& mesh,int orig_vertices);
+        /// Connects the edge vertices starting from index \a edge_vertices_start
+        /// to vertices on adjacent edges in the specified \a mesh.
+        static void interconnectEdgeVertices(Mesh& mesh,int edge_vertices_start);
 
-        /// Inserts the vertices in \a ivl on the edges between the given two
-        /// adjacent vertices and connects them to the specified \a mesh.
-        static void insertAndConnect(Mesh& mesh,InterVertexList const& ivl);
+        /// Inserts the given \a edge_vertices into the specified \a mesh and
+        /// connects them to vertices on adjacent edges.
+        static void spliceEdgeVertices(Mesh& mesh,EdgeVertexList const& edge_vertices);
 
         /// Adds the missing neighbors of newly inserted vertices after a
         /// subdivision step. Starting from vertex index \a x0i, neighbors
@@ -467,8 +467,8 @@ struct Mesh
                 // Only accept the primitive indices if they are "in order" to avoid index
                 // permutations of the same primitive.
                 ordered=true;
-                int count=m_mesh.orbit(m_vi,(*neighbors)[m_ni],m_primitive);
-                for (int i=2;i<count;++i) {
+                m_mesh.orbit(m_vi,(*neighbors)[m_ni],m_primitive);
+                for (int i=2;i<m_primitive.getSize();++i) {
                     if (m_primitive[i]<static_cast<unsigned int>(m_vi)) {
                         ordered=false;
                         break;
@@ -549,23 +549,21 @@ struct Mesh
     //@}
 
     /**
-     * \name Selection operations
+     * \name Walking operations
      */
     //@{
 
-    /// Returns the index of the vertex following \a xi in the neighborhood of
-    /// \a vi, both given as indices into the vertex array. Optionally, this is
-    /// repeated the given number of \a steps.
-    int nextTo(int const xi,int const vi,int const steps=1) const;
+    /// Returns the index of the vertex following the vertex with index \a oi in
+    /// the neighborhood of the vertex with index \a ci at the given \a distance.
+    int nextTo(int const oi,int const ci,int const distance=1) const;
 
-    /// Returns the index of the vertex preceding \a xi in the neighborhood of
-    /// \a vi, both given as indices into the vertex array. Optionally, this is
-    /// repeated the given number of \a steps.
-    int prevTo(int const xi,int const vi,int const steps=1) const;
+    /// Returns the index of the vertex preceding the vertex with index \a oi in
+    /// the neighborhood of the vertex with index \a ci at the given \a distance.
+    int prevTo(int const oi,int const ci,int const distance=1) const;
 
-    /// Given an oriented edge from \a ai to \a bi, returns the number of
-    /// vertices that make up the edge's face, and their indices in \a polygon.
-    int orbit(int ai,int bi,IndexArray& polygon) const;
+    /// Returns the \a primitive and its number of vertices the oriented edge
+    /// from \a ai to \a bi belongs to.
+    void orbit(int ai,int bi,IndexArray& primitive) const;
 
     //@}
 
@@ -574,15 +572,16 @@ struct Mesh
      */
     //@{
 
-    /// Inserts a new vertex \a x on the edge between \a ai and \a bi and
+    /// Inserts \a xi after or before \a oi in the neighborhood of \a ci.
+    void splice(int const xi,int const oi,int const ci,bool const after=true);
+
+    /// Inserts a new vertex \a v on the edge between \a ai and \a bi, and
     /// returns its index in the vertex array.
-    int insert(int const ai,int const bi,math::Vec3f const& x);
+    int insert(math::Vec3f const& v,int const ai,int const bi);
 
-    /// Inserts \a ai after or before \a xi in the neighborhood of \a vi.
-    void splice(int const ai,int const xi,int const vi,bool const after=true);
-
-    /// Removes \a xi from the neighborhood of \a vi.
-    void erase(int const xi,int const vi);
+    /// Removes \a bi from the neighborhood of \a ai and vice versa unless
+    /// \a oneway is set to \c true.
+    void separate(int const ai,int const bi,bool const oneway=false);
 
     //@}
 
@@ -616,9 +615,11 @@ struct Mesh
 
     //@}
 
+#ifndef GALE_TINY_CODE
     /// Performs a simple brute-force check of the neighborhood information.
     /// Returns -1 on success or the vertex index causing the error.
     int check() const;
+#endif
 
     VectorArray vertices; ///< Array of vertex positions.
     IndexTable neighbors; ///< Array of arrays of neighboring vertex indices.
