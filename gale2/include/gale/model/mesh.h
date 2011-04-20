@@ -127,7 +127,7 @@ struct Mesh
         /// the knot's spiral, which is obtained by looping through the hole
         /// \a p times with \a q revolutions before joining its ends, where \a p
         /// and \a q have to be relatively prime.
-        static Mesh* TorusKnot(float const rk,float const rt,int const sk,int const st,int const p,int const q,float const w=1,float const h=1);
+        static Mesh* TorusKnot(float const rk,float const rt,int const sk,int const st,int const p,int const q,float const w=1.0f,float const h=1.0f);
 
         /// Returns a Möbius Strip with a ring radius width \a rrw and height
         /// \a rrh, and tube radius width \a rtw and height \a rth, where the
