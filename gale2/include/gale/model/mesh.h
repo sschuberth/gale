@@ -572,6 +572,9 @@ struct Mesh
      */
     //@{
 
+    /// Returns the average of the vertices indexed by \a primitive.
+    math::Vec3f average(IndexArray const& primitive) const;
+
     /// Inserts \a xi after or before \a oi in the neighborhood of \a ci.
     void splice(int const xi,int const oi,int const ci,bool const after=true);
 

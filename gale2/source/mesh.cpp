@@ -110,6 +110,19 @@ void Mesh::orbit(int ai,int bi,IndexArray& primitive) const
     }
 }
 
+Vec3f Mesh::average(IndexArray const& primitive) const
+{
+    int num=primitive.getSize();
+    Vec3f avg=Vec3f::ZERO();
+
+    for (int i=0;i<num;++i) {
+        avg+=vertices[primitive[i]];
+    }
+
+    avg/=static_cast<float>(num);
+    return avg;
+}
+
 void Mesh::splice(int const xi,int const oi,int const ci,bool const after)
 {
     IndexArray& cn=neighbors[ci];

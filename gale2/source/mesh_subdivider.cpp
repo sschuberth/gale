@@ -213,14 +213,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
                     center+=mesh.vertices[pi];
 
                     if (move && avg_neighbors[pi]==Vec3f::ZERO()) {
-                        IndexArray const& neighbors=mesh.neighbors[pi];
-                        int const valence=neighbors.getSize();
-
-                        Vec3f& avg=avg_neighbors[pi];
-                        for (int n=0;n<valence;++n) {
-                            avg+=mesh.vertices[neighbors[n]];
-                        }
-                        avg/=static_cast<float>(valence);
+                        avg_neighbors[pi]=mesh.average(mesh.neighbors[pi]);
                     }
                 }
 
