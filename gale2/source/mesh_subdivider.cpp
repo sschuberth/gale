@@ -105,7 +105,7 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
 void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
 {
     EdgeVertexList edge_vertices;
-    VectorArray displacements;
+    VectorArray avg_neighbors;
 
     // Pre-calculate weights for common valences.
     static float weights[1+6]={0};
@@ -120,6 +120,11 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
         edge_vertices.setSize(mesh.numEdges());
         int i=0;
 
+        if (move) {
+            avg_neighbors.setSize(mesh.numVertices());
+            memset(avg_neighbors,0,avg_neighbors.getSize()*sizeof(VectorArray::Type));
+        }
+
         // Generate a list of new edge vertices.
         Mesh::EdgeIterator edge_current=mesh.beginEdges();
         Mesh::EdgeIterator edge_end=mesh.endEdges();
@@ -130,36 +135,33 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
             s.b=edge_current.indexB();
 
             // Calculate the new vertex position.
-            s.v = ( edge_current.vertexA()              + edge_current.vertexB()              ) * 0.375f
+            Vec3f const& a=edge_current.vertexA();
+            Vec3f const& b=edge_current.vertexB();
+            s.v = ( a                                   + b              ) * 0.375f
                 + ( mesh.vertices[mesh.nextTo(s.a,s.b)] + mesh.vertices[mesh.prevTo(s.a,s.b)] ) * 0.125f;
+
+            if (move) {
+                avg_neighbors[s.a]+=b;
+                avg_neighbors[s.b]+=a;
+            }
 
             ++edge_current;
         }
 
         if (move) {
-            displacements.setSize(mesh.numVertices());
-
             // Calculate new positions for original vertices.
             for (i=0;i<mesh.numVertices();++i) {
-                IndexArray const& neighbors=mesh.neighbors[i];
-                int const valence=neighbors.getSize();
+                int const valence=mesh.neighbors[i].getSize();
 
                 // Average the neighboring vertices.
-                Vec3f q=Vec3f::ZERO();
-                for (int n=0;n<valence;++n) {
-                    q+=mesh.vertices[neighbors[n]];
-                }
-                q/=static_cast<float>(valence);
+                Vec3f& avg=avg_neighbors[i];
+                avg/=static_cast<float>(valence);
 
                 // INFO: If higher valences need to be supported, calculate the weight on-the-fly here.
                 G_ASSERT(valence<G_ARRAY_LENGTH(weights))
 
-                displacements[i]=lerp(q,mesh.vertices[i],weights[valence]);
-            }
-
-            // Move the original vertices.
-            for (i=0;i<mesh.numVertices();++i) {
-                mesh.vertices[i]=displacements[i];
+                Vec3f& v=mesh.vertices[i];
+                v=lerp(v,avg,weights[valence]);
             }
         }
 
@@ -169,7 +171,7 @@ void Mesh::Subdivider::Loop(Mesh& mesh,int steps,bool const move)
 
 void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 {
-    VectorArray displacements;
+    VectorArray avg_neighbors;
 
     // Pre-calculate weights for common valences.
     static float weights[1+6]={0};
@@ -182,6 +184,11 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 
     while (steps-->0) {
         int face_vertices_start=mesh.numVertices();
+
+        if (move) {
+            avg_neighbors.setSize(mesh.numVertices());
+            memset(avg_neighbors,0,avg_neighbors.getSize()*sizeof(VectorArray::Type));
+        }
 
         // Avoid memory reallocations when adding vertices and their neighbors.
         int num_faces=mesh.numFaces();
@@ -204,6 +211,17 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
                 for (int i=0;i<prim_vertices;++i) {
                     int pi=prim_current.indices()[i];
                     center+=mesh.vertices[pi];
+
+                    if (move && avg_neighbors[pi]==Vec3f::ZERO()) {
+                        IndexArray const& neighbors=mesh.neighbors[pi];
+                        int const valence=neighbors.getSize();
+
+                        Vec3f& avg=avg_neighbors[pi];
+                        for (int n=0;n<valence;++n) {
+                            avg+=mesh.vertices[neighbors[n]];
+                        }
+                        avg/=static_cast<float>(valence);
+                    }
                 }
 
                 center/=static_cast<float>(prim_vertices);
@@ -213,28 +231,15 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
         }
 
         if (move) {
-            displacements.setSize(face_vertices_start);
-
             // Calculate new positions for original vertices.
             for (int i=0;i<face_vertices_start;++i) {
-                IndexArray const& neighbors=mesh.neighbors[i];
-                int const valence=neighbors.getSize();
+                int const valence=mesh.neighbors[i].getSize();
 
                 // INFO: If higher valences need to be supported, calculate the weight on-the-fly here.
                 G_ASSERT(valence<G_ARRAY_LENGTH(weights))
 
-                float weight=weights[valence];
-                displacements[i]=mesh.vertices[i]*(1.0f-weight);
-
-                // Take the neighboring vertices into account.
-                for (int n=0;n<valence;++n) {
-                    displacements[i]+=mesh.vertices[neighbors[n]]*(weight/valence);
-                }
-            }
-
-            // Move the original vertices.
-            for (int i=0;i<face_vertices_start;++i) {
-                mesh.vertices[i]=displacements[i];
+                Vec3f& v=mesh.vertices[i];
+                v=lerp(v,avg_neighbors[i],weights[valence]);
             }
         }
 
