@@ -351,6 +351,10 @@ struct Mesh
     /// Removes \a xi from the neighborhood of \a vi.
     void erase(int const xi,int const vi);
 
+    /// Removes the vertex identified by index \a xi from the mesh, including
+    /// all its neighborhood information.
+    void remove(int const xi);
+
     //@}
 
     /**

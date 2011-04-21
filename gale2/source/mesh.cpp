@@ -147,6 +147,35 @@ void Mesh::erase(int const xi,int const vi)
     }
 }
 
+void Mesh::remove(int const xi)
+{
+    for (int i=0;i<neighbors.getSize();++i) {
+        IndexArray& n=neighbors[i];
+
+        int k=0;
+        while (k<n.getSize()) {
+            int nk=n[k];
+
+            // Remove xi from its neighbor.
+            if (nk==xi) {
+                n.remove(k);
+                continue;
+            }
+
+            // Adjust higher vertex indices.
+            if (nk>xi) {
+                --n[k];
+            }
+
+            ++k;
+        }
+    }
+
+    // Remove xi and its neighborhood information.
+    vertices.remove(xi);
+    neighbors.remove(xi);
+}
+
 int Mesh::check() const {
     for (int vi=0;vi<vertices.getSize();++vi) {
         IndexArray const& vn=neighbors[vi];
