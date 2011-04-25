@@ -327,7 +327,13 @@ struct Mesh
         ,   m_num_vertices(mesh.vertices.getSize())
         ,   m_vi(vi)
         ,   m_ni(ni)
-        {}
+        ,   m_neighbors(&mesh.neighbors[m_vi])
+        {
+            // Initialize unless this is the end iterator.
+            while (m_vi<m_num_vertices && !next()) {
+                iterate();
+            }
+        }
 
         /// Returns \c true if the two iterators' vertex and neighbor indices
         /// are equal, \c false otherwise.
@@ -344,24 +350,9 @@ struct Mesh
 
         /// Moves the iterator forward to the next edge in the mesh.
         EdgeIterator operator++() {
-            IndexArray const* neighbors=&m_mesh.neighbors[m_vi];
-
-            // The below break criterion defines a (somewhat arbitrary) relation on
-            // the vertex indices to ensure walking each edge only in one direction.
             do {
-                // Get the next neighbor index.
-                if (++m_ni==neighbors->getSize()) {
-                    m_ni=0;
-
-                    // Get the next vertex index.
-                    if (++m_vi==m_num_vertices) {
-                        break;
-                    }
-
-                    // Refer to the current neighbor indices.
-                    neighbors=&m_mesh.neighbors[m_vi];
-                }
-            } while ((*neighbors)[m_ni]<static_cast<unsigned int>(m_vi));
+                iterate();
+            } while (m_vi<m_num_vertices && !next());
 
             return *this;
         }
@@ -373,7 +364,7 @@ struct Mesh
 
         /// Returns the index of the edge's second vertex.
         int indexB() const {
-            return m_mesh.neighbors[m_vi][m_ni];
+            return (*m_neighbors)[m_ni];
         }
 
         /// Returns the edge's first vertex.
@@ -388,11 +379,28 @@ struct Mesh
 
       private:
 
+        /// Determines whether the current vertex / neighbor pair is a valid edge.
+        bool next() const {
+            // The below break criterion defines a (somewhat arbitrary) relation on
+            // the vertex indices to ensure walking each edge only in one direction.
+            return m_neighbors->getSize()>0 && indexA()<indexB();
+        }
+
+        /// Iterates to the next edge, skipping any single vertices.
+        void iterate() {
+            if (++m_ni>=m_neighbors->getSize()) {
+                m_ni=0;
+                m_neighbors=&m_mesh.neighbors[++m_vi];
+            }
+        }
+
         Mesh const& m_mesh; ///< The mesh being iterated over.
         int m_num_vertices; ///< Number of vertices in the mesh.
 
         int m_vi; ///< Index of the first vertex.
         int m_ni; ///< Index of the first vertex' neighbor.
+
+        IndexArray const* m_neighbors; ///< The current vertex' neighbors.
     };
 
     /// A simple class to iterate over the primitives in a mesh.
@@ -532,7 +540,7 @@ struct Mesh
     /// Returns an iterator that marks the end of the mesh's set of edges. Note
     /// that incrementing the end iterator is undefined.
     EdgeIterator endEdges() const {
-        return EdgeIterator(*this,numEdges()?vertices.getSize():0,0);
+        return EdgeIterator(*this,vertices.getSize(),0);
     }
 
     /// Returns an iterator that marks the begin of the mesh's set of primitives.
