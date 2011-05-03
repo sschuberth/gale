@@ -82,7 +82,7 @@ class TestWindow:public DefaultWindow
         (*m_meshes)[8][0][0].init(Mesh::Factory::Shell(0.2f,0.4f,80,20,2.5f,3));
 
 #ifndef GALE_TINY_CODE
-        for (int b=0;b<8;++b) {
+        for (int b=0;b<G_ARRAY_LENGTH(BASE_NAMES);++b) {
             int error=(*m_meshes)[b][0][0].mesh->check();
             if (error>=0) {
                 printf("DEBUG  : Mesh is inconsistent at vertex %d.\n",error);
@@ -430,7 +430,7 @@ int __cdecl main()
 #if !defined NDEBUG && !defined GALE_TINY_CODE
     puts("Base meshes");
     puts("-----------");
-    for (int b=0;b<8;++b) {
+    for (int b=0;b<G_ARRAY_LENGTH(BASE_NAMES);++b) {
         printf("'%d': %s\n",b+1,BASE_NAMES[b]);
     }
     puts("\n");
