@@ -362,12 +362,12 @@ class TestWindow:public DefaultWindow
 #ifndef GALE_TINY_CODE
         int mode=(m_step==0)?0:m_mode;
         MeshCache& mc=(*m_meshes)[m_base][mode][m_step];
-        printf(" mesh (%d vertices, %d edges, %d faces).\n"
+        printf(" mesh: %d vert(ex/ices), %d edge(s), about %d face(s).\n"
         ,   mc.mesh->numVertices()
         ,   mc.mesh->numEdges()
         ,   mc.mesh->numFaces()
         );
-        printf("MESH   : Prepared %d points, %d lines, %d triangles, %d quads, %d polys.\n"
+        printf("MESH   : Prepared %d point(s), %d line(s), %d triangle(s), %d quad(s), %d poly(s).\n"
         ,   mc.mesh_prep.numPoints()
         ,   mc.mesh_prep.numLines()
         ,   mc.mesh_prep.numTriangles()
