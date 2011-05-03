@@ -29,6 +29,7 @@ static char const* BASE_NAMES[]={
 ,   "Spherical Supershape"
 ,   "Toroidal Supershape"
 ,   "Shell"
+,   "All Primitives"
 };
 
 static char const* MODE_NAMES[]={
@@ -41,6 +42,119 @@ static char const* MODE_NAMES[]={
 };
 
 static const int MAX_STEPS=5;
+
+static Mesh* AllPrimitivesMesh() {
+    int const loops=2;
+    Mesh* all_prims=new Mesh((1+2+3+4+5)*loops);
+
+    int v=0;
+    float y_step=0.4f,y=(5*loops-1)*0.5f*y_step;
+
+    for (int i=0;i<loops;++i) {
+        // Point
+        all_prims->vertices[v]=Vec3f( 0.0f, y, 0.0f);
+        G_ASSERT(all_prims->neighbors[v].getSize()==0)
+        ++v;
+
+        y-=y_step;
+
+        // Line
+        all_prims->vertices[v]=Vec3f( 1.0f, y, 0.0f);
+        all_prims->neighbors[v].setSize(1);
+        all_prims->neighbors[v][0]=v+1;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f(-1.0f, y, 0.0f);
+        all_prims->neighbors[v].setSize(1);
+        all_prims->neighbors[v][0]=v-1;
+        ++v;
+
+        y-=y_step;
+
+        // Triangle
+        all_prims->vertices[v]=Vec3f( 1.0f, y, 1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v+1;
+        all_prims->neighbors[v][1]=v+2;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f( 1.0f, y,-1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v-1;
+        all_prims->neighbors[v][1]=v+1;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f(-1.0f, y, 0.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v-1;
+        all_prims->neighbors[v][1]=v-2;
+        ++v;
+
+        y-=y_step;
+
+        // Quad
+        all_prims->vertices[v]=Vec3f( 1.0f, y, 1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v+1;
+        all_prims->neighbors[v][1]=v+3;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f( 1.0f, y,-1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v-1;
+        all_prims->neighbors[v][1]=v+1;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f(-1.0f, y,-1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v-1;
+        all_prims->neighbors[v][1]=v+1;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f(-1.0f, y, 1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v-1;
+        all_prims->neighbors[v][1]=v-3;
+        ++v;
+
+        y-=y_step;
+
+        // Poly
+        all_prims->vertices[v]=Vec3f( 1.0f, y, 1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v+1;
+        all_prims->neighbors[v][1]=v+4;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f( 1.0f, y,-1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v-1;
+        all_prims->neighbors[v][1]=v+1;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f(-1.0f, y,-1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v-1;
+        all_prims->neighbors[v][1]=v+1;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f(-2.0f, y, 0.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v-1;
+        all_prims->neighbors[v][1]=v+1;
+        ++v;
+
+        all_prims->vertices[v]=Vec3f(-1.0f, y, 1.0f);
+        all_prims->neighbors[v].setSize(2);
+        all_prims->neighbors[v][0]=v-1;
+        all_prims->neighbors[v][1]=v-4;
+        ++v;
+
+        y-=y_step;
+    }
+
+    return all_prims;
+}
 
 class TestWindow:public DefaultWindow
 {
@@ -80,6 +194,8 @@ class TestWindow:public DefaultWindow
         (*m_meshes)[7][0][0].init(Mesh::Factory::ToroidalMapper(tp_long,40,tp_lat,20));
 
         (*m_meshes)[8][0][0].init(Mesh::Factory::Shell(0.2f,0.4f,80,20,2.5f,3));
+
+        (*m_meshes)[9][0][0].init(AllPrimitivesMesh());
 
 #ifndef GALE_TINY_CODE
         for (int b=0;b<G_ARRAY_LENGTH(BASE_NAMES);++b) {
@@ -213,9 +329,13 @@ class TestWindow:public DefaultWindow
 
                 break;
             }
+            case '0': // All Primitives
             case '5': // Dodecahedron
             {
                 int new_base=key-'0'-1;
+                if (new_base<0) {
+                    new_base=10+new_base;
+                }
                 if (m_mode!=5) {
                     printf("ERROR  : ");
                     printf(MODE_NAMES[m_mode]);
