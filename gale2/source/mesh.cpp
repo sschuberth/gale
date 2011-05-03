@@ -127,6 +127,48 @@ int Mesh::insert(int const ai,int const bi,Vec3f const& x)
     return xi;
 }
 
+int Mesh::collapse(IndexArray const& primitive)
+{
+    int num=primitive.getSize();
+    Vec3f avg=Vec3f::ZERO();
+
+    // Separate each vertex from the neighboring vertex.
+    for (int i=0;i<num;++i) {
+        unsigned int p=primitive[i];
+        avg+=vertices[p];
+
+        int k=(i+1)%num;
+        separate(p,primitive[k]);
+    }
+
+    avg/=static_cast<float>(num);
+    IndexArray collapsed_neighbors;
+
+    // Remove the primitive vertices but save their neighbors.
+    for (int i=0;i<num;++i) {
+        unsigned int p=primitive[i];
+        collapsed_neighbors.insert(neighbors[p]);
+
+        remove(p);
+    }
+
+    // Insert the vertex replacing the primitive.
+    //vertices.insert(avg);
+    //neighbors.insert(collapsed_neighbors);
+
+#ifndef NDEBUG
+    for (int v=0;v<vertices.getSize();++v) {
+        printf("%d: ",v);
+        for (int n=0;n<neighbors[v].getSize();++n) {
+            printf("%d, ",neighbors[v][n]);
+        }
+        printf("EON\n");
+    }
+#endif
+
+    return 0;
+}
+
 void Mesh::splice(int const ai,int const xi,int const vi,bool const after)
 {
     // Insert ai after or before xi in vi's neighborhood.

@@ -345,6 +345,10 @@ struct Mesh
     /// returns its index in the vertex array.
     int insert(int const ai,int const bi,math::Vec3f const& x);
 
+    /// Collapses the vertices of the given \a primitive to a centroid vertex,
+    /// whose index is return.
+    int collapse(IndexArray const& primitive);
+
     /// Inserts \a ai after or before \a xi in the neighborhood of \a vi.
     void splice(int const ai,int const xi,int const vi,bool const after=true);
 
