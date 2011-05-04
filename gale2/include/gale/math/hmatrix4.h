@@ -44,7 +44,9 @@ namespace math {
  * Homogeneous matrix class implementation based on column vectors. The matrix
  * is stored as 4x4 numbers organized in column-major order in memory as
  * required by OpenGL, i.e. the matrix entry at row r, 0 <= r <= 3, and column
- * c, 0 <= c <= 3, is located at offset i = c*4 + r.
+ * c, 0 <= c <= 3, is located at offset i = c*4 + r. For a nice article about
+ * column vs. row vectors see
+ * <http://fgiesen.wordpress.com/2011/05/04/row-major-vs-column-major-and-gl-es/>.
  *
  * OpenGL example usage:
  * \code
