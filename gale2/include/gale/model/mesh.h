@@ -291,6 +291,23 @@ struct Mesh
 
       private:
 
+        /// Structure for inserting a vertex on an edge.
+        struct InterVertex {
+            int a,b;       ///< Indices of the adjacent vertices.
+            math::Vec3f v; ///< Position of the vertex.
+        };
+
+        /// List of vertices to be inserted after a subdivision step.
+        typedef global::DynamicArray<InterVertex> InterVertexList;
+
+        /// Connects edge vertices starting from index \a orig_vertices to each
+        /// other in the specified \a mesh.
+        static void interconnectEdgeVertices(Mesh& mesh,int orig_vertices);
+
+        /// Inserts the vertices in \a ivl on the edges between the given two
+        /// adjacent vertices and connects them to the specified \a mesh.
+        static void insertAndConnect(Mesh& mesh,InterVertexList const& ivl);
+
         /// Adds the missing neighbors of newly inserted vertices after a
         /// subdivision step. Starting from vertex index \a x0i, neighbors
         /// missing in the original mesh \a orig are inserted into the given

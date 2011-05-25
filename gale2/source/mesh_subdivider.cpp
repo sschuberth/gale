@@ -38,83 +38,64 @@ namespace model {
 void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float const scale)
 {
     while (steps-->0) {
-        Mesh orig=mesh;
-        VectorArray const& ov=orig.vertices;
+        int orig_vertices=mesh.numVertices();
 
-        // Store the index of the first new vertex.
-        int x0i=ov.getSize();
+        // Insert a new vertex on each edge.
+        Mesh::EdgeIterator edge_current=mesh.beginEdges();
+        Mesh::EdgeIterator edge_end=mesh.endEdges();
+        while (edge_current!=edge_end) {
+            int ai=edge_current.indexA();
+            int bi=edge_current.indexB();
 
-        // Loop over all vertices in the base mesh.
-        for (int vi=0;vi<x0i;++vi) {
-            IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=ov[vi];
+            if (ai<orig_vertices && bi<orig_vertices) {
+                // Calculate the new vertex position.
+                Vec3f v=edge_current.vertexA()+edge_current.vertexB();
 
-            // Loop over v's neighborhood.
-            for (int n=0;n<vn.getSize();++n) {
-                int ui=vn[n];
-                Vec3f const& u=ov[ui];
-
-                // Be sure to walk each pair of vertices, i.e. edge, only once.
-                // Use the address in memory to define a relation on the
-                // universe of vertices.
-                if (&u<&v) {
-                    continue;
-                }
-
-                // Add a new vertex as the arithmetic average of its two neighbors.
-                Vec3f a=u+v;
                 if (scale==0.0f) {
-                    mesh.insert(ui,vi,a*0.5f);
+                    v=v*0.5f;
                 }
                 else {
-                    mesh.insert(ui,vi,(~a)*scale);
+                    v=(~v)*scale;
                 }
+
+                mesh.insert(ai,bi,v);
             }
+
+            ++edge_current;
         }
 
-        orig=mesh;
-        assignNeighbors(orig,mesh,x0i);
+        interconnectEdgeVertices(mesh,orig_vertices);
     }
 }
 
 void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
 {
+    InterVertexList vertices;
+
     while (steps-->0) {
-        Mesh orig=mesh;
-        VectorArray const& ov=orig.vertices;
+        vertices.setSize(mesh.numEdges());
+        int i=0;
 
-        // Store the index of the first new vertex.
-        int x0i=ov.getSize();
+        // Generate a list of new edge vertices.
+        Mesh::EdgeIterator edge_current=mesh.beginEdges();
+        Mesh::EdgeIterator edge_end=mesh.endEdges();
+        while (edge_current!=edge_end) {
+            // Get the neighbor vertex indices.
+            InterVertex& s=vertices[i++];
+            s.a=edge_current.indexA();
+            s.b=edge_current.indexB();
 
-        // Loop over all vertices in the base mesh.
-        for (int vi=0;vi<x0i;++vi) {
-            IndexArray const& vn=orig.neighbors[vi];
-            Vec3f const& v=ov[vi];
+            // Calculate the new vertex position.
+            s.v = ( edge_current.vertexA()                + edge_current.vertexB()                ) * 0.5f
+                + ( mesh.vertices[mesh.nextTo(s.a,s.b)]   + mesh.vertices[mesh.prevTo(s.a,s.b)]   ) * 0.125f
+                - ( mesh.vertices[mesh.nextTo(s.a,s.b,2)] + mesh.vertices[mesh.prevTo(s.a,s.b,2)]
+                +   mesh.vertices[mesh.nextTo(s.b,s.a,2)] + mesh.vertices[mesh.prevTo(s.b,s.a,2)] ) * 0.0625f;
 
-            // Loop over v's neighborhood.
-            for (int n=0;n<vn.getSize();++n) {
-                int ui=vn[n];
-                Vec3f const& u=ov[ui];
-
-                // Be sure to walk each pair of vertices, i.e. edge, only once.
-                // Use the address in memory to define a relation on the
-                // universe of vertices.
-                if (&u<&v) {
-                    continue;
-                }
-
-                Vec3f x = v*0.5f + u*0.5f
-                        + ov[orig.nextTo(ui,vi)]   * 0.125f  + ov[orig.prevTo(ui,vi)]   * 0.125f
-                        - ov[orig.nextTo(ui,vi,2)] * 0.0625f - ov[orig.prevTo(ui,vi,2)] * 0.0625f
-                        - ov[orig.nextTo(vi,ui,2)] * 0.0625f - ov[orig.prevTo(vi,ui,2)] * 0.0625f;
-
-                // Add a new vertex as the arithmetic average of its two neighbors.
-                mesh.insert(ui,vi,x);
-            }
+            ++edge_current;
         }
 
-        orig=mesh;
-        assignNeighbors(orig,mesh,x0i);
+        // Insert the new vertices on existing edges and connect them to the mesh.
+        insertAndConnect(mesh,vertices);
     }
 }
 
@@ -453,6 +434,37 @@ void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
 /*
  * Helper methods
  */
+
+void Mesh::Subdivider::interconnectEdgeVertices(Mesh& mesh,int orig_vertices)
+{
+    for (int i=orig_vertices;i<mesh.numVertices();++i) {
+        IndexArray& n=mesh.neighbors[i];
+
+        // The new inserted vertices just have two neighbors as yet.
+        int const& a=n[0];
+        int const& b=n[1];
+
+        n.insert(mesh.nextTo(i,a),0);
+        n.insert(mesh.prevTo(i,a),2);
+
+        n.insert(mesh.nextTo(i,b),3);
+        n.insert(mesh.prevTo(i,b));
+    }
+}
+
+void Mesh::Subdivider::insertAndConnect(Mesh& mesh,InterVertexList const& vertices)
+{
+    // Remember the number of vertices in the original mesh.
+    int orig_vertices=mesh.numVertices();
+
+    // Insert the new edge vertices.
+    for (int i=0;i<vertices.getSize();++i) {
+        InterVertex const& s=vertices[i];
+        mesh.insert(s.a,s.b,s.v);
+    }
+
+    interconnectEdgeVertices(mesh,orig_vertices);
+}
 
 void Mesh::Subdivider::assignNeighbors(Mesh const& orig,Mesh& mesh,int const x0i)
 {
