@@ -85,10 +85,10 @@ class TestWindow:public DefaultWindow
         for (int b=0;b<8;++b) {
             int error=(*m_meshes)[b][0][0].mesh->check();
             if (error>=0) {
-                printf("DEBUG: Mesh is inconsistent at vertex %d.\n",error);
+                printf("DEBUG  : Mesh is inconsistent at vertex %d.\n",error);
             }
 
-            printf("DEBUG: Bounding box size is %f x %f.\n"
+            printf("DEBUG  : Bounding box size is %f x %f.\n"
             ,   (*m_meshes)[b][0][0].mesh_prep.box.getWidth()
             ,   (*m_meshes)[b][0][0].mesh_prep.box.getHeight()
             );
@@ -140,7 +140,7 @@ class TestWindow:public DefaultWindow
             }
         }
         else {
-            puts("STATUS: Mesh out of frustum.");
+            puts("STATUS : Mesh out of frustum.");
         }
 
         if (m_show_normals) {
@@ -150,7 +150,7 @@ class TestWindow:public DefaultWindow
                 Renderer::draw(mc.normals_prep);
             }
             else {
-                puts("STATUS: Normals out of frustum.");
+                puts("STATUS : Normals out of frustum.");
             }
         }
     }
@@ -179,7 +179,7 @@ class TestWindow:public DefaultWindow
             {
                 int new_base=key-'0'-1;
                 if (m_mode==4) {
-                    printf("ERROR: ");
+                    printf("ERROR  : ");
                     printf(MODE_NAMES[m_mode]);
                     printf(" not supported on ");
                     printf(BASE_NAMES[new_base]);
@@ -198,7 +198,7 @@ class TestWindow:public DefaultWindow
             {
                 int new_base=key-'0'-1;
                 if (m_mode<4) {
-                    printf("ERROR: ");
+                    printf("ERROR  : ");
                     printf(MODE_NAMES[m_mode]);
                     printf(" not supported on ");
                     printf(BASE_NAMES[new_base]);
@@ -217,7 +217,7 @@ class TestWindow:public DefaultWindow
             {
                 int new_base=key-'0'-1;
                 if (m_mode!=5) {
-                    printf("ERROR: ");
+                    printf("ERROR  : ");
                     printf(MODE_NAMES[m_mode]);
                     printf(" not supported on ");
                     printf(BASE_NAMES[new_base]);
@@ -248,7 +248,7 @@ class TestWindow:public DefaultWindow
                 // Check if the base mesh only consists of supported primitives.
                 MeshCache const& mc=(*m_meshes)[m_base][0][0];
                 if (mc.mesh_prep.pointCount() || mc.mesh_prep.lineCount() || mc.mesh_prep.quadCount() || mc.mesh_prep.polygonCount()) {
-                    printf("ERROR: ");
+                    printf("ERROR  : ");
                     printf(BASE_NAMES[m_base]);
                     printf(" mesh cannot be subdivided using ");
                     printf(MODE_NAMES[new_mode]);
@@ -266,7 +266,7 @@ class TestWindow:public DefaultWindow
                 // Check if the base mesh only consists of supported primitives.
                 MeshCache const& mc=(*m_meshes)[m_base][0][0];
                 if (mc.mesh_prep.pointCount() || mc.mesh_prep.lineCount() || mc.mesh_prep.triangleCount() || mc.mesh_prep.polygonCount()) {
-                    printf("ERROR: ");
+                    printf("ERROR  : ");
                     printf(BASE_NAMES[m_base]);
                     printf(" mesh cannot be subdivided using ");
                     printf(MODE_NAMES[new_mode]);
@@ -347,21 +347,29 @@ class TestWindow:public DefaultWindow
 #ifndef GALE_TINY_CODE
             int error=mc.mesh->check();
             if (error>=0) {
-                printf("DEBUG: Mesh is inconsistent at vertex %d.\n",error);
+                printf("DEBUG  : Mesh is inconsistent at vertex %d.\n",error);
             }
 
-            printf("DEBUG: Bounding box size is %f x %f.\n"
+            printf("DEBUG  : Bounding box size is %f x %f.\n"
             ,   mc.mesh_prep.box.getWidth()
             ,   mc.mesh_prep.box.getHeight()
             );
 #endif
         }
 
-        printf("STATUS: ");
+        printf("MESH   : ");
         printf(BASE_NAMES[m_base]);
-        printf(" mesh, ");
+#ifndef GALE_TINY_CODE
+        int mode=(m_step==0)?0:m_mode;
+        MeshCache& mc=(*m_meshes)[m_base][mode][m_step];
+        printf(" mesh (%d vertices, %d edges, %d faces).\n",mc.mesh->numVertices(),mc.mesh->numEdges(),mc.mesh->numFaces());
+#else
+        printf(" mesh.\n");
+#endif
+
+        printf("SUBDIV : ");
         printf(MODE_NAMES[m_mode]);
-        printf(" subdivision, ");
+        printf(", ");
         static char buffer[]="step 0.";
         buffer[5]='0'+m_step;
         puts(buffer);
