@@ -129,6 +129,60 @@ int Mesh::insert(int const ai,int const bi,Vec3f const& x)
 
 int Mesh::collapse(IndexArray const& primitive)
 {
+#if 1
+    int i,k;
+    IndexArray combined_neighbors;
+
+    // Combine all neighbors of the vertices to collapse.
+    for (i=0;i<primitive.getSize();++i) {
+        unsigned int p=primitive[i];
+        combined_neighbors.insert(neighbors[p]);
+    }
+
+    // Remove all primitive vertices from the combined neighbors.
+    i=0;
+    while (i<combined_neighbors.getSize()) {
+        if (primitive.find(combined_neighbors[i])>=0) {
+            combined_neighbors.remove(i);
+        }
+        else {
+            ++i;
+        }
+    }
+
+    Vec3f avg=Vec3f::ZERO();
+    IndexArray adjusted_primitive=primitive;
+
+    for (i=0;i<adjusted_primitive.getSize();++i) {
+        unsigned int p=adjusted_primitive[i];
+
+        avg+=vertices[p];
+
+        remove(p);
+
+        for (k=0;k<combined_neighbors.getSize();++k) {
+            unsigned int& n=combined_neighbors[k];
+            if (n>p) {
+                --n;
+            }
+        }
+
+        for (k=0;k<adjusted_primitive.getSize();++k) {
+            unsigned int& n=adjusted_primitive[k];
+            if (n>p) {
+                --n;
+            }
+        }
+    }
+
+    avg/=static_cast<float>(adjusted_primitive.getSize());
+
+    // Insert the vertex replacing the primitive.
+    vertices.insert(avg);
+    //neighbors.insert(collapsed_neighbors);
+
+    return 0;
+#else
     int num=primitive.getSize();
     Vec3f avg=Vec3f::ZERO();
 
@@ -142,14 +196,23 @@ int Mesh::collapse(IndexArray const& primitive)
     }
 
     avg/=static_cast<float>(num);
-    IndexArray collapsed_neighbors;
+    IndexArray combined_neighbors;
 
     // Remove the primitive vertices but save their neighbors.
     for (int i=0;i<num;++i) {
         unsigned int p=primitive[i];
-        collapsed_neighbors.insert(neighbors[p]);
+        combined_neighbors.insert(neighbors[p]);
 
         remove(p);
+
+    for (int v=0;v<vertices.getSize();++v) {
+        printf("%d: ",v);
+        for (int n=0;n<neighbors[v].getSize();++n) {
+            printf("%d, ",neighbors[v][n]);
+        }
+        printf("EON\n");
+    }
+        printf("\n");
     }
 
     // Insert the vertex replacing the primitive.
@@ -167,6 +230,7 @@ int Mesh::collapse(IndexArray const& primitive)
 #endif
 
     return 0;
+#endif
 }
 
 void Mesh::splice(int const ai,int const xi,int const vi,bool const after)

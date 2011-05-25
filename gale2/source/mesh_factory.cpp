@@ -162,6 +162,9 @@ Mesh* Mesh::Factory::Hexahedron()
     static float const e=2*a;
     populateNeighborhood(m,e,3);
 
+    Mesh::PrimitiveIterator i=m->beginPrimitives();
+    m->collapse(i.indices());
+
     return m;
 }
 
