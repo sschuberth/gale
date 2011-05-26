@@ -331,14 +331,14 @@ struct Mesh
 
         /// Returns \c true if the two iterators' vertex and neighbor indices
         /// are equal, \c false otherwise.
-        bool operator==(EdgeIterator const& other) {
+        bool operator==(EdgeIterator const& other) const {
             // For performance reasons, this does not compare the actual mesh.
             return m_vi==other.m_vi && m_ni==other.m_ni;
         }
 
         /// Returns \c true if the two iterators' vertex and neighbor indices
         /// are not equal, \c false otherwise.
-        bool operator!=(EdgeIterator const& other) {
+        bool operator!=(EdgeIterator const& other) const {
             return !(*this==other);
         }
 
@@ -421,14 +421,14 @@ struct Mesh
 
         /// Returns \c true if the two iterators' vertex and neighbor indices
         /// are equal, \c false otherwise.
-        bool operator==(PrimitiveIterator const& other) {
+        bool operator==(PrimitiveIterator const& other) const {
             // For performance reasons, this does not compare the actual mesh.
             return m_vi==other.m_vi && m_ni==other.m_ni;
         }
 
         /// Returns \c true if the two iterators' vertex and neighbor indices
         /// are not equal, \c false otherwise.
-        bool operator!=(PrimitiveIterator const& other) {
+        bool operator!=(PrimitiveIterator const& other) const {
             return !(*this==other);
         }
 
