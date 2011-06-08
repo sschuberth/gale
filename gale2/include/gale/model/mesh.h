@@ -411,10 +411,10 @@ struct Mesh
         /// Associates the iterator with the given \a mesh and the primitive defined
         /// by the edge from vertex index \vi to its neighbor index \a ni.
         PrimitiveIterator(Mesh const& mesh,int vi=0,int ni=0)
-            :   m_mesh(mesh)
-            ,   m_num_vertices(mesh.vertices.getSize())
-            ,   m_vi(vi)
-            ,   m_ni(ni)
+        :   m_mesh(mesh)
+        ,   m_num_vertices(mesh.vertices.getSize())
+        ,   m_vi(vi)
+        ,   m_ni(ni)
         {
             if (m_vi<m_mesh.vertices.getSize()) {
                 if (m_mesh.neighbors[m_vi].getSize()==0) {
