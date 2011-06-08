@@ -403,7 +403,8 @@ struct Mesh
         IndexArray const* m_neighbors; ///< The current vertex' neighbors.
     };
 
-    /// A simple class to iterate over the primitives in a mesh.
+    /// A simple class to iterate over the primitives in a mesh. Note that both
+    /// sides of stand-alone primitives of a (non-manifold) mesh are iterated.
     class PrimitiveIterator
     {
       public:
