@@ -23,46 +23,79 @@
  *
  */
 
-/// A simple class to iterate over the edges in a mesh.
-class EdgeIterator
+/// An abstract base class that serves as an interface for mesh iterators.
+class G_NO_VTABLE Iterator
 {
   public:
 
-    /// Associates the iterator with the given \a mesh and the edge defined
-    /// by vertex index \vi and its neighbor index \a ni.
-    EdgeIterator(Mesh const& mesh,int vi=0,int ni=0)
+    Iterator(Mesh const& mesh,int vi=0,int ni=0)
     :   m_mesh(mesh)
     ,   m_num_vertices(mesh.vertices.getSize())
     ,   m_vi(vi)
     ,   m_ni(ni)
     ,   m_neighbors(&mesh.neighbors[m_vi])
     {
-        // Initialize unless this is the end iterator.
-        while (m_vi<m_num_vertices && !next()) {
-            iterate();
-        }
+        // Cannot call pure virtual methods in a base class' constructor, see
+        // http://www.parashift.com/c%2B%2B-faq-lite/strange-inheritance.html#faq-23.5
     }
 
     /// Returns \c true if the two iterators' vertex and neighbor indices
     /// are equal, \c false otherwise.
-    bool operator==(EdgeIterator const& other) const {
-        // For performance reasons, this does not compare the actual mesh.
+    bool operator==(Iterator const& other) const {
         return m_vi==other.m_vi && m_ni==other.m_ni;
     }
 
     /// Returns \c true if the two iterators' vertex and neighbor indices
     /// are not equal, \c false otherwise.
-    bool operator!=(EdgeIterator const& other) const {
+    bool operator!=(Iterator const& other) const {
         return !(*this==other);
     }
 
-    /// Moves the iterator forward to the next edge in the mesh.
-    EdgeIterator operator++() {
+    /// Moves the iterator forward to the next element in the mesh.
+    Iterator operator++() {
         do {
             iterate();
         } while (m_vi<m_num_vertices && !next());
 
         return *this;
+    }
+
+  protected:
+
+    /// Iterates to the next vertex / neighbor pair.
+    void iterate() {
+        if (++m_ni>=m_neighbors->getSize()) {
+            m_ni=0;
+            m_neighbors=&m_mesh.neighbors[++m_vi];
+        }
+    }
+
+    /// Determines the element for the current vertex / neighbor, if any.
+    virtual bool next()=0;
+
+    Mesh const& m_mesh; ///< The mesh being iterated over.
+    int m_num_vertices; ///< Number of vertices in the mesh.
+
+    int m_vi; ///< Index of the first vertex.
+    int m_ni; ///< Index of the first vertex' neighbor.
+
+    IndexArray const* m_neighbors; ///< The current vertex' neighbors.
+};
+
+/// A class to iterate over the edges in a mesh.
+class EdgeIterator:public Iterator
+{
+  public:
+
+    /// Associates the iterator with the given \a mesh and the edge defined
+    /// by vertex index \vi and its neighbor index \a ni.
+    EdgeIterator(Mesh const& mesh,int vi=0,int ni=0)
+    :   Iterator(mesh,vi,ni)
+    {
+        // Initialize unless this is the end iterator.
+        while (m_vi<m_num_vertices && !next()) {
+            iterate();
+        }
     }
 
     /// Returns the index of the edge's first vertex.
@@ -88,70 +121,28 @@ class EdgeIterator
   private:
 
     /// Determines whether the current vertex / neighbor pair is a valid edge.
-    bool next() const {
+    bool next() {
         // The below break criterion defines a (somewhat arbitrary) relation on
         // the vertex indices to ensure walking each edge only in one direction.
         return m_neighbors->getSize()>0 && indexA()<indexB();
     }
-
-    /// Iterates to the next edge, skipping any single vertices.
-    void iterate() {
-        if (++m_ni>=m_neighbors->getSize()) {
-            m_ni=0;
-            m_neighbors=&m_mesh.neighbors[++m_vi];
-        }
-    }
-
-    Mesh const& m_mesh; ///< The mesh being iterated over.
-    int m_num_vertices; ///< Number of vertices in the mesh.
-
-    int m_vi; ///< Index of the first vertex.
-    int m_ni; ///< Index of the first vertex' neighbor.
-
-    IndexArray const* m_neighbors; ///< The current vertex' neighbors.
 };
 
-/// A simple class to iterate over the primitives in a mesh. Note that both
-/// sides of stand-alone primitives of a (non-manifold) mesh are iterated.
-class PrimitiveIterator
+/// A class to iterate over the primitives in a mesh. Note that both sides
+/// of stand-alone primitives of a (non-manifold) mesh are iterated.
+class PrimitiveIterator:public Iterator
 {
   public:
 
     /// Associates the iterator with the given \a mesh and the primitive defined
     /// by the edge from vertex index \vi to its neighbor index \a ni.
     PrimitiveIterator(Mesh const& mesh,int vi=0,int ni=0)
-    :   m_mesh(mesh)
-    ,   m_num_vertices(mesh.vertices.getSize())
-    ,   m_vi(vi)
-    ,   m_ni(ni)
-    ,   m_neighbors(&mesh.neighbors[m_vi])
+    :   Iterator(mesh,vi,ni)
     {
         // Initialize unless this is the end iterator.
         if (m_vi<m_num_vertices) {
             next();
         }
-    }
-
-    /// Returns \c true if the two iterators' vertex and neighbor indices
-    /// are equal, \c false otherwise.
-    bool operator==(PrimitiveIterator const& other) const {
-        // For performance reasons, this does not compare the actual mesh.
-        return m_vi==other.m_vi && m_ni==other.m_ni;
-    }
-
-    /// Returns \c true if the two iterators' vertex and neighbor indices
-    /// are not equal, \c false otherwise.
-    bool operator!=(PrimitiveIterator const& other) const {
-        return !(*this==other);
-    }
-
-    /// Moves the iterator forward to the next primitive in the mesh.
-    PrimitiveIterator operator++() {
-        do {
-            iterate();
-        } while (m_vi<m_num_vertices && !next());
-
-        return *this;
     }
 
     /// Returns the primitive's vertex indices.
@@ -190,23 +181,6 @@ class PrimitiveIterator
 
         return exists;
     }
-
-    /// Iterates to the next vertex or edge, which potentially is part of a
-    /// new primitive.
-    void iterate() {
-        if (++m_ni>=m_neighbors->getSize()) {
-            m_ni=0;
-            m_neighbors=&m_mesh.neighbors[++m_vi];
-        }
-    }
-
-    Mesh const& m_mesh; ///< The mesh being iterated over.
-    int m_num_vertices; ///< Number of vertices in the mesh.
-
-    int m_vi; ///< Index of the first vertex.
-    int m_ni; ///< Index of the first vertex' neighbor.
-
-    IndexArray const* m_neighbors; ///< The current vertex' neighbors.
 
     IndexArray m_primitive; ///< The current primitive's indices.
 };
