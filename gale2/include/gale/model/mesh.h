@@ -416,15 +416,11 @@ struct Mesh
         ,   m_num_vertices(mesh.vertices.getSize())
         ,   m_vi(vi)
         ,   m_ni(ni)
+        ,   m_neighbors(&mesh.neighbors[m_vi])
         {
-            if (m_vi<m_mesh.vertices.getSize()) {
-                if (m_mesh.neighbors[m_vi].getSize()==0) {
-                    m_primitive.setSize(1);
-                    m_primitive[0]=m_vi;
-                }
-                else {
-                    m_mesh.orbit(m_vi,m_mesh.neighbors[m_vi][m_ni],m_primitive);
-                }
+            // Initialize unless this is the end iterator.
+            if (m_vi<m_num_vertices) {
+                next();
             }
         }
 
@@ -443,47 +439,9 @@ struct Mesh
 
         /// Moves the iterator forward to the next primitive in the mesh.
         PrimitiveIterator operator++() {
-            IndexArray const* neighbors=&m_mesh.neighbors[m_vi];
-            bool ordered;
-
             do {
-                // The below break criterion defines a (somewhat arbitrary) relation on
-                // the vertex indices to ensure walking each edge only in one direction.
-                do {
-                    int num_neighbors=neighbors->getSize();
-
-                    // Handle point primitives.
-                    if (num_neighbors==0) {
-                        m_primitive.setSize(1);
-                        m_primitive[0]=++m_vi;
-                        return *this;
-                    }
-
-                    // Get the next neighbor index.
-                    if (++m_ni==num_neighbors) {
-                        m_ni=0;
-
-                        // Get the next vertex index.
-                        if (++m_vi==m_num_vertices) {
-                            break;
-                        }
-
-                        // Refer to the current neighbor indices.
-                        neighbors=&m_mesh.neighbors[m_vi];
-                    }
-                } while ((*neighbors)[m_ni]<static_cast<unsigned int>(m_vi));
-
-                // Only accept the primitive indices if they are "in order" to avoid index
-                // permutations of the same primitive.
-                ordered=true;
-                m_mesh.orbit(m_vi,(*neighbors)[m_ni],m_primitive);
-                for (int i=2;i<m_primitive.getSize();++i) {
-                    if (m_primitive[i]<static_cast<unsigned int>(m_vi)) {
-                        ordered=false;
-                        break;
-                    }
-                }
-            } while (!ordered);
+                iterate();
+            } while (m_vi<m_num_vertices && !next());
 
             return *this;
         }
@@ -495,13 +453,54 @@ struct Mesh
 
       private:
 
+        /// Determines the primitive for the current vertex / neighbor, if any.
+        bool next() {
+            bool exists=true;
+
+            // Handle point primitives.
+            if (m_neighbors->getSize()==0) {
+                m_primitive.setSize(1);
+                m_primitive[0]=m_vi;
+            }
+            // Handle line primitives.
+            else if (m_neighbors->getSize()==1) {
+                m_primitive.setSize(2);
+                m_primitive[0]=m_vi;
+                m_primitive[1]=(*m_neighbors)[m_ni];
+            }
+            else {
+                // Only accept the primitive indices if they are "in order" to
+                // avoid vertex permutations of the same primitive.
+                m_mesh.orbit(m_vi,(*m_neighbors)[m_ni],m_primitive);
+                for (int i=1;i<m_primitive.getSize();++i) {
+                    if (m_primitive[i]<m_primitive[0]) {
+                        exists=false;
+                        break;
+                    }
+                }
+            }
+
+            return exists;
+        }
+
+        /// Iterates to the next vertex or edge, which potentially is part of a
+        /// new primitive.
+        void iterate() {
+            if (++m_ni>=m_neighbors->getSize()) {
+                m_ni=0;
+                m_neighbors=&m_mesh.neighbors[++m_vi];
+            }
+        }
+
         Mesh const& m_mesh; ///< The mesh being iterated over.
         int m_num_vertices; ///< Number of vertices in the mesh.
 
         int m_vi; ///< Index of the first vertex.
         int m_ni; ///< Index of the first vertex' neighbor.
 
-        IndexArray m_primitive;        ///< The current primitive's indices.
+        IndexArray const* m_neighbors; ///< The current vertex' neighbors.
+
+        IndexArray m_primitive; ///< The current primitive's indices.
     };
 
     /**
