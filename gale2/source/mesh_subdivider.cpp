@@ -206,19 +206,17 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
                 mesh.neighbors.insert(prim_current.indices());
 
                 // Calculate the vertex by averaging the face vertices.
-                int vi=mesh.vertices.insert(Vec3f::ZERO());
-                Vec3f& center=mesh.vertices[vi];
+                mesh.vertices.insert(mesh.average(prim_current.indices()));
 
-                for (int i=0;i<prim_vertices;++i) {
-                    int pi=prim_current.indices()[i];
-                    center+=mesh.vertices[pi];
+                if (move) {
+                    for (int i=0;i<prim_vertices;++i) {
+                        int pi=prim_current.indices()[i];
 
-                    if (move && avg_neighbors[pi]==Vec3f::ZERO()) {
-                        avg_neighbors[pi]=mesh.average(mesh.neighbors[pi]);
+                        if (avg_neighbors[pi]==Vec3f::ZERO()) {
+                            avg_neighbors[pi]=mesh.average(mesh.neighbors[pi]);
+                        }
                     }
                 }
-
-                center/=static_cast<float>(prim_vertices);
             }
 
             ++prim_current;
