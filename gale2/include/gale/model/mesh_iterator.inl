@@ -33,7 +33,6 @@ class G_NO_VTABLE Iterator
     ,   m_num_vertices(mesh.vertices.getSize())
     ,   m_vi(vi)
     ,   m_ni(ni)
-    ,   m_neighbors(&mesh.neighbors[m_vi])
     {
         // Cannot call pure virtual methods in a base class' constructor, see
         // http://www.parashift.com/c%2B%2B-faq-lite/strange-inheritance.html#faq-23.5
@@ -64,9 +63,11 @@ class G_NO_VTABLE Iterator
 
     /// Iterates to the next vertex / neighbor pair.
     void iterate() {
-        if (++m_ni>=m_neighbors->getSize()) {
+        IndexArray const* neighbors=&m_mesh.neighbors[m_vi];
+
+        if (++m_ni>=neighbors->getSize()) {
             m_ni=0;
-            m_neighbors=&m_mesh.neighbors[++m_vi];
+            neighbors=&m_mesh.neighbors[++m_vi];
         }
     }
 
@@ -78,8 +79,6 @@ class G_NO_VTABLE Iterator
 
     int m_vi; ///< Index of the first vertex.
     int m_ni; ///< Index of the first vertex' neighbor.
-
-    IndexArray const* m_neighbors; ///< The current vertex' neighbors.
 };
 
 /// A class to iterate over the edges in a mesh.
@@ -105,7 +104,7 @@ class EdgeIterator:public Iterator
 
     /// Returns the index of the edge's second vertex.
     int indexB() const {
-        return (*m_neighbors)[m_ni];
+        return m_mesh.neighbors[m_vi][m_ni];
     }
 
     /// Returns the edge's first vertex.
@@ -124,7 +123,7 @@ class EdgeIterator:public Iterator
     bool next() {
         // The below break criterion defines a (somewhat arbitrary) relation on
         // the vertex indices to ensure walking each edge only in one direction.
-        return m_neighbors->getSize()>0 && indexA()<indexB();
+        return m_mesh.neighbors[m_vi].getSize()>0 && indexA()<indexB();
     }
 };
 
@@ -156,21 +155,23 @@ class PrimitiveIterator:public Iterator
     bool next() {
         bool exists=true;
 
+        IndexArray const* neighbors=&m_mesh.neighbors[m_vi];
+
         // Handle point primitives.
-        if (m_neighbors->getSize()==0) {
+        if (neighbors->getSize()==0) {
             m_primitive.setSize(1);
             m_primitive[0]=m_vi;
         }
         // Handle line primitives.
-        else if (m_neighbors->getSize()==1) {
+        else if (neighbors->getSize()==1) {
             m_primitive.setSize(2);
             m_primitive[0]=m_vi;
-            m_primitive[1]=(*m_neighbors)[m_ni];
+            m_primitive[1]=(*neighbors)[m_ni];
         }
         else {
             // Only accept the primitive indices if they are "in order" to
             // avoid vertex permutations of the same primitive.
-            m_mesh.orbit(m_vi,(*m_neighbors)[m_ni],m_primitive);
+            m_mesh.orbit(m_vi,(*neighbors)[m_ni],m_primitive);
             for (int i=1;i<m_primitive.getSize();++i) {
                 if (m_primitive[i]<m_primitive[0]) {
                     exists=false;
