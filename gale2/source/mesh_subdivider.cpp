@@ -195,16 +195,17 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
         mesh.vertices.setCapacity(mesh.vertices.getSize()+num_faces);
         mesh.neighbors.setCapacity(mesh.neighbors.getSize()+num_faces);
 
-        // Add the new vertices and connect them to the face.
+        // Add the new face vertices.
         Mesh::PrimitiveIterator prim_current=mesh.beginPrimitives();
         Mesh::PrimitiveIterator prim_end=mesh.endPrimitives();
         while (prim_current!=prim_end) {
             int prim_vertices=prim_current.indices().getSize();
 
             if (prim_vertices==3) {
-                // Connect the new vertex to the face.
+                // Connect the vertex-to-be to its face.
                 mesh.neighbors.insert(prim_current.indices());
 
+                // Calculate the vertex by averaging the face vertices.
                 int vi=mesh.vertices.insert(Vec3f::ZERO());
                 Vec3f& center=mesh.vertices[vi];
 
