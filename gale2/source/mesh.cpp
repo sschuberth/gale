@@ -133,14 +133,17 @@ void Mesh::splice(int const xi,int const oi,int const ci,bool const after)
     cn.insert(xi,n+static_cast<int>(after));
 }
 
-int Mesh::insert(Vec3f const& v,int const ai,int const bi)
+int Mesh::insert(Vec3f const& v,int const ai,int const bi,int const capacity)
 {
     int vi=vertices.insert(v);
 
-    unsigned int const vn[]={ai,bi};
-    neighbors.insert(vn);
-
-    int n;
+    // Make room for one more neighbor array and initialize it.
+    int n=neighbors.getSize();
+    neighbors.setSize(n+1);
+    IndexArray& vn=neighbors[n];
+    vn=IndexArray(2,capacity);
+    vn[0]=ai;
+    vn[1]=bi;
 
     // In the neighborhood of ai, replace bi with vi.
     IndexArray& an=neighbors[ai];

@@ -401,8 +401,9 @@ struct Mesh
     void splice(int const xi,int const oi,int const ci,bool const after=true);
 
     /// Inserts a new vertex \a v on the edge between \a ai and \a bi, and
-    /// returns its index in the vertex array.
-    int insert(math::Vec3f const& v,int const ai,int const bi);
+    /// returns its index in the vertex array. Optionally, set the new vertex'
+    /// neighbor array \a capacity.
+    int insert(math::Vec3f const& v,int const ai,int const bi,int const capacity=0);
 
     /// Removes \a bi from the neighborhood of \a ai and vice versa unless
     /// \a oneway is set to \c true.
