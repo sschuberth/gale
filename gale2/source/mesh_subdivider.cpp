@@ -38,7 +38,12 @@ namespace model {
 void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float const scale)
 {
     while (steps-->0) {
-        int edge_vertices_start=mesh.numVertices();
+        int const num_verts_orig=mesh.numVertices();
+
+        // Avoid reallocations by setting the capacity to the final size.
+        int const num_verts_step=num_verts_orig+mesh.numEdges();
+        mesh.vertices.setCapacity(num_verts_step);
+        mesh.neighbors.setCapacity(num_verts_step);
 
         // Insert a new vertex on each edge.
         Mesh::EdgeIterator edge_current=mesh.beginEdges();
@@ -47,7 +52,7 @@ void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float const scale)
             int ai=edge_current.indexA();
             int bi=edge_current.indexB();
 
-            if (ai<edge_vertices_start && bi<edge_vertices_start) {
+            if (ai<num_verts_orig && bi<num_verts_orig) {
                 // Calculate the new vertex position.
                 Vec3f v=edge_current.vertexA()+edge_current.vertexB();
 
@@ -58,13 +63,13 @@ void Mesh::Subdivider::Polyhedral(Mesh& mesh,int steps,float const scale)
                     v=(~v)*scale;
                 }
 
-                mesh.insert(v,ai,bi);
+                mesh.insert(v,ai,bi,6);
             }
 
             ++edge_current;
         }
 
-        interconnectEdgeVertices(mesh,edge_vertices_start);
+        interconnectEdgeVertices(mesh,num_verts_orig);
     }
 }
 
