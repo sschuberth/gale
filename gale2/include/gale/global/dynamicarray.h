@@ -157,6 +157,7 @@ class DynamicArray
 
     /// Deeply copies the \a other dynamic array to this dynamic array.
     DynamicArray& operator=(DynamicArray const& other) {
+        setCapacity(other.m_capacity);
         setSize(other.m_size);
 
         // The assignment operator is called when copying to an already existing
