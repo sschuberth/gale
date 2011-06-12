@@ -193,17 +193,17 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
     }
 
     while (steps-->0) {
-        int face_vertices_start=mesh.numVertices();
+        int const num_verts_orig=mesh.numVertices();
+
+        // Avoid reallocations by setting the capacity to the final size.
+        int const num_verts_step=num_verts_orig+mesh.numFaces();
+        mesh.vertices.setCapacity(num_verts_step);
+        mesh.neighbors.setCapacity(num_verts_step);
 
         if (move) {
             avg_neighbors.setSize(mesh.numVertices());
             memset(avg_neighbors,0,avg_neighbors.getSize()*sizeof(VectorArray::Type));
         }
-
-        // Avoid memory reallocations when adding vertices and their neighbors.
-        int num_faces=mesh.numFaces();
-        mesh.vertices.setCapacity(mesh.vertices.getSize()+num_faces);
-        mesh.neighbors.setCapacity(mesh.neighbors.getSize()+num_faces);
 
         // Add the new face vertices.
         Mesh::PrimitiveIterator prim_current=mesh.beginPrimitives();
@@ -234,7 +234,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 
         if (move) {
             // Calculate new positions for original vertices.
-            for (int i=0;i<face_vertices_start;++i) {
+            for (int i=0;i<num_verts_orig;++i) {
                 int const valence=mesh.neighbors[i].getSize();
 
                 // INFO: If higher valences need to be supported, calculate the weight on-the-fly here.
@@ -246,7 +246,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
         }
 
         // Connect the faces to the new vertices.
-        for (int i=face_vertices_start;i<mesh.vertices.getSize();++i) {
+        for (int i=num_verts_orig;i<mesh.vertices.getSize();++i) {
             IndexArray const& n=mesh.neighbors[i];
 
             mesh.splice(i,n[1],n[0]);
@@ -261,7 +261,7 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
             int ai=edge_current.indexA();
             int bi=edge_current.indexB();
 
-            if (ai<face_vertices_start && bi<face_vertices_start) {
+            if (ai<num_verts_orig && bi<num_verts_orig) {
                 int ni=mesh.nextTo(ai,bi);
                 int pi=mesh.prevTo(ai,bi);
 
