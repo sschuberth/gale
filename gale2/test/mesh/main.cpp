@@ -6,6 +6,7 @@
 #endif
 
 #include <gale/math/color.h>
+#include <gale/system/timer.h>
 #include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/renderer.h>
 
@@ -17,6 +18,7 @@
 
 using namespace gale::math;
 using namespace gale::model;
+using namespace gale::system;
 using namespace gale::wrapgl;
 
 static char const* BASE_NAMES[]={
@@ -461,7 +463,15 @@ class TestWindow:public DefaultWindow
             // Perform a deep-copy of the previous mesh, and subdivide the copy.
             int mode=(s==1)?0:m_mode;
             mc.mesh=new Mesh(*(*m_meshes)[m_base][mode][s-1].mesh);
+
+            double seconds;
+            m_timer.reset();
             scheme_ptrs[m_mode](*mc.mesh,1);
+            m_timer.stop(seconds);
+#ifndef GALE_TINY_CODE
+            printf("SUBDIV : %f seconds elapsed.\n",seconds);
+#endif
+
             mc.init(mc.mesh);
 
 #ifndef GALE_TINY_CODE
@@ -538,6 +548,8 @@ class TestWindow:public DefaultWindow
 
     // Array of base meshes, subdivision modes, and subdivision steps.
     typedef MeshCache MeshTable[G_ARRAY_LENGTH(BASE_NAMES)][G_ARRAY_LENGTH(MODE_NAMES)][MAX_STEPS+1];
+
+    Timer m_timer;
 
     MeshTable* m_meshes;
     int m_base,m_mode,m_step;
