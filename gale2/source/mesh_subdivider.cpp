@@ -278,6 +278,124 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
 
 void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
 {
+#if 1
+    bool move=true;
+
+    EdgeVertexList edge_vertices;
+    VectorArray displacements;
+
+    while (steps-->0) {
+        edge_vertices.setSize(mesh.numEdges());
+        int i=0;
+
+        if (move) {
+            displacements.setSize(mesh.numVertices());
+            memset(displacements,0,displacements.getSize()*sizeof(VectorArray::Type));
+        }
+
+        int const num_verts_orig=mesh.numVertices();
+
+        // Add the new face vertices.
+        Mesh::PrimitiveIterator prim_current=mesh.beginPrimitives();
+        Mesh::PrimitiveIterator prim_end=mesh.endPrimitives();
+        while (prim_current!=prim_end) {
+            IndexArray const& prim=prim_current.indices();
+
+            if (prim.getSize()>=3) {
+                // Connect the vertex-to-be to its face (only temporarily).
+                mesh.neighbors.insert(prim);
+
+                // Calculate the vertex by averaging the face vertices.
+                Vec3f centroid=mesh.average(prim);
+                mesh.vertices.insert(centroid);
+
+                for (int p=0;p<prim.getSize();++p) {
+                    int ai=prim[p];
+                    int bi=prim[(p+1)%prim.getSize()];
+
+                    // For each unique edge, do some pre-calculations.
+                    if (ai<bi) {
+                        EdgeVertex& s=edge_vertices[i++];
+                        s.a=ai;
+                        s.b=bi;
+                        s.v=mesh.vertices[ai]+mesh.vertices[bi];
+
+                        if (move) {
+                            displacements[ai]+=s.v;
+                            displacements[bi]+=s.v;
+                        }
+                    }
+
+                    if (move) {
+                        displacements[ai]+=centroid;
+                    }
+                }
+            }
+
+            ++prim_current;
+        }
+
+        int const num_verts_face=mesh.numVertices();
+
+        // Connect the faces to the face vertices (only temporarily).
+        for (i=num_verts_orig;i<num_verts_face;++i) {
+            IndexArray& neighbors=mesh.neighbors[i];
+
+            for (int n=0;n<neighbors.getSize();++n) {
+                int nn=(n+1)%neighbors.getSize();
+                mesh.splice(i,neighbors[nn],neighbors[n]);
+            }
+        }
+
+        // Insert the new edge vertices.
+        for (i=0;i<edge_vertices.getSize();++i) {
+            EdgeVertex const& s=edge_vertices[i];
+            int vi=mesh.insert(s.v,s.a,s.b);
+
+            // Connect to the face vertex to the "left".
+            int left=mesh.nextTo(vi,s.a);
+            mesh.splice(left,s.b,vi);
+            mesh.splice(vi,s.a,left);
+
+            // Connect to the face vertex to the "right".
+            int right=mesh.prevTo(vi,s.a);
+            mesh.splice(right,s.a,vi);
+            mesh.splice(vi,s.b,right);
+
+            // Add the face vertices for the vertex position.
+            Vec3f& v=mesh.vertices[vi];
+            v+=mesh.vertices[left]+mesh.vertices[right];
+
+            // Average the edge and face vertices.
+            v*=0.25f;
+        }
+
+        // Disconnect the face vertices from the faces.
+        for (i=num_verts_orig;i<num_verts_face;++i) {
+            IndexArray& neighbors=mesh.neighbors[i];
+
+            for (int n=0;n<neighbors.getSize();++n) {
+                mesh.separate(i,neighbors[n]);
+            }
+        }
+
+        if (move) {
+            // Calculate new positions for original vertices.
+            for (i=0;i<num_verts_orig;++i) {
+                IndexArray const& neighbors=mesh.neighbors[i];
+                int const valence=neighbors.getSize();
+
+                // Average the edge midpoints and face points.
+                Vec3f& D=displacements[i];
+                D/=static_cast<float>(valence);
+
+                // Displace the original vertices.
+                Vec3f& S=mesh.vertices[i];
+                S=(S*(valence-3.0f)+D)/static_cast<float>(valence);
+            }
+        }
+    }
+#else
     while (steps-->0) {
         Mesh orig=mesh;
         VectorArray const& ov=orig.vertices;
@@ -379,6 +497,7 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
             }
         }
     }
+#endif
 }
 
 void Mesh::Subdivider::DooSabin(Mesh& mesh,int steps)
