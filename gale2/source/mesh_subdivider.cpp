@@ -78,6 +78,11 @@ void Mesh::Subdivider::Butterfly(Mesh& mesh,int steps)
     EdgeVertexList edge_vertices;
 
     while (steps-->0) {
+        // Avoid reallocations by setting the capacity to the final size.
+        int const num_verts_step=mesh.numVertices()+mesh.numEdges();
+        mesh.vertices.setCapacity(num_verts_step);
+        mesh.neighbors.setCapacity(num_verts_step);
+
         edge_vertices.setSize(mesh.numEdges());
         int i=0;
 
@@ -491,7 +496,7 @@ void Mesh::Subdivider::spliceEdgeVertices(Mesh& mesh,EdgeVertexList const& edge_
     // Insert the new edge vertices.
     for (int i=0;i<edge_vertices.getSize();++i) {
         EdgeVertex const& s=edge_vertices[i];
-        mesh.insert(s.v,s.a,s.b);
+        mesh.insert(s.v,s.a,s.b,6);
     }
 
     interconnectEdgeVertices(mesh,edge_vertices_start);
