@@ -205,22 +205,22 @@ void Mesh::Subdivider::Sqrt3(Mesh& mesh,int steps,bool const move)
             memset(avg_neighbors,0,avg_neighbors.getSize()*sizeof(VectorArray::Type));
         }
 
-        // Add the new face vertices.
+        // Insert a new vertex on each face.
         Mesh::PrimitiveIterator prim_current=mesh.beginPrimitives();
         Mesh::PrimitiveIterator prim_end=mesh.endPrimitives();
         while (prim_current!=prim_end) {
-            int prim_vertices=prim_current.indices().getSize();
+            IndexArray const& prim=prim_current.indices();
 
-            if (prim_vertices==3) {
+            if (prim.getSize()==3) {
                 // Connect the vertex-to-be to its face.
-                mesh.neighbors.insert(prim_current.indices());
+                mesh.neighbors.insert(prim);
 
                 // Calculate the vertex by averaging the face vertices.
-                mesh.vertices.insert(mesh.average(prim_current.indices()));
+                mesh.vertices.insert(mesh.average(prim));
 
                 if (move) {
-                    for (int i=0;i<prim_vertices;++i) {
-                        int pi=prim_current.indices()[i];
+                    for (int i=0;i<prim.getSize();++i) {
+                        int pi=prim[i];
 
                         if (avg_neighbors[pi]==Vec3f::ZERO()) {
                             avg_neighbors[pi]=mesh.average(mesh.neighbors[pi]);
