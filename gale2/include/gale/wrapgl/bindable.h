@@ -39,9 +39,9 @@ namespace gale {
 namespace wrapgl {
 
 /**
- * This is a wrapper class for all objects that can be bound to the OpenGL
- * state. The template argument \c B is the name to query the binding and \c I
- * refers to the implementation class.
+ * This is a wrapper class implementing the Curiously Recurring Template Pattern
+ * (CRTP) for all objects that can be bound to the OpenGL state. The template argument
+ * \c B is the name to query the binding and \c I refers to the implementation class.
  */
 template<GLenum B,class I>
 class Bindable

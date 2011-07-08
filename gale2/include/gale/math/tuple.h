@@ -48,8 +48,9 @@ namespace math {
 #pragma pack(push,1)
 
 /**
- * Tuple base class implementation, with \a N elements of type \a T. Derived
- * classes are specified as \a C to provide the proper return and argument type.
+ * Tuple base class implementation with \a N elements of type \a T. The Curiously
+ * Recurring Template Pattern (CRTP) is used so that a derived class' operators
+ * have the proper argument and return type.
  */
 template<unsigned int N,typename T,class C>
 class TupleBase
