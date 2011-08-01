@@ -25,11 +25,11 @@ pushd "%~dp0..\glex"
 echo *** Deleting existing OpenGL API initialization files ...
 del GLEX_*.*
 
-: Download the OpenGL specification files if needed.
+rem Download the OpenGL specification files if needed.
 echo *** Updating OpenGL specification files ...
 bash -c "export PATH=$PATH:/bin && ../../glex2/update_spec.sh"
 
-: Read the OpenGL APIs used in the project.
+rem Read the OpenGL APIs used in the project.
 echo *** Parsing required OpenGL APIs ...
 bash -c "export PATH=$PATH:/bin && ../../glex2/glex.sh es=../../glex2/spec/enumext.spec fs=../../glex2/spec/gl.spec tm=../../glex2/spec/gl.tm api=@../build/opengl-apis.txt"
 bash -c "export PATH=$PATH:/bin && ../../glex2/glex.sh es=../../glex2/spec/wglenumext.spec fs=../../glex2/spec/wglext.spec tm=../../glex2/spec/wgl.tm api=@../build/opengl-apis.txt"
