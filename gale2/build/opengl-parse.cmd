@@ -18,7 +18,7 @@ if "%GIT%"=="" (
 )
 
 rem Make sure Bash is in PATH (for running scripts).
-set PATH=%PATH%;%GIT%bin
+set PATH=%GIT%bin;%PATH%
 
 pushd "%~dp0..\glex"
 
