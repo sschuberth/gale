@@ -617,6 +617,13 @@ inline unsigned int countSetBits(unsigned int x)
 #endif
 }
 
+/// Returns the remainder of \a x divided by 3.
+inline unsigned int mod3(unsigned int x)
+{
+    // Taken from <http://www.codercorner.com/Modulo3.htm>.
+    return (1<<x)&3;
+}
+
 //@}
 
 /**

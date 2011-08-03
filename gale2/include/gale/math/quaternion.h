@@ -530,8 +530,8 @@ class Quaternion
                 i=2;
             }
 
-            unsigned int j=(i+1)%3;
-            unsigned int k=(j+1)%3;
+            unsigned int j=mod3(i+1);
+            unsigned int k=mod3(j+1);
 
             T r=sqrt(m(i,i)-m(j,j)-m(k,k)+1);
             T s=T(0.5)/r;
