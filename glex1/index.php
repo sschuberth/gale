@@ -145,7 +145,7 @@ else {
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
             <a href="http://gale.berlios.de/glex1/">glex</a> is part of the <a href="http://developer.berlios.de/projects/gale/">gale project</a> generously hosted by <a href="http://www.berlios.de/">BerliOS</a><br />
-                Source code high-lighting is performed by <a href="http://qbnz.com/highlighter/">GeSHi</a> <?= GESHI_VERSION ?><br />
+                Source code high-lighting is performed by <a href="http://repo.or.cz/w/geshi.git">GeSHi</a> <?= GESHI_VERSION ?><br />
                 &nbsp;
             </td>
         </tr>
