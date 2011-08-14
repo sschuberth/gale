@@ -1,7 +1,15 @@
-body {
-    background-image: url(gradient.php?width=1&height=2000&top=004276&bottom=b2b6bf);
-    background-repeat: repeat-x;
-    background-attachment: fixed;
+html {
+    /* For Gecko-based browsers (Mozilla Firefox etc.) */
+    background: -moz-linear-gradient(top, #004276, #aeb3be) fixed;
+    /* For Opera 11.10+ */
+    background: -o-linear-gradient(top, #004276, #aeb3be) fixed;
+    /* For WebKit-based browsers (Apple Safari, Google Chrome etc.) */
+    background: -webkit-gradient(linear, left top, left bottom, from(#004276), to(#aeb3be)) fixed;
+    /* For Microsoft Internet Explorer 5.5 - 7.0 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#004276, endColorstr=#aeb3be);
+    /* For Microsoft Internet Explorer 8.0 - 9.0 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#004276, endColorstr=#aeb3be)";
+
     font-family: Arial;
 }
 
