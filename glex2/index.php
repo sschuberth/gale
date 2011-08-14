@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>glex - An OpenGL Extension Specification Parser (Version 2)</title>
+    <title>glex 2 - An OpenGL Extension Specification Parser</title>
     <link type="text/css" href="style.css" rel="stylesheet" />
 </head>
 
@@ -59,7 +59,7 @@ function showSourceCode($file) {
         <tr>
             <td><!-- Corner spacer --></td>
             <td style="text-align: center; background-image: url(images/title.png)">
-                <h2>glex, Version 2</h2>
+                <h2>glex 2</h2>
                 <h4>An OpenGL Extension Specification Parser</h4>
                 <h6>(based on *.spec specification files)</h6>
             </td>
