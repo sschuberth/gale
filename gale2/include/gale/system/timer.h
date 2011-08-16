@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef TIMER_H
-#define TIMER_H
+#pragma once
 
 /**
  * \file
@@ -169,5 +168,3 @@ class Timer
 } // namespace system
 
 } // namespace gale
-
-#endif // TIMER_H

@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef COLOR_H
-#define COLOR_H
+#pragma once
 
 /**
  * \file
@@ -437,5 +436,3 @@ typedef Color<4,unsigned char> Col4ub;
 } // namespace math
 
 } // namespace gale
-
-#endif // COLOR_H

@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef DEFINES_H
-#define DEFINES_H
+#pragma once
 
 /**
  * \file
@@ -269,5 +268,3 @@
 #endif
 
 #define G_UNREF_PARAM(x) (void)(x);
-
-#endif // DEFINES_H

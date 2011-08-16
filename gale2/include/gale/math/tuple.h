@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef TUPLE_H
-#define TUPLE_H
+#pragma once
 
 /**
  * \file
@@ -477,5 +476,3 @@ typedef Tuple<4,unsigned char> Tup4ub;
 } // namespace math
 
 } // namespace gale
-
-#endif // TUPLE_H

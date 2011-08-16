@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef DEFAULTWINDOW_H
-#define DEFAULTWINDOW_H
+#pragma once
 
 /**
  * \file
@@ -166,5 +165,3 @@ class DefaultWindow:public MinimalWindow
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // DEFAULTWINDOW_H

@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef INTERPOLATOR_H
-#define INTERPOLATOR_H
+#pragma once
 
 /**
  * \file
@@ -212,5 +211,3 @@ class Interpolator
 } // namespace math
 
 } // namespace gale
-
-#endif // INTERPOLATOR_H

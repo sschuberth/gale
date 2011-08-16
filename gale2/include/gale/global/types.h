@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
 /**
  * \file
@@ -96,5 +95,3 @@ typedef float g_real32;
 typedef double g_real64;
 
 #endif // G_OS_WINDOWS
-
-#endif // TYPES_H

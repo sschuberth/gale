@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef OPERATORS_H
-#define OPERATORS_H
+#pragma once
 
 /**
  * \file
@@ -230,5 +229,3 @@ struct OpCalcProd
 } // namespace meta
 
 } // namespace gale
-
-#endif // OPERATORS_H

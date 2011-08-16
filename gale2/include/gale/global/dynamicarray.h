@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef DYNAMICARRAY_H
-#define DYNAMICARRAY_H
+#pragma once
 
 /**
  * \file
@@ -431,5 +430,3 @@ class DynamicArray
 } // namespace global
 
 } // namespace gale
-
-#endif // DYNAMICARRAY_H

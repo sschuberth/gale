@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef PLATFORM_H
-#define PLATFORM_H
+#pragma once
 
 /**
  * \file
@@ -107,5 +106,3 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-
-#endif // PLATFORM_H

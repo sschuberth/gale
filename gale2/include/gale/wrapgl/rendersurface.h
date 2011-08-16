@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef RENDERSURFACE_H
-#define RENDERSURFACE_H
+#pragma once
 
 /**
  * \file
@@ -173,5 +172,3 @@ class RenderSurface
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // RENDERSURFACE_H

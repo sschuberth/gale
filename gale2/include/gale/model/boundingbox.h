@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef BOUNDINGBOX_H
-#define BOUNDINGBOX_H
+#pragma once
 
 /**
  * \file
@@ -128,5 +127,3 @@ struct AABB
 } // namespace model
 
 } // namespace gale
-
-#endif // BOUNDINGBOX_H

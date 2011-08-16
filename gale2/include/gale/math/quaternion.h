@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef QUATERNION_H
-#define QUATERNION_H
+#pragma once
 
 /**
  * \file
@@ -639,5 +638,3 @@ typedef Quaternion<float> Quatf;
 } // namespace math
 
 } // namespace gale
-
-#endif // QUATERNION_H

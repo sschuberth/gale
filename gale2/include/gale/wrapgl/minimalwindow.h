@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef MINIMALWINDOW_H
-#define MINIMALWINDOW_H
+#pragma once
 
 /**
  * \file
@@ -125,5 +124,3 @@ class MinimalWindow:public RenderSurface
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // MINIMALWINDOW_H

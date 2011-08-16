@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef FRAMEBUFFEROBJECT_H
-#define FRAMEBUFFEROBJECT_H
+#pragma once
 
 /**
  * \file
@@ -337,5 +336,3 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // FRAMEBUFFEROBJECT_H

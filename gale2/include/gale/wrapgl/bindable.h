@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef BINDABLE_H
-#define BINDABLE_H
+#pragma once
 
 /**
  * \file
@@ -114,5 +113,3 @@ class Bindable
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // BINDABLE_H

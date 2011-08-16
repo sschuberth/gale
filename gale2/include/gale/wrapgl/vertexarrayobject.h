@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef VERTEXARRAYOBJECT_H
-#define VERTEXARRAYOBJECT_H
+#pragma once
 
 /**
  * \file
@@ -87,5 +86,3 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // VERTEXARRAYOBJECT_H

@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef PLANE_H
-#define PLANE_H
+#pragma once
 
 /**
  * \file
@@ -174,5 +173,3 @@ class Plane
 } // namespace model
 
 } // namespace gale
-
-#endif // PLANE_H

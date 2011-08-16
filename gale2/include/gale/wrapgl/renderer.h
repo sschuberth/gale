@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef RENDERER_H
-#define RENDERER_H
+#pragma once
 
 /**
  * \file
@@ -57,5 +56,3 @@ struct Renderer
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // RENDERER_H

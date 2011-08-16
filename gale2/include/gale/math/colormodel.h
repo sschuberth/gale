@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef COLORMODEL_H
-#define COLORMODEL_H
+#pragma once
 
 /**
  * \file
@@ -282,5 +281,3 @@ class ColorModelRYB:public ColorModel
 } // namespace math
 
 } // namespace gale
-
-#endif // COLORMODEL_H

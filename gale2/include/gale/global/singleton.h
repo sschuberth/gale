@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef SINGLETON_H
-#define SINGLETON_H
+#pragma once
 
 /**
  * \file
@@ -72,5 +71,3 @@ class Singleton
 } // namespace global
 
 } // namespace gale
-
-#endif // SINGLETON_H

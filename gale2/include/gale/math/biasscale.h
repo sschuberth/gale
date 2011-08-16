@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef BIASSCALE_H
-#define BIASSCALE_H
+#pragma once
 
 /**
  * \file
@@ -292,5 +291,3 @@ typedef ScaleBias<float> ScaleBiasf;
 } // namespace math
 
 } // namespace gale
-
-#endif // BIASSCALE_H

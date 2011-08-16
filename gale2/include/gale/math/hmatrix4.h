@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef HMATRIX4_H
-#define HMATRIX4_H
+#pragma once
 
 /**
  * \file
@@ -660,5 +659,3 @@ typedef HMatrix4<float> HMat4f;
 } // namespace math
 
 } // namespace gale
-
-#endif // HMATRIX4_H

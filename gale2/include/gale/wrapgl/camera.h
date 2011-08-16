@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
 /**
  * \file
@@ -413,5 +412,3 @@ class Camera
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // CAMERA_H

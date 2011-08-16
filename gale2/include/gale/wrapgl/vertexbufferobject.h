@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef VERTEXBUFFEROBJECT_H
-#define VERTEXBUFFEROBJECT_H
+#pragma once
 
 /**
  * \file
@@ -193,5 +192,3 @@ typedef VertexBufferObject<GL_ELEMENT_ARRAY_BUFFER_ARB,GL_ELEMENT_ARRAY_BUFFER_B
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // VERTEXBUFFEROBJECT_H

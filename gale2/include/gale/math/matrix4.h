@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef MATRIX4_H
-#define MATRIX4_H
+#pragma once
 
 /**
  * \file
@@ -600,5 +599,3 @@ typedef Matrix4<float> Mat4f;
 } // namespace math
 
 } // namespace gale
-
-#endif // MATRIX4_H

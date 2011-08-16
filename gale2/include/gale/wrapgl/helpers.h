@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef HELPERS_H
-#define HELPERS_H
+#pragma once
 
 /**
  * \file
@@ -104,5 +103,3 @@ class Logo
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // HELPERS_H

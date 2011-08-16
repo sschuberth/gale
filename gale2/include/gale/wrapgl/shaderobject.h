@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef SHADEROBJECT_H
-#define SHADEROBJECT_H
+#pragma once
 
 /**
  * \file
@@ -233,5 +232,3 @@ class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // SHADEROBJECT_H

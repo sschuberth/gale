@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef PREPAREDMESH_H
-#define PREPAREDMESH_H
+#pragma once
 
 /**
  * \file
@@ -156,5 +155,3 @@ class PreparedMesh
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // PREPAREDMESH_H

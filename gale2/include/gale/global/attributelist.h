@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef ATTRIBUTELIST_H
-#define ATTRIBUTELIST_H
+#pragma once
 
 /**
  * \file
@@ -184,5 +183,3 @@ typedef AttributeList<float> AttributeListf;
 } // namespace global
 
 } // namespace gale
-
-#endif // ATTRIBUTELIST_H

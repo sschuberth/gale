@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef MESH_H
-#define MESH_H
+#pragma once
 
 /**
  * \file
@@ -394,5 +393,3 @@ struct Mesh
 } // namespace model
 
 } // namespace gale
-
-#endif // MESH_H

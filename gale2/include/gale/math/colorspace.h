@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef COLORSPACE_H
-#define COLORSPACE_H
+#pragma once
 
 /**
  * \file
@@ -226,5 +225,3 @@ class ColorSpaceHSV:public ColorSpace
 } // namespace math
 
 } // namespace gale
-
-#endif // COLORSPACE_H

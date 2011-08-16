@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef SMARTPOINTER_H
-#define SMARTPOINTER_H
+#pragma once
 
 /**
  * \file
@@ -102,5 +101,3 @@ class SharedPtr
 } // namespace global
 
 } // namespace gale
-
-#endif // SMARTPOINTER_H

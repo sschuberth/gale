@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef VECTOR_H
-#define VECTOR_H
+#pragma once
 
 /**
  * \file
@@ -419,5 +418,3 @@ typedef Vector<4,short> Vec4s;
 } // namespace math
 
 } // namespace gale
-
-#endif // VECTOR_H

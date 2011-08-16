@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef TOOLS_H
-#define TOOLS_H
+#pragma once
 
 /**
  * \file
@@ -63,5 +62,3 @@ struct ArrayInitializer
 } // namespace meta
 
 } // namespace gale
-
-#endif // TOOLS_H

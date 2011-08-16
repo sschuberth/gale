@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef PIXELBUFFEROBJECT_H
-#define PIXELBUFFEROBJECT_H
+#pragma once
 
 /**
  * \file
@@ -53,5 +52,3 @@ typedef VertexBufferObject<GL_PIXEL_UNPACK_BUFFER_ARB,GL_PIXEL_UNPACK_BUFFER_BIN
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // PIXELBUFFEROBJECT_H

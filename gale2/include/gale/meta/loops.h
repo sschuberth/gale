@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef LOOPS_H
-#define LOOPS_H
+#pragma once
 
 /**
  * \file
@@ -183,5 +182,3 @@ struct LoopFwd<1,OP>
 } // namespace meta
 
 } // namespace gale
-
-#endif // LOOPS_H

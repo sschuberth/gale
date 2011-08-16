@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef ESSENTIALS_H
-#define ESSENTIALS_H
+#pragma once
 
 /**
  * \file
@@ -812,5 +811,3 @@ inline unsigned int floorPow2(unsigned int const x)
 } // namespace math
 
 } // namespace gale
-
-#endif // ESSENTIALS_H

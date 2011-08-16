@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef RANDOM_H
-#define RANDOM_H
+#pragma once
 
 /**
  * \file
@@ -165,5 +164,3 @@ class RandomBase
 } // namespace math
 
 } // namespace gale
-
-#endif // RANDOM_H

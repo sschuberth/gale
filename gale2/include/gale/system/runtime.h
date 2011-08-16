@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef RUNTIME_H
-#define RUNTIME_H
+#pragma once
 
 /**
  * \file
@@ -156,5 +155,3 @@ void __cdecl operator delete(void* pointer,void* place);
 //@}
 
 #endif // GALE_TINY_CODE
-
-#endif // RUNTIME_H

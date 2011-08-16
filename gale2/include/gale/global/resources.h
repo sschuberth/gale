@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef RESOURCES_H
-#define RESOURCES_H
+#pragma once
 
 /**
  * \file
@@ -57,5 +56,3 @@ inline HICON CreateIconFromPointer(LPBYTE data,WORD index=0)
 
 /// The raw Three Kings icon data.
 extern unsigned char threekings_ico[];
-
-#endif // RESOURCES_H

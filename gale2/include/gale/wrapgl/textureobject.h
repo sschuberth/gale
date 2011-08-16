@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef TEXTUREOBJECT_H
-#define TEXTUREOBJECT_H
+#pragma once
 
 /**
  * \file
@@ -231,5 +230,3 @@ class Texture3D:public TextureObject<GL_TEXTURE_3D_EXT,GL_TEXTURE_BINDING_3D_EXT
 } // namespace wrapgl
 
 } // namespace gale
-
-#endif // TEXTUREOBJECT_H

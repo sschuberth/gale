@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef FORMULA_H
-#define FORMULA_H
+#pragma once
 
 /**
  * \file
@@ -124,5 +123,3 @@ struct SuperFormula:public Formula
 } // namespace math
 
 } // namespace gale
-
-#endif // FORMULA_H

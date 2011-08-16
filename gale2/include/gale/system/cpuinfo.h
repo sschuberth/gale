@@ -23,8 +23,7 @@
  *
  */
 
-#ifndef CPUINFO_H
-#define CPUINFO_H
+#pragma once
 
 /**
  * \file
@@ -795,5 +794,3 @@ extern CPUInfo& CPU;
 } // namespace system
 
 } // namespace gale
-
-#endif // CPUINFO_H
