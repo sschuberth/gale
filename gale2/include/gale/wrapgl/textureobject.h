@@ -101,14 +101,14 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
         G_ASSERT_OPENGL
     }
 
-    /// Returns the priority requesting to make the texture resident.
+    /// Returns the texture's priority to be resident in texture memory.
     GLclampf getPriority() const {
         GLfloat value;
         getParameter(GL_TEXTURE_PRIORITY,&value)
         return static_cast<GLclampf>(value);
     }
 
-    /// Sets the priority requesting to make the texture resident.
+    /// Sets the texture's priority to be resident in texture memory.
     void setPriority(GLclampf const priority) const {
         bind();
         glPrioritizeTextures(1,&m_handle,priority);
