@@ -302,12 +302,11 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
             IndexArray const& prim=prim_current.indices();
 
             if (prim.getSize()>=3) {
-                // Connect the vertex-to-be to its face (only temporarily).
-                mesh.neighbors.insert(prim);
-
                 // Calculate the vertex by averaging the face vertices.
                 Vec3f centroid=mesh.average(prim);
                 mesh.vertices.insert(centroid);
+
+                IndexArray neighbors;
 
                 for (int p=0;p<prim.getSize();++p) {
                     int ai=prim[p];
@@ -315,21 +314,19 @@ void Mesh::Subdivider::CatmullClark(Mesh& mesh,int steps)
 
                     // For each unique edge, do some pre-calculations.
                     if (ai<bi) {
-                        EdgeVertex& s=edge_vertices[i++];
+                        EdgeVertex& s=edge_vertices[i];
                         s.a=ai;
                         s.b=bi;
-                        s.v=mesh.vertices[ai]+mesh.vertices[bi];
 
-                        if (move) {
-                            displacements[ai]+=s.v;
-                            displacements[bi]+=s.v;
-                        }
-                    }
+                        s.v = ( mesh.vertices[ai]  + mesh.vertices[bi]  ) * 0.375f
+                            + ( mesh.nextTo(bi,ai) + mesh.prevTo(ai,bi)
+                            +   mesh.prevTo(bi,ai) + mesh.nextTo(ai,bi) ) * 0.0625f;
 
-                    if (move) {
-                        displacements[ai]+=centroid;
+                        neighbors.insert(i++);
                     }
                 }
+
+                mesh.neighbors.insert(neighbors);
             }
 
             ++prim_current;
