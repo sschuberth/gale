@@ -166,7 +166,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
     }
 
     /// Checks whether the \a handle is of this object's type.
-    static bool isOfType(GLuint const handle) {
+    static bool hasSameType(GLuint const handle) {
         bool result=glIsRenderbuffer && glIsRenderbuffer(handle)!=GL_FALSE;
         G_ASSERT_OPENGL
         return result;
@@ -324,7 +324,7 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
     }
 
     /// Checks whether the \a handle is of this object's type.
-    static bool isOfType(GLuint const handle) {
+    static bool hasSameType(GLuint const handle) {
         bool result=glIsFramebuffer && glIsFramebuffer(handle)!=GL_FALSE;
         G_ASSERT_OPENGL
         return result;

@@ -100,7 +100,7 @@ class Bindable
 
     /// Checks whether this object's handle is valid.
     bool isValidHandle() const {
-        return I::isOfType(m_handle);
+        return I::hasSameType(m_handle);
     }
 
   protected:

@@ -47,7 +47,7 @@ class ShaderObject
   public:
 
     /// Checks whether the \a handle is a shader.
-    static bool isOfType(GLuint const handle) {
+    static bool hasSameType(GLuint const handle) {
         GLboolean result=glIsShader && glIsShader(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
@@ -222,7 +222,7 @@ class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
     }
 
     /// Checks whether the \a handle is of this object's type.
-    static bool isOfType(GLuint const handle) {
+    static bool hasSameType(GLuint const handle) {
         GLboolean result=glIsProgram && glIsProgram(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;

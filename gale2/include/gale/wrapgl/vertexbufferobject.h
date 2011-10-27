@@ -161,7 +161,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     }
 
     /// Checks whether the \a handle is of this object's type.
-    static bool isOfType(GLuint const handle) {
+    static bool hasSameType(GLuint const handle) {
         GLboolean result=glIsBufferARB && glIsBufferARB(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;

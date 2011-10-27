@@ -76,7 +76,7 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
     }
 
     /// Checks whether the \a handle is of this object's type.
-    static bool isOfType(GLuint const handle) {
+    static bool hasSameType(GLuint const handle) {
         GLboolean result=glIsVertexArray && glIsVertexArray(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
