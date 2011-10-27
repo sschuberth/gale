@@ -53,13 +53,6 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
     /// Class constant for external access to the target type.
     static GLenum const TARGET=T;
 
-    /// Sets the current binding to the object described by \a handle. If
-    /// \a handle is 0, the current object will be unbound.
-    static void setCurrent(GLuint const handle) {
-        glBindBufferARB(T,handle);
-        G_ASSERT_OPENGL
-    }
-
     /**
      * \name Methods to operate on the buffer's data
      */
@@ -142,6 +135,11 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
   private:
 
+    /**
+     * \name Implementation of the bindable interface
+     */
+    //@{
+
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
         handle=0;
@@ -160,6 +158,13 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
         }
     }
 
+    /// Sets the current binding to the object described by \a handle. If
+    /// \a handle is 0, the current object will be unbound.
+    static void setCurrent(GLuint const handle) {
+        glBindBufferARB(T,handle);
+        G_ASSERT_OPENGL
+    }
+
     /// Checks whether the \a handle is of this object's type.
     static bool hasSameType(GLuint const handle) {
         GLboolean result=glIsBufferARB && glIsBufferARB(handle);
@@ -167,7 +172,7 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
         return result!=GL_FALSE;
     }
 
-  private:
+    //@}
 
     /// Returns the buffer parameter specified by \a name.
     GLint getParameter(GLenum const name) const {

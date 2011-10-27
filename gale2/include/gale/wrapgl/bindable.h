@@ -38,9 +38,11 @@ namespace gale {
 namespace wrapgl {
 
 /**
- * This is a wrapper class implementing the Curiously Recurring Template Pattern
- * (CRTP) for all objects that can be bound to the OpenGL state. The template argument
- * \c B is the name to query the binding and \c I refers to the implementation class.
+ * This is a wrapper class implementing the Curiously Recurring Template Pattern (CRTP) for all
+ * objects that can be bound to the OpenGL state. The template argument \c B is the name to query
+ * the binding and \c I refers to the implementation class, which needs to provide the following
+ * static methods: createObject(), destroyObject(), setCurrent(), hasSameType() and optionally
+ * getCurrent().
  */
 template<GLenum B,class I>
 class Bindable

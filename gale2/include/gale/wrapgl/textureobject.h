@@ -52,13 +52,6 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
     /// Class constant for external access to the target type.
     static GLenum const TARGET=T;
 
-    /// Sets the current binding to the object described by \a handle. If
-    /// \a handle is 0, the current object will be unbound.
-    static void setCurrent(GLuint const handle) {
-        glBindTexture(T,handle);
-        G_ASSERT_OPENGL
-    }
-
     /**
      * \name Methods to operate on the texture's data
      */
@@ -124,6 +117,11 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
 
   private:
 
+    /**
+     * \name Implementation of the bindable interface
+     */
+    //@{
+
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
         glGenTextures(1,&handle);
@@ -137,12 +135,21 @@ class TextureObject:public Bindable<B,TextureObject<T,B> >
         G_ASSERT_OPENGL
     }
 
+    /// Sets the current binding to the object described by \a handle. If
+    /// \a handle is 0, the current object will be unbound.
+    static void setCurrent(GLuint const handle) {
+        glBindTexture(T,handle);
+        G_ASSERT_OPENGL
+    }
+
     /// Checks whether the \a handle is of this object's type.
     static bool hasSameType(GLuint const handle) {
         GLboolean result=glIsTexture(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
     }
+
+    //@}
 };
 
 /**

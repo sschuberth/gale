@@ -46,16 +46,12 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
 {
     template<GLenum B,class I> friend class Bindable;
 
-  public:
-
-    /// Sets the current binding to the object described by \a handle. If
-    /// \a handle is 0, the current object will be unbound.
-    static void setCurrent(GLuint const handle) {
-        glBindVertexArray(handle);
-        G_ASSERT_OPENGL
-    }
-
   private:
+
+    /**
+     * \name Implementation of the bindable interface
+     */
+    //@{
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
@@ -75,12 +71,21 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
         }
     }
 
+    /// Sets the current binding to the object described by \a handle. If
+    /// \a handle is 0, the current object will be unbound.
+    static void setCurrent(GLuint const handle) {
+        glBindVertexArray(handle);
+        G_ASSERT_OPENGL
+    }
+
     /// Checks whether the \a handle is of this object's type.
     static bool hasSameType(GLuint const handle) {
         GLboolean result=glIsVertexArray && glIsVertexArray(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
     }
+
+    //@}
 };
 
 } // namespace wrapgl

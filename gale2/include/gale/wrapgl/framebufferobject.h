@@ -56,13 +56,6 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
 
   public:
 
-    /// Sets the current binding to the object described by \a handle. If
-    /// \a handle is 0, the current object will be unbound.
-    static void setCurrent(GLuint const handle) {
-        glBindRenderbuffer(GL_RENDERBUFFER,handle);
-        G_ASSERT_OPENGL
-    }
-
     /**
      * \name Methods to operate on the object's data
      */
@@ -145,6 +138,11 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
 
   private:
 
+    /**
+     * \name Implementation of the bindable interface
+     */
+    //@{
+
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
         initFallback();
@@ -165,6 +163,13 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
         }
     }
 
+    /// Sets the current binding to the object described by \a handle. If
+    /// \a handle is 0, the current object will be unbound.
+    static void setCurrent(GLuint const handle) {
+        glBindRenderbuffer(GL_RENDERBUFFER,handle);
+        G_ASSERT_OPENGL
+    }
+
     /// Checks whether the \a handle is of this object's type.
     static bool hasSameType(GLuint const handle) {
         bool result=glIsRenderbuffer && glIsRenderbuffer(handle)!=GL_FALSE;
@@ -172,7 +177,7 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
         return result;
     }
 
-  private:
+    //@}
 
     /// Maps ARB_framebuffer_object function pointers to EXT_framebuffer_*
     /// function pointers as a fallback.
@@ -197,13 +202,6 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
     template<GLenum B,class I> friend class Bindable;
 
   public:
-
-    /// Sets the current binding to the object described by \a handle. If
-    /// \a handle is 0, the current object will be unbound.
-    static void setCurrent(GLuint const handle,GLenum const target=GL_FRAMEBUFFER) {
-        glBindFramebuffer(target,handle);
-        G_ASSERT_OPENGL
-    }
 
     /**
      * \name Methods related to the framebuffer object's target
@@ -303,6 +301,11 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
 
   private:
 
+    /**
+     * \name Implementation of the bindable interface
+     */
+    //@{
+
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
         RenderBufferObject::initFallback();
@@ -323,12 +326,21 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
         }
     }
 
+    /// Sets the current binding to the object described by \a handle. If
+    /// \a handle is 0, the current object will be unbound.
+    static void setCurrent(GLuint const handle,GLenum const target=GL_FRAMEBUFFER) {
+        glBindFramebuffer(target,handle);
+        G_ASSERT_OPENGL
+    }
+
     /// Checks whether the \a handle is of this object's type.
     static bool hasSameType(GLuint const handle) {
         bool result=glIsFramebuffer && glIsFramebuffer(handle)!=GL_FALSE;
         G_ASSERT_OPENGL
         return result;
     }
+
+    //@}
 
     GLenum m_target; ///< Specifies for which rendering operation the object becomes the target when it is bound.
 };

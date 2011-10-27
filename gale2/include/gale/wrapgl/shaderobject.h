@@ -137,13 +137,6 @@ class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
 
   public:
 
-    /// Sets the current binding to the object described by \a handle. If
-    /// \a handle is 0, the current object will be unbound.
-    static void setCurrent(GLuint const handle) {
-        glUseProgram(handle);
-        G_ASSERT_OPENGL
-    }
-
     /// Attaches the given \a shader to this program.
     void attach(ShaderObject const& shader) {
         glAttachShader(m_handle,shader.handle());
@@ -203,6 +196,11 @@ class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
 
   private:
 
+    /**
+     * \name Implementation of the bindable interface
+     */
+    //@{
+
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
         handle=0;
@@ -221,12 +219,21 @@ class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
         }
     }
 
+    /// Sets the current binding to the object described by \a handle. If
+    /// \a handle is 0, the current object will be unbound.
+    static void setCurrent(GLuint const handle) {
+        glUseProgram(handle);
+        G_ASSERT_OPENGL
+    }
+
     /// Checks whether the \a handle is of this object's type.
     static bool hasSameType(GLuint const handle) {
         GLboolean result=glIsProgram && glIsProgram(handle);
         G_ASSERT_OPENGL
         return result!=GL_FALSE;
     }
+
+    //@}
 };
 
 } // namespace wrapgl
