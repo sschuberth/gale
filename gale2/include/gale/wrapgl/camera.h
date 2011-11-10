@@ -116,12 +116,11 @@ class Camera
         return s_current;
     }
 
-    /// Initializes a perspective camera with a screen space that matches the
-    /// dimensions of the given \a surface or, if not given, the current viewport.
-    /// The camera's vertical field of view and clipping plane distances can be
-    /// specified by \a fov, \a clip_near and \a clip_far respectively. The
-    /// modelview matrix is set to identity, so the camera looks down the
-    /// negative z-axis.
+    /// Initializes the camera to perspective projection with a screen space that matches the
+    /// dimensions of the given \a surface or, if not given, the current viewport. The camera's
+    /// vertical field of view and clipping plane distances can be specified by \a fov,
+    /// \a clip_near and \a clip_far respectively. The modelview matrix is set to identity, so the
+    /// camera looks down the negative z-axis.
     Camera(RenderSurface const* surface=NULL,double const fov=math::Constd::PI()*0.25,double const clip_near=0.001,double const clip_far=1000.0)
     :   m_surface(surface)
     ,   m_frustum(*this)
