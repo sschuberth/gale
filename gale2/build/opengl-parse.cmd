@@ -20,6 +20,12 @@ if "%GIT%"=="" (
 rem Make sure Bash is in PATH (for running scripts).
 set PATH=%GIT%bin;%PATH%
 
+where /q bash.exe
+if errorlevel 1 (
+    echo Error: Unable to find "bash.exe" in PATH.
+    exit /b
+)
+
 pushd "%~dp0..\glex"
 
 echo *** Deleting existing OpenGL API initialization files ...
