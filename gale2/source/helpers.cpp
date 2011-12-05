@@ -113,11 +113,6 @@ Logo::Logo(double const fov,float const distance)
     G_ASSERT_OPENGL
 
     // Save states that need to be changed for rendering the logo.
-    glPushAttrib(GL_COLOR_BUFFER_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    G_ASSERT_OPENGL
-
     glPushAttrib(GL_CURRENT_BIT);
     glColor3fv(Col3f::WHITE());
     G_ASSERT_OPENGL
@@ -127,7 +122,6 @@ Logo::Logo(double const fov,float const distance)
     glDisable(GL_TEXTURE_1D);
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
-    glEnable(GL_LINE_SMOOTH);
     G_ASSERT_OPENGL
 
     glPushAttrib(GL_LINE_BIT);
@@ -145,7 +139,6 @@ Logo::Logo(double const fov,float const distance)
     glNewList(m_list_range+LIST_EPILOGUE,GL_COMPILE);
     G_ASSERT_OPENGL
 
-    glPopAttrib();
     glPopAttrib();
     glPopAttrib();
     glPopAttrib();
