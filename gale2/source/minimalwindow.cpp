@@ -117,7 +117,6 @@ LRESULT MinimalWindow::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
         // This is sent to a window when a portion should be painted.
         case WM_PAINT: {
             onPaint();
-            glFlush();
             G_ASSERT_OPENGL
 
             // Make use of double-buffering.
