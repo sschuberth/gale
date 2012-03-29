@@ -548,6 +548,108 @@ G_INLINE long long roundToZero(double const d)
 //@}
 
 /**
+ * \name Floating-point conversion related functions
+ */
+//@{
+
+/**
+ * A union to access the components of a 32-bit float.
+ */
+union FP32
+{
+    unsigned int u; ///< The float bits mapped to an integer.
+    float f; ///< The float itself.
+    struct
+    {
+        unsigned int mantissa:23;
+        unsigned int exponent:8;
+        unsigned int sign:1;
+    };
+};
+
+/**
+ * A union to access the components of a 16-bit "half" float.
+ */
+union FP16
+{
+    unsigned short u; ///< The float bits mapped to an integer.
+    struct
+    {
+        unsigned int mantissa:10;
+        unsigned int exponent:5;
+        unsigned int sign:1;
+    };
+};
+
+/// Converts the given 16-bit "half" float \a h to a 32-bit float, see
+/// <https://gist.github.com/2144712#L218>.
+G_INLINE FP32 convertHalfToFloat(FP16 h)
+{
+    static FP32 const magic={(254-15)<<23};
+    static FP32 const was_infnan={(127+16)<<23};
+    FP32 o;
+
+    // Exponent/mantissa bits.
+    o.u=(h.u&0x7fff)<<13;
+
+    // Exponent adjustment.
+    o.f*=magic.f;
+
+    // Make sure Inf/NaN survive.
+    if (o.f>=was_infnan.f)
+        o.u|=255<<23;
+
+    // Sign bit.
+    o.u|=(h.u&0x8000)<<16;
+
+    return o;
+}
+
+/// Converts the given 32-bit float \a f to a 16-bit "half" float, see
+/// <https://gist.github.com/2156668#L153>.
+G_INLINE FP16 convertFloatToHalf(FP32 f)
+{
+    FP32 infty={31<<23};
+    FP32 magic={15<<23};
+    FP16 o={0};
+
+    unsigned int sign=f.sign;
+    f.sign=0;
+
+    // If all exponent bits are set this is Inf or NaN.
+    if (f.exponent == 255)
+    {
+        // NaN->qNaN and Inf->Inf.
+        o.exponent=31;
+        o.mantissa=f.mantissa?0x200:0;
+    }
+    // This is a (de)normalized number or zero.
+    else {
+        // Make sure we don't get sticky bits.
+        f.u&=~0xfff;
+
+        // Shift exponent down, denormalize if necessary.
+        f.f*=magic.f;
+
+        // Rounding bias.
+        f.u+=0x1000;
+        if (f.u>infty.u) {
+            // Clamp to signed infinity if overflowed.
+            f.u=infty.u;
+        }
+
+        // Take the bits!
+        o.u=f.u>>13;
+    }
+
+    o.sign=sign;
+
+    return o;
+}
+
+//@}
+
+/**
  * \name Bit juggling functions
  */
 //@{
