@@ -78,7 +78,7 @@ if (empty($error)) {
         echo '<div style="height: 128px"></div>';
     }
     else {
-        $geshi=&new GeSHi();
+        $geshi=new GeSHi();
 
         $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
         $geshi->set_overall_style('background-color: #c7d1d2; font-size: small;');
