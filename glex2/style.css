@@ -1,0 +1,41 @@
+html {
+    /* For Gecko-based browsers (Mozilla Firefox etc.) */
+    background: -moz-linear-gradient(top, #004276, #aeb3be) fixed;
+    /* For Opera 11.10+ */
+    background: -o-linear-gradient(top, #004276, #aeb3be) fixed;
+    /* For WebKit-based browsers (Apple Safari, Google Chrome etc.) */
+    background: -webkit-gradient(linear, left top, left bottom, from(#004276), to(#aeb3be)) fixed;
+    /* For Microsoft Internet Explorer 5.5 - 7.0 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#004276, endColorstr=#aeb3be);
+    /* For Microsoft Internet Explorer 8.0 - 9.0 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#004276, endColorstr=#aeb3be)";
+
+    font-family: Arial;
+}
+
+hr {
+    border-style: none;
+    background-color: #c9d0e0;
+    color: #c9d0e0;
+    height: 1px;
+}
+
+img {
+    border-style: none;
+    display: block;
+}
+
+table {
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td {
+    background-color: white;
+    padding: 0px;
+}
+
+td.corner {
+    background-color: transparent;
+}
