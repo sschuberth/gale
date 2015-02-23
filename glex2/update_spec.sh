@@ -18,7 +18,7 @@ elif [ -n "$(curl --version 2> /dev/null)" ]; then
     cd spec
     for i in $urls; do
         echo "Updating $i"
-        curl --remote-name --remote-time --time-cond $(basename $i) $i
+        curl --location --remote-name --remote-time --time-cond $(basename $i) $i
     done
 else
     echo "Error: Neither Wget nor cURL was found."
