@@ -34,7 +34,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow(_T("test_fbo"),600,600)
+    :   DefaultWindow(_T("demo_fbo"),600,600)
     ,   m_win_camera(m_camera)
     ,   m_draw_texture(&m_fbo_textures[0])
     ,   m_read_texture(&m_fbo_textures[1])

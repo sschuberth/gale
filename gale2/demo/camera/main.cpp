@@ -18,7 +18,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow(_T("test_camera"),800,600)
+    :   DefaultWindow(_T("demo_camera"),800,600)
     {
         // Set narrow clipping planes for the main camera so we actually see the
         // camera frustum's top and bottom.

@@ -18,7 +18,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow(_T("test_texture"),800,600)
+    :   DefaultWindow(_T("demo_texture"),800,600)
     {
         // Move the camera back to be able to see objects at the origin.
         m_camera.approach(-5);

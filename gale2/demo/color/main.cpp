@@ -19,7 +19,7 @@ class TestWindow:public DefaultWindow
   public:
 
     TestWindow()
-    :   DefaultWindow(_T("test_color"),500,500)
+    :   DefaultWindow(_T("demo_color"),500,500)
     ,   m_value(100.0f)
     ,   m_mode(0)
     {
