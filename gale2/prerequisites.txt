@@ -15,7 +15,7 @@ Windows
 Tools
 -----
 
-- msysGit, that is "Git for Windows" (http://msysgit.googlecode.com/)
+- Git for Windows (http://git-scm.com/download/win)
 - PHP, needs to be in PATH (http://www.php.net/)
 
 Compiler

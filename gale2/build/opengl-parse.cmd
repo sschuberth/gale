@@ -2,7 +2,7 @@
 
 setlocal
 
-rem Read the msysGit installation path from the Registry.
+rem Read the Git for Windows installation path from the Registry.
 :REG_QUERY
 for /f "skip=2 delims=: tokens=1*" %%a in ('reg query "HKLM\SOFTWARE%WOW%\Microsoft\Windows\CurrentVersion\Uninstall\Git_is1" /v InstallLocation 2^> nul') do (
     for /f "tokens=3" %%z in ("%%a") do (
