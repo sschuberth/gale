@@ -30,7 +30,7 @@ add_executable(${name} ${sources})
 # Specify any required include directories. The specified path is interpreted as
 # relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
 # file are absolute.
-include_directories("../../include")
+include_directories("../../include" "../../../catch/single_include")
 
 # Compile and link against OpenGL and GALE.
 find_package(OpenGL REQUIRED)
