@@ -5,7 +5,7 @@ following software to be installed on your development machine.
 Common
 ======
 
-- CMake 2.6.4, not newer (http://www.cmake.org/)
+- CMake 2.6.4 or newer (http://www.cmake.org/)
 - Doxygen 1.6.0 or newer (http://www.doxygen.org/)
 
 
