@@ -527,6 +527,9 @@ class HMatrix4
     void orthonormalize() {
         c0.normalize();
         c1=~(c1-(c1%c0)*c0);
+
+        // This is cheaper than what the real modified Gram-Schmidt algorithm does. Also see
+        // https://fgiesen.wordpress.com/2013/06/02/modified-gram-schmidt-orthogonalization/.
         c2=c0^c1;
     }
 
