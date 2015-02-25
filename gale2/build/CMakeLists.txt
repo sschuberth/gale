@@ -105,7 +105,6 @@ if(MSVC)
     # - "Merge read-only data and code sections"
     set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}
         /OPT:REF
-        /OPT:NOWIN98
         /DYNAMICBASE:NO
         /FIXED
         /MERGE:.rdata=.text
