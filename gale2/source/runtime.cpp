@@ -59,6 +59,13 @@ int WinMainCRTStartup()
  * Replacements for C runtime functions
  */
 
+// Inspired by http://graphics.stanford.edu/~seander/bithacks.html#IntegerAbs
+int abs(int n)
+{
+    int const mask=n>>(sizeof(int)*8-1);
+    return (n+mask)^mask;
+}
+
 int print_str(char const* str)
 {
     DWORD length=0,written;
@@ -75,7 +82,7 @@ int print_int(int num)
 {
     // Longest integer string is "-2147483648".
     char buffer[11+1];
-    int pos=11, digit;
+    int pos=11,digit;
 
     buffer[pos--]='\0';
     do {
