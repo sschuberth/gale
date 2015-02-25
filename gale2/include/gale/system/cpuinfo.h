@@ -659,15 +659,9 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     // Bit 28 is reserved (on Intel and AMD).
 
-    /// Returns whether the processor supports 64-bit extensions to the IA-32
-    /// (slightly different meaning on AMD).
-    bool hasIntel64() const {
-        return (m_80000001_edx&(1<<29))!=0;
-    }
-
     /// Returns whether the processor supports Long Mode to access 64-bit
     /// instructions and registers, running 32-bit and 16-bit programs in
-    /// a compatibility sub-mode (slightly different meaning on Intel).
+    /// a compatibility sub-mode.
     bool hasAMD64() const {
         return (m_80000001_edx&(1<<29))!=0;
     }
