@@ -26,3 +26,4 @@ Please try <a href="http://threekings.tk/gale/glex1/">GLEX 1 online</a> and <a h
 # TODO
 
 * Implement demo_distfield.
+* Leverage [Read The Docs](https://readthedocs.org/) (via [Breathe](https://breathe.readthedocs.org/)).
