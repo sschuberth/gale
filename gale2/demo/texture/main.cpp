@@ -6,6 +6,7 @@
 #endif
 
 #include <gale/math/color.h>
+#include <gale/math/colorspace.h>
 #include <gale/math/random.h>
 #include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/textureobject.h>
@@ -28,8 +29,9 @@ class TestWindow:public DefaultWindow
         Col3ub color,palette[5];
         Tuple<3,unsigned char> data[2*2];
 
-        color.setHSV(rand.randomExcl0N(360),rand.random0N(100),rand.random0N(100));
-        color.blend(palette);
+        ColorSpaceHSV hsv(rand.randomExcl0N(360),rand.random0N(100),rand.random0N(100));
+        color=hsv.getRGB<Col3ub>();
+        //color.blend(palette);
 
         // The texture is smaller than the default pixel alignment.
         glPixelStorei(GL_UNPACK_ALIGNMENT,1);
