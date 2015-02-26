@@ -212,7 +212,7 @@ else {
         <?php drawTableBorder('t','white',FALSE,5); ?>
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
-                <a href="http://threekings.tk/gale/glex2/">glex</a> is part of the <a href="https://sourceforge.net/projects/gale-opengl/">gale project</a> generously hosted by <a href="https://sourceforge.net/">SourceForge</a><br />
+                <a href="http://threekings.tk/gale/glex2/">glex</a> is part of the <a href="https://github.com/sschuberth/gale/">gale project</a> generously hosted by <a href="https://github.com/">GitHub</a><br />
                 Source code high-lighting is performed by <a href="http://repo.or.cz/w/geshi.git">GeSHi</a> <?= GESHI_VERSION ?><br />
                 &nbsp;
             </td>
