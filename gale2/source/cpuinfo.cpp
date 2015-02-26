@@ -247,10 +247,10 @@ unsigned int CPUInfo::maxCPUIDExtFunc() const
 #elif defined(G_COMP_GNUC) // G_COMP_MSVC
 
 // See Brennan's Guide to Inline Assembly,
-// <http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html>.
+// http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html.
 
 // See Machine Constraints - Using the GNU Compiler Collection (GCC),
-// <http://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html#Machine-Constraints>.
+// http://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html#Machine-Constraints.
 
 // Always preserve the EBX register to be compatible with the -fPIC option.
 // Note that specifying EBX in the clobber list does *not* work!

@@ -42,10 +42,10 @@ namespace system {
  * capabilities. For details consult these documents:
  *
  * - Intel Processor Identification and the CPUID Instruction, see
- *   <http://www.intel.com/Assets/PDF/appnote/241618.pdf>.
+ *   http://www.intel.com/Assets/PDF/appnote/241618.pdf.
  *
  * - AMD CPUID Specification, see
- *   <http://support.amd.com/us/Processor_TechDocs/25481.pdf>.
+ *   http://support.amd.com/us/Processor_TechDocs/25481.pdf.
  */
 class CPUInfo:public global::Singleton<CPUInfo>
 {
@@ -55,7 +55,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /// Checks if this is a little-endian (as opposed to big-endian) machine.
     bool isLittleEndian() const {
-        // See <http://sjbaker.org/steve/software/cute_code.html>.
+        // See http://sjbaker.org/steve/software/cute_code.html.
         static int const i=1;
         return *reinterpret_cast<char const*>(&i)!=0;
     }
@@ -175,7 +175,7 @@ class CPUInfo:public global::Singleton<CPUInfo>
 
     /**
      * \name Methods to determine the number of processing units, see
-     * <http://cache-www.intel.com/cd/00/00/27/66/276611_276611.txt>
+     * http://cache-www.intel.com/cd/00/00/27/66/276611_276611.txt
      */
     //@{
 

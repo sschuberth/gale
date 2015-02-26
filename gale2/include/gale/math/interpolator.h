@@ -55,7 +55,7 @@ static T cubic(T const& a,T const& b,I const& s) {
 
 /**
  * A collection of interpolation (and approximation) methods. For a nice introduction, see
- * <http://altdevblogaday.org/2011/03/21/moving-beyond-the-linear-bezier/>.
+ * http://altdevblogaday.org/2011/03/21/moving-beyond-the-linear-bezier/.
  */
 class Interpolator
 {
@@ -64,7 +64,7 @@ class Interpolator
     /// Piecewise linear interpolation of the values in \a v at position \a s.
     /// The position in range [0,1] is mapped to the array size. If \a closed is
     /// \c true, the values are treated as being periodic, resulting in a closed
-    /// curve. Also see <http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/>.
+    /// curve. Also see http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/.
     template<class T>
     static T Linear(global::DynamicArray<T> const& v,float s,bool const closed=false) {
         int i0,i1;
@@ -76,7 +76,7 @@ class Interpolator
     /// Piecewise cosine interpolation of the values in \a v at position \a s.
     /// The position in range [0,1] is mapped to the array size. If \a closed is
     /// \c true, the values are treated as being periodic, resulting in a closed
-    /// curve. Also see <http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/>.
+    /// curve. Also see http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/.
     template<class T>
     static T Cosine(global::DynamicArray<T> const& v,float s,bool const closed=false) {
         int i0,i1;
@@ -89,7 +89,7 @@ class Interpolator
     /// corresponding tangents in \a t at position \a s. The position in range
     /// [0,1] is mapped to the array size. If \a closed is \c true, the values
     /// are treated as being periodic, resulting in a closed curve. Also see
-    /// <http://local.wasp.uwa.edu.au/~pbourke/geometry/bezier/cubicbezier.html>.
+    /// http://local.wasp.uwa.edu.au/~pbourke/geometry/bezier/cubicbezier.html.
     template<class T>
     static T Bezier(global::DynamicArray<T> const& v,global::DynamicArray<T> const& t,float s,bool const closed=false) {
         static signed char const w[]={
@@ -109,7 +109,7 @@ class Interpolator
     /// Uniform cubic B-Spline approximation of the values in \a v ("de Boor" points) at
     /// position \a s. The position in range [0,1] is mapped to the array size.
     /// If \a closed is \c true, the values are treated as being periodic,
-    /// resulting in a closed curve. Also see <http://blackpawn.com/texts/splines/>.
+    /// resulting in a closed curve. Also see http://blackpawn.com/texts/splines/.
     template<class T>
     static T BSpline(global::DynamicArray<T> const& v,float s,bool const closed=false) {
         static signed char const w[]={
@@ -133,7 +133,7 @@ class Interpolator
     /// Piecewise cubic Catmull-Rom interpolation of the values in \a v at
     /// position \a s. The position in range [0,1] is mapped to the array size.
     /// If \a closed is \c true, the values are treated as being periodic,
-    /// resulting in a closed curve. Also see <http://blackpawn.com/texts/splines/>.
+    /// resulting in a closed curve. Also see http://blackpawn.com/texts/splines/.
     template<class T>
     static T CatmullRom(global::DynamicArray<T> const& v,float s,bool const closed=false) {
         static signed char const w[]={
@@ -159,7 +159,7 @@ class Interpolator
     /// corresponding tangents in \a t at position \a s. The position in range
     /// [0,1] is mapped to the array size. If \a closed is \c true, the values
     /// are treated as being periodic, resulting in a closed curve. Also see
-    /// <http://www.cubic.org/docs/hermite.htm>.
+    /// http://www.cubic.org/docs/hermite.htm.
     template<class T>
     static T Hermite(global::DynamicArray<T> const& v,global::DynamicArray<T> const& t,float s,bool const closed=false) {
         static signed char const w[]={

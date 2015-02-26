@@ -49,7 +49,7 @@ MinimalWindow::MinimalWindow(
     // Manually post a WM_SIZE message as the one sent by SetWindowPos()
     // below does not reach the derived window's onResize() method because
     // virtual functions are not yet virtual during a class' construction, see
-    // <http://www.artima.com/cppsource/nevercall.html>.
+    // http://www.artima.com/cppsource/nevercall.html.
     PostMessage(windowHandle(),WM_SIZE,SIZE_RESTORED,MAKELPARAM(width,height));
 
     SetWindowText(windowHandle(),title);

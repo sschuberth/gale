@@ -38,7 +38,7 @@ inline HICON CreateIconFromPointer(LPBYTE data,WORD index=0)
 {
 #ifndef GALE_TINY_CODE
     // Check ICONDIR structure entries, see
-    // <http://msdn.microsoft.com/en-us/library/ms997538.aspx>.
+    // http://msdn.microsoft.com/en-us/library/ms997538.aspx.
     LPWORD icondir=LPWORD(data);
     if (!icondir || icondir[0]!=0 || icondir[1]!=1 || icondir[2]<=index) {
         return NULL;

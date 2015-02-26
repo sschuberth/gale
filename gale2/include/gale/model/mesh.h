@@ -42,7 +42,7 @@ namespace model {
 
 /**
  * A vertex-vertex mesh data structure implementation as described at
- * <http://en.wikipedia.org/wiki/Polygon_mesh#Vertex-vertex_meshes>.
+ * http://en.wikipedia.org/wiki/Polygon_mesh#Vertex-vertex_meshes.
  */
 struct Mesh
 {
@@ -68,18 +68,18 @@ struct Mesh
             static void Ellipse(VectorArray& shape,int const segs,float const w,float const h);
 
             /// Returns an array of vectors on a heart shape as published at
-            /// <http://iquilezles.org/blog/?p=1181>.
+            /// http://iquilezles.org/blog/?p=1181.
             static void Heart(VectorArray& shape,int const segs);
 
             /// Returns an array of vectors as calculated by the Superformula,
-            /// see <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape/>.
+            /// see http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape/.
             static void Supershape(VectorArray& shape,int const segs,float const m,float const n1,float const n2,float const n3,float const a=1.0f,float const b=1.0f);
         };
 
         /**
          * \name Platonic Solids
          * Methods to create the five Platonic Solids, each with unit edge
-         * length, see <http://mathworld.wolfram.com/PlatonicSolid.html>.
+         * length, see http://mathworld.wolfram.com/PlatonicSolid.html.
          */
         //@{
 
@@ -146,7 +146,7 @@ struct Mesh
         /// opening, consisting of \a ss segments along the shell and
         // \a st segments around the tube. The height
         /// is given by \a h, the number of spiral turns by \a n. For details,
-        /// see <http://local.wasp.uwa.edu.au/~pbourke/geometry/shell/>.
+        /// see http://local.wasp.uwa.edu.au/~pbourke/geometry/shell/.
         static Mesh* Shell(float const rs,float const rt,int const ss,int const st,float const h,int const n);
 
         //@}
@@ -154,7 +154,7 @@ struct Mesh
         /**
          * \name Product meshes
          * Methods based on multiplying formulas to yield a 3D composite, see
-         * e.g. <http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape3d/>.
+         * e.g. http://local.wasp.uwa.edu.au/~pbourke/geometry/supershape3d/.
          * On Paul Bourke's site, "SuperShape 1" is the longitudinal shape, and
          * "SuperShape 2" is the latitudinal shape.
          */
@@ -219,7 +219,7 @@ struct Mesh
     };
 
     /// Class to subdivide meshes using different algorithms, for an overview
-    /// see <http://en.wikipedia.org/wiki/Subdivision_surface>.
+    /// see http://en.wikipedia.org/wiki/Subdivision_surface.
     class Subdivider
     {
       public:
@@ -246,7 +246,7 @@ struct Mesh
         }
 
         /// Divides the triangular faces of a mesh as described by Dyn et al. in
-        /// <http://www.math.tau.ac.il/~niradyn/papers/butterfly.pdf>.
+        /// http://www.math.tau.ac.il/~niradyn/papers/butterfly.pdf.
         static void Butterfly(Mesh& mesh,int steps=1);
 
         //@}
@@ -259,7 +259,7 @@ struct Mesh
         //@{
 
         /// Divides the triangular faces of a mesh as described by C. T. Loop in
-        /// <http://research.microsoft.com/~cloop/thesis.pdf>.
+        /// http://research.microsoft.com/~cloop/thesis.pdf.
         static void Loop(Mesh& mesh,int steps,bool const move);
 
         /// Convenience wrapper for use with a function pointer that calls
@@ -269,7 +269,7 @@ struct Mesh
         }
 
         /// Divides the triangular faces of a mesh as described by L. Kobbelt in
-        /// <http://www.graphics.rwth-aachen.de/uploads/media/sqrt3.pdf>.
+        /// http://www.graphics.rwth-aachen.de/uploads/media/sqrt3.pdf.
         static void Sqrt3(Mesh& mesh,int steps,bool const move);
 
         /// Convenience wrapper for use with a function pointer that calls
@@ -279,11 +279,11 @@ struct Mesh
         }
 
         /// Divides the quadrangular faces of a mesh as described by E. Catmull
-        /// and J. Clark in <http://www.cs.berkeley.edu/~sequin/CS284/PAPERS/CatmullClark_SDSurf.pdf>.
+        /// and J. Clark in http://www.cs.berkeley.edu/~sequin/CS284/PAPERS/CatmullClark_SDSurf.pdf.
         static void CatmullClark(Mesh& mesh,int steps=1);
 
         /// Divides the faces of a mesh as described by D. Doo and M. Sabin in
-        /// <http://trac2.assembla.com/DooSabinSurfaces/export/12/trunk/docs/Doo%201978%20Subdivision%20algorithm.pdf>.
+        /// http://trac2.assembla.com/DooSabinSurfaces/export/12/trunk/docs/Doo%201978%20Subdivision%20algorithm.pdf.
         static void DooSabin(Mesh& mesh,int steps=1);
 
         //@}

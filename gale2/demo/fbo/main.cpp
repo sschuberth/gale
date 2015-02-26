@@ -19,7 +19,7 @@
 #endif
 
 // Switching the draw buffer to a different color attachment should be fastest,
-// see page 29 in <http://download.nvidia.com/developer/presentations/2005/GDC/OpenGL_Day/OpenGL_FrameBuffer_Object.pdf>.
+// see page 29 in http://download.nvidia.com/developer/presentations/2005/GDC/OpenGL_Day/OpenGL_FrameBuffer_Object.pdf.
 #define SWITCH_DRAW_BUFFER
 
 using namespace gale::math;

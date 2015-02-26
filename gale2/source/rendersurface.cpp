@@ -83,15 +83,15 @@ RenderSurface::RenderSurface(
     G_ASSERT_CALL(makeCurrent())
 
     // Try to initialize an extension for more sophisticated selection of a
-    // pixel format, see <http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt>.
+    // pixel format, see http://opengl.org/registry/specs/ARB/wgl_pixel_format.txt.
     GLEX_WGL_ARB_pixel_format_init();
 
     // Try to initialize an extension to ask for multi-sampled pixel formats, see
-    // <http://www.opengl.org/registry/specs/ARB/multisample.txt>.
+    // http://www.opengl.org/registry/specs/ARB/multisample.txt.
     GLEX_ARB_multisample_init();
 
     // Try to initialize an extension required to create a context of a specific
-    // version, see <http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt>.
+    // version, see http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt.
     GLEX_WGL_ARB_create_context_init();
 
     AttributeListi attr;
@@ -247,7 +247,7 @@ LRESULT RenderSurface::handleMessage(UINT const uMsg,WPARAM const wParam,LPARAM 
         }
 
         // Avoid GDI clearing the background under Windows Vista with Aero
-        // enabled, see <http://opengl.org/pipeline/article/vol003_7/>.
+        // enabled, see http://opengl.org/pipeline/article/vol003_7/.
         case WM_ERASEBKGND: {
             return 1;
         }

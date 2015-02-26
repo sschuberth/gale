@@ -167,7 +167,7 @@ struct OpCmpEqual
 };
 
 /// Boolean absolute and relative "equal" comparison operator, see
-/// <http://realtimecollisiondetection.net/blog/?p=89>.
+/// http://realtimecollisiondetection.net/blog/?p=89.
 struct OpCmpEqualRel
 {
     /// Returns whether \a a equals \a b with regard to an absolute and relative

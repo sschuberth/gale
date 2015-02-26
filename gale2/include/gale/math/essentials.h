@@ -328,7 +328,7 @@ inline T max(T const a,T const b,T const c,T const d)
 template<typename T>
 inline T sgn(T const x)
 {
-    // See <http://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign>.
+    // See http://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign.
     return static_cast<T>(x>0)-static_cast<T>(x<0);
 }
 
@@ -582,7 +582,7 @@ union FP16
 };
 
 /// Converts the given 16-bit "half" float \a h to a 32-bit float, see
-/// <https://gist.github.com/2144712#L218>.
+/// https://gist.github.com/2144712#L218.
 G_INLINE FP32 convertHalfToFloat(FP16 h)
 {
     static FP32 const magic={(254-15)<<23};
@@ -606,7 +606,7 @@ G_INLINE FP32 convertHalfToFloat(FP16 h)
 }
 
 /// Converts the given 32-bit float \a f to a 16-bit "half" float, see
-/// <https://gist.github.com/2156668#L153>.
+/// https://gist.github.com/2156668#L153.
 G_INLINE FP16 convertFloatToHalf(FP32 f)
 {
     FP32 infty={31<<23};
@@ -721,7 +721,7 @@ inline unsigned int countSetBits(unsigned int x)
 /// Returns the remainder of \a x divided by 3.
 inline unsigned int mod3(unsigned int x)
 {
-    // Taken from <http://www.codercorner.com/Modulo3.htm>.
+    // Taken from http://www.codercorner.com/Modulo3.htm.
     return (1<<x)&3;
 }
 

@@ -40,7 +40,7 @@ namespace wrapgl {
 
 /**
  * \name Type definitions for the different buffer types, see
- * <http://www.opengl.org/registry/specs/ARB/pixel_buffer_object.txt>
+ * http://www.opengl.org/registry/specs/ARB/pixel_buffer_object.txt
  */
 //@{
 

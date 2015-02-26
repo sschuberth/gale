@@ -25,7 +25,7 @@
 
 /**
  * Multiply-with-carry random number generator as invented by George Marsaglia
- * and implemented by Agner Fog, see <http://www.agner.org/random/mother/>.
+ * and implemented by Agner Fog, see http://www.agner.org/random/mother/.
  */
 struct RandomMotherImpl
 {

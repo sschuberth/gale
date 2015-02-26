@@ -122,7 +122,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
      * static methods instead of static variables are used here, see
-     * <http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14>.
+     * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14.
      */
     //@{
 
@@ -351,7 +351,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
     /// saturation and value are taken into account, different tints or shades
     /// of the same pure color return different complementary colors. An alpha
     /// channel is ignored, if present. See
-    /// <http://en.wikipedia.org/wiki/Complementary_color>.
+    /// http://en.wikipedia.org/wiki/Complementary_color.
     Color complement() const {
         Color tmp=WHITE()-*this+BLACK();
 
@@ -370,7 +370,7 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
     //@}
 
     /**
-     * \name Mixing methods, see <http://en.wikipedia.org/wiki/Color_mixing>.
+     * \name Mixing methods, see http://en.wikipedia.org/wiki/Color_mixing.
      */
     //@{
 

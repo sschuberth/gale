@@ -27,7 +27,7 @@ static float const LINE_WIDTH=3.0f;
 
 static int const NUM_SMALL_HEARTS=50;
 
-// Modeled using <http://threekings.tk/mirror/Spline/MainForm.html>.
+// Modeled using http://threekings.tk/mirror/Spline/MainForm.html.
 static Vec2f const ECG[]={
     Vec2f( -195,    0)
 ,   Vec2f( -179,    0)

@@ -40,7 +40,7 @@ namespace wrapgl {
 
 /**
  * This is a bindable OpenGL object implementation for Vertex Array Objects, see
- * <http://www.opengl.org/registry/specs/ARB/vertex_array_object.txt>.
+ * http://www.opengl.org/registry/specs/ARB/vertex_array_object.txt.
  */
 class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObject>
 {

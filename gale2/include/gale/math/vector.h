@@ -69,7 +69,7 @@ class Vector:public TupleBase<N,T,Vector<N,T> >
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
      * static methods instead of static variables are used here, see
-     * <http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14>.
+     * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14.
      */
     //@{
 

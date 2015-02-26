@@ -60,7 +60,7 @@ class Timer
 #ifdef G_OS_WINDOWS
         if (s_instances==0) {
             // Work around a bug in Windows on machines with multiple CPUs that
-            // do not have a hotfix applied, see <http://support.microsoft.com/?id=896256>.
+            // do not have a hotfix applied, see http://support.microsoft.com/?id=896256.
             s_mask=SetThreadAffinityMask(GetCurrentThread(),1);
         }
         ++s_instances;

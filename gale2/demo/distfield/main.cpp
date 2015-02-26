@@ -18,7 +18,7 @@ class DemoWindow:public MinimalWindow
         G_ASSERT(viewport[2]>0 && viewport[3]>0)
 #endif
 
-        // See <http://sizecoding.blogspot.com/2008/02/chocolux-1k-intro.html>.
+        // See http://sizecoding.blogspot.com/2008/02/chocolux-1k-intro.html.
         int t=static_cast<int>(GetTickCount());
         glRecti(-t,-t,t,t);
     }

@@ -72,7 +72,7 @@ class Quaternion
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
      * static methods instead of static variables are used here, see
-     * <http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14>.
+     * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14.
      */
     //@{
 
@@ -386,7 +386,7 @@ class Quaternion
 
     /**
      * \name Interpolation related methods, see
-     * <http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/>
+     * http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
      */
     //@{
 

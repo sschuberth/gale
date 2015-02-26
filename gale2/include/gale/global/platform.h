@@ -42,7 +42,7 @@
      * \def NOMINMAX
      * Suppress the min and max macro definitions in Windef.h to avoid conflicts
      * with STL, see
-     * <http://support.microsoft.com/default.aspx?scid=kb;en-us;143208>.
+     * http://support.microsoft.com/default.aspx?scid=kb;en-us;143208.
      */
     #ifndef NOMINMAX
         #define NOMINMAX 1
@@ -52,7 +52,7 @@
      * \def VC_EXTRA_LEAN
      * Exclude rarely-used services from Windows headers, thus reducing the size
      * of the files and speeding up the build process, see
-     * <http://support.microsoft.com/default.aspx?scid=kb;en-us;166474>.
+     * http://support.microsoft.com/default.aspx?scid=kb;en-us;166474.
      */
     #ifndef VC_EXTRA_LEAN
         #define VC_EXTRA_LEAN 1
@@ -62,7 +62,7 @@
      * \def WIN32_LEAN_AND_MEAN
      * Exclude rarely-used services from Windows headers, thus reducing the size
      * of the files and speeding up the build process, see
-     * <http://support.microsoft.com/default.aspx?scid=kb;en-us;166474>.
+     * http://support.microsoft.com/default.aspx?scid=kb;en-us;166474.
      */
     #ifndef WIN32_LEAN_AND_MEAN
         #define WIN32_LEAN_AND_MEAN 1
@@ -71,7 +71,7 @@
     /**
      * \def _WIN32_WINNT
      * Assume at least Windows 2000 to get some additional defines, see
-     * <http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winprog/winprog/using_the_windows_headers.asp>.
+     * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winprog/winprog/using_the_windows_headers.asp.
      */
     #if defined(_WIN32_WINNT) && _WIN32_WINNT<0x0500
         #undef _WIN32_WINNT
@@ -87,7 +87,7 @@
     /**
      * \def PFD_SUPPORT_COMPOSITION
      * Pixel format flag to enable composition of OpenGL contexts in Windows
-     * Vista, see <http://opengl.org/pipeline/article/vol003_7/>.
+     * Vista, see http://opengl.org/pipeline/article/vol003_7/.
      */
     #ifndef PFD_SUPPORT_COMPOSITION
         #define PFD_SUPPORT_COMPOSITION 0x00008000

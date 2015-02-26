@@ -90,7 +90,7 @@ struct ConstantFormula:public Formula
 
 /**
  * Functor for the generalized Superformula as described by J. Gielis, see
- * <http://mathworld.wolfram.com/Superellipse.html>.
+ * http://mathworld.wolfram.com/Superellipse.html.
  */
 struct SuperFormula:public Formula
 {

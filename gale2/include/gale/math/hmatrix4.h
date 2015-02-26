@@ -45,7 +45,7 @@ namespace math {
  * required by OpenGL, i.e. the matrix entry at row r, 0 <= r <= 3, and column
  * c, 0 <= c <= 3, is located at offset i = c*4 + r. For a nice article about
  * column vs. row vectors see
- * <http://fgiesen.wordpress.com/2011/05/04/row-major-vs-column-major-and-gl-es/>.
+ * http://fgiesen.wordpress.com/2011/05/04/row-major-vs-column-major-and-gl-es/.
  *
  * OpenGL example usage:
  * \code
@@ -165,7 +165,7 @@ class HMatrix4
      * \name Predefined constants
      * In order to avoid the so called "static initialization order fiasco",
      * static methods instead of static variables are used here, see
-     * <http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14>.
+     * http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14.
      */
     //@{
 

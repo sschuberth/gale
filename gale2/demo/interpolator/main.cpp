@@ -29,7 +29,7 @@ class TestWindow:public DefaultWindow
 
         glPointSize(5.0f);
 
-        // Resemble the graph at <http://www.alglib.net/interpolation/spline3.php>.
+        // Resemble the graph at http://www.alglib.net/interpolation/spline3.php.
         for (int i=0;i<9;++i) {
             float x=i*80.0f+80.0f;
             float y=f(i-4.0f);
@@ -44,7 +44,7 @@ class TestWindow:public DefaultWindow
         static int const N=m_points.getSize()-1;
 
         // Calculate the tangents as described at the bottom (method 3) at
-        // <http://local.wasp.uwa.edu.au/~pbourke/geometry/bezier/cubicbezier.html>.
+        // http://local.wasp.uwa.edu.au/~pbourke/geometry/bezier/cubicbezier.html.
         m_tangents.setSize(m_points.getSize());
         for (int i=0;i<m_tangents.getSize();++i) {
             int ip=(i==0)?0:i-1;

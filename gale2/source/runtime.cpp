@@ -129,7 +129,7 @@ __declspec(noalias) void __cdecl free(void* memblock)
 // would work, the linker wants to pull in the functions from the CRT. So in
 // order to implement our own minimal versions, we first need to force the
 // functions to formally be a function, also see
-// <http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=101250>.
+// http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=101250.
 
 // Warning C4164: Intrinsic function not declared.
 #pragma warning(disable:4164)

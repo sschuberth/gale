@@ -41,7 +41,7 @@ namespace wrapgl {
 /**
  * This is a bindable OpenGL object implementation for Vertex Buffer Objects of
  * target type \c T, see
- * <http://www.opengl.org/registry/specs/ARB/vertex_buffer_object.txt>.
+ * http://www.opengl.org/registry/specs/ARB/vertex_buffer_object.txt.
  */
 template<GLenum T,GLenum B>
 class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >

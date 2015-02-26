@@ -44,7 +44,7 @@
     /**
      * \def G_ARCH_X86_64
      * AMD64 / Intel 64 architecture define, see
-     * <http://predef.sourceforge.net/prearch.html#sec3>.
+     * http://predef.sourceforge.net/prearch.html#sec3.
      */
     #define G_ARCH_X86_64
 #endif
@@ -59,7 +59,7 @@
     /**
      * \def G_ARCH_X86
      * Intel x86 architecture define, see
-     * <http://predef.sourceforge.net/prearch.html#sec6>.
+     * http://predef.sourceforge.net/prearch.html#sec6.
      */
     #define G_ARCH_X86
 #endif
@@ -84,7 +84,7 @@
     /**
      * \def G_OS_LINUX
      * Linux operating system define, see
-     * <http://predef.sourceforge.net/preos.html#sec16>.
+     * http://predef.sourceforge.net/preos.html#sec16.
      */
     #define G_OS_LINUX
 #endif
@@ -101,7 +101,7 @@
     /**
      * \def G_OS_WINDOWS
      * Windows operating system define, see
-     * <http://predef.sourceforge.net/preos.html#sec23>.
+     * http://predef.sourceforge.net/preos.html#sec23.
      */
     #define G_OS_WINDOWS
 #endif
@@ -138,7 +138,7 @@
     /**
      * \def G_COMP_GNUC
      * GNU C/C++ compiler define, see
-     * <http://predef.sourceforge.net/precomp.html#sec13>.
+     * http://predef.sourceforge.net/precomp.html#sec13.
      */
     #define G_COMP_GNUC G_COMP_VERSION(__GNUC__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__)
 #endif
@@ -153,7 +153,7 @@
     /**
      * \def G_COMP_MSVC
      * Microsoft Visual C++ compiler define, see
-     * <http://predef.sourceforge.net/precomp.html#sec32>.
+     * http://predef.sourceforge.net/precomp.html#sec32.
      */
     #define G_COMP_MSVC G_COMP_VERSION(_MSC_VER/100-6,_MSC_VER%100,_MSC_FULL_VER-_MSC_VER*100000)
 #endif

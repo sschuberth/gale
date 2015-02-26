@@ -40,7 +40,7 @@ namespace wrapgl {
 
 /**
  * This is a wrapper class for Shader Objects as promoted to OpenGL 2.0, see
- * <http://www.opengl.org/documentation/specs/version2.0/glspec20.pdf>.
+ * http://www.opengl.org/documentation/specs/version2.0/glspec20.pdf.
  */
 class ShaderObject
 {
@@ -129,7 +129,7 @@ class ShaderObject
 
 /**
  * This is a bindable OpenGL object implementation for Program Objects, see
- * <http://www.opengl.org/documentation/specs/version2.0/glspec20.pdf>.
+ * http://www.opengl.org/documentation/specs/version2.0/glspec20.pdf.
  */
 class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
 {

@@ -27,7 +27,7 @@
 
 /**
  * \file
- * Color model representations, see <http://en.wikipedia.org/wiki/Color_model>.
+ * Color model representations, see http://en.wikipedia.org/wiki/Color_model.
  */
 
 #include "color.h"
@@ -76,7 +76,7 @@ class G_NO_VTABLE ColorModel
 
 /**
  * An HSV (also known as HSB) color model representation, see
- * <http://en.wikipedia.org/wiki/HSL_and_HSV>.
+ * http://en.wikipedia.org/wiki/HSL_and_HSV.
  */
 class ColorModelHSV:public ColorModel
 {
@@ -225,7 +225,7 @@ class ColorModelHSV:public ColorModel
 
 /**
  * An RYB color model representation, see
- * <http://threekings.tk/mirror/ryb_TR.pdf>.
+ * http://threekings.tk/mirror/ryb_TR.pdf.
  */
 class ColorModelRYB:public ColorModel
 {
@@ -233,7 +233,7 @@ class ColorModelRYB:public ColorModel
 
     /**
      * \name Hue conversion methods, see
-     * <http://www.daleroose.com/web_design/color_chart/>.
+     * http://www.daleroose.com/web_design/color_chart/.
      */
     //@{
 
