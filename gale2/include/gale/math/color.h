@@ -36,6 +36,8 @@ namespace gale {
 
 namespace math {
 
+class ColorModelHSV;
+
 /**
  * Helper class with only a single template parameter. This is needed because
  * partial specialization of class templates by only specifying the differing
@@ -346,6 +348,99 @@ class Color:public TupleBase<N,T,Color<N,T> >,public ColorChannel<T>
      * \name Miscellaneous methods
      */
     //@{
+
+    /// Returns a blend of 5 colors that match this color to form a \a palette.
+    void blend(ColorModelHSV(&palette)[5]) {
+        ColorModelHSV hsv(*this);
+
+        double h,s,v;
+
+        if (hsv.getV()>70) {
+            v=hsv.getV()-30;
+        }
+        else {
+            v=hsv.getV()+30;
+        }
+
+        palette[0].setH(hsv.getH());
+        palette[0].setS(hsv.getS());
+        palette[0].setV(v);
+
+        palette[2].setV(v);
+
+        if (hsv.getH()>=0 && hsv.getH()<30) {
+            palette[1].setH(hsv.getH()+30);
+            palette[1].setS(hsv.getS());
+            palette[1].setV(hsv.getV());
+
+            palette[2].setH(hsv.getH()+30);
+            palette[2].setS(hsv.getS());
+        }
+        else if (hsv.getH()>=30 && hsv.getH()<60) {
+            palette[1].setH(hsv.getH()+150);
+            palette[1].setS(clamp(hsv.getS()-30,0.0,100.0));
+            palette[1].setV(clamp(hsv.getV()-20,0.0,100.0));
+
+            palette[2].setH(hsv.getH()+150);
+            palette[2].setS(clamp(hsv.getS()-50,0.0,100.0));
+
+            // Overwrite the previously set value.
+            palette[2].setV(clamp(hsv.getV()+20,0.0,100.0));
+        }
+        else if (hsv.getH()>=60 && hsv.getH()<180) {
+            h=hsv.getH()-40;
+
+            palette[1].setH(h);
+            palette[1].setS(hsv.getS());
+            palette[1].setV(hsv.getV());
+
+            palette[2].setH(h);
+            palette[2].setS(hsv.getS());
+        }
+        else if (hsv.getH()>=180 && hsv.getH()<220) {
+            palette[1].setH(hsv.getH()-160);
+            palette[1].setS(hsv.getS());
+            palette[1].setV(hsv.getV());
+
+            palette[2].setH(hsv.getH()-170);
+            palette[2].setS(hsv.getS());
+        }
+        else if (hsv.getH()>=220 && hsv.getH()<300) {
+            s=clamp(hsv.getS()-40,0.0,100.0);
+
+            palette[1].setH(hsv.getH());
+            palette[1].setS(s);
+            palette[1].setV(hsv.getV());
+
+            palette[2].setH(hsv.getH());
+            palette[2].setS(s);
+        }
+        else {
+            h=wrap(hsv.getH()+20,0.0,360.0);
+
+            if (hsv.getS()>50) {
+                s=hsv.getS()-40;
+            }
+            else {
+                s=hsv.getS()+40;
+            }
+
+            palette[1].setH(h);
+            palette[1].setS(s);
+            palette[1].setV(hsv.getV());
+
+            palette[2].setH(h);
+            palette[2].setS(s);
+        }
+
+        palette[3].setH(0);
+        palette[3].setS(0);
+        palette[3].setV(100-hsv.getV());
+
+        palette[4].setH(0);
+        palette[4].setS(0);
+        palette[4].setV(hsv.getV());
+    }
 
     /// Returns the color's complementary color. As not only hue, but also
     /// saturation and value are taken into account, different tints or shades
