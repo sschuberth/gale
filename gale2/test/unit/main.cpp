@@ -12,7 +12,7 @@
 
 #include <gale/math/biasscale.h>
 #include <gale/math/color.h>
-#include <gale/math/colorspace.h>
+#include <gale/math/colormodel.h>
 #include <gale/math/hmatrix4.h>
 #include <gale/math/matrix4.h>
 #include <gale/math/quaternion.h>
@@ -720,7 +720,7 @@ TEST_CASE("Color class tests") {
         RandomEcuyerf e;
 
         Col3ub::Type r, g, b;
-        ColorSpaceHSV hsv;
+        ColorModelHSV hsv;
         Col3ub rgb;
         for (int i = 0; i < 1000; ++i) {
             r = static_cast<Col3ub::Type>(e.random(255));

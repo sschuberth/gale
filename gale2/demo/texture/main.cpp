@@ -6,7 +6,7 @@
 #endif
 
 #include <gale/math/color.h>
-#include <gale/math/colorspace.h>
+#include <gale/math/colormodel.h>
 #include <gale/math/random.h>
 #include <gale/wrapgl/defaultwindow.h>
 #include <gale/wrapgl/textureobject.h>
@@ -29,7 +29,7 @@ class TestWindow:public DefaultWindow
         Col3ub color,palette[5];
         Tuple<3,unsigned char> data[2*2];
 
-        ColorSpaceHSV hsv(rand.randomExcl0N(360),rand.random0N(100),rand.random0N(100));
+        ColorModelHSV hsv(rand.randomExcl0N(360),rand.random0N(100),rand.random0N(100));
         color=hsv.getRGB<Col3ub>();
         //color.blend(palette);
 

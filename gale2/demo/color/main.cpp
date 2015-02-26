@@ -25,7 +25,7 @@ class TestWindow:public DefaultWindow
     {
         // Check the RGB / HSV color conversion.
         double r,g,b,s,v;
-        ColorSpaceHSV hsv;
+        ColorModelHSV hsv;
         Col3d rgb_hue_only,rgb_with_saturation,rgb;
         for (int i=0;i<10000;++i) {
             r=m_rand.random01();
@@ -106,7 +106,7 @@ class TestWindow:public DefaultWindow
             m_camera.apply();
             glClear(GL_COLOR_BUFFER_BIT);
 
-            ColorSpaceHSV hsv;
+            ColorModelHSV hsv;
             hsv.setV(m_value);
             glBegin(GL_QUADS);
             unsigned int y0=0,y1;
@@ -147,7 +147,7 @@ class TestWindow:public DefaultWindow
 
             m_rand.init(0xdeadbeef);
 
-            ColorSpaceHSV hsv;
+            ColorModelHSV hsv;
             hsv.setV(100);
             glBegin(GL_QUADS);
             unsigned y0=0,y1;
