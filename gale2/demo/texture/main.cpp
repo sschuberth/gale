@@ -26,12 +26,13 @@ class TestWindow:public DefaultWindow
 
         // Generate a minimum-sized texture for each face of the cube.
         RandomEcuyerf rand;
-        Col3ub color,palette[5];
+        Col3ub color;
+        ColorModelHSV palette[5];
         Tuple<3,unsigned char> data[2*2];
 
-        ColorModelHSV hsv(rand.randomExcl0N(360),rand.random0N(100),rand.random0N(100));
+        ColorModelHSV hsv(rand.randomExcl0N(360),50+rand.random0N(50),50+rand.random0N(50));
         color=hsv.getRGB<Col3ub>();
-        //color.blend(palette);
+        color.blend(palette);
 
         // The texture is smaller than the default pixel alignment.
         glPixelStorei(GL_UNPACK_ALIGNMENT,1);
@@ -44,7 +45,8 @@ class TestWindow:public DefaultWindow
 
         for (int i=1;i<6;++i) {
             // Cube faces 2-6.
-            data[3].set(palette[i-1].getR(),palette[i-1].getG(),palette[i-1].getB());
+            Col3ub blend=palette[i-1].getRGB<Col3ub>();
+            data[3].set(blend.getR(),blend.getG(),blend.getB());
             data[0]=data[1]=data[2]=data[3];
             m_textures[i].setData(2,2,data,GL_RGB,GL_UNSIGNED_BYTE,GL_RGB);
             glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);

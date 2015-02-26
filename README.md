@@ -21,8 +21,8 @@ Please try <a href="http://threekings.tk/gale/glex1/">GLEX 1 online</a> and <a h
 ![demo_mesh](gale2/demo/mesh/screenshot.jpg)
 ![demo_quaternion](gale2/demo/quaternion/screenshot.jpg)
 ![demo_shader](gale2/demo/shader/screenshot.jpg)
+![demo_texture](gale2/demo/texture/screenshot.jpg)
 
 # TODO
 
 * Implement demo_distfield.
-* Fix demo_texture.
