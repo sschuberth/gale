@@ -13,6 +13,4 @@ Please try <a href="http://threekings.tk/gale/glex1/">GLEX 1 online</a> and <a h
 
 # Screenshots
 
-## demo_camera
-
-![demo_camera](https://github.com/sschuberth/gale/tree/master/gale2/demo/camera/screenshot.jpg)
+![demo_camera](gale2/demo/camera/screenshot.jpg)
