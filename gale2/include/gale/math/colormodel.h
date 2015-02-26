@@ -299,6 +299,28 @@ class ColorModelRYB:public ColorModel
     /// Sets the color model to match the given \a r, \a g, \a b values, where
     /// all values need to be in range [0,1].
     void fromRGB(double const r,double const g,double const b) {
+        // Convert RGB to HSV.
+        ColorModelHSV hsv_rgb;
+        hsv_rgb.fromRGB(r,g,b);
+
+        // Get the RYB hue for the RGB hue.
+        double h_ryb;
+        RGBHueToRYBHue(hsv_rgb.getH(),h_ryb);
+
+        // Abuse the HSV to RGB conversion: The amount of green for a given hue
+        // in RGB matches the amount of yellow for the same hue in RYB.
+        ColorModelHSV hsv_ryb(h_ryb,100,100);
+        Tup3d ryb_hue_only;
+        hsv_ryb.toRGB(ryb_hue_only[0],ryb_hue_only[1],ryb_hue_only[2]);
+
+        Tup3d white(0,0,0);
+        Tup3d black(1,1,1);
+        Tup3d ryb_with_saturation=lerp(white,ryb_hue_only,hsv_rgb.getS()/100.0);
+        Tup3d ryb=lerp(black,ryb_with_saturation,hsv_rgb.getV()/100.0);
+
+        m_r=ryb[0];
+        m_y=ryb[1];
+        m_b=ryb[2];
     }
 
     /// Gets the \a r, \a g, \a b values from the color model, where all values
