@@ -14,10 +14,15 @@ Please try <a href="http://threekings.tk/gale/glex1/">GLEX 1 online</a> and <a h
 # Screenshots
 
 ![demo_camera](gale2/demo/camera/screenshot.jpg)
-![demo_color](gale2/demo/color/screenshot.jpg
-![demo_fbo](gale2/demo/fbo/screenshot.jpg
-![demo_heartbeat](gale2/demo/heartbeat/screenshot.jpg
-![demo_interpolator](gale2/demo/interpolator/screenshot.jpg
-![demo_mesh](gale2/demo/mesh/screenshot.jpg
-![demo_quaternion](gale2/demo/quaternion/screenshot.jpg
-![demo_shader](gale2/demo/shader/screenshot.jpg
+![demo_color](gale2/demo/color/screenshot.jpg)
+![demo_fbo](gale2/demo/fbo/screenshot.jpg)
+![demo_heartbeat](gale2/demo/heartbeat/screenshot.jpg)
+![demo_interpolator](gale2/demo/interpolator/screenshot.jpg)
+![demo_mesh](gale2/demo/mesh/screenshot.jpg)
+![demo_quaternion](gale2/demo/quaternion/screenshot.jpg)
+![demo_shader](gale2/demo/shader/screenshot.jpg)
+
+# TODO
+
+* Implement demo_distfield.
+* Fix demo_texture.
