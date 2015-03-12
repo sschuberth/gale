@@ -3,12 +3,12 @@
 pushd $(dirname $0) > /dev/null
 
 urls="
-    https://www.opengl.org/registry/api/enumext.spec
-    https://www.opengl.org/registry/api/gl.spec
-    https://www.opengl.org/registry/api/gl.tm
-    https://www.opengl.org/registry/api/wglenumext.spec
-    https://www.opengl.org/registry/api/wglext.spec
-    https://www.opengl.org/registry/api/wgl.tm
+    https://www.opengl.org/registry/oldspecs/enumext.spec
+    https://www.opengl.org/registry/oldspecs/gl.spec
+    https://www.opengl.org/registry/oldspecs/gl.tm
+    https://www.opengl.org/registry/oldspecs/wglenumext.spec
+    https://www.opengl.org/registry/oldspecs/wglext.spec
+    https://www.opengl.org/registry/oldspecs/wgl.tm
 "
 
 if [ -n "$(wget --version 2> /dev/null)" ]; then

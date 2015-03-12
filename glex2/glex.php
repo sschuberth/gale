@@ -32,11 +32,11 @@ if (empty($es) || empty($fs) || empty($tm)) {
              "       [api=(<name>[,name]|<@file>)] [debug=<verbosity>]\n\n".
              "Where:\n".
              "       <es>    is an enumerant value specification file like\n".
-             "               http://www.opengl.org/registry/api/enumext.spec\n\n".
+             "               https://www.opengl.org/registry/oldspecs/enumext.spec\n\n".
              "       <fs>    is a function specification file like\n".
-             "               http://www.opengl.org/registry/api/gl.spec\n\n".
+             "               https://www.opengl.org/registry/oldspecs/gl.spec\n\n".
              "       <tm>    is a type map file like\n".
-             "               http://www.opengl.org/registry/api/gl.tm\n\n".
+             "               https://www.opengl.org/registry/oldspecs/gl.tm\n\n".
              "       [api]   is either a comma separated list of extension names like\n".
              "               \"ARB_transpose_matrix\" and version strings like \"VERSION_2_0\"\n".
              "               or a file name prefixed by \"@\" with one name per line (optional)\n\n".

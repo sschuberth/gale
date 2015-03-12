@@ -159,7 +159,7 @@ else {
             <tr>
                 <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
                 <td style="background-color: #d3e0e7; padding: 10px">
-                    <?php $url='http://www.opengl.org/registry/api/enumext.spec'; ?>
+                    <?php $url='https://www.opengl.org/registry/oldspecs/enumext.spec'; ?>
                     Enter the URL to an OpenGL extension enumerants specification file
                     (e.g. <a href="<?= $url ?>"><?= $url ?></a>):
                     <p><input type="text" size="100%" name="es" value="<?= empty($es)?$url:$es ?>" /></p>
@@ -169,7 +169,7 @@ else {
             <tr>
                 <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
                 <td style="background-color: #d3e0e7; padding: 10px">
-                    <?php $url='http://www.opengl.org/registry/api/gl.spec'; ?>
+                    <?php $url='https://www.opengl.org/registry/oldspecs/gl.spec'; ?>
                     Enter the URL to an OpenGL extension functions specification file
                     (e.g. <a href="<?= $url ?>"><?= $url ?></a>):
                     <p><input type="text" size="100%" name="fs" value="<?= empty($fs)?$url:$fs ?>" /></p>
@@ -179,7 +179,7 @@ else {
             <tr>
                 <td style="background-color: #d3e0e7"><!-- Corner spacer --></td>
                 <td style="background-color: #d3e0e7; padding: 10px">
-                    <?php $url='http://www.opengl.org/registry/api/gl.tm'; ?>
+                    <?php $url='https://www.opengl.org/registry/oldspecs/gl.tm'; ?>
                     Enter the URL to an OpenGL typemap file
                     (e.g. <a href="<?= $url ?>"><?= $url ?></a>):
                     <p><input type="text" size="100%" name="tm" value="<?= empty($tm)?$url:$tm ?>" /></p>
