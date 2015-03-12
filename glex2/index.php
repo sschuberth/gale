@@ -71,7 +71,7 @@ function showSourceCode($file) {
 <?php
 
 // GeSHi is included in any case for the version information in the footer.
-include_once 'geshi/geshi.php';
+include_once '../geshi/src/geshi.php';
 
 if (empty($error)) {
     if (empty($es) || empty($fs) || empty($tm)) {
