@@ -213,7 +213,7 @@ else {
         <tr>
             <td colspan="7" style="text-align: center; font-size: 8pt">
                 <a href="http://threekings.tk/gale/glex2/">glex</a> is part of the <a href="https://github.com/sschuberth/gale/">gale project</a> generously hosted by <a href="https://github.com/">GitHub</a><br />
-                Source code high-lighting is performed by <a href="http://repo.or.cz/w/geshi.git">GeSHi</a> <?= GESHI_VERSION ?><br />
+                Source code high-lighting is performed by <a href="https://github.com/GeSHi/geshi-1.0.git">GeSHi</a> <?= GESHI_VERSION ?><br />
                 &nbsp;
             </td>
         </tr>
