@@ -17,8 +17,8 @@ if ($cmdline) {
 }
 else {
     // Use @ to suppress any errors in case optional arguments are missing.
-    @$enumspec=$_REQUEST['es'];
-    @$funcspec=$_REQUEST['fs'];
+    @$es=$_REQUEST['es'];
+    @$fs=$_REQUEST['fs'];
     @$tm=$_REQUEST['tm'];
     @$api=$_REQUEST['api'];
     @$debug=$_REQUEST['debug'];
