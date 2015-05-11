@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/jxoll6s40w0gind4/branch/master?svg=true)](https://ci.appveyor.com/project/sschuberth/gale/branch/master)
+
 # Introduction
 
 The "Graphics Abstraction Layer & Engine" (GALE) is an object oriented wrapper around OpenGL and its extensions. It is designed to be modern, lightweight and self-consistent (there is no CRT dependency). Typical targets are small graphical applications. You can probably think of it as something similar to (but far less extensive than) the great <a href="http://www.geometrictools.com/">Wild Magic</a> and <a href="http://g3d.sourceforge.net/">G3D Innovation Engine</a> libraries, with a bit of <a href="http://glew.sourceforge.net/">GLEW</a> and <a href="http://glm.g-truc.net/">GLM</a>, however with a focus on very compact programs.
