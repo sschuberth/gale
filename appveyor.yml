@@ -1,12 +1,12 @@
 install:
-  - cmd: git submodule update --init --recursive
-  - cmd: cinst php -y
-  - cmd: set PATH=C:\tools\php;%PATH%
+  - git submodule update --init --recursive
+  - cinst php -y
+  - set PATH=C:\tools\php;%PATH%
 
 build_script:
-  - cmd: cd gale2\build
-  - cmd: CMake-VS2013-Win32.cmd
-  - cmd: cmake --build "Visual Studio 12 2013"
+  - cd gale2\build
+  - CMake-VS2013-Win32.cmd
+  - cmake --build "Visual Studio 12 2013"
 
 artifacts:
   - path: gale2\bin\**\*.exe
