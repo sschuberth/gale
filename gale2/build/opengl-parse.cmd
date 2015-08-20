@@ -40,6 +40,4 @@ echo *** Parsing required OpenGL APIs ...
 bash -lc "../../glex2/glex.sh es=../../glex2/spec/enumext.spec fs=../../glex2/spec/gl.spec tm=../../glex2/spec/gl.tm api=@../build/opengl-apis.txt"
 bash -lc "../../glex2/glex.sh es=../../glex2/spec/wglenumext.spec fs=../../glex2/spec/wglext.spec tm=../../glex2/spec/wgl.tm api=@../build/opengl-apis.txt"
 
-if exist *.stackdump pause
-
 popd
