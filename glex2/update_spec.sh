@@ -11,10 +11,10 @@ urls="
     https://www.opengl.org/registry/oldspecs/wgl.tm
 "
 
-if [ -n "$(wget --version 2> /dev/null)" ]; then
+if type -p wget > /dev/null; then
     wget --timestamping --directory-prefix=spec $urls
-elif [ -n "$(curl --version 2> /dev/null)" ]; then
-    mkdir spec 2> /dev/null
+elif type -p curl > /dev/null; then
+    mkdir -p spec
     cd spec
     for i in $urls; do
         echo "Updating $i"
