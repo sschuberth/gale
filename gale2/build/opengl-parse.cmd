@@ -33,12 +33,12 @@ del GLEX_*.*
 
 rem Download the OpenGL specification files if needed.
 echo *** Updating OpenGL specification files ...
-bash -c "export PATH=$PATH:/bin && ../../glex2/update_spec.sh"
+bash -lc "../../glex2/update_spec.sh"
 
 rem Read the OpenGL APIs used in the project.
 echo *** Parsing required OpenGL APIs ...
-bash -c "export PATH=$PATH:/bin && ../../glex2/glex.sh es=../../glex2/spec/enumext.spec fs=../../glex2/spec/gl.spec tm=../../glex2/spec/gl.tm api=@../build/opengl-apis.txt"
-bash -c "export PATH=$PATH:/bin && ../../glex2/glex.sh es=../../glex2/spec/wglenumext.spec fs=../../glex2/spec/wglext.spec tm=../../glex2/spec/wgl.tm api=@../build/opengl-apis.txt"
+bash -lc "../../glex2/glex.sh es=../../glex2/spec/enumext.spec fs=../../glex2/spec/gl.spec tm=../../glex2/spec/gl.tm api=@../build/opengl-apis.txt"
+bash -lc "../../glex2/glex.sh es=../../glex2/spec/wglenumext.spec fs=../../glex2/spec/wglext.spec tm=../../glex2/spec/wgl.tm api=@../build/opengl-apis.txt"
 
 if exist *.stackdump pause
 
