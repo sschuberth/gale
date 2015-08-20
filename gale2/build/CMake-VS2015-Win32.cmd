@@ -1,1 +1,1 @@
-@call CMake-VS.cmd "Visual Studio 15 2015"
+@call CMake-VS.cmd "Visual Studio 14 2015"
