@@ -5,8 +5,8 @@ install:
 
 build_script:
   - cd gale2\build
-  - CMake-VS2013-Win32.cmd
-  - cmake --build "Visual Studio 12 2013"
+  - CMake-VS2015-Win32.cmd
+  - cmake --build "Visual Studio 14 2015"
 
 artifacts:
   - path: gale2\bin\**\*.exe
