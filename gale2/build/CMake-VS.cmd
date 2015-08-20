@@ -35,6 +35,7 @@ if "%CMAKE%"=="" (
 
 rem Generate the project files in the output directory.
 pushd %1
+"%CMAKE%" --version
 "%CMAKE%" -G %1 ..
 if errorlevel 1 pause
 popd
