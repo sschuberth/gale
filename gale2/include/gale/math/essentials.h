@@ -40,25 +40,16 @@
 #include <float.h>
 #include <limits.h>
 
+#include <type_traits>
+
 /**
  * \name Overloaded functions to calculate the absolute value
  */
 //@{
 
 /// Dummy for meta-templates as used by e.g. the Color class.
-inline unsigned int abs(unsigned int const x)
-{
-    return x;
-}
-
-/// Dummy for meta-templates as used by e.g. the Color class.
-inline unsigned short abs(unsigned short const x)
-{
-    return x;
-}
-
-/// Dummy for meta-templates as used by e.g. the Color class.
-inline unsigned char abs(unsigned char const x)
+template<typename T>
+typename std::enable_if<std::is_unsigned<T>::value, T>::type abs(T const x)
 {
     return x;
 }
