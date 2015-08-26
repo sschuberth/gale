@@ -152,8 +152,8 @@ struct OpCmpGreaterEqual
 /// Boolean absolute "equal" comparison operator.
 struct OpCmpEqual
 {
-    /// Returns whether \a a equals \a b with regard to an absolute tolerance
-    /// depending on the precision of data type \a T.
+    /// Returns whether \a a equals \a b with regard to an absolute \a tolerance
+    /// which by default depends on the precision of data type \a T.
     template<typename T>
     static G_INLINE bool evaluate(
         T const& a
@@ -170,8 +170,9 @@ struct OpCmpEqual
 /// http://realtimecollisiondetection.net/blog/?p=89.
 struct OpCmpEqualRel
 {
-    /// Returns whether \a a equals \a b with regard to an absolute and relative
-    /// tolerance depending on the precision of data type \a T.
+    /// Returns whether \a a equals \a b with regard to an absolute tolerance
+    /// \a tol_abs and a relative tolerance \a tol_rel which by default depend
+    /// on the precision of data type \a T.
     template<typename T>
     static G_INLINE bool evaluate(
       T const& a,T const& b,
