@@ -46,8 +46,6 @@ file(GLOB_RECURSE sources "${glex_root}/*.c")
 list(APPEND files ${sources})
 source_group(${group} FILES ${sources})
 
-add_definitions(/D GALE_USE_VBO /D GALE_USE_SSE /D GALE_USE_SSE2 /D GALE_USE_SSE3)
-
 # Set some custom compiler flags for the heavily size optimized build.
 if(MSVC)
     # Flags specified later will override earlier flags.
@@ -126,6 +124,8 @@ set(LIBRARY_OUTPUT_PATH "../../lib" CACHE INTERNAL "" FORCE)
 # This writes absolute paths to the generated files even if relative paths are
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
 add_library(${project_name} STATIC ${files})
+
+target_compile_definitions(${project_name} PRIVATE GALE_USE_VBO GALE_USE_SSE GALE_USE_SSE2 GALE_USE_SSE3)
 
 # Specify any required include directories. The specified path is interpreted as
 # relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
