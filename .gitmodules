@@ -1,6 +1,6 @@
-[submodule "geshi"]
-	path = geshi
-	url = https://github.com/GeSHi/geshi-1.0.git
 [submodule "catch"]
 	path = catch
 	url = https://github.com/philsquared/Catch.git
+[submodule "glex2"]
+	path = glex2
+	url = https://github.com/sschuberth/glex2.git
