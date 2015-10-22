@@ -9,10 +9,6 @@ Not all of the GALE 1 functionality is available in GALE 2 yet (e.g. images and 
 
 For building GALE 2, please refer to the <a href="https://github.com/sschuberth/gale/blob/master/gale2/prerequisites.txt">prerequisites</a>.
 
-There also is a sub-project called GLEX, an OpenGL Extension Specification Parser, which is used to turn OpenGL extension specification files into a set of compact C source files that can be easily included into existing projects to initialize only the desired extension or core API function pointers. GLEX **version 2** parses the database `*.spec` / `*.tm` files which are linked from the <a href="http://www.opengl.org/registry/">OpenGL Registry</a>. As GLEX is written in PHP, it can be easily used from both the command line and via a web front-end.
-
-Please try out <a href="http://threekings.tk/gale/glex2/">GLEX 2 online</a>.
-
 # Screenshots
 
 ![demo_camera](gale2/demo/camera/screenshot.jpg)
