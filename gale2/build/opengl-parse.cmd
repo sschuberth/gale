@@ -1,28 +1,28 @@
 @echo off
 
-setlocal
+setlocal enabledelayedexpansion
 
 rem Read the Git for Windows installation path from the Registry.
-:REG_QUERY
-for /f "skip=2 delims=: tokens=1*" %%a in ('reg query "HKLM\SOFTWARE%WOW%\Microsoft\Windows\CurrentVersion\Uninstall\Git_is1" /v InstallLocation 2^> nul') do (
-    for /f "tokens=3" %%z in ("%%a") do (
-        set GIT=%%z:%%b
+for %%k in (HKCU HKLM) do (
+    for %%w in (\ \Wow6432Node\) do (
+        for /f "skip=2 delims=: tokens=1*" %%a in ('reg query "%%k\SOFTWARE%%wMicrosoft\Windows\CurrentVersion\Uninstall\Git_is1" /v InstallLocation 2^> nul') do (
+            for /f "tokens=3" %%z in ("%%a") do (
+                set GIT=%%z:%%b
+                echo Found Git at "!GIT!".
+                goto DONE
+            )
+        )
     )
 )
-if "%GIT%"=="" (
-    if "%WOW%"=="" (
-        rem Assume we are on 64-bit Windows, so explicitly read the 32-bit Registry.
-        set WOW=\Wow6432Node
-        goto REG_QUERY
-    )
-)
+
+:DONE
 
 rem Make sure Bash is in PATH (for running scripts).
 set PATH=%GIT%bin;%PATH%
 
 where /q bash.exe
 if errorlevel 1 (
-    echo Error: Unable to find "bash.exe" in PATH.
+    echo Error: Unable to find "bash.exe".
     exit /b
 )
 

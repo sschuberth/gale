@@ -1,6 +1,6 @@
 @echo off
 
-setlocal
+setlocal enabledelayedexpansion
 
 call opengl-parse.cmd
 if errorlevel 1 (
@@ -13,25 +13,26 @@ rmdir /s /q %1 2> nul
 mkdir %1 2> nul
 
 rem Read the CMake installation path from the Registry.
-:REG_QUERY
-for /f "delims=\ tokens=8" %%u in ('reg query "HKLM\SOFTWARE%WOW%\Microsoft\Windows\CurrentVersion\Uninstall" 2^> nul') do (
-    for /f "tokens=1" %%n in ("%%u") do (
-        if "%%n"=="CMake" (
-            for /f "skip=2 delims=: tokens=1*" %%a in ('reg query "HKLM\SOFTWARE%WOW%\Microsoft\Windows\CurrentVersion\Uninstall\%%u" /v UninstallString 2^> nul') do (
-                for /f "tokens=3" %%z in ("%%a") do (
-                    set CMAKE=%%z:%%~pbbin\cmake.exe
+for %%k in (HKCU HKLM) do (
+    for %%w in (\ \Wow6432Node\) do (
+        set KEY=%%k\SOFTWARE%%wMicrosoft\Windows\CurrentVersion\Uninstall
+        for /f "delims=\ tokens=8" %%u in ('reg query "!KEY!" 2^> nul') do (
+            for /f "tokens=1" %%n in ("%%u") do (
+                if "%%n"=="CMake" (
+                    for /f "skip=2 delims=: tokens=1*" %%a in ('reg query "!KEY!\%%u" /v UninstallString 2^> nul') do (
+                        for /f "tokens=3" %%z in ("%%a") do (
+                            set CMAKE=%%z:%%~pbbin\cmake.exe
+                            echo Found CMake at "!CMAKE!".
+                            goto DONE
+                        )
+                    )
                 )
             )
         )
     )
 )
-if "%CMAKE%"=="" (
-    if "%WOW%"=="" (
-        rem Assume we are on 64-bit Windows, so explicitly read the 32-bit Registry.
-        set WOW=\Wow6432Node
-        goto REG_QUERY
-    )
-)
+
+:DONE
 
 rem Generate the project files in the output directory.
 pushd %1
