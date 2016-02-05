@@ -11,14 +11,40 @@ For building GALE 2, please refer to the <a href="https://github.com/sschuberth/
 
 # Screenshots
 
+## [demo_camera](https://ci.appveyor.com/api/projects/sschuberth/gale/artifacts/gale2/bin/Debug/demo_camera.exe):
+
 ![demo_camera](gale2/demo/camera/screenshot.jpg)
+
+## [demo_color](https://ci.appveyor.com/api/projects/sschuberth/gale/artifacts/gale2/bin/Debug/demo_color.exe):
+
 ![demo_color](gale2/demo/color/screenshot.jpg)
+
+## [demo_fbo](https://ci.appveyor.com/api/projects/sschuberth/gale/artifacts/gale2/bin/Debug/demo_fbo.exe):
+
 ![demo_fbo](gale2/demo/fbo/screenshot.jpg)
+
+## [demo_heartbeat](https://ci.appveyor.com/api/projects/sschuberth/gale/artifacts/gale2/bin/Debug/demo_heartbeat.exe):
+
 ![demo_heartbeat](gale2/demo/heartbeat/screenshot.jpg)
+
+## [demo_interpolator](https://ci.appveyor.com/api/projects/sschuberth/gale/artifacts/gale2/bin/Debug/demo_interpolator.exe):
+
 ![demo_interpolator](gale2/demo/interpolator/screenshot.jpg)
+
+## [demo_mesh](https://ci.appveyor.com/api/projects/sschuberth/gale/artifacts/gale2/bin/Debug/demo_mesh.exe):
+
 ![demo_mesh](gale2/demo/mesh/screenshot.jpg)
+
+## [demo_quaternion](https://ci.appveyor.com/api/projects/sschuberth/gale/artifacts/gale2/bin/Debug/demo_quaternion.exe):
+
 ![demo_quaternion](gale2/demo/quaternion/screenshot.jpg)
+
+## [demo_shader](https://ci.appveyor.com/api/projects/sschuberth/gale/artifacts/gale2/bin/Debug/demo_shader.exe):
+
 ![demo_shader](gale2/demo/shader/screenshot.jpg)
+
+## [demo_texture](https://ci.appveyor.com/api/projects/sschuberth/gale/artifacts/gale2/bin/Debug/demo_texture.exe):
+
 ![demo_texture](gale2/demo/texture/screenshot.jpg)
 
 # TODO
