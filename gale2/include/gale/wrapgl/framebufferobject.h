@@ -147,7 +147,6 @@ class RenderBufferObject:public Bindable<GL_RENDERBUFFER_BINDING,RenderBufferObj
     static void createObject(GLuint& handle) {
         initFallback();
 
-        handle=0;
         if (glGenRenderbuffers) {
             glGenRenderbuffers(1,&handle);
             G_ASSERT_OPENGL
@@ -310,7 +309,6 @@ class FrameBufferObject:public Bindable<GL_FRAMEBUFFER_BINDING,FrameBufferObject
     static void createObject(GLuint& handle) {
         RenderBufferObject::initFallback();
 
-        handle=0;
         if (glGenFramebuffers) {
             glGenFramebuffers(1,&handle);
             G_ASSERT_OPENGL

@@ -65,8 +65,12 @@ class Bindable
     /// Creates a new (initially unbound) OpenGL object.
     Bindable()
     :   m_dirty_state(false)
+#ifdef GALE_INIT_DATA
+    ,   m_handle(0)
+#endif
     {
         I::createObject(m_handle);
+        G_ASSERT(m_handle)
     }
 
     /// Destroys this OpenGL object. If the object is currently bound, the

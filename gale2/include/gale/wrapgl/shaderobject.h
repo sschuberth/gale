@@ -203,7 +203,6 @@ class ProgramObject:public Bindable<GL_CURRENT_PROGRAM,ProgramObject>
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
-        handle=0;
         if (GLEX_VERSION_2_0 || GLEX_VERSION_2_0_init()) {
             handle=glCreateProgram();
             G_ASSERT_OPENGL

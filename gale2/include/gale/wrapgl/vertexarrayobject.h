@@ -55,7 +55,6 @@ class VertexArrayObject:public Bindable<GL_VERTEX_ARRAY_BINDING,VertexArrayObjec
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
-        handle=0;
         if (GLEX_ARB_vertex_array_object || GLEX_ARB_vertex_array_object_init()) {
             glGenVertexArrays(1,&handle);
             G_ASSERT_OPENGL

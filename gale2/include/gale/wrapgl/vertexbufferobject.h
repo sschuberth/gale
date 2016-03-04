@@ -142,7 +142,6 @@ class VertexBufferObject:public Bindable<B,VertexBufferObject<T,B> >
 
     /// Creates a new (initially unbound) OpenGL object and stores the \a handle.
     static void createObject(GLuint& handle) {
-        handle=0;
         if (GLEX_ARB_vertex_buffer_object || GLEX_ARB_vertex_buffer_object_init()) {
             glGenBuffersARB(1,&handle);
             G_ASSERT_OPENGL
