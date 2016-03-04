@@ -107,11 +107,11 @@ class Quaternion
 
     /// Create a quaternion whose components are either not initialized at all
     /// or initialized to 0 if \c GALE_INIT_DATA is defined.
-    Quaternion() {
+    Quaternion()
 #ifdef GALE_INIT_DATA
-        real=0;
+    :   real(0)
 #endif
-    }
+    {}
 
     /// Initialized the quaternion to the given \a real number part and the
     /// imaginary number parts given as \a imag.
