@@ -125,7 +125,8 @@ set(LIBRARY_OUTPUT_PATH "../../lib" CACHE INTERNAL "" FORCE)
 # specified, which is why we do not care to do a RELATIVE GLOB_RECURSE above.
 add_library(${project_name} STATIC ${files})
 
-target_compile_definitions(${project_name} PRIVATE GALE_USE_VBO GALE_USE_SSE GALE_USE_SSE2 GALE_USE_SSE3)
+set(default_definitions GALE_USE_VBO GALE_USE_SSE GALE_USE_SSE2 GALE_USE_SSE3)
+target_compile_definitions(${project_name} PRIVATE ${default_definitions})
 
 # Specify any required include directories. The specified path is interpreted as
 # relative to CMAKE_CURRENT_SOURCE_DIR, but the paths written to the project
@@ -140,6 +141,7 @@ foreach(demo ${demos})
     if(IS_DIRECTORY ${path})
         get_filename_component(dir ${path} NAME)
         add_subdirectory(${demo} "${CMAKE_CURRENT_BINARY_DIR}/${dir}")
+        target_compile_definitions("demo_${dir}" PRIVATE ${default_definitions})
     endif()
 endforeach()
 
@@ -149,5 +151,6 @@ foreach(test ${tests})
     if(IS_DIRECTORY ${path})
         get_filename_component(dir ${path} NAME)
         add_subdirectory(${test} "${CMAKE_CURRENT_BINARY_DIR}/${dir}")
+        target_compile_definitions("test_${dir}" PRIVATE ${default_definitions})
     endif()
 endforeach()
