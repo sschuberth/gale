@@ -5,9 +5,6 @@
     #include <crtdbg.h>
 #endif
 
-#define CATCH_CONFIG_RUNNER
-#include <catch.hpp>
-
 #include <gale/global/dynamicarray.h>
 
 #include <gale/math/biasscale.h>
@@ -20,6 +17,9 @@
 
 #include <gale/system/cpuinfo.h>
 #include <gale/system/timer.h>
+
+#define CATCH_CONFIG_RUNNER
+#include <catch.hpp>
 
 TEST_CASE("DynamicArray class tests") {
     using namespace gale::global;
