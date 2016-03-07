@@ -60,6 +60,7 @@ if(MSVC)
     # - Enable Function-Level Linking
     # - Disable Run-Time Type Info
     # - Calling Convention "__fastcall"
+    # - Use no enhanced instructions and use x87 for floating point
     set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}
         /D GALE_TINY_CODE
         /Oi
@@ -70,6 +71,7 @@ if(MSVC)
         /Gy
         /GR-
         /Gr
+        /arch:IA32
     ")
 
     # Compiler flags that are not properly reflected in the IDE:
@@ -78,6 +80,7 @@ if(MSVC)
     # - Floating Point Model
     # - "suppress _ftol" (NOTE: Makes casts use the current FPU rounding mode)
     # - "omit default library name in .OBJ"
+    # - disable thread-safe local static initialization
     set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}
         /GF
         /EHs-c-
@@ -85,6 +88,7 @@ if(MSVC)
         /Gs999999
         /QIfist
         /Zl
+        /Zc:threadSafeInit-
     ")
 
     # Linker flags that are properly reflected in the IDE:
