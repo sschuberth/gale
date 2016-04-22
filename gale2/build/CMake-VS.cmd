@@ -8,7 +8,25 @@ if errorlevel 1 (
     exit /b 1
 )
 
-rem Read the CMake installation path from the Registry.
+echo Searching for a CMake executable ...
+
+rem Read a CMake >= 3.5 installation path from the registry.
+for %%k in (HKCU HKLM) do (
+    for %%w in (\ \Wow6432Node\) do (
+        for /f "delims=" %%u in ('reg query "%%k\SOFTWARE%%wMicrosoft\Windows\CurrentVersion\Uninstall" /f "{*" /k 2^> nul') do (
+            for /f "skip=2 tokens=3*" %%d in ('reg query "%%u" /v DisplayName 2^> nul') do (
+                if "%%d"=="CMake" (
+                    for /f "skip=2 tokens=3*" %%i in ('reg query "%%u" /v InstallLocation 2^> nul') do (
+                        set CMAKE=%%i %%jbin\cmake.exe
+                        goto FOUND
+                    )
+                )
+            )
+        )
+    )
+)
+
+rem Read a CMake < 3.5 installation path from the registry.
 for %%k in (HKCU HKLM) do (
     for %%w in (\ \Wow6432Node\) do (
         set KEY=%%k\SOFTWARE%%wMicrosoft\Windows\CurrentVersion\Uninstall
