@@ -5,12 +5,8 @@ setlocal enabledelayedexpansion
 call opengl-parse.cmd
 if errorlevel 1 (
     echo Error: Failed to parse the OpenGL specification.
-    exit /b
+    exit /b 1
 )
-
-rem (Re-)create an empty output directory.
-rmdir /s /q %1 2> nul
-mkdir %1 2> nul
 
 rem Read the CMake installation path from the Registry.
 for %%k in (HKCU HKLM) do (
@@ -22,8 +18,7 @@ for %%k in (HKCU HKLM) do (
                     for /f "skip=2 delims=: tokens=1*" %%a in ('reg query "!KEY!\%%u" /v UninstallString 2^> nul') do (
                         for /f "tokens=3" %%z in ("%%a") do (
                             set CMAKE=%%z:%%~pbbin\cmake.exe
-                            echo Found CMake at "!CMAKE!".
-                            goto DONE
+                            goto FOUND
                         )
                     )
                 )
@@ -32,10 +27,22 @@ for %%k in (HKCU HKLM) do (
     )
 )
 
-:DONE
+echo Unable to find a CMake installation directory in the registry.
+goto QUIT
 
-rem Generate the project files in the output directory.
-pushd %1
+:FOUND
+
+echo Found a CMake binary at "%CMAKE%".
 "%CMAKE%" --version
+
+rem (Re-)create an empty output directory to generate the project files in.
+rmdir /s /q %1 2> nul
+mkdir %1 2> nul
+
+pushd %1
 "%CMAKE%" -G %1 ..
 popd
+
+:QUIT
+
+exit /b %errorlevel%
