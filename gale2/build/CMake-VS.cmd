@@ -3,17 +3,23 @@
 setlocal enabledelayedexpansion
 
 call opengl-parse.cmd
-if errorlevel 1 (
+if not errorlevel 0 (
     echo Error: Failed to parse the OpenGL specification.
-    exit /b 1
+    goto QUIT
 )
 
-echo Searching for a CMake executable ...
+rem Check if CMake is in PATH.
+for /f "delims=" %%i in ('where cmake.exe 2^> nul') do (
+    set CMAKE=%%i
+)
+if exist "%CMAKE%" goto FOUND
+
+echo *** Searching for a CMake ^>= 3.5 executable ...
 
 rem Read a CMake >= 3.5 installation path from the registry.
 for %%k in (HKCU HKLM) do (
     for %%w in (\ \Wow6432Node\) do (
-        for /f "delims=" %%u in ('reg query "%%k\SOFTWARE%%wMicrosoft\Windows\CurrentVersion\Uninstall" /f "{*" /k 2^> nul') do (
+        for /f "skip=1 delims=" %%u in ('reg query "%%k\SOFTWARE%%wMicrosoft\Windows\CurrentVersion\Uninstall" /f "{*" /k 2^> nul') do (
             for /f "skip=2 tokens=3*" %%d in ('reg query "%%u" /v DisplayName 2^> nul') do (
                 if "%%d"=="CMake" (
                     for /f "skip=2 tokens=3*" %%i in ('reg query "%%u" /v InstallLocation 2^> nul') do (
@@ -25,6 +31,8 @@ for %%k in (HKCU HKLM) do (
         )
     )
 )
+
+echo *** Searching for a CMake ^< 3.5 executable ...
 
 rem Read a CMake < 3.5 installation path from the registry.
 for %%k in (HKCU HKLM) do (
@@ -45,12 +53,12 @@ for %%k in (HKCU HKLM) do (
     )
 )
 
-echo Unable to find a CMake installation directory in the registry.
+echo *** Unable to find a CMake installation directory in the registry.
 goto QUIT
 
 :FOUND
 
-echo Found a CMake binary at "%CMAKE%".
+echo *** Found a CMake executable at "%CMAKE%".
 "%CMAKE%" --version
 
 rem (Re-)create an empty output directory to generate the project files in.
