@@ -1,6 +1,6 @@
 install:
   - git submodule update --init --recursive
-  - cinst php -y
+  - cinst php -y -i
   - set PATH=C:\tools\php;%PATH%
 
 build_script:
