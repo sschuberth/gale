@@ -1,0 +1,20 @@
+/// \namespace gale
+/// Root namespace for GALE.
+
+/// \namespace gale::global
+/// Namespace for miscellaneous globally used code.
+
+/// \namespace gale::math
+/// Namespace for mathematical code.
+
+/// \namespace gale::meta
+/// Namespace for meta-template programming code.
+
+/// \namespace gale::model
+/// Namespace for modelling and mesh handling related code.
+
+/// \namespace gale::system
+/// Namespace for operating system related code.
+
+/// \namespace gale::wrapgl
+/// Namespace for all code that contains OpenGL API calls.
